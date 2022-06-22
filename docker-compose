@@ -1,0 +1,66 @@
+#!/bin/bash
+
+DIRNAME=$(dirname "$0")
+CONFIG="$DIRNAME"/docker-compose.yml
+NGINX_IP=192.168.240.9
+VHOSTS_FMT="media-librarian-dev.com"
+
+function setup_env_file() {
+    # Check if exists .env and copy from .env.example
+    if [ ! -f "$DIRNAME"/src/.env ]; then
+        CURRENT_USER=$(whoami)
+        echo "Trying to copy .env.example -> .env ..."
+
+        cp -n "$DIRNAME"/src/.env.example "$DIRNAME"/src/.env
+        sudo chown "$CURRENT_USER":"$CURRENT_USER" "$DIRNAME"/src/.env
+    fi
+}
+
+function create_domain_name_mapping() {
+    echo "Mapping virtual host names"
+
+    # update /etc/hosts
+    echo -n "Updating /etc/hosts... "
+    sudo sh -c "cat /etc/hosts | grep -v \"$NGINX_IP\" > /tmp/hosts.new"
+    sudo sh -c "echo -e \"$NGINX_IP\t$VHOSTS_FMT\" >> /tmp/hosts.new"
+    sudo sh -c "cat /tmp/hosts.new > /etc/hosts && rm /tmp/hosts.new"
+    echo "Done"
+
+    # Check interface for nginx exists
+    VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
+
+    if [[ "$VIRTUAL_NET_EXISTS" = "" ]]; then
+        echo -n "No virtual network interface. Creating a new one... "
+        CN=$(echo $NGINX_IP | cut -d . -f 4)
+        sudo sh -c "ifconfig docker0:ng_$CN $NGINX_IP"
+        echo "Done"
+    else
+        echo "Virtual interface is up."
+    fi
+}
+
+opts=""
+case "$1" in
+"build")
+    sudo echo "Building..."
+    create_domain_name_mapping
+    ;;
+"up")
+    sudo echo "Booting..."
+    create_domain_name_mapping
+    # setup_env_file
+    ;;
+"start")
+    sudo echo "Running in background..."
+    ;;
+"down")
+#    echo "Down is disabled. Use './docker-compose stop' to stop containers"
+#    exit
+    ;;
+"*") ;;
+
+esac
+
+# shellcheck disable=SC2086
+# shellcheck disable=SC2068
+docker-compose --file $CONFIG $opts $@

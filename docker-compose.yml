@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+    webapp:
+        container_name: media_librarian_webapp
+        hostname: webapp
+        build: ./docker/local
+        env_file: ./src/.env
+        ports:
+            - "192.168.240.9:80:80"
+        volumes:
+            - ./src:/app
+            - ./logs:/logs
+        depends_on:
+            - pgsql
+        networks:
+            - media_librarian_network
+        command: [ "webapp" ]
+        logging:
+            driver: json-file
+            options:
+                max-size: "128m"
+                max-file: "1"
+
+    pgsql:
+        container_name: media_librarian_db
+        image: postgres:14-alpine
+        env_file: ./src/.env
+        ports:
+            - "192.168.240.9:5432:5432"
+        volumes:
+            - ./pgsql_data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: "postgres"
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "password"
+        networks:
+            - media_librarian_network
+        healthcheck:
+            test: [ "CMD", "pg_isready -q -d postgres -U postgres" ]
+
+networks:
+    media_librarian_network:
+        driver: bridge
