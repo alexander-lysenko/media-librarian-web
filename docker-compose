@@ -48,7 +48,7 @@ case "$1" in
 "up")
     sudo echo "Booting..."
     create_domain_name_mapping
-    # setup_env_file
+     setup_env_file
     ;;
 "start")
     sudo echo "Running in background..."
