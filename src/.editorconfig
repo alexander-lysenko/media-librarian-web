@@ -14,7 +14,7 @@ trim_trailing_whitespace = false
 [*.{yml,yaml,ts,tsx}]
 indent_size = 2
 
-[{package.json,composer.json}]
+[{package.json,composer.json,tsconfig.json,.eslintrc.json}]
 indent_size = 2
 
 [docker-compose.yml]
