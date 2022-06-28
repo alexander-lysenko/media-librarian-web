@@ -1,3 +1,4 @@
+import { createTheme } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import * as React from "react";
@@ -6,9 +7,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import { Landing } from "./pages/Landing";
 import { Login } from "./pages/Login";
-import { Signup } from "./pages/Signup";
-import theme from "./theme";
 import { Profile } from "./pages/Profile";
+import { Signup } from "./pages/Signup";
+import { getDesignTokens } from "./theme";
 
 const rootElement = document.getElementById("root") as Element;
 const root = createRoot(rootElement);
@@ -16,7 +17,7 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <Router>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={createTheme(getDesignTokens("light"))}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline enableColorScheme />
         <Routes>
@@ -27,6 +28,5 @@ root.render(
         </Routes>
       </ThemeProvider>
     </Router>
-    {"Салам"}
   </React.StrictMode>,
 );
