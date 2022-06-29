@@ -1,0 +1,15 @@
+{
+    "loginPage": {
+        "email": "Email Address",
+        "forgotPassword": "Forgot password?",
+        "password": "Password",
+        "rememberMe": "Remember Me",
+        "signIn": "Sign In",
+        "subtitle": "Log in your account to access your libraries",
+        "title": "Sign In",
+        "needSignUp": "Need to create an account?"
+    },
+    "signupPage": {
+
+    }
+}

@@ -6,9 +6,9 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import { Landing } from "./pages/Landing";
-import { Login } from "./pages/Login";
+import { SignIn } from "./pages/SignIn";
 import { Profile } from "./pages/Profile";
-import { Signup } from "./pages/Signup";
+import { SignUp } from "./pages/SignUp";
 import { getDesignTokens } from "./theme";
 
 const rootElement = document.getElementById("root") as Element;
@@ -22,8 +22,8 @@ root.render(
         <CssBaseline enableColorScheme />
         <Routes>
           <Route path={"/"} element={<Landing />} />
-          <Route path={"/login"} element={<Login />} />
-          <Route path={"/signup"} element={<Signup />} />
+          <Route path={"/login"} element={<SignIn />} />
+          <Route path={"/signup"} element={<SignUp />} />
           <Route path={"/Profile"} element={<Profile />} />
         </Routes>
       </ThemeProvider>

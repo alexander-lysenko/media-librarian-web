@@ -16,7 +16,7 @@ export const StickyFooter = ({ children }: Props) => {
   return (
     <FooterWrapper>
       <Grid container justifyContent="center" maxWidth="xs">
-        <Typography variant="body2" color="text.secondary">
+        <Typography component="div" color="text.secondary">
           {children}
         </Typography>
       </Grid>

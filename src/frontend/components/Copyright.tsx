@@ -1,15 +1,16 @@
 import { Link, Typography } from "@mui/material";
 import React from "react";
 
-export const Copyright = (props: any) => {
+export const Copyright = (props: object) => {
+  const date = new Date().getFullYear();
+
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://example.com/">
         Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
+      </Link>
+      {` ${date}.`}
     </Typography>
   );
 };
