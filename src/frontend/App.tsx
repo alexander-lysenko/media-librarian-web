@@ -24,7 +24,7 @@ root.render(
           <Route path={"/"} element={<Landing />} />
           <Route path={"/login"} element={<SignIn />} />
           <Route path={"/signup"} element={<SignUp />} />
-          <Route path={"/Profile"} element={<Profile />} />
+          <Route path={"/profile"} element={<Profile />} />
         </Routes>
       </ThemeProvider>
     </Router>

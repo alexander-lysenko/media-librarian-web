@@ -4,7 +4,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 import { Copyright } from "../components/Copyright";
-import { LoginForm } from "../components/forms/LoginForm";
+import { SignupForm } from "../components/forms/SignupForm";
 import { StickyFooter } from "../components/StickyFooter";
 import { useTranslation } from "../hooks/useTranslation";
 
@@ -29,7 +29,7 @@ export const SignUp = () => {
             </Avatar>
             <Typography variant="h5">{t("signupPage.title")}</Typography>
             <Typography variant="body2">{t("signupPage.subtitle")}</Typography>
-            <LoginForm />
+            <SignupForm />
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2" />
@@ -55,8 +55,8 @@ const BackgroundContainer = () => (
     item
     xs={false}
     sm={4}
-    md={7}
-    xl={8}
+    md={6}
+    lg={8}
     sx={{
       backgroundImage: "url(https://source.unsplash.com/random?movie,series)",
       backgroundRepeat: "no-repeat",
@@ -73,8 +73,8 @@ const PageContainer = ({ children }: Props) => (
     item
     xs={12}
     sm={8}
-    md={5}
-    xl={4}
+    md={6}
+    lg={4}
     container
     direction="column"
     component={Paper}

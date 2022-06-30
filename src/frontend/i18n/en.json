@@ -2,16 +2,24 @@
     "loginPage": {
         "email": "Email Address",
         "forgotPassword": "Forgot password?",
+        "needSignUp": "Need to create an account?",
         "password": "Password",
         "rememberMe": "Remember Me",
-        "signIn": "Sign In",
+        "signInBtn": "Sign In",
         "subtitle": "Log into your account to access your collections.",
-        "title": "Sign In",
-        "needSignUp": "Need to create an account?"
+        "title": "Sign In"
     },
     "signupPage": {
+        "email": "Email Address",
+        "emailAsLoginHint": "Your e-mail address will be used as your account name.",
+        "password": "Password",
+        "passwordHint": "At least 8 characters, mixed alpha-numeric set.",
+        "passwordRepeat": "Repeat Password",
+        "passwordRepeatHint": "Should match the password input from the prior field.",
+        "signIn": "Sign in to an existing account",
         "subtitle": "Create your free account. Start collecting anything.",
         "title": "Sign Up",
-        "signIn": "Sign in to an existing account"
+        "username": "Personal Name",
+        "usernameHint": "Tell us your name or how you'd like to be addressed."
     }
 }
