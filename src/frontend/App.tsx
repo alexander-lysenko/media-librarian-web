@@ -6,8 +6,8 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import { Landing } from "./pages/Landing";
-import { SignIn } from "./pages/SignIn";
 import { Profile } from "./pages/Profile";
+import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { getDesignTokens } from "./theme";
 

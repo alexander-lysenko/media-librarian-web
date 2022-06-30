@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import React, { ReactNode } from "react";
 
 type Props = {
@@ -6,11 +6,18 @@ type Props = {
 };
 
 /**
- * To get this component worked properly (i.e. real sticky footer), you must set the height
- * (actual or minimal) of parent component as 100vh using the 'sx' object. The parent component
- * should use flexbox as well. Examples:
+ * To get this component worked properly (i.e. real sticky footer experience), you must set the height
+ * (actual or minimal) of parent component as 100vh using the 'sx' prop.
+ * The parent component should use CSS Flex Box as well.
+ *
+ * Examples:
  * <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+ *   <StickyFooter/>{content}<StickyFooter>
+ * </Box>
+ * // or
  * <Grid container component="main" sx={{ height: "100vh" }}>
+ *   <StickyFooter/>{content}<StickyFooter>
+ * </Grid>
  */
 export const StickyFooter = ({ children }: Props) => {
   return (

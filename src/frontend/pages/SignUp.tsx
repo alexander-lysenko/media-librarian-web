@@ -6,41 +6,41 @@ import { NavLink } from "react-router-dom";
 import { Copyright } from "../components/Copyright";
 import { LoginForm } from "../components/forms/LoginForm";
 import { StickyFooter } from "../components/StickyFooter";
+import { useTranslation } from "../hooks/useTranslation";
 
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 /**
  * Component representing the SignUp (Register) page
  */
 export const SignUp = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <BackgroundContainer />
         <PageContainer>
-          <PageBox>
+          <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
             <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign Up
-            </Typography>
+            <Typography variant="h5">{t("signupPage.title")}</Typography>
+            <Typography variant="body2">{t("signupPage.subtitle")}</Typography>
             <LoginForm />
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+                <Link href="#" variant="body2" />
               </Grid>
               <Grid item>
                 <Link component={NavLink} to={"/login"} variant="body2">
-                  {"Sign Up"}
+                  {t("signupPage.signIn")}
                 </Link>
               </Grid>
             </Grid>
-          </PageBox>
+          </Box>
           <StickyFooter>
             <Copyright />
           </StickyFooter>
@@ -56,6 +56,7 @@ const BackgroundContainer = () => (
     xs={false}
     sm={4}
     md={7}
+    xl={8}
     sx={{
       backgroundImage: "url(https://source.unsplash.com/random?movie,series)",
       backgroundRepeat: "no-repeat",
@@ -73,6 +74,7 @@ const PageContainer = ({ children }: Props) => (
     xs={12}
     sm={8}
     md={5}
+    xl={4}
     container
     direction="column"
     component={Paper}
@@ -81,18 +83,4 @@ const PageContainer = ({ children }: Props) => (
   >
     {children}
   </Grid>
-);
-
-const PageBox = ({ children }: Props) => (
-  <Box
-    sx={{
-      my: 8,
-      mx: 4,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}
-  >
-    {children}
-  </Box>
 );

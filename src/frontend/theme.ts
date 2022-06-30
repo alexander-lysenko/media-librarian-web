@@ -1,7 +1,8 @@
-import { PaletteMode } from "@mui/material";
+import { PaletteMode, PaletteOptions, ThemeOptions } from "@mui/material";
 import { red, yellow } from "@mui/material/colors";
+import { TypographyOptions } from "@mui/material/styles/createTypography";
 
-const lightPalette = {
+const lightPalette: PaletteOptions = {
   primary: {
     main: "#556cd6",
   },
@@ -16,9 +17,9 @@ const lightPalette = {
   },
 };
 
-const darkPalette = {
+const darkPalette: PaletteOptions = {
   primary: {
-    main: "#556cd6",
+    main: "#adb7f8",
   },
   secondary: {
     main: "#19857b",
@@ -31,13 +32,13 @@ const darkPalette = {
   },
 };
 
-const typography = {};
+const typography: TypographyOptions = {};
 
 // Compose a theme instance.
-export const getDesignTokens = (mode: PaletteMode) => ({
+export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
   palette: {
     mode,
     ...(mode === "light" ? lightPalette : darkPalette),
-    // ...typography,
   },
+  typography,
 });

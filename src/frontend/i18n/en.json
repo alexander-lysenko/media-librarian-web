@@ -5,11 +5,13 @@
         "password": "Password",
         "rememberMe": "Remember Me",
         "signIn": "Sign In",
-        "subtitle": "Log in your account to access your libraries",
+        "subtitle": "Log into your account to access your collections.",
         "title": "Sign In",
         "needSignUp": "Need to create an account?"
     },
     "signupPage": {
-
+        "subtitle": "Create your free account. Start collecting anything.",
+        "title": "Sign Up",
+        "signIn": "Sign in to an existing account"
     }
 }

@@ -9,7 +9,7 @@ import { StickyFooter } from "../components/StickyFooter";
 import { useTranslation } from "../hooks/useTranslation";
 
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 /**
@@ -23,7 +23,7 @@ export const SignIn = () => {
       <Grid container component="main" sx={{ height: "100vh" }}>
         <BackgroundContainer />
         <PageContainer>
-          <LoginPageBox>
+          <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
             <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
               <LockOutlinedIcon />
             </Avatar>
@@ -43,7 +43,7 @@ export const SignIn = () => {
                 </Link>
               </Grid>
             </Grid>
-          </LoginPageBox>
+          </Box>
           <StickyFooter>
             <Copyright />
           </StickyFooter>
@@ -59,6 +59,7 @@ const BackgroundContainer = () => (
     xs={false}
     sm={4}
     md={7}
+    xl={8}
     sx={{
       backgroundImage: "url(https://source.unsplash.com/random?movie-posters)",
       backgroundRepeat: "no-repeat",
@@ -76,6 +77,7 @@ const PageContainer = ({ children }: Props) => (
     xs={12}
     sm={8}
     md={5}
+    xl={4}
     container
     direction="column"
     component={Paper}
@@ -84,18 +86,4 @@ const PageContainer = ({ children }: Props) => (
   >
     {children}
   </Grid>
-);
-
-const LoginPageBox = ({ children }: Props) => (
-  <Box
-    sx={{
-      my: 8,
-      mx: 4,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}
-  >
-    {children}
-  </Box>
 );
