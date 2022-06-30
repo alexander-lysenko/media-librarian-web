@@ -1,4 +1,4 @@
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { PersonAddAltRounded } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
 import React from "react";
 import { NavLink } from "react-router-dom";
@@ -25,7 +25,7 @@ export const SignUp = () => {
         <PageContainer>
           <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
             <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
-              <LockOutlinedIcon />
+              <PersonAddAltRounded />
             </Avatar>
             <Typography variant="h5">{t("signupPage.title")}</Typography>
             <Typography variant="body2">{t("signupPage.subtitle")}</Typography>

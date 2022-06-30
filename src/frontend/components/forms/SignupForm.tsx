@@ -1,4 +1,15 @@
-import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
+import { AlternateEmailOutlined, BadgeOutlined, PasswordOutlined } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  FormControl, FormHelperText,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import React from "react";
 
 import { useTranslation } from "../../hooks/useTranslation";
@@ -7,56 +18,60 @@ type Props = {
   label: string;
   helperText?: string;
   name: string;
+  onChange: (event: SelectChangeEvent) => void;
+  value?: string;
 };
 
-const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  console.log({
-    email: data.get("email"),
-    password: data.get("password"),
-  });
-};
-
+/**
+ * Sign Up Form component
+ */
 export const SignupForm = () => {
-  const { t } = useTranslation();
+  const [lang, setLang] = React.useState("en");
+  const { t, setLanguage } = useTranslation();
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get("email"),
+      password: data.get("password"),
+      passwordRepeat: data.get("passwordRepeat"),
+      username: data.get("username"),
+      language: data.get("language"),
+    });
+  };
+
+  const handleLanguageSelect = (event: SelectChangeEvent) => {
+    console.log(event);
+    setLang(event.target.value);
+    setLanguage(event.target.value);
+  };
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <EmailTextField
-            label={t("signupPage.email")}
-            helperText={t("signupPage.emailAsLoginHint")}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <UsernameTextField
-            label={t("signupPage.username")}
-            helperText={t("signupPage.usernameHint")}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <PasswordTextField
-            name={"password"}
-            label={t("signupPage.password")}
-            helperText={t("signupPage.passwordHint")}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <PasswordTextField
-            name={"passwordRepeat"}
-            label={t("signupPage.passwordRepeat")}
-            helperText={t("signupPage.passwordRepeatHint")}
-          />
-        </Grid>
-      </Grid>
-      <FormControlLabel
-        control={<Checkbox value="remember" color="primary" />}
-        label="Remember me"
+      <UsernameTextField
+        label={t("signupPage.username")}
+        helperText={t("signupPage.usernameHint")}
+      />
+      <EmailTextField label={t("signupPage.email")} helperText={t("signupPage.emailAsLoginHint")} />
+      <PasswordTextField
+        name={"password"}
+        label={t("signupPage.password")}
+        helperText={t("signupPage.passwordHint")}
+      />
+      <PasswordTextField
+        name={"passwordRepeat"}
+        label={t("signupPage.passwordRepeat")}
+        helperText={t("signupPage.passwordRepeatHint")}
+      />
+      <LanguageSelect
+        onChange={handleLanguageSelect}
+        value={lang}
+        label={t("signupPage.language")}
+        helperText={t("signupPage.languageHint")}
       />
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-        Sign In
+        {t("signupPage.signUpBtn")}
       </Button>
     </Box>
   );
@@ -65,7 +80,7 @@ export const SignupForm = () => {
 const EmailTextField = ({ label, helperText }: Partial<Props>) => (
   <TextField
     size="small"
-    margin="normal"
+    margin="dense"
     required
     fullWidth
     id="email"
@@ -73,28 +88,42 @@ const EmailTextField = ({ label, helperText }: Partial<Props>) => (
     label={label}
     helperText={helperText}
     autoComplete="email"
-    autoFocus
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          <AlternateEmailOutlined />
+        </InputAdornment>
+      ),
+    }}
   />
 );
 
 const UsernameTextField = ({ label, helperText }: Partial<Props>) => (
   <TextField
     size="small"
-    margin="normal"
+    margin="dense"
     required
     fullWidth
-    id="email"
-    name="email"
+    id="username"
+    name="username"
     label={label}
     helperText={helperText}
-    autoComplete="email"
+    autoComplete="name"
     autoFocus
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          <BadgeOutlined />
+        </InputAdornment>
+      ),
+    }}
   />
 );
-const PasswordTextField = ({ name, label, helperText }: Props) => (
+
+const PasswordTextField = ({ name, label, helperText }: Partial<Props>) => (
   <TextField
     size="small"
-    margin="normal"
+    margin="dense"
     required
     fullWidth
     type="password"
@@ -103,5 +132,33 @@ const PasswordTextField = ({ name, label, helperText }: Props) => (
     label={label}
     helperText={helperText}
     autoComplete="current-password"
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          <PasswordOutlined />
+        </InputAdornment>
+      ),
+    }}
   />
 );
+
+const LanguageSelect = ({ onChange, label, value, helperText }: Partial<Props>) => {
+  return (
+    <FormControl fullWidth size="small" margin="dense">
+      <InputLabel id="language">{label}</InputLabel>
+      <Select
+        required
+        labelId="language"
+        id="language"
+        name="language"
+        value={value}
+        label={label}
+        onChange={onChange}
+      >
+        <MenuItem value={"en"}>English</MenuItem>
+        <MenuItem value={"ru"}>Русский</MenuItem>
+      </Select>
+      <FormHelperText>{helperText}</FormHelperText>
+    </FormControl>
+  );
+};

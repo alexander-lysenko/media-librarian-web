@@ -1,20 +1,31 @@
-import { useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 import en from "../i18n/en.json";
 import ru from "../i18n/ru.json";
 
 type Dictionary = { [prop: string]: string | unknown };
 
-let currentLanguage = "en";
 const dictionary: Dictionary = { en, ru };
+type LanguageSet = keyof typeof dictionary;
+
+const translateContext = createContext<LanguageSet | null>(null);
+
+export const TranslationProvider = ({ value, children }: React.ProviderProps<string>) => {
+  return <translateContext.Provider value={value}>{children}</translateContext.Provider>;
+};
 
 export const useTranslation = () => {
+  const currentLanguage = useContext(translateContext);
+  if (!currentLanguage) {
+    throw new Error("[Translation] The provider is not defined");
+  }
+
   const [language, setLanguage] = useState(currentLanguage);
   const languages = Object.keys(dictionary);
 
-  useEffect(() => {
-    currentLanguage = language || "en";
-  }, [language]);
+  // useEffect(() => {
+  //   currentLanguage = language || "en";
+  // }, [language]);
 
   const t = (key: string, props?: Record<string, unknown>): string => {
     let localizedString =

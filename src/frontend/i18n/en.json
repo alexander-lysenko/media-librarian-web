@@ -15,10 +15,11 @@
         "password": "Password",
         "passwordHint": "At least 8 characters, mixed alpha-numeric set.",
         "passwordRepeat": "Repeat Password",
-        "passwordRepeatHint": "Should match the password input from the prior field.",
+        "passwordRepeatHint": "Should match the password entry from the prior field.",
         "signIn": "Sign in to an existing account",
         "subtitle": "Create your free account. Start collecting anything.",
         "title": "Sign Up",
+        "signUpBtn": "Sign Up",
         "username": "Personal Name",
         "usernameHint": "Tell us your name or how you'd like to be addressed."
     }

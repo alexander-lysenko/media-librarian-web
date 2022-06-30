@@ -1,4 +1,5 @@
-import { Box, Button, Checkbox, FormControlLabel, TextField } from "@mui/material";
+import { AlternateEmailOutlined, PasswordOutlined } from "@mui/icons-material";
+import { Box, Button, Checkbox, FormControlLabel, InputAdornment, TextField } from "@mui/material";
 import React from "react";
 
 import { useTranslation } from "../../hooks/useTranslation";
@@ -44,6 +45,13 @@ const EmailTextField = ({ label }: Props) => (
     label={label}
     autoComplete="email"
     autoFocus
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          <AlternateEmailOutlined />
+        </InputAdornment>
+      ),
+    }}
   />
 );
 const PasswordTextField = ({ label }: Props) => (
@@ -57,5 +65,12 @@ const PasswordTextField = ({ label }: Props) => (
     name="password"
     label={label}
     autoComplete="current-password"
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          <PasswordOutlined />
+        </InputAdornment>
+      ),
+    }}
   />
 );
