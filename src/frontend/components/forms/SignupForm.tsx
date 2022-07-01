@@ -2,7 +2,8 @@ import { AlternateEmailOutlined, BadgeOutlined, PasswordOutlined } from "@mui/ic
 import {
   Box,
   Button,
-  FormControl, FormHelperText,
+  FormControl,
+  FormHelperText,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -13,6 +14,7 @@ import {
 import React from "react";
 
 import { useTranslation } from "../../hooks/useTranslation";
+import { useTranslationStore } from "../../hooks/useTranslationStore";
 
 type Props = {
   label: string;
@@ -26,8 +28,8 @@ type Props = {
  * Sign Up Form component
  */
 export const SignupForm = () => {
-  const [lang, setLang] = React.useState("en");
-  const { t, setLanguage } = useTranslation();
+  const { t } = useTranslation();
+  const { getLanguage, setLanguage } = useTranslationStore((state) => state);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,7 +45,6 @@ export const SignupForm = () => {
 
   const handleLanguageSelect = (event: SelectChangeEvent) => {
     console.log(event);
-    setLang(event.target.value);
     setLanguage(event.target.value);
   };
 
@@ -66,7 +67,7 @@ export const SignupForm = () => {
       />
       <LanguageSelect
         onChange={handleLanguageSelect}
-        value={lang}
+        value={getLanguage()}
         label={t("signupPage.language")}
         helperText={t("signupPage.languageHint")}
       />
