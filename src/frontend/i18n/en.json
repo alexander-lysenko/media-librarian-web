@@ -12,14 +12,16 @@
     "signupPage": {
         "email": "Email Address",
         "emailAsLoginHint": "Your e-mail address will be used as your account name.",
+        "language": "Language",
+        "languageHint": "Choose the default interface language. You can always change it in your profile.",
         "password": "Password",
         "passwordHint": "At least 8 characters, mixed alpha-numeric set.",
         "passwordRepeat": "Repeat Password",
         "passwordRepeatHint": "Should match the password entry from the prior field.",
         "signIn": "Sign in to an existing account",
+        "signUpBtn": "Sign Up",
         "subtitle": "Create your free account. Start collecting anything.",
         "title": "Sign Up",
-        "signUpBtn": "Sign Up",
         "username": "Personal Name",
         "usernameHint": "Tell us your name or how you'd like to be addressed."
     }

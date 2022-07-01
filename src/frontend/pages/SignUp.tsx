@@ -55,8 +55,8 @@ const BackgroundContainer = () => (
     item
     xs={false}
     sm={4}
-    md={6}
-    lg={8}
+    md={7}
+    xl={8}
     sx={{
       backgroundImage: "url(https://source.unsplash.com/random?movie,series)",
       backgroundRepeat: "no-repeat",
@@ -73,8 +73,8 @@ const PageContainer = ({ children }: Props) => (
     item
     xs={12}
     sm={8}
-    md={6}
-    lg={4}
+    md={5}
+    xl={4}
     container
     direction="column"
     component={Paper}

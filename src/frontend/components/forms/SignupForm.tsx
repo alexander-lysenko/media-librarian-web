@@ -14,7 +14,7 @@ import {
 import React from "react";
 
 import { useTranslation } from "../../hooks/useTranslation";
-import { useTranslationStore } from "../../hooks/useTranslationStore";
+import { Language } from "../../hooks/useTranslationStore";
 
 type Props = {
   label: string;
@@ -28,8 +28,7 @@ type Props = {
  * Sign Up Form component
  */
 export const SignupForm = () => {
-  const { t } = useTranslation();
-  const { getLanguage, setLanguage } = useTranslationStore((state) => state);
+  const { t, getLanguage, setLanguage } = useTranslation();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,8 +43,11 @@ export const SignupForm = () => {
   };
 
   const handleLanguageSelect = (event: SelectChangeEvent) => {
+    setLanguage(event.target.value as Language);
+  };
+
+  const handleThemeSelect = (event: SelectChangeEvent) => {
     console.log(event);
-    setLanguage(event.target.value);
   };
 
   return (
@@ -70,6 +72,12 @@ export const SignupForm = () => {
         value={getLanguage()}
         label={t("signupPage.language")}
         helperText={t("signupPage.languageHint")}
+      />
+      <ThemeSelect
+        onChange={handleThemeSelect}
+        value={"light"}
+        label={t("signupPage.theme")}
+        helperText={t("signupPage.themeHint")}
       />
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         {t("signupPage.signUpBtn")}
@@ -144,6 +152,7 @@ const PasswordTextField = ({ name, label, helperText }: Partial<Props>) => (
 );
 
 const LanguageSelect = ({ onChange, label, value, helperText }: Partial<Props>) => {
+  const { languages } = useTranslation();
   return (
     <FormControl fullWidth size="small" margin="dense">
       <InputLabel id="language">{label}</InputLabel>
@@ -156,8 +165,36 @@ const LanguageSelect = ({ onChange, label, value, helperText }: Partial<Props>) 
         label={label}
         onChange={onChange}
       >
-        <MenuItem value={"en"}>English</MenuItem>
-        <MenuItem value={"ru"}>Русский</MenuItem>
+        {Object.entries(languages).map(([key, definition]) => (
+          <MenuItem key={key} value={key}>
+            {definition}
+          </MenuItem>
+        ))}
+      </Select>
+      <FormHelperText>{helperText}</FormHelperText>
+    </FormControl>
+  );
+};
+
+const ThemeSelect = ({ onChange, label, value, helperText }: Partial<Props>) => {
+  return (
+    <FormControl fullWidth size="small" margin="dense">
+      <InputLabel id="theme">{label}</InputLabel>
+      <Select
+        required
+        labelId="theme"
+        id="theme"
+        name="theme"
+        value={value}
+        label={label}
+        onChange={onChange}
+      >
+        <MenuItem key={"light"} value={"light"}>
+          {"light"}
+        </MenuItem>
+        <MenuItem key={"dark"} value={"dark"}>
+          {"dark"}
+        </MenuItem>
       </Select>
       <FormHelperText>{helperText}</FormHelperText>
     </FormControl>

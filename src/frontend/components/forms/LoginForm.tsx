@@ -28,7 +28,7 @@ export const LoginForm = () => {
         label={t("loginPage.rememberMe")}
       />
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-        {t("loginPage.signIn")}
+        {t("loginPage.signInBtn")}
       </Button>
     </Box>
   );
