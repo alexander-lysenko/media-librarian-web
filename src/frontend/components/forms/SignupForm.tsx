@@ -26,18 +26,26 @@ type Props = {
 
 /**
  * Sign Up Form component
+ * TODO: Form validation
  */
 export const SignupForm = () => {
   const { t, getLanguage, setLanguage } = useTranslation();
+  // const formStore = {
+  //   email: validation.required().string({min: 10}),
+  //   username: validation.required().string(),
+  //   password: validation.required().string(),
+  //   passwordRepeat: validation.required().string(),
+  //   language: validation.required().string(),
+  // };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
+      username: data.get("username"),
       password: data.get("password"),
       passwordRepeat: data.get("passwordRepeat"),
-      username: data.get("username"),
       language: data.get("language"),
     });
   };
