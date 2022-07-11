@@ -4,6 +4,14 @@ export interface PropValuePair {
 }
 
 export interface Validator {
+  /** A standard error message when validation fails */
+  errorMessage: string;
+
+  /** Validation entry point. */
+  validate: (value: unknown) => string | undefined;
+}
+
+export interface ValidationRule {
   errorMessage?: string;
   on?: () => boolean;
   except?: () => boolean;
@@ -26,10 +34,6 @@ interface RangeValidator extends Validator {
   range: Array<never>;
   notIn: boolean;
   strict: boolean;
-}
-
-interface RequiredValidator extends Validator {
-  desiredValue?: never;
 }
 
 interface StringValidator extends Validator {
@@ -88,14 +92,6 @@ export class FormValidation {
         this.errorMessage = rules.errorMessage;
       }
     } else {
-      this.errorMessage = rules.errorMessage;
-    }
-
-    return this;
-  }
-
-  public required(rules: RequiredValidator): this {
-    if (this.value) {
       this.errorMessage = rules.errorMessage;
     }
 

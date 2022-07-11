@@ -1,50 +1,45 @@
-import { ChangeEvent, FocusEvent, useRef, useState } from "react";
+import { ChangeEvent, FocusEvent, useMemo } from "react";
 
-import { Validator } from "../core/formValidation/validatior";
-
-type ValuesList = Record<string, unknown>;
-type RulesList = Record<keyof ValuesList, Validator[]>;
-type ErrorsList = Record<keyof ValuesList, string | undefined>;
+import { useFormValidationStore, ValuesList } from "../store/useFormValidationStore";
 
 export const useFormValidation = () => {
-  const [values, setValues] = useState({} as ValuesList);
-  const [rules, setRules] = useState({} as RulesList);
-  const [errors, setErrors] = useState({} as ErrorsList);
+  const [getValue, setValue] = useFormValidationStore((state) => [state.getValue, state.setValue]);
+  const [getRule, setRule] = useFormValidationStore((state) => [state.getRule, state.setRule]);
+  const [errors, setError] = useFormValidationStore((state) => [state.errors, state.setError]);
 
   // Internal methods
 
-  const validate = (property: keyof ValuesList): void => {
-    const value = values[property];
-    console.log("Validate:", value);
-    // for (rule in rules[property]) {
-    //   if ()
-    // }
-    //
-    const errorMessage = value !== "" ? "validated" : undefined;
-    setErrors({ ...errors, [property]: errorMessage });
-  };
+  const validate = useMemo(
+    () =>
+      (property: keyof ValuesList): void => {
+        let errorMessage = undefined;
+        const value = getValue(property);
+        const rules = getRule(property) || [];
+
+        for (const rule of rules) {
+          errorMessage = rule.validate(value);
+        }
+
+        setError(property, errorMessage as string);
+      },
+    [getRule, setError, getValue],
+  );
 
   // Exportable methods
 
-  const setValidationRule = (property: string, ruleList: Validator[]) => {
-    setRules({ ...rules, [property]: ruleList });
-  };
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    console.log("change", { [event.target.name]: event.target.value });
 
-    setValues({ ...values, [event.target.name]: event.target.value });
+    setValue(event.target.name, event.target.value);
     validate(event.target.name);
   };
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     event.preventDefault();
-    console.log("blur", { [event.target.name]: event.target.value });
 
-    setValues({ ...values, [event.target.name]: event.target.value });
+    setValue(event.target.name, event.target.value);
     validate(event.target.name);
   };
 
-  return { values, errors, setValidationRule, handleChange, handleBlur };
+  return { errors, setValidationRule: setRule, handleChange, handleBlur };
 };

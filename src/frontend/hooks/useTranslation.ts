@@ -1,4 +1,4 @@
-import { Dictionary, useTranslationStore } from "./useTranslationStore";
+import { Dictionary, useTranslationStore } from "../store/useTranslationStore";
 
 export const useTranslation = () => {
   const { dictionary, languages, getLanguage, setLanguage } = useTranslationStore();

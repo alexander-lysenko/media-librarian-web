@@ -11,11 +11,12 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, FocusEvent } from "react";
+import React, { ChangeEvent, FocusEvent, useEffect } from "react";
 
+import { Required } from "../../core/formValidation/required";
 import { useFormValidation } from "../../hooks/useFormValidation";
 import { useTranslation } from "../../hooks/useTranslation";
-import { Language } from "../../hooks/useTranslationStore";
+import { Language } from "../../store/useTranslationStore";
 
 type InputProps = {
   label: string;
@@ -33,14 +34,12 @@ type InputProps = {
  */
 export const SignupForm = () => {
   const { t, getLanguage, setLanguage } = useTranslation();
-  const { values, errors, handleChange, handleBlur } = useFormValidation();
-  // const validationRules = {
-  //   email: validation.required().string({min: 10}),
-  //   username: validation.required().string(),
-  //   password: validation.required().string(),
-  //   passwordRepeat: validation.required().string(),
-  //   language: validation.required().string(),
-  // };
+  const { errors, handleChange, handleBlur, setValidationRule } = useFormValidation();
+
+  useEffect(
+    () => setValidationRule("username", [new Required({ errorMessage: "A value is required" })]),
+    [setValidationRule],
+  );
 
   console.info(errors);
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,14 +81,14 @@ export const SignupForm = () => {
         name={"password"}
         label={t("signupPage.password")}
         helperText={t("signupPage.passwordHint")}
-        onChange={handleChange}
+        // onChange={handleChange}
         errorMessage={errors.password}
       />
       <PasswordTextField
         name={"passwordRepeat"}
         label={t("signupPage.passwordRepeat")}
         helperText={t("signupPage.passwordRepeatHint")}
-        onChange={handleChange}
+        // onChange={handleChange}
         errorMessage={errors.passwordRepeat}
       />
       <LanguageSelect
