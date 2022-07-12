@@ -1,18 +1,18 @@
 import create from "zustand";
 
-import { Validator } from "../core/formValidation/validatiors";
+import { ValidatorInterface } from "../core/formValidation/validatiors";
 
 export type ValuesList = Record<string, unknown>;
 
 interface FormValidationState {
   values: ValuesList;
-  rules: Record<keyof ValuesList, Validator[]>;
+  rules: Record<keyof ValuesList, ValidatorInterface[]>;
   errors: Record<keyof ValuesList, string | undefined>;
   setValue: (property: string, value: unknown) => void;
-  setRule: (property: keyof ValuesList, rules: Validator[]) => void;
+  setRule: (property: keyof ValuesList, rules: ValidatorInterface[]) => void;
   setError: (property: keyof ValuesList, errorMessage: string) => void;
   getValue: (property: keyof ValuesList) => unknown;
-  getRule: (property: keyof ValuesList) => Validator[];
+  getRule: (property: keyof ValuesList) => ValidatorInterface[];
   getError: (property: keyof ValuesList) => string | undefined;
 }
 

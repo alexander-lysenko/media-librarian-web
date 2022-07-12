@@ -13,7 +13,9 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, FocusEvent, useEffect } from "react";
 
-import { Required } from "../../core/formValidation/required";
+import { EmailValidator } from "../../core/formValidation/emailValidator";
+import { RequiredValidator } from "../../core/formValidation/requiredValidator";
+import { StringValidator } from "../../core/formValidation/stringValidator";
 import { useFormValidation } from "../../hooks/useFormValidation";
 import { useTranslation } from "../../hooks/useTranslation";
 import { Language } from "../../store/useTranslationStore";
@@ -34,14 +36,23 @@ type InputProps = {
  */
 export const SignupForm = () => {
   const { t, getLanguage, setLanguage } = useTranslation();
-  const { errors, handleChange, handleBlur, setValidationRule } = useFormValidation();
+  const { errors, handleBlur, setValidationRule } = useFormValidation();
 
-  useEffect(
-    () => setValidationRule("username", [new Required({ errorMessage: "A value is required" })]),
-    [setValidationRule],
-  );
+  useEffect(() => {
+    setValidationRule("username", [
+      new RequiredValidator({ errorMessage: "A value is required" }),
+      new StringValidator({
+        minLength: 3,
+        tooShortErrorMsg: "Full name is expected",
+        errorMessage: "A value is required",
+      }),
+    ]);
+    setValidationRule("email", [
+      new RequiredValidator({ errorMessage: "Email is required" }),
+      new EmailValidator({ errorMessage: "Email is not valid" }),
+    ]);
+  }, [setValidationRule]);
 
-  console.info(errors);
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -67,28 +78,28 @@ export const SignupForm = () => {
       <UsernameTextField
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint")}
-        onChange={handleChange}
         onBlur={handleBlur}
         errorMessage={errors.username}
       />
       <EmailTextField
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint")}
-        onChange={handleChange}
+        // onChange={handleChange}
+        onBlur={handleBlur}
         errorMessage={errors.email}
       />
       <PasswordTextField
         name={"password"}
         label={t("signupPage.password")}
         helperText={t("signupPage.passwordHint")}
-        // onChange={handleChange}
+        onBlur={handleBlur}
         errorMessage={errors.password}
       />
       <PasswordTextField
         name={"passwordRepeat"}
         label={t("signupPage.passwordRepeat")}
         helperText={t("signupPage.passwordRepeatHint")}
-        // onChange={handleChange}
+        onBlur={handleBlur}
         errorMessage={errors.passwordRepeat}
       />
       <LanguageSelect
@@ -151,6 +162,7 @@ const EmailTextField = (props: Partial<InputProps>) => {
       error={props.errorMessage !== undefined}
       helperText={props.errorMessage || props.helperText}
       onChange={props.onChange}
+      onBlur={props.onBlur}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
@@ -177,6 +189,7 @@ const PasswordTextField = (props: Partial<InputProps>) => {
       helperText={props.errorMessage || props.helperText}
       autoComplete="current-password"
       onChange={props.onChange}
+      onBlur={props.onBlur}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

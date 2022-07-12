@@ -18,6 +18,9 @@ export const useFormValidation = () => {
 
         for (const rule of rules) {
           errorMessage = rule.validate(value);
+          if (errorMessage !== undefined) {
+            break;
+          }
         }
 
         setError(property, errorMessage as string);
