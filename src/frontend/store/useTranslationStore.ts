@@ -11,19 +11,29 @@ export type LanguageDefinitions = { [lang in Language]: string };
 const dictionary: Dictionary = { en, ru };
 const languages: LanguageDefinitions = { en: "English", ru: "Русский" };
 
-export interface LanguageState {
+export interface TranslationState {
   dictionary: Dictionary;
   languages: LanguageDefinitions;
+  setLanguages: (languages: LanguageDefinitions) => void;
+  getLanguages: () => LanguageDefinitions;
+}
+
+export interface LanguageState {
   language: Language;
   setLanguage: (language: Language) => void;
   getLanguage: () => Language;
 }
 
-export const useTranslationStore = create<LanguageState>(
+export const useTranslationStore = create<TranslationState>((set, get) => ({
+  dictionary: dictionary,
+  languages: languages,
+  setLanguages: (languages: LanguageDefinitions) => set(() => ({ languages })),
+  getLanguages: () => get().languages,
+}));
+
+export const useLanguageStore = create<LanguageState>(
   persist(
     (set, get) => ({
-      dictionary: dictionary,
-      languages: languages,
       language: "en",
       setLanguage: (language: Language) => set(() => ({ language })),
       getLanguage: () => get().language,

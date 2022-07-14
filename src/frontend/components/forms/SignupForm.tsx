@@ -11,7 +11,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, useEffect } from "react";
+import React, { ChangeEvent, FocusEvent, useEffect, useMemo } from "react";
 
 import { EmailValidator } from "../../core/formValidation/emailValidator";
 import { RequiredValidator } from "../../core/formValidation/requiredValidator";
@@ -36,24 +36,27 @@ type InputProps = {
  */
 export const SignupForm = () => {
   const { t, getLanguage, setLanguage } = useTranslation();
-  const { errors, handleBlur, setValidationRule } = useFormValidation();
+  const { errors, validateOnBlur, setValidationRule, validateOnSubmit } = useFormValidation();
 
   useEffect(() => {
+    // doesn't reload translation
     setValidationRule("username", [
-      new RequiredValidator({ errorMessage: "A value is required" }),
+      new RequiredValidator({ errorMessage: t("formValidation.usernameRequired") }),
       new StringValidator({
         minLength: 3,
-        tooShortErrorMsg: "Full name is expected",
-        errorMessage: "A value is required",
+        tooShortErrorMsg: t("formValidation.usernameMinLength", { n: 3 }),
+        errorMessage: t("formValidation.usernameRequired"),
       }),
     ]);
     setValidationRule("email", [
-      new RequiredValidator({ errorMessage: "Email is required" }),
-      new EmailValidator({ errorMessage: "Email is not valid" }),
+      new RequiredValidator({ errorMessage: t("formValidation.emailRequired") }),
+      new EmailValidator({ errorMessage: t("formValidation.emailInvalid") }),
     ]);
-  }, [setValidationRule]);
+  }, [setValidationRule, t]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    validateOnSubmit(event);
+    console.log(errors);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -78,28 +81,27 @@ export const SignupForm = () => {
       <UsernameTextField
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint")}
-        onBlur={handleBlur}
+        onBlur={validateOnBlur}
         errorMessage={errors.username}
       />
       <EmailTextField
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint")}
-        // onChange={handleChange}
-        onBlur={handleBlur}
+        onBlur={validateOnBlur}
         errorMessage={errors.email}
       />
       <PasswordTextField
         name={"password"}
         label={t("signupPage.password")}
         helperText={t("signupPage.passwordHint")}
-        onBlur={handleBlur}
+        onBlur={validateOnBlur}
         errorMessage={errors.password}
       />
       <PasswordTextField
         name={"passwordRepeat"}
         label={t("signupPage.passwordRepeat")}
         helperText={t("signupPage.passwordRepeatHint")}
-        onBlur={handleBlur}
+        onBlur={validateOnBlur}
         errorMessage={errors.passwordRepeat}
       />
       <LanguageSelect
@@ -227,6 +229,8 @@ const LanguageSelect = (props: Partial<InputProps>) => {
 };
 
 const ThemeSelect = (props: Partial<InputProps>) => {
+  const { t } = useTranslation();
+
   return (
     <FormControl fullWidth size="small" margin="dense">
       <InputLabel id="theme">{props.label}</InputLabel>
@@ -240,10 +244,10 @@ const ThemeSelect = (props: Partial<InputProps>) => {
         onChange={props.onChange as (event: SelectChangeEvent) => void | undefined}
       >
         <MenuItem key={"light"} value={"light"}>
-          {"light"}
+          {t("theme.presetLight")}
         </MenuItem>
         <MenuItem key={"dark"} value={"dark"}>
-          {"dark"}
+          {t("theme.presetDark")}
         </MenuItem>
       </Select>
       <FormHelperText>{props.helperText}</FormHelperText>

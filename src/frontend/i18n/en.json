@@ -1,4 +1,12 @@
 {
+    "formValidation": {
+        "usernameRequired": "Personal Name is required",
+        "usernameMinLength": "Expected a full Personal Name (min {n} symbols)",
+        "emailRequired": "Email Address is required",
+        "emailInvalid": "Please provide a valid e-mail address",
+        "passwordRequired": "Sorry but password cannot be blank",
+        "passwordRepeatRequired": "You must confirm your password, that's a rule"
+    },
     "loginPage": {
         "email": "Email Address",
         "forgotPassword": "Forgot password?",
@@ -21,8 +29,14 @@
         "signIn": "Sign in to an existing account",
         "signUpBtn": "Sign Up",
         "subtitle": "Create your free account. Start collecting anything.",
+        "theme": "UI Theme",
+        "themeHint": "Choose the default interface theme. You can always change it in your profile.",
         "title": "Sign Up",
         "username": "Personal Name",
         "usernameHint": "Tell us your name or how you'd like to be addressed."
+    },
+    "theme": {
+        "presetDark": "Dark",
+        "presetLight": "Light"
     }
 }
