@@ -24,19 +24,18 @@ services:
     pgsql:
         container_name: media_librarian_db
         image: postgres:14-alpine
-        env_file: ./src/.env
         ports:
             - "192.168.240.9:5432:5432"
         volumes:
             - ./pgsql_data:/var/lib/postgresql/data
         environment:
-            POSTGRES_DB: "postgres"
-            POSTGRES_USER: "postgres"
-            POSTGRES_PASSWORD: "password"
+            POSTGRES_DB: "${DB_DATABASE:?}"
+            POSTGRES_USER: "${DB_USERNAME:?}"
+            POSTGRES_PASSWORD: "${DB_PASSWORD:?}"
         networks:
             - media_librarian_network
         healthcheck:
-            test: [ "CMD", "pg_isready -q -d postgres -U postgres" ]
+            test: [ "CMD", "pg_isready -q -d ${DB_DATABASE} -U ${DB_USERNAME}" ]
 
 networks:
     media_librarian_network:

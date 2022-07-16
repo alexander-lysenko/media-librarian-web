@@ -38,6 +38,7 @@ function webapp() {
     run_services
 #    install_composer_dependencies && apply_migrations
 
+    echo "=========="
     echo "Media Librarian Web App is Up! Please make sure the front end is built from the latest version"
     while true; do
         sleep 1

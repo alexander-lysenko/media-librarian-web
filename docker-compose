@@ -63,4 +63,4 @@ esac
 
 # shellcheck disable=SC2086
 # shellcheck disable=SC2068
-docker-compose --file $CONFIG $opts $@
+docker-compose --file $CONFIG --env-file "$DIRNAME"/src/.env $opts $@
