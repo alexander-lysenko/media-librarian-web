@@ -6,14 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /** @var string */
+    private string $tableName = 'failed_jobs';
+
     /**
-     * Run the migrations.
-     *
+     * Run the migration.
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('failed_jobs', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
             $table->text('connection');
@@ -25,12 +27,11 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
-     *
+     * Reverse the migration.
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('failed_jobs');
+        Schema::dropIfExists($this->tableName);
     }
 };

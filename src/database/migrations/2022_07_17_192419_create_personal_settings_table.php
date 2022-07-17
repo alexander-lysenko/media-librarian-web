@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /** @var string */
-    private string $tableName = 'password_resets';
+    private string $tableName = 'personal_settings';
 
     /**
      * Run the migration.
@@ -18,9 +18,12 @@ return new class extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('email');
-            $table->string('token', 64)->unique();
-            $table->timestamp('created_at')->nullable();
+            $table->string('locale', 5)->default('en');
+            $table->string('theme')->default('light');
+            $table->jsonb('metadata')->nullable();
+            $table->longText('avatar')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 
