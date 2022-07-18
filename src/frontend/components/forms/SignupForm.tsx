@@ -1,4 +1,5 @@
-import { AlternateEmailOutlined, BadgeOutlined, PasswordOutlined } from "@mui/icons-material";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { AlternateEmailOutlined, BadgeOutlined, HourglassBottomOutlined, PasswordOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -11,18 +12,14 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, useEffect, useMemo } from "react";
+import React, { ChangeEvent, FocusEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { object as yupShape, ref, string } from "yup";
 
-import { EmailValidator } from "../../core/formValidation/emailValidator";
-import { RequiredValidator } from "../../core/formValidation/requiredValidator";
-import { StringValidator } from "../../core/formValidation/stringValidator";
-import { useFormValidation } from "../../hooks/useFormValidation";
 import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 import { Language } from "../../store/useTranslationStore";
-import { useForm } from "react-hook-form";
-import { object as yupShape, string } from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 
+type ReactSetStateAction<T> = React.Dispatch<React.SetStateAction<T>>;
 type InputProps = {
   label: string;
   helperText?: string;
@@ -31,66 +28,63 @@ type InputProps = {
   onBlur: (event: FocusEvent<HTMLInputElement>) => void;
   value?: string;
   errorMessage: string | undefined;
+  loadingState?: boolean;
 };
 
-const makeSchema = (t: LocalizedStringFn) =>
+const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAction<boolean>) =>
   yupShape({
-    userName: string()
-      .required(t("formValidation.usernameRequired"))
-      .min(3, t("formValidation.usernameMinLength", { n: 3 }))
-      .trim(),
     email: string()
       .required(t("formValidation.emailRequired"))
       .email(t("formValidation.emailInvalid"))
       .lowercase()
+      .trim()
+      .test({
+        name: "checkEmailUnique",
+        message: t("formValidation.emailNotUnique"),
+        test: (email) =>
+          // async validation example #1
+          new Promise((resolve) => {
+            setLoading(true);
+            setTimeout(() => {
+              resolve(email !== "admin@example.com");
+              setLoading(false);
+            }, 1000);
+          }),
+        // async validation example #2
+        // fetch(`is-email-unique/${email}`).then(async (res) => {
+        //   const { isEmailUnique } = await res.json();
+        //   return isEmailUnique;
+        // }),
+      }),
+    username: string()
+      .required(t("formValidation.usernameRequired"))
+      .min(3, t("formValidation.usernameMinLength", { n: 3 }))
       .trim(),
+    password: string()
+      .required(t("formValidation.passwordRequired"))
+      .min(8, t("formValidation.passwordMinLength", { n: 8 })),
+    passwordRepeat: string()
+      .required(t("formValidation.passwordRepeatRequired"))
+      .oneOf([ref("password")], t("formValidation.passwordRepeatNotMatch")),
   });
 
 /**
  * Sign Up Form component
- * TODO: Form validation
  */
 export const SignupForm = () => {
+  const [emailChecking, setEmailChecking] = useState(false);
+
   const { t, getLanguage, setLanguage } = useTranslation();
-  // const { errors, validateOnBlur, setValidationRule, validateOnSubmit } = useFormValidation();
+  const schema = makeValidationSchema(t, setEmailChecking);
+  const { register, formState, handleSubmit } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onBlur" || "onTouched",
+    reValidateMode: "onChange",
+  });
+  const { errors } = formState;
 
-  const schema = makeSchema(t);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
-
-  //
-  // useEffect(() => {
-  //   // doesn't reload translation
-  //   setValidationRule("username", [
-  //     new RequiredValidator({ errorMessage: t("formValidation.usernameRequired") }),
-  //     new StringValidator({
-  //       minLength: 3,
-  //       tooShortErrorMsg: t("formValidation.usernameMinLength", { n: 3 }),
-  //       errorMessage: t("formValidation.usernameRequired"),
-  //     }),
-  //   ]);
-  //   setValidationRule("email", [
-  //     new RequiredValidator({ errorMessage: t("formValidation.emailRequired") }),
-  //     new EmailValidator({ errorMessage: t("formValidation.emailInvalid") }),
-  //   ]);
-  // }, [setValidationRule, t]);
-
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    validateOnSubmit(event);
-    console.log(errors);
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      username: data.get("username"),
-      password: data.get("password"),
-      passwordRepeat: data.get("passwordRepeat"),
-      language: data.get("language"),
-    });
-  };
+  const onValidSubmit = (data: any) => console.log(data);
+  const onInvalidSubmit = (data: any) => console.log(data);
 
   const handleLanguageSelect = (event: ChangeEvent<HTMLInputElement>) => {
     setLanguage(event.target.value as Language);
@@ -101,40 +95,41 @@ export const SignupForm = () => {
   };
 
   return (
-    <Box component="form" noValidate onSubmit={onSubmit} sx={{ mt: 1 }}>
+    <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
       <UsernameTextField
+        {...register("username")}
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint")}
-        {...register("username")}
-        errorMessage={errors.username?.message}
+        errorMessage={errors.username?.message as unknown as string}
       />
       <EmailTextField
+        {...register("email")}
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint")}
-        onBlur={validateOnBlur}
-        errorMessage={errors.email}
+        errorMessage={errors.email?.message as unknown as string}
+        loadingState={emailChecking}
       />
       <PasswordTextField
-        name={"password"}
+        {...register("password")}
         label={t("signupPage.password")}
         helperText={t("signupPage.passwordHint")}
-        onBlur={validateOnBlur}
-        errorMessage={errors.password}
+        errorMessage={errors.password?.message as unknown as string}
       />
       <PasswordTextField
-        name={"passwordRepeat"}
+        {...register("passwordRepeat")}
         label={t("signupPage.passwordRepeat")}
         helperText={t("signupPage.passwordRepeatHint")}
-        onBlur={validateOnBlur}
-        errorMessage={errors.passwordRepeat}
+        errorMessage={errors.passwordRepeat?.message as unknown as string}
       />
       <LanguageSelect
+        {...register("language")}
         onChange={handleLanguageSelect}
         value={getLanguage()}
         label={t("signupPage.language")}
         helperText={t("signupPage.languageHint")}
       />
       <ThemeSelect
+        {...register("theme")}
         onChange={handleThemeSelect}
         value={"light"}
         label={t("signupPage.theme")}
@@ -147,17 +142,17 @@ export const SignupForm = () => {
   );
 };
 
-const UsernameTextField = (props: Partial<InputProps>) => {
+const UsernameTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
+      inputRef={ref}
       size="small"
       margin="dense"
-      required
       fullWidth
       id="username"
       name="username"
       label={props.label}
-      error={props.errorMessage !== undefined}
+      error={!!props.errorMessage}
       helperText={props.errorMessage || props.helperText}
       autoComplete="name"
       autoFocus
@@ -172,14 +167,14 @@ const UsernameTextField = (props: Partial<InputProps>) => {
       }}
     />
   );
-};
+});
 
-const EmailTextField = (props: Partial<InputProps>) => {
+const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
+      inputRef={ref}
       size="small"
       margin="dense"
-      required
       fullWidth
       id="email"
       name="email"
@@ -192,20 +187,20 @@ const EmailTextField = (props: Partial<InputProps>) => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <AlternateEmailOutlined />
+            {props.loadingState ? <HourglassBottomOutlined /> : <AlternateEmailOutlined />}
           </InputAdornment>
         ),
       }}
     />
   );
-};
+});
 
-const PasswordTextField = (props: Partial<InputProps>) => {
+const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
+      inputRef={ref}
       size="small"
       margin="dense"
-      required
       fullWidth
       type="password"
       id={props.name}
@@ -225,15 +220,15 @@ const PasswordTextField = (props: Partial<InputProps>) => {
       }}
     />
   );
-};
+});
 
-const LanguageSelect = (props: Partial<InputProps>) => {
+const LanguageSelect = React.forwardRef((props: Partial<InputProps>, ref) => {
   const { languages } = useTranslation();
   return (
     <FormControl fullWidth size="small" margin="dense">
       <InputLabel id="language">{props.label}</InputLabel>
       <Select
-        required
+        inputRef={ref}
         labelId="language"
         id="language"
         name="language"
@@ -250,16 +245,16 @@ const LanguageSelect = (props: Partial<InputProps>) => {
       <FormHelperText>{props.helperText}</FormHelperText>
     </FormControl>
   );
-};
+});
 
-const ThemeSelect = (props: Partial<InputProps>) => {
+const ThemeSelect = React.forwardRef((props: Partial<InputProps>, ref) => {
   const { t } = useTranslation();
 
   return (
     <FormControl fullWidth size="small" margin="dense">
       <InputLabel id="theme">{props.label}</InputLabel>
       <Select
-        required
+        inputRef={ref}
         labelId="theme"
         id="theme"
         name="theme"
@@ -277,4 +272,4 @@ const ThemeSelect = (props: Partial<InputProps>) => {
       <FormHelperText>{props.helperText}</FormHelperText>
     </FormControl>
   );
-};
+});

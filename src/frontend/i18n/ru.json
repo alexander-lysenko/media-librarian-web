@@ -1,8 +1,10 @@
 {
     "formValidation": {
         "emailInvalid": "Кажется, формат Вашего e-mail не соответствует действительности",
+        "emailNotUnique": "Этот адрес почты уже зарегистрирован",
         "emailRequired": "Адрес почты является обязательным",
         "passwordMinLength": "Минимальная длина пароля - {n} символов",
+        "passwordRepeatNotMatch": "Пароли не совпадают",
         "passwordRepeatRequired": "Пароль необходимо подтвердить, таковы правила",
         "passwordRequired": "Очень жаль, но пароль придется ввести",
         "usernameMinLength": "Попробуйте ввести полное имя (не менее {n} символов)",

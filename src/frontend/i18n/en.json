@@ -1,8 +1,10 @@
 {
     "formValidation": {
         "emailInvalid": "Please provide a valid e-mail address",
+        "emailNotUnique": "This email address has already been taken",
         "emailRequired": "Email Address is required",
         "passwordMinLength": "Password is usually longer (min {n} symbols)",
+        "passwordRepeatNotMatch": "Passwords do not match",
         "passwordRepeatRequired": "You must confirm your password, that's a rule",
         "passwordRequired": "Sorry but password cannot be blank",
         "usernameMinLength": "Expected a full Personal Name (min {n} symbols)",
