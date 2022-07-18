@@ -2,17 +2,17 @@ import { useMemo } from "react";
 
 import { Dictionary, useLanguageStore, useTranslationStore } from "../store/useTranslationStore";
 
+export type LocalizedStringFn = (key: string, props?: Record<string, unknown>) => string;
+
 export const useTranslation = () => {
-  const { dictionary, languages } = useTranslationStore();
-  const { getLanguage, setLanguage } = useLanguageStore();
+  const { dictionary, getLanguages } = useTranslationStore();
+  const { language, getLanguage, setLanguage } = useLanguageStore();
 
   const t = useMemo(
-    () =>
+    (): LocalizedStringFn =>
       (key: string, props?: Record<string, unknown>): string => {
-        const lang = getLanguage();
-
         let localizedString =
-          key.split(".").reduce((o, i) => (o as Dictionary)?.[i], dictionary?.[lang]) ??
+          key.split(".").reduce((o, i) => (o as Dictionary)?.[i], dictionary?.[language]) ??
           key.split(".").reduce((o, i) => (o as Dictionary)?.[i], dictionary?.["en"]) ??
           key;
 
@@ -24,8 +24,8 @@ export const useTranslation = () => {
 
         return localizedString as string;
       },
-    [dictionary, getLanguage],
+    [dictionary, language],
   );
 
-  return { t, getLanguage, setLanguage, languages };
+  return { t, getLanguage, setLanguage, languages: getLanguages() };
 };

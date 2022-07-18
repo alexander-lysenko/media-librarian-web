@@ -17,8 +17,11 @@ import { EmailValidator } from "../../core/formValidation/emailValidator";
 import { RequiredValidator } from "../../core/formValidation/requiredValidator";
 import { StringValidator } from "../../core/formValidation/stringValidator";
 import { useFormValidation } from "../../hooks/useFormValidation";
-import { useTranslation } from "../../hooks/useTranslation";
+import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 import { Language } from "../../store/useTranslationStore";
+import { useForm } from "react-hook-form";
+import { object as yupShape, string } from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type InputProps = {
   label: string;
@@ -30,31 +33,52 @@ type InputProps = {
   errorMessage: string | undefined;
 };
 
+const makeSchema = (t: LocalizedStringFn) =>
+  yupShape({
+    userName: string()
+      .required(t("formValidation.usernameRequired"))
+      .min(3, t("formValidation.usernameMinLength", { n: 3 }))
+      .trim(),
+    email: string()
+      .required(t("formValidation.emailRequired"))
+      .email(t("formValidation.emailInvalid"))
+      .lowercase()
+      .trim(),
+  });
+
 /**
  * Sign Up Form component
  * TODO: Form validation
  */
 export const SignupForm = () => {
   const { t, getLanguage, setLanguage } = useTranslation();
-  const { errors, validateOnBlur, setValidationRule, validateOnSubmit } = useFormValidation();
+  // const { errors, validateOnBlur, setValidationRule, validateOnSubmit } = useFormValidation();
 
-  useEffect(() => {
-    // doesn't reload translation
-    setValidationRule("username", [
-      new RequiredValidator({ errorMessage: t("formValidation.usernameRequired") }),
-      new StringValidator({
-        minLength: 3,
-        tooShortErrorMsg: t("formValidation.usernameMinLength", { n: 3 }),
-        errorMessage: t("formValidation.usernameRequired"),
-      }),
-    ]);
-    setValidationRule("email", [
-      new RequiredValidator({ errorMessage: t("formValidation.emailRequired") }),
-      new EmailValidator({ errorMessage: t("formValidation.emailInvalid") }),
-    ]);
-  }, [setValidationRule, t]);
+  const schema = makeSchema(t);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  //
+  // useEffect(() => {
+  //   // doesn't reload translation
+  //   setValidationRule("username", [
+  //     new RequiredValidator({ errorMessage: t("formValidation.usernameRequired") }),
+  //     new StringValidator({
+  //       minLength: 3,
+  //       tooShortErrorMsg: t("formValidation.usernameMinLength", { n: 3 }),
+  //       errorMessage: t("formValidation.usernameRequired"),
+  //     }),
+  //   ]);
+  //   setValidationRule("email", [
+  //     new RequiredValidator({ errorMessage: t("formValidation.emailRequired") }),
+  //     new EmailValidator({ errorMessage: t("formValidation.emailInvalid") }),
+  //   ]);
+  // }, [setValidationRule, t]);
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     validateOnSubmit(event);
     console.log(errors);
     event.preventDefault();
@@ -77,12 +101,12 @@ export const SignupForm = () => {
   };
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+    <Box component="form" noValidate onSubmit={onSubmit} sx={{ mt: 1 }}>
       <UsernameTextField
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint")}
-        onBlur={validateOnBlur}
-        errorMessage={errors.username}
+        {...register("username")}
+        errorMessage={errors.username?.message}
       />
       <EmailTextField
         label={t("signupPage.email")}

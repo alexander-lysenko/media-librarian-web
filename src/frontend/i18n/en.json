@@ -1,11 +1,12 @@
 {
     "formValidation": {
-        "usernameRequired": "Personal Name is required",
-        "usernameMinLength": "Expected a full Personal Name (min {n} symbols)",
-        "emailRequired": "Email Address is required",
         "emailInvalid": "Please provide a valid e-mail address",
+        "emailRequired": "Email Address is required",
+        "passwordMinLength": "Password is usually longer (min {n} symbols)",
+        "passwordRepeatRequired": "You must confirm your password, that's a rule",
         "passwordRequired": "Sorry but password cannot be blank",
-        "passwordRepeatRequired": "You must confirm your password, that's a rule"
+        "usernameMinLength": "Expected a full Personal Name (min {n} symbols)",
+        "usernameRequired": "Personal Name is required"
     },
     "loginPage": {
         "email": "Email Address",
