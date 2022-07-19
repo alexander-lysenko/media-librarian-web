@@ -13,8 +13,8 @@ import {
   TextField,
 } from "@mui/material";
 import React, { ChangeEvent, FocusEvent, useState } from "react";
-import { useForm } from "react-hook-form";
-import { object as yupShape, ref, string } from "yup";
+import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { object as yupShape, ref as yupRef, string } from "yup";
 
 import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 import { Language } from "../../store/useTranslationStore";
@@ -41,20 +41,21 @@ const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAct
       .test({
         name: "checkEmailUnique",
         message: t("formValidation.emailNotUnique"),
-        test: (email) =>
+        test: (email) => {
           // async validation example #1
-          new Promise((resolve) => {
+          return new Promise((resolve) => {
             setLoading(true);
             setTimeout(() => {
               resolve(email !== "admin@example.com");
               setLoading(false);
             }, 1000);
-          }),
-        // async validation example #2
-        // fetch(`is-email-unique/${email}`).then(async (res) => {
-        //   const { isEmailUnique } = await res.json();
-        //   return isEmailUnique;
-        // }),
+          });
+          // async validation example #2
+          // return fetch(`is-email-unique/${email}`).then(async (res) => {
+          //   const { isEmailUnique } = await res.json();
+          //   return isEmailUnique;
+          // });
+        },
       }),
     username: string()
       .required(t("formValidation.usernameRequired"))
@@ -65,11 +66,11 @@ const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAct
       .min(8, t("formValidation.passwordMinLength", { n: 8 })),
     passwordRepeat: string()
       .required(t("formValidation.passwordRepeatRequired"))
-      .oneOf([ref("password")], t("formValidation.passwordRepeatNotMatch")),
+      .oneOf([yupRef("password")], t("formValidation.passwordRepeatNotMatch")),
   });
 
 /**
- * Sign Up Form component
+ * Sign Up Form functional component
  */
 export const SignupForm = () => {
   const [emailChecking, setEmailChecking] = useState(false);
@@ -83,8 +84,8 @@ export const SignupForm = () => {
   });
   const { errors } = formState;
 
-  const onValidSubmit = (data: any) => console.log(data);
-  const onInvalidSubmit = (data: any) => console.log(data);
+  const onValidSubmit: SubmitHandler<FieldValues> = (data) => console.log(data);
+  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
 
   const handleLanguageSelect = (event: ChangeEvent<HTMLInputElement>) => {
     setLanguage(event.target.value as Language);
@@ -180,7 +181,7 @@ const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
       name="email"
       autoComplete="email"
       label={props.label}
-      error={props.errorMessage !== undefined}
+      error={!!props.errorMessage}
       helperText={props.errorMessage || props.helperText}
       onChange={props.onChange}
       onBlur={props.onBlur}
@@ -206,7 +207,7 @@ const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => 
       id={props.name}
       name={props.name}
       label={props.label}
-      error={props.errorMessage !== undefined}
+      error={!!props.errorMessage}
       helperText={props.errorMessage || props.helperText}
       autoComplete="current-password"
       onChange={props.onChange}
@@ -224,6 +225,7 @@ const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => 
 
 const LanguageSelect = React.forwardRef((props: Partial<InputProps>, ref) => {
   const { languages } = useTranslation();
+
   return (
     <FormControl fullWidth size="small" margin="dense">
       <InputLabel id="language">{props.label}</InputLabel>

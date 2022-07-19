@@ -23,7 +23,7 @@ export const SignUp = () => {
       <Grid container component="main" sx={{ height: "100vh" }}>
         <BackgroundContainer />
         <PageContainer>
-          <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
+          <Box mx={4} mt={8} display="flex" flexDirection="column" alignItems="center">
             <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
               <PersonAddAltRounded />
             </Avatar>

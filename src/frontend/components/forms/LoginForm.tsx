@@ -1,12 +1,11 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { AlternateEmailOutlined, PasswordOutlined } from "@mui/icons-material";
 import { Box, Button, Checkbox, FormControlLabel, InputAdornment, TextField } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, useEffect } from "react";
+import React, { ChangeEvent, FocusEvent } from "react";
+import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { boolean, object as yupShape, string } from "yup";
 
-import { EmailValidator } from "../../core/formValidation/emailValidator";
-import { RequiredValidator } from "../../core/formValidation/requiredValidator";
-import { StringValidator } from "../../core/formValidation/stringValidator";
-import { useFormValidation } from "../../hooks/useFormValidation";
-import { useTranslation } from "../../hooks/useTranslation";
+import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 
 type InputProps = {
   label: string;
@@ -18,48 +17,49 @@ type InputProps = {
   errorMessage: string | undefined;
 };
 
-const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  console.log({
-    email: data.get("email"),
-    password: data.get("password"),
+const makeValidationSchema = (t: LocalizedStringFn) =>
+  yupShape({
+    email: string()
+      .required(t("formValidation.emailRequired"))
+      .email(t("formValidation.emailInvalid"))
+      .lowercase()
+      .trim(),
+    password: string()
+      .required(t("formValidation.passwordRequired"))
+      .min(8, t("formValidation.passwordMinLength", { n: 8 })),
+    rememberMe: boolean(),
   });
-};
 
+/**
+ * Sign In (aka Login) Form functional component
+ */
 export const LoginForm = () => {
   const { t } = useTranslation();
-  const { errors, validateOnBlur, setValidationRule, validateOnSubmit } = useFormValidation();
+  const schema = makeValidationSchema(t);
+  const { register, formState, handleSubmit } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onBlur" || "onTouched",
+    reValidateMode: "onChange",
+  });
+  const { errors } = formState;
 
-  useEffect(() => {
-    // doesn't reload translation
-    setValidationRule("email", [
-      new RequiredValidator({ errorMessage: t("formValidation.emailRequired") }),
-      new EmailValidator({ errorMessage: t("formValidation.emailInvalid") }),
-    ]);
-    setValidationRule("password", [
-      new RequiredValidator({ errorMessage: t("formValidation.passwordRequired") }),
-      new StringValidator({
-        minLength: 8,
-        tooShortErrorMsg: t("formValidation.passwordMinLength", { n: 8 }),
-      }),
-    ]);
-  }, [setValidationRule, t]);
+  const onValidSubmit: SubmitHandler<FieldValues> = (data) => console.log(data);
+  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
 
   return (
-    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+    <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
       <EmailTextField
+        {...register("email")}
         label={t("loginPage.email")}
-        onBlur={validateOnBlur}
-        errorMessage={errors.email}
+        errorMessage={errors.email?.message as unknown as string}
       />
       <PasswordTextField
+        {...register("password")}
         label={t("loginPage.password")}
-        onBlur={validateOnBlur}
-        errorMessage={errors.password}
+        errorMessage={errors.password?.message as unknown as string}
       />
       <FormControlLabel
-        control={<Checkbox value="remember" color="primary" />}
+        control={<Checkbox color="primary" {...register("rememberMe")} />}
         label={t("loginPage.rememberMe")}
       />
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
@@ -69,51 +69,56 @@ export const LoginForm = () => {
   );
 };
 
-const EmailTextField = (props: Partial<InputProps>) => (
-  <TextField
-    size="small"
-    margin="normal"
-    required
-    fullWidth
-    id="email"
-    name="email"
-    label={props.label}
-    error={props.errorMessage !== undefined}
-    helperText={props.errorMessage || props.helperText}
-    autoComplete="email"
-    autoFocus
-    onChange={props.onChange}
-    onBlur={props.onBlur}
-    InputProps={{
-      endAdornment: (
-        <InputAdornment position="end">
-          <AlternateEmailOutlined />
-        </InputAdornment>
-      ),
-    }}
-  />
-);
-const PasswordTextField = (props: Partial<InputProps>) => (
-  <TextField
-    size="small"
-    margin="normal"
-    required
-    fullWidth
-    type="password"
-    id="password"
-    name="password"
-    label={props.label}
-    error={props.errorMessage !== undefined}
-    helperText={props.errorMessage || props.helperText}
-    autoComplete="current-password"
-    onChange={props.onChange}
-    onBlur={props.onBlur}
-    InputProps={{
-      endAdornment: (
-        <InputAdornment position="end">
-          <PasswordOutlined />
-        </InputAdornment>
-      ),
-    }}
-  />
-);
+const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+  return (
+    <TextField
+      inputRef={ref}
+      fullWidth
+      size="small"
+      margin="normal"
+      id="email"
+      name="email"
+      label={props.label}
+      error={!!props.errorMessage}
+      helperText={props.errorMessage || props.helperText}
+      autoComplete="email"
+      autoFocus
+      onChange={props.onChange}
+      onBlur={props.onBlur}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <AlternateEmailOutlined />
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+});
+
+const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+  return (
+    <TextField
+      inputRef={ref}
+      fullWidth
+      size="small"
+      margin="normal"
+      type="password"
+      id="password"
+      name="password"
+      label={props.label}
+      error={!!props.errorMessage}
+      helperText={props.errorMessage || props.helperText}
+      autoComplete="current-password"
+      onChange={props.onChange}
+      onBlur={props.onBlur}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <PasswordOutlined />
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+});
