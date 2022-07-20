@@ -16,6 +16,7 @@ import React, { ChangeEvent, FocusEvent, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { object as yupShape, ref as yupRef, string } from "yup";
 
+import { yupSequentialStringSchema } from "../../core/helpers/yupSequentialStringSchema";
 import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 import { Language } from "../../store/useTranslationStore";
 
@@ -31,18 +32,15 @@ type InputProps = {
   loadingState?: boolean;
 };
 
-const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAction<boolean>) =>
-  yupShape({
-    email: string()
-      .required(t("formValidation.emailRequired"))
-      .email(t("formValidation.emailInvalid"))
-      .lowercase()
-      .trim()
-      .test({
+const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAction<boolean>) => {
+  return yupShape({
+    email: yupSequentialStringSchema([
+      string().required(t("formValidation.emailRequired")).email(t("formValidation.emailInvalid")).lowercase().trim(),
+      string().test({
         name: "checkEmailUnique",
         message: t("formValidation.emailNotUnique"),
         test: (email) => {
-          // async validation example #1
+          console.log("Email unique check: simulating...");
           return new Promise((resolve) => {
             setLoading(true);
             setTimeout(() => {
@@ -50,13 +48,14 @@ const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAct
               setLoading(false);
             }, 1000);
           });
-          // async validation example #2
+          // // async validation example #2
           // return fetch(`is-email-unique/${email}`).then(async (res) => {
           //   const { isEmailUnique } = await res.json();
           //   return isEmailUnique;
           // });
         },
       }),
+    ]),
     username: string()
       .required(t("formValidation.usernameRequired"))
       .min(3, t("formValidation.usernameMinLength", { n: 3 }))
@@ -68,6 +67,7 @@ const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAct
       .required(t("formValidation.passwordRepeatRequired"))
       .oneOf([yupRef("password")], t("formValidation.passwordRepeatNotMatch")),
   });
+};
 
 /**
  * Sign Up Form functional component
@@ -77,7 +77,7 @@ export const SignupForm = () => {
 
   const { t, getLanguage, setLanguage } = useTranslation();
   const schema = makeValidationSchema(t, setEmailChecking);
-  const { register, formState, handleSubmit } = useForm({
+  const { register, formState, trigger, handleSubmit } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
@@ -109,6 +109,9 @@ export const SignupForm = () => {
         helperText={t("signupPage.emailAsLoginHint")}
         errorMessage={errors.email?.message as unknown as string}
         loadingState={emailChecking}
+        // onChange={debounce(async () => {
+        //   await trigger("email");
+        // }, 1000)}
       />
       <PasswordTextField
         {...register("password")}
