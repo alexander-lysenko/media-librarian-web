@@ -19,6 +19,7 @@ import { object as yupShape, ref as yupRef, string } from "yup";
 import { yupSequentialStringSchema } from "../../core/helpers/yupSequentialStringSchema";
 import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 import { Language } from "../../store/useTranslationStore";
+import { registerFieldWithDebounceValidation } from "../../core/helpers/registerFieldWithDebounceValidation";
 
 type ReactSetStateAction<T> = React.Dispatch<React.SetStateAction<T>>;
 type InputProps = {
@@ -32,7 +33,7 @@ type InputProps = {
   loadingState?: boolean;
 };
 
-const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAction<boolean>) => {
+const makeValidationSchema = (t: LocalizedStringFn, setEmailCheckingState: ReactSetStateAction<boolean>) => {
   return yupShape({
     email: yupSequentialStringSchema([
       string().required(t("formValidation.emailRequired")).email(t("formValidation.emailInvalid")).lowercase().trim(),
@@ -42,10 +43,10 @@ const makeValidationSchema = (t: LocalizedStringFn, setLoading: ReactSetStateAct
         test: (email) => {
           console.log("Email unique check: simulating...");
           return new Promise((resolve) => {
-            setLoading(true);
+            setEmailCheckingState(true);
             setTimeout(() => {
               resolve(email !== "admin@example.com");
-              setLoading(false);
+              setEmailCheckingState(false);
             }, 1000);
           });
           // // async validation example #2
@@ -77,7 +78,8 @@ export const SignupForm = () => {
 
   const { t, getLanguage, setLanguage } = useTranslation();
   const schema = makeValidationSchema(t, setEmailChecking);
-  const { register, formState, trigger, handleSubmit } = useForm({
+
+  const { register, trigger, formState, handleSubmit } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
@@ -105,13 +107,11 @@ export const SignupForm = () => {
       />
       <EmailTextField
         {...register("email")}
+        // {...registerFieldWithDebounceValidation("email", 1000, trigger, register)}
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint")}
         errorMessage={errors.email?.message as unknown as string}
         loadingState={emailChecking}
-        // onChange={debounce(async () => {
-        //   await trigger("email");
-        // }, 1000)}
       />
       <PasswordTextField
         {...register("password")}

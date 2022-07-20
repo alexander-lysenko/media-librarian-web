@@ -60,8 +60,7 @@ const BackgroundContainer = () => (
     sx={{
       backgroundImage: "url(https://source.unsplash.com/random?movie,series)",
       backgroundRepeat: "no-repeat",
-      backgroundColor: (t) =>
-        t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
+      backgroundColor: (t) => (t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900]),
       backgroundSize: "cover",
       backgroundPosition: "center",
     }}
@@ -69,18 +68,7 @@ const BackgroundContainer = () => (
 );
 
 const PageContainer = ({ children }: Props) => (
-  <Grid
-    item
-    xs={12}
-    sm={8}
-    md={5}
-    xl={4}
-    container
-    direction="column"
-    component={Paper}
-    elevation={6}
-    square
-  >
+  <Grid item xs={12} sm={8} md={5} xl={4} container direction="column" component={Paper} elevation={6} square>
     {children}
   </Grid>
 );

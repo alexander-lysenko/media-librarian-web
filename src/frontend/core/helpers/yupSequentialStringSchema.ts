@@ -14,7 +14,6 @@ export function yupSequentialStringSchema(schemas: StringSchema[]) {
         await schema.validate(value);
       }
     } catch (error: unknown) {
-      console.log(error);
       const message = (error as ValidationError).message;
       return context.createError({ message });
     }
