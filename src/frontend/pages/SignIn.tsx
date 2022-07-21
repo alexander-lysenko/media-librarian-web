@@ -19,37 +19,35 @@ export const SignIn = () => {
   const { t } = useTranslation();
 
   return (
-    <>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <BackgroundContainer />
-        <PageContainer>
-          <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
-            <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography variant="h5">{t("loginPage.title")}</Typography>
-            <Typography variant="body2">{t("loginPage.subtitle")}</Typography>
-            <LoginForm />
+    <Grid container component="main" sx={{ height: "100vh" }}>
+      <BackgroundContainer />
+      <PageContainer>
+        <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
+          <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography variant="h5">{t("loginPage.title")}</Typography>
+          <Typography variant="body2">{t("loginPage.subtitle")}</Typography>
+          <LoginForm />
 
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  {t("loginPage.forgotPassword")}
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link component={NavLink} to={"/signup"} variant="body2">
-                  {t("loginPage.needSignUp")}
-                </Link>
-              </Grid>
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                {t("loginPage.forgotPassword")}
+              </Link>
             </Grid>
-          </Box>
-          <StickyFooter>
-            <Copyright />
-          </StickyFooter>
-        </PageContainer>
-      </Grid>
-    </>
+            <Grid item>
+              <Link component={NavLink} to={"/signup"} variant="body2">
+                {t("loginPage.needSignUp")}
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+        <StickyFooter>
+          <Copyright />
+        </StickyFooter>
+      </PageContainer>
+    </Grid>
   );
 };
 
@@ -61,10 +59,9 @@ const BackgroundContainer = () => (
     md={7}
     xl={8}
     sx={{
+      backgroundColor: (t) => (t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900]),
       backgroundImage: "url(https://source.unsplash.com/random?movie-posters)",
       backgroundRepeat: "no-repeat",
-      backgroundColor: (t) =>
-        t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
       backgroundSize: "cover",
       backgroundPosition: "center",
     }}
@@ -72,18 +69,7 @@ const BackgroundContainer = () => (
 );
 
 const PageContainer = ({ children }: Props) => (
-  <Grid
-    item
-    xs={12}
-    sm={8}
-    md={5}
-    xl={4}
-    container
-    direction="column"
-    component={Paper}
-    elevation={6}
-    square
-  >
+  <Grid item xs={12} sm={8} md={5} xl={4} container direction="column" component={Paper} elevation={6} square>
     {children}
   </Grid>
 );

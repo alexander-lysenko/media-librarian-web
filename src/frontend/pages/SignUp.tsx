@@ -19,34 +19,32 @@ export const SignUp = () => {
   const { t } = useTranslation();
 
   return (
-    <>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <BackgroundContainer />
-        <PageContainer>
-          <Box mx={4} mt={8} display="flex" flexDirection="column" alignItems="center">
-            <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
-              <PersonAddAltRounded />
-            </Avatar>
-            <Typography variant="h5">{t("signupPage.title")}</Typography>
-            <Typography variant="body2">{t("signupPage.subtitle")}</Typography>
-            <SignupForm />
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2" />
-              </Grid>
-              <Grid item>
-                <Link component={NavLink} to={"/login"} variant="body2">
-                  {t("signupPage.signIn")}
-                </Link>
-              </Grid>
+    <Grid container component="main" sx={{ height: "100vh" }}>
+      <BackgroundContainer />
+      <PageContainer>
+        <Box mx={4} mt={8} display="flex" flexDirection="column" alignItems="center">
+          <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
+            <PersonAddAltRounded />
+          </Avatar>
+          <Typography variant="h5">{t("signupPage.title")}</Typography>
+          <Typography variant="body2">{t("signupPage.subtitle")}</Typography>
+          <SignupForm />
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2" />
             </Grid>
-          </Box>
-          <StickyFooter>
-            <Copyright />
-          </StickyFooter>
-        </PageContainer>
-      </Grid>
-    </>
+            <Grid item>
+              <Link component={NavLink} to={"/login"} variant="body2">
+                {t("signupPage.signIn")}
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+        <StickyFooter>
+          <Copyright />
+        </StickyFooter>
+      </PageContainer>
+    </Grid>
   );
 };
 

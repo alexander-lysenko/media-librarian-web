@@ -5,6 +5,7 @@ import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+import { App } from "./pages/App";
 import { Landing } from "./pages/Landing";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
@@ -24,6 +25,7 @@ root.render(
           <Route path={"/"} element={<Landing />} />
           <Route path={"/login"} element={<SignIn />} />
           <Route path={"/signup"} element={<SignUp />} />
+          <Route path={"/app"} element={<App />} />
           <Route path={"/profile"} element={<Profile />} />
         </Routes>
       </Router>

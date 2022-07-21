@@ -5,6 +5,7 @@ export const Profile = () => (
   <>
     Profile
     <Link to={"/"}>Home</Link>
+    <Link to={"/app"}>App</Link>
     <Link to={"/login"}>Login</Link>
     <Link to={"/signup"}>Sign Up</Link>
     <Link to={"/profile"}>Profile</Link>
