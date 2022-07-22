@@ -5,6 +5,7 @@ import {
   Divider,
   Grid,
   IconButton,
+  List,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -31,10 +32,10 @@ export const SidebarProfiler = () => {
   };
 
   return (
-    <>
+    <List sx={{ py: 0 }}>
       <ListItem key="profile" sx={profileSx}>
         <Grid container>
-          <Avatar children={children} sx={{ ...sx, width: 60, height: 60 }}></Avatar>
+          <Avatar children={children} sx={{ ...sx, width: 60, height: 60 }} />
           <Grid container alignItems="flex-end" sx={{ mt: 2 }} wrap="nowrap" onClick={toggleCollapse}>
             <Grid item xs zeroMinWidth>
               <Typography variant="subtitle1" sx={{ fontWeight: "bold", lineHeight: 1.5 }} noWrap>
@@ -54,20 +55,20 @@ export const SidebarProfiler = () => {
       </ListItem>
       <Divider />
       <Collapse in={collapseOpen}>
-        <ListItemButton key="l1">
+        <ListItemButton key="toProfile">
           <ListItemIcon>
             <Badge />
           </ListItemIcon>
-          <ListItemText>Profile</ListItemText>
+          <ListItemText disableTypography>Profile</ListItemText>
         </ListItemButton>
-        <ListItemButton key="l2">
+        <ListItemButton key="toLogOut">
           <ListItemIcon>
             <LogoutOutlined />
           </ListItemIcon>
-          <ListItemText>Log Out</ListItemText>
+          <ListItemText disableTypography>Log Out</ListItemText>
         </ListItemButton>
-        <Divider variant="middle" />
+        <Divider variant="middle" sx={{ pt: 1, pb: 0 }} />
       </Collapse>
-    </>
+    </List>
   );
 };

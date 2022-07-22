@@ -1,13 +1,15 @@
 import { AddCircleOutlined } from "@mui/icons-material";
 import {
   Box,
-  Button,
+  Button, Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   SwipeableDrawer,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import React, { KeyboardEvent, MouseEvent, useState } from "react";
 
@@ -17,7 +19,9 @@ import { SidebarProfiler } from "./SidebarProfiler";
 const anchor: Anchor = "left";
 
 export const SidebarDrawer = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const theme = useTheme();
+  const isLargeViewport = useMediaQuery(theme.breakpoints.up("md"));
 
   const toggleDrawer = (open: boolean) => (event: KeyboardEvent | MouseEvent) => {
     if (event && event.type === "keydown") {
@@ -29,35 +33,42 @@ export const SidebarDrawer = () => {
     setOpen(open);
   };
 
-  return (
-    <>
-      <Button onClick={toggleDrawer(true)}>{anchor}</Button>
-      <SwipeableDrawer
-        anchor={anchor}
-        open={open}
-        onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
-        disableBackdropTransition
-      >
-        <Box sx={{ width: 256 }} role="presentation" onKeyDown={toggleDrawer(false)}>
-          <List sx={{ py: 0 }}>
-            <SidebarProfiler />
-            <ListItem>
-              <ListItemIcon>
-                <AddCircleOutlined />
-              </ListItemIcon>
-              <ListItemText>List Item Example</ListItemText>
-            </ListItem>
-            <ListItemButton>
-              <ListItemIcon>
-                <AddCircleOutlined />
-              </ListItemIcon>
-              <ListItemText>List Item Button Example</ListItemText>
-            </ListItemButton>
-            <ListItem>Something goes here</ListItem>
-          </List>
-        </Box>
-      </SwipeableDrawer>
-    </>
+  const drawerContent = (
+    <Box sx={{ width: 256 }} role="presentation" onKeyDown={toggleDrawer(false)}>
+      <SidebarProfiler />
+      <List>
+        <ListItem>
+          <ListItemIcon>
+            <AddCircleOutlined />
+          </ListItemIcon>
+          <ListItemText>List Item Example</ListItemText>
+        </ListItem>
+        <ListItemButton>
+          <ListItemIcon>
+            <AddCircleOutlined />
+          </ListItemIcon>
+          <ListItemText disableTypography sx={{}}>
+            List Item Button Example
+          </ListItemText>
+        </ListItemButton>
+        <ListItem>Something goes here</ListItem>
+      </List>
+    </Box>
+  );
+
+  return isLargeViewport ? (
+    <Drawer variant="permanent" open={open}>
+      {drawerContent}
+    </Drawer>
+  ) : (
+    <SwipeableDrawer
+      anchor={anchor}
+      open={open}
+      onClose={toggleDrawer(false)}
+      onOpen={toggleDrawer(true)}
+      disableBackdropTransition
+    >
+      {drawerContent}
+    </SwipeableDrawer>
   );
 };
