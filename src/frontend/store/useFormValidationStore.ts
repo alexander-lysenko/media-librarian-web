@@ -26,8 +26,7 @@ export const useFormValidationStore = create<FormValidationState>((set, get) => 
   isFormValid: true,
   setValue: (property, value) => set(() => ({ values: { ...get().values, [property]: value } })),
   setRule: (property, rules) => set(() => ({ rules: { ...get().rules, [property]: rules } })),
-  setError: (property, errorMessage) =>
-    set(() => ({ errors: { ...get().errors, [property]: errorMessage } })),
+  setError: (property, errorMessage) => set(() => ({ errors: { ...get().errors, [property]: errorMessage } })),
   getValue: (property) => get()?.values[property],
   getRule: (property) => get()?.rules[property],
   getError: (property) => get()?.errors[property],

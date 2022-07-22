@@ -1,4 +1,15 @@
 {
+    "app": {
+        "logout": "Log Out",
+        "openProfileMenu": "Open Profile Menu",
+        "profile": "Profile"
+    },
+    "common": {
+        "all": "All"
+    },
+    "dataTable": {
+        "rowsPerPage": "Rows per page:"
+    },
     "formValidation": {
         "emailInvalid": "Please provide a valid e-mail address",
         "emailNotUnique": "This email address has already been taken",

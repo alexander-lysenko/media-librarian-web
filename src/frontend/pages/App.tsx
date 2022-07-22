@@ -1,31 +1,33 @@
-import { MenuOpenOutlined,MenuOutlined } from "@mui/icons-material";
-import { AppBar, Box, Grid, IconButton, Toolbar, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { MenuOpenOutlined, MenuOutlined } from "@mui/icons-material";
+import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
+import React from "react";
 
-import { SidebarDrawer } from "../components/SidebarDrawer";
+import { NavbarProfiler } from "../components/NavbarProfiler";
+import { LibraryTable } from "../components/tables/LibraryTable";
+// import { SidebarDrawer } from "../components/SidebarDrawer";
+import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 
 export const App = () => {
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore((state) => state);
+
   return (
     <Box sx={{ display: "flex" }}>
       {" "}
       <AppBar component="nav" position="fixed">
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            // sx={{ mr: 2, display: { sm: "none" } }}
-          >
+          <IconButton color="inherit" aria-label="open drawer" onClick={() => setDrawerOpen(!isDrawerOpen)}>
             {isDrawerOpen ? <MenuOpenOutlined /> : <MenuOutlined />}
           </IconButton>
-          {"MUI"}
+          <Box sx={{ flex: "1 0 auto" }}>{"MUI"}</Box>
+          <NavbarProfiler />
         </Toolbar>
       </AppBar>
-      <Box component="nav" sx={{ width: { sm: 300 }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
-        <SidebarDrawer />
-      </Box>
+      {/*<Box component="nav" sx={{ width: { sm: 300 }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">*/}
+      {/*  <SidebarDrawer />*/}
+      {/*</Box>*/}
       <Box component="main" sx={{ p: 3 }}>
         <Toolbar />
+        <LibraryTable />
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
           magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus

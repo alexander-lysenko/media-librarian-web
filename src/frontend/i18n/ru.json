@@ -1,4 +1,15 @@
 {
+    "app": {
+        "logout": "Выйти из аккаунта",
+        "openProfileMenu": "Открыть меню профиля",
+        "profile": "Профиль"
+    },
+    "common": {
+        "all": "Все"
+    },
+    "dataTable": {
+        "rowsPerPage": "Показыывать записей:"
+    },
     "formValidation": {
         "emailInvalid": "Кажется, формат Вашего e-mail не соответствует действительности",
         "emailNotUnique": "Этот адрес почты уже зарегистрирован",

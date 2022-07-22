@@ -1,7 +1,7 @@
 import { AddCircleOutlined } from "@mui/icons-material";
 import {
   Box,
-  Button, Drawer,
+  Drawer,
   List,
   ListItem,
   ListItemButton,
@@ -11,26 +11,27 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { KeyboardEvent, MouseEvent, useState } from "react";
+import React, { KeyboardEvent, MouseEvent } from "react";
 
 import { Anchor } from "../core/types";
+import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 import { SidebarProfiler } from "./SidebarProfiler";
 
 const anchor: Anchor = "left";
 
 export const SidebarDrawer = () => {
-  const [open, setOpen] = useState(true);
+  const { open, setOpen } = useSidebarDrawerOpenStore((state) => state);
   const theme = useTheme();
   const isLargeViewport = useMediaQuery(theme.breakpoints.up("md"));
 
-  const toggleDrawer = (open: boolean) => (event: KeyboardEvent | MouseEvent) => {
+  const toggleDrawer = (isOpen: boolean) => (event: KeyboardEvent | MouseEvent) => {
     if (event && event.type === "keydown") {
       if ((event as KeyboardEvent).key === "Tab" || (event as KeyboardEvent).key === "Shift") {
         return;
       }
     }
 
-    setOpen(open);
+    setOpen(isOpen);
   };
 
   const drawerContent = (
@@ -57,7 +58,7 @@ export const SidebarDrawer = () => {
   );
 
   return isLargeViewport ? (
-    <Drawer variant="permanent" open={open}>
+    <Drawer variant="persistent" open={open}>
       {drawerContent}
     </Drawer>
   ) : (
