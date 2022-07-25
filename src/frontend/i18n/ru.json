@@ -8,7 +8,8 @@
         "all": "Все"
     },
     "dataTable": {
-        "rowsPerPage": "Показыывать записей:"
+        "rowsPerPage": "Показыывать записей:",
+        "viewingEntries": "{from} - {to} из {count}"
     },
     "formValidation": {
         "emailInvalid": "Кажется, формат Вашего e-mail не соответствует действительности",

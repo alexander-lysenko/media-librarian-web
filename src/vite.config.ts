@@ -17,7 +17,7 @@ export default defineConfig(({ command }) => ({
     },
   },
   server: {
-    host: "localhost",
+    host: true,
     port: 3000,
   },
 }));

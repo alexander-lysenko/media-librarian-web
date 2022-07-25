@@ -1,5 +1,5 @@
 import { MenuOpenOutlined, MenuOutlined } from "@mui/icons-material";
-import { AppBar, Box, IconButton, Rating, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, IconButton, Rating, Toolbar, Typography, useTheme } from "@mui/material";
 import React from "react";
 
 import { NavbarProfiler } from "../components/NavbarProfiler";
@@ -32,7 +32,7 @@ const columns: DataColumn[] = [
   {
     id: "Оценка",
     label: "Оценка",
-    component: (value) => <ColoredRating size={5} value={value} />,
+    component: (value) => <ColoredRating readOnly size={5} value={value} />,
   },
   {
     id: "Отзыв",
@@ -45,8 +45,12 @@ const dataRows: DataRow[] = movies;
 export const App = () => {
   const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore((state) => state);
 
+  const theme = useTheme();
+  const viewPort = theme.spacing(8);
+  console.log(theme.spacing);
+
   return (
-    <Box>
+    <Box sx={{ mt: { xs: 7, sm: 8 } }}>
       <Box component="nav" sx={{ width: { sm: 300 }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
         <SidebarDrawer />
       </Box>
@@ -60,18 +64,12 @@ export const App = () => {
             <NavbarProfiler />
           </Toolbar>
         </AppBar>
-        <Toolbar />
-        <DataTable columns={columns} rows={dataRows} onRowClick={(e, i) => console.log(e, i)} />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus. Convallis convallis tellus id interdum
-          velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate eu
-          scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
-          lobortis feugiat vivamus at augue. At augue eget arcu dictum varius duis at consectetur lorem. Velit sed
-          ullamcorper morbi tincidunt. Lorem donec massa sapien faucibus et molestie ac.
-        </Typography>
+        <DataTable
+          columns={columns}
+          rows={dataRows}
+          containerSx={{ height: "80vh" }}
+          onRowClick={(e, i) => console.log(e, i)}
+        />
       </Box>
     </Box>
   );

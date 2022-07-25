@@ -8,7 +8,8 @@
         "all": "All"
     },
     "dataTable": {
-        "rowsPerPage": "Rows per page:"
+        "rowsPerPage": "Rows per page:",
+        "viewingEntries": "{from} - {to} of {count}"
     },
     "formValidation": {
         "emailInvalid": "Please provide a valid e-mail address",

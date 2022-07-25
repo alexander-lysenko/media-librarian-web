@@ -1,6 +1,9 @@
 import {
   Box,
+  CircularProgress,
+  Grid,
   Paper,
+  Skeleton,
   SxProps,
   Table,
   TableBody,
@@ -8,6 +11,7 @@ import {
   TableContainer,
   TableHead,
   TablePagination,
+  TablePaginationProps,
   TableRow,
   TableSortLabel,
   Typography,
@@ -15,14 +19,6 @@ import {
 import React from "react";
 
 import { useTranslation } from "../../hooks/useTranslation";
-
-type RowsPerPageOptions = Array<number | { label: string; value: number }> | [];
-type SortDirection = "asc" | "desc";
-
-type SortOptions = {
-  column: string;
-  direction: SortDirection;
-};
 
 export type DataColumn = {
   id: string;
@@ -34,11 +30,36 @@ export type DataColumn = {
 
 export type DataRow = Record<string, unknown>;
 
+type RowsPerPageOptions = Array<number | { label: string; value: number }> | [];
+type SortDirection = "asc" | "desc";
+
+type SortOptions = {
+  column: string;
+  direction: SortDirection;
+};
+
+type TableContentsProps = {
+  columns: DataColumn[];
+  rows: DataRow[];
+  sort: SortOptions | undefined;
+  selectedItem: number | null;
+  sx?: SxProps;
+  onSort: (columnId: string) => (event: React.MouseEvent<unknown>) => void;
+  onItemSelect: (event: React.MouseEvent<unknown>, name: string | number) => void;
+};
+
 type DataTableProps = {
   columns: DataColumn[];
   rows: DataRow[];
   onRowClick: (event: React.MouseEvent<unknown>, name: string | number) => void;
+  containerSx?: SxProps;
+  tableSx?: SxProps;
 };
+
+type DataTablePaginationProps = Pick<
+  TablePaginationProps,
+  "count" | "page" | "rowsPerPage" | "onPageChange" | "onRowsPerPageChange"
+>;
 
 const detectAvailableRowsPerPageOptions = (len: number, labelForAll?: string): RowsPerPageOptions => {
   const rPpOpts: RowsPerPageOptions = [];
@@ -51,16 +72,102 @@ const detectAvailableRowsPerPageOptions = (len: number, labelForAll?: string): R
   return rPpOpts;
 };
 
+const LoadingOverlay = () => {
+  return (
+    <Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <CircularProgress disableShrink />
+    </Box>
+  );
+};
+
+const DataTablePagination = (props: DataTablePaginationProps) => {
+  const { count, page, rowsPerPage, onPageChange, onRowsPerPageChange } = props;
+  const { t } = useTranslation();
+
+  return (
+    <TablePagination
+      component="div"
+      count={count}
+      page={page}
+      rowsPerPage={rowsPerPage}
+      rowsPerPageOptions={detectAvailableRowsPerPageOptions(count, t("common.all"))}
+      onPageChange={onPageChange}
+      onRowsPerPageChange={onRowsPerPageChange}
+      SelectProps={{ inputProps: { sx: { py: 2 } } }}
+      labelRowsPerPage={t("dataTable.rowsPerPage")}
+      labelDisplayedRows={({ from, to, count }) =>
+        t("dataTable.viewingEntries", { from, to, count: count !== -1 ? count : `> ${to}` })
+      }
+      getItemAriaLabel={(type) => type}
+    />
+  );
+};
+
+const TableContents = (props: TableContentsProps) => {
+  const { columns, rows, sort, selectedItem, sx, onSort, onItemSelect } = props;
+  return (
+    <Table stickyHeader size="small" sx={sx}>
+      <TableHead>
+        <TableRow>
+          {columns.map((column) => {
+            return (
+              <TableCell key={column.id} sx={column.headerCellSx} sortDirection="asc">
+                <TableSortLabel
+                  active={sort?.column === column.id}
+                  direction={sort?.column === column.id ? sort?.direction : "asc"}
+                  onClick={onSort(column.id)}
+                  children={
+                    <Typography variant="subtitle2" noWrap>
+                      {column.label}
+                    </Typography>
+                  }
+                />
+              </TableCell>
+            );
+          })}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map((row, index) => {
+          return (
+            <TableRow
+              key={index}
+              hover
+              selected={index === selectedItem}
+              onClick={(event) => {
+                onItemSelect(event, index);
+              }}
+              children={columns.map((column) => (
+                <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
+                  {column.component
+                    ? column.component(row[column.id] as never)
+                    : ((value) => (
+                        <Typography variant="body2" noWrap>
+                          {value}
+                        </Typography>
+                      ))(row[column.id] as never)}
+                </TableCell>
+              ))}
+            />
+          );
+        })}
+      </TableBody>
+    </Table>
+  );
+};
+
 /**
  * Data Table component, displays Library items
  */
-export const DataTable = ({ columns, rows, onRowClick }: DataTableProps) => {
-  const [page, setPage] = React.useState<number>(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
+export const DataTable = (props: DataTableProps) => {
+  const { columns, rows, onRowClick, containerSx, tableSx } = props;
+
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedItem, setSelectedItem] = React.useState<number>(-1);
   const [sortDirection, setSortDirection] = React.useState<SortOptions | undefined>(undefined);
 
-  const { t } = useTranslation();
+  const [page, setPage] = React.useState<number>(1);
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
     event?.preventDefault();
@@ -72,7 +179,7 @@ export const DataTable = ({ columns, rows, onRowClick }: DataTableProps) => {
     setPage(0);
   };
 
-  const createSortHandler = (columnId: string) => (event: React.MouseEvent<unknown>) => {
+  const handleSorting = (columnId: string) => (event: React.MouseEvent<unknown>) => {
     event.preventDefault();
     if (columnId === sortDirection?.column) {
       const direction = sortDirection?.direction;
@@ -84,68 +191,27 @@ export const DataTable = ({ columns, rows, onRowClick }: DataTableProps) => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <TableContainer sx={{ maxHeight: "80vh" }}>
-          <Table stickyHeader size="small" sx={{ minWidth: 750 }} aria-label="library table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => {
-                  return (
-                    <TableCell key={column.id} sx={column.headerCellSx} sortDirection="asc">
-                      <TableSortLabel
-                        active={sortDirection?.column === column.id}
-                        direction={sortDirection?.column === column.id ? sortDirection?.direction : "asc"}
-                        onClick={createSortHandler(column.id)}
-                        children={
-                          <Typography variant="subtitle2" noWrap>
-                            {column.label}
-                          </Typography>
-                        }
-                      />
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row, index) => {
-                return (
-                  <TableRow
-                    key={index}
-                    hover
-                    selected={index === selectedItem}
-                    onClick={(event) => {
-                      setSelectedItem(index);
-                      onRowClick(event, index);
-                    }}
-                    children={columns.map((column) => (
-                      <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
-                        {column.component
-                          ? column.component(row[column.id] as never)
-                          : ((value) => (
-                              <Typography variant="body2" noWrap>
-                                {value}
-                              </Typography>
-                            ))(row[column.id] as never)}
-                      </TableCell>
-                    ))}
-                  />
-                );
-              })}
-            </TableBody>
-          </Table>
+      <Paper sx={{ width: "100%" }}>
+        <TableContainer sx={{ ...containerSx, position: "relative" }}>
+          {!loading && <LoadingOverlay />}
+          <TableContents
+            columns={columns}
+            rows={rows}
+            sort={sortDirection}
+            selectedItem={selectedItem}
+            onSort={handleSorting}
+            onItemSelect={(event, index) => {
+              setSelectedItem(index as number);
+              onRowClick(event, index);
+            }}
+          />
         </TableContainer>
-        <TablePagination
-          component="div"
+        <DataTablePagination
           count={rows.length}
           page={page}
           rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={detectAvailableRowsPerPageOptions(rows.length, t("common.all"))}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          SelectProps={{ inputProps: { sx: { py: 2 } } }}
-          labelRowsPerPage={t("dataTable.rowsPerPage")}
-          labelDisplayedRows={({ from, to, count }) => `${from}–${to} of ${count !== -1 ? count : `more than ${to}`}`}
         />
       </Paper>
     </Box>
