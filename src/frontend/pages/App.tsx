@@ -1,14 +1,16 @@
 import { MenuOpenOutlined, MenuOutlined } from "@mui/icons-material";
-import { AppBar, Box, IconButton, Rating, Toolbar, Typography, useTheme } from "@mui/material";
+import { AppBar, Box, IconButton, Toolbar } from "@mui/material";
 import React from "react";
 
 import { NavbarProfiler } from "../components/NavbarProfiler";
-import { DataColumn, DataRow, DataTable } from "../components/tables/DataTable";
-import movies from "../mock/movies.json";
-// import { SidebarDrawer } from "../components/SidebarDrawer";
-import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 import { SidebarDrawer } from "../components/SidebarDrawer";
 import { ColoredRating } from "../components/tables/ColoredRating";
+import { DataTable } from "../components/tables/DataTable";
+import { DataColumn, DataRow } from "../core/types";
+import movies from "../mock/movies.json";
+import { useLibraryTableStore } from "../store/useLibraryTableStore";
+// import { SidebarDrawer } from "../components/SidebarDrawer";
+import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 
 const columns: DataColumn[] = [
   {
@@ -32,7 +34,7 @@ const columns: DataColumn[] = [
   {
     id: "Оценка",
     label: "Оценка",
-    component: (value) => <ColoredRating readOnly size={5} value={value} />,
+    component: (value: number) => <ColoredRating readOnly size={5} value={value} />,
   },
   {
     id: "Отзыв",
@@ -43,12 +45,11 @@ const columns: DataColumn[] = [
 
 const dataRows: DataRow[] = movies;
 export const App = () => {
-  const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore((state) => state);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore();
+  const libStore = useLibraryTableStore();
 
-  const theme = useTheme();
-  const viewPort = theme.spacing(8);
-  console.log(theme.spacing);
-
+  console.log(libStore);
   return (
     <Box sx={{ mt: { xs: 7, sm: 8 } }}>
       <Box component="nav" sx={{ width: { sm: 300 }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
@@ -66,9 +67,18 @@ export const App = () => {
         </AppBar>
         <DataTable
           columns={columns}
-          rows={dataRows}
+          rows={dataRows.concat(dataRows, dataRows, dataRows, dataRows, dataRows, dataRows, dataRows, dataRows)}
           containerSx={{ height: "80vh" }}
-          onRowClick={(e, i) => console.log(e, i)}
+          loading={loading}
+          page={libStore.page}
+          rowsPerPage={libStore.rowsPerPage}
+          selectedItem={libStore.selectedItem}
+          setPage={libStore.setPage}
+          setRowsPerPage={libStore.setRowsPerPage}
+          setSelectedItem={libStore.setSelectedItem}
+          setSort={libStore.setSort}
+          sort={libStore.sort}
+          total={libStore.total}
         />
       </Box>
     </Box>

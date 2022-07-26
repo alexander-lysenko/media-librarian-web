@@ -1,10 +1,7 @@
 import {
   Box,
   CircularProgress,
-  Grid,
   Paper,
-  Skeleton,
-  SxProps,
   Table,
   TableBody,
   TableCell,
@@ -18,45 +15,27 @@ import {
 } from "@mui/material";
 import React from "react";
 
+import {
+  DataTableBaseProps,
+  DataTableEventsProps,
+  DataTablePaginationProps,
+  DataTableStyleProps,
+} from "../../core/types";
 import { useTranslation } from "../../hooks/useTranslation";
 
-export type DataColumn = {
-  id: string;
-  label?: string;
-  component?: (props: never) => React.ReactNode;
-  headerCellSx?: SxProps;
-  contentCellSx?: SxProps;
-};
-
-export type DataRow = Record<string, unknown>;
-
 type RowsPerPageOptions = Array<number | { label: string; value: number }> | [];
-type SortDirection = "asc" | "desc";
 
-type SortOptions = {
-  column: string;
-  direction: SortDirection;
-};
+type DataTableProps = DataTableBaseProps &
+  DataTableStyleProps &
+  DataTablePaginationProps & {
+    loading: boolean;
+  };
 
-type TableContentsProps = {
-  columns: DataColumn[];
-  rows: DataRow[];
-  sort: SortOptions | undefined;
-  selectedItem: number | null;
-  sx?: SxProps;
-  onSort: (columnId: string) => (event: React.MouseEvent<unknown>) => void;
-  onItemSelect: (event: React.MouseEvent<unknown>, name: string | number) => void;
-};
+type TableContentsProps = Pick<DataTableBaseProps, "columns" | "rows" | "sort" | "selectedItem"> &
+  Pick<DataTableStyleProps, "tableSx"> &
+  DataTableEventsProps;
 
-type DataTableProps = {
-  columns: DataColumn[];
-  rows: DataRow[];
-  onRowClick: (event: React.MouseEvent<unknown>, name: string | number) => void;
-  containerSx?: SxProps;
-  tableSx?: SxProps;
-};
-
-type DataTablePaginationProps = Pick<
+type CustomTablePaginationProps = Pick<
   TablePaginationProps,
   "count" | "page" | "rowsPerPage" | "onPageChange" | "onRowsPerPageChange"
 >;
@@ -80,7 +59,7 @@ const LoadingOverlay = () => {
   );
 };
 
-const DataTablePagination = (props: DataTablePaginationProps) => {
+const DataTablePagination = (props: CustomTablePaginationProps) => {
   const { count, page, rowsPerPage, onPageChange, onRowsPerPageChange } = props;
   const { t } = useTranslation();
 
@@ -104,9 +83,9 @@ const DataTablePagination = (props: DataTablePaginationProps) => {
 };
 
 const TableContents = (props: TableContentsProps) => {
-  const { columns, rows, sort, selectedItem, sx, onSort, onItemSelect } = props;
+  const { tableSx, columns, rows, sort, selectedItem, onSort, onRowClick } = props;
   return (
-    <Table stickyHeader size="small" sx={sx}>
+    <Table stickyHeader size="small" sx={tableSx}>
       <TableHead>
         <TableRow>
           {columns.map((column) => {
@@ -134,9 +113,7 @@ const TableContents = (props: TableContentsProps) => {
               key={index}
               hover
               selected={index === selectedItem}
-              onClick={(event) => {
-                onItemSelect(event, index);
-              }}
+              onClick={onRowClick(index)}
               children={columns.map((column) => (
                 <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
                   {column.component
@@ -160,14 +137,21 @@ const TableContents = (props: TableContentsProps) => {
  * Data Table component, displays Library items
  */
 export const DataTable = (props: DataTableProps) => {
-  const { columns, rows, onRowClick, containerSx, tableSx } = props;
-
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = React.useState<number>(-1);
-  const [sortDirection, setSortDirection] = React.useState<SortOptions | undefined>(undefined);
-
-  const [page, setPage] = React.useState<number>(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
+  const {
+    columns,
+    rows,
+    sort,
+    page,
+    rowsPerPage,
+    loading,
+    selectedItem,
+    setSelectedItem,
+    setPage,
+    setRowsPerPage,
+    setSort,
+    containerSx,
+    tableSx,
+  } = props;
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
     event?.preventDefault();
@@ -181,30 +165,36 @@ export const DataTable = (props: DataTableProps) => {
 
   const handleSorting = (columnId: string) => (event: React.MouseEvent<unknown>) => {
     event.preventDefault();
-    if (columnId === sortDirection?.column) {
-      const direction = sortDirection?.direction;
-      setSortDirection({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
+    if (columnId === sort?.column) {
+      const direction = sort?.direction;
+      setSort && setSort({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
     } else {
-      setSortDirection({ column: columnId, direction: "asc" });
+      setSort && setSort({ column: columnId, direction: "asc" });
     }
+  };
+
+  const handleSelectItem = (rowId: string | number) => (event: React.MouseEvent<unknown>) => {
+    event.preventDefault();
+    setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
   };
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%" }}>
         <TableContainer sx={{ ...containerSx, position: "relative" }}>
-          {!loading && <LoadingOverlay />}
-          <TableContents
-            columns={columns}
-            rows={rows}
-            sort={sortDirection}
-            selectedItem={selectedItem}
-            onSort={handleSorting}
-            onItemSelect={(event, index) => {
-              setSelectedItem(index as number);
-              onRowClick(event, index);
-            }}
-          />
+          {loading ? (
+            <LoadingOverlay />
+          ) : (
+            <TableContents
+              tableSx={tableSx}
+              columns={columns}
+              rows={rows}
+              sort={sort}
+              selectedItem={selectedItem}
+              onSort={handleSorting}
+              onRowClick={handleSelectItem}
+            />
+          )}
         </TableContainer>
         <DataTablePagination
           count={rows.length}
