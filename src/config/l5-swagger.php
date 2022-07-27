@@ -39,7 +39,7 @@ return [
                  * Absolute paths to directory containing the swagger annotations are stored.
                 */
                 'annotations' => [
-                    base_path('app/Http/Controllers/Api/V1'),
+                    base_path('app/Http/Controllers/V1'),
                 ],
 
             ],
@@ -58,7 +58,7 @@ return [
             'oauth2_callback' => 'api/oauth2-callback',
 
             /*
-             * Middleware allows to prevent unexpected access to API documentation
+             * Middleware allows preventing unexpected access to API documentation
             */
             'middleware' => [
                 'api' => [],
@@ -85,9 +85,9 @@ return [
             'views' => base_path('resources/views/vendor/l5-swagger'),
 
             /*
-             * Edit to set the api's base path
+             * Edit to set the API base path
             */
-            'base' => env('L5_SWAGGER_BASE_PATH', null),
+            'base' => env('L5_SWAGGER_BASE_PATH'),
 
             /*
              * Edit to set path where swagger ui assets should be stored
@@ -95,7 +95,7 @@ return [
             'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'vendor/swagger-api/swagger-ui/dist/'),
 
             /*
-             * Absolute path to directories that should be exclude from scanning
+             * Absolute path to directories that should be excluded from scanning
              * @deprecated Please use `scanOptions.exclude`
              * `scanOptions.exclude` overwrites this
             */
@@ -135,7 +135,7 @@ return [
             'pattern' => null,
 
             /*
-             * Absolute path to directories that should be exclude from scanning
+             * Absolute path to directories that should be excluded from scanning
              * @note This option overwrites `paths.excludes`
              * @see \OpenApi\scan
             */
@@ -228,7 +228,7 @@ return [
         'proxy' => false,
 
         /*
-         * Configs plugin allows to fetch external configs instead of passing them to SwaggerUIBundle.
+         * Configs plugin allows fetching external configs instead of passing them to SwaggerUIBundle.
          * See more at: https://github.com/swagger-api/swagger-ui#configs-plugin
         */
         'additional_config_url' => null,
@@ -238,7 +238,7 @@ return [
          * 'method' (sort by HTTP method).
          * Default is the order returned by the server unchanged.
         */
-        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', "alpha"),
+        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', 'alpha'),
 
         /*
          * Pass the validatorUrl parameter to SwaggerUi init on the JS side.

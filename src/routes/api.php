@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// User Authentication, signup, sign-out
+Route::middleware(['auth:sanctum'])->prefix('v1/user/')->name('v1.user.')->group(function () {
+    Route::post('/signup', [UserController::class, 'signup']);
+    Route::post('/login', [UserController::class, 'login']);
+    Route::get('/', function (Request $request) {
+        return $request->user();
+    });
+});
+
+// Application routes
+Route::middleware([])->prefix('v1/')->name('v1')->group(function () {
+    Route::get('lib', fn() => "Hello");
 });
