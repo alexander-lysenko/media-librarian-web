@@ -9,10 +9,13 @@ function setup_env_file() {
     # Check if exists .env and copy from .env.example
     if [ ! -f "$DIRNAME"/src/.env ]; then
         CURRENT_USER=$(whoami)
-        echo "Trying to copy .env.example -> .env ..."
+        echo -n "Trying to copy .env.example -> .env ..."
 
         cp -n "$DIRNAME"/src/.env.example "$DIRNAME"/src/.env
         sudo chown "$CURRENT_USER":"$CURRENT_USER" "$DIRNAME"/src/.env
+        echo "Done"
+    else
+        echo "Creating environment from the file: $DIRNAME/src/.env"
     fi
 }
 
@@ -22,7 +25,7 @@ function create_domain_name_mapping() {
     # update /etc/hosts
     echo -n "Updating /etc/hosts... "
     sudo sh -c "cat /etc/hosts | grep -v \"$NGINX_IP\" > /tmp/hosts.new"
-    sudo sh -c "echo -e \"$NGINX_IP\t$VHOSTS_FMT\" >> /tmp/hosts.new"
+    echo -e "$NGINX_IP\t$VHOSTS_FMT" | sudo tee -a /tmp/hosts.new > /dev/null
     sudo sh -c "cat /tmp/hosts.new > /etc/hosts && rm /tmp/hosts.new"
     echo "Done"
 
@@ -30,12 +33,12 @@ function create_domain_name_mapping() {
     VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
 
     if [[ "$VIRTUAL_NET_EXISTS" = "" ]]; then
-        echo -n "No virtual network interface. Creating a new one... "
+        echo -n "Virtual network interface is not set up. Creating a new one... "
         CN=$(echo $NGINX_IP | cut -d . -f 4)
         sudo sh -c "ifconfig docker0:ng_$CN $NGINX_IP"
         echo "Done"
     else
-        echo "Virtual interface is up."
+        echo "Virtual network interface is up."
     fi
 }
 
@@ -48,7 +51,7 @@ case "$1" in
 "up")
     sudo echo "Booting..."
     create_domain_name_mapping
-     setup_env_file
+    setup_env_file
     ;;
 "start")
     sudo echo "Running in background..."

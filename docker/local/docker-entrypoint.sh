@@ -12,7 +12,7 @@ function run_services() {
 }
 
 function clean_webapp_logs() {
-    echo "Creating / Cleaning logs..."
+    echo -n "Creating / Cleaning logs... "
     # Overwrites log files with an empty string
     echo -n "" >/logs/nginx-error.log
     echo -n "" >/logs/php-error.log
@@ -21,6 +21,7 @@ function clean_webapp_logs() {
     echo -n "" >/logs/xdebug.log
     # Make an ability to read the log files outside the container
     chown -R nginx:www-data /logs
+    echo "Done"
 }
 
 function install_composer_dependencies() {
@@ -36,7 +37,7 @@ function apply_migrations() {
 function webapp() {
     clean_webapp_logs
     run_services
-#    install_composer_dependencies && apply_migrations
+    install_composer_dependencies && apply_migrations
 
     echo "=========="
     echo "Media Librarian Web App is Up! Please make sure the front end is built from the latest version"
