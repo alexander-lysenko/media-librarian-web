@@ -10,9 +10,11 @@ use Laravel\Sanctum\HasApiTokens;
 
 /**
  * Authenticate-able user model
+ * @property int $id
  * @property string $name
  * @property string $email
  * @property string $password
+ * @property string $email_verified_at
  */
 class User extends AuthUser
 {

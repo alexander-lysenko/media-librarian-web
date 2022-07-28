@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Hash;
 use Throwable;
 
 /**
@@ -12,37 +14,43 @@ use Throwable;
 class CreateUser extends Command
 {
     protected $signature = 'user:create ' .
-    '{username : "User Name" of the new user}' .
-    '{email : E-mail address the account is created with}' .
-    '{password : Set a password for the new user}';
+    '{--u|name= : "User Name" of the newly created user}' .
+    '{--e|email= : E-mail address the account is created with}' .
+    '{--p|password= : Set a password for the newly created user}';
 
     protected $description = 'Create (register) a new user through console';
 
     /**
-     * CreateUser constructor
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
+     * Execute the console command.
+     * https://laravel.com/docs/9.x/artisan
+     *
+     * @return void
      * @throws Throwable
      */
     public function handle(): void
     {
-        $username = $this->argument('username');
-        $email = $this->argument('email');
-        $password = $this->argument('password');
+
+        // Enter username, if not present via command line option
+        $name = $this->option('username') ?: $this->ask('Please enter a username.');
+
+        // Enter email, if not present via command line option
+        $email = $this->option('email') ?: $this->ask('Please enter an e-Mail.');
+
+        // Enter password securely, if not present via command line option
+        $password = $email = $this->option('password') ?: $this->secret('Please enter a new password.');
 
         $user = new User([
-            'name' => $username,
+            'name' => $name,
             'email' => $email,
-            'password' => $password,
+            'password' => Hash::make($password),
+            'email_verified_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'status' => 'ACTIVE',
         ]);
-        $user->saveOrFail();
 
-        $this->info("New user ({$email}) has been created as \"{$username}\"!");
+        if ($user->saveOrFail()) {
+            $this->info("New user ({$name} <{$email}>) has been created with ID {$user->id}");
+        } else {
+            $this->warn('User has not been created due to the following errors:');
+        }
     }
-
 }
