@@ -4,11 +4,17 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+/**
+ * Authenticate-able user model
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ */
+class User extends AuthUser
 {
     use HasApiTokens, HasFactory, Notifiable;
 
