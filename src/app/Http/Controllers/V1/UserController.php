@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use OpenApi\Annotations as OA;
 
 /**
@@ -42,7 +43,8 @@ class UserController extends ApiV1Controller
      */
     public function signup(SignupRequest $request): JsonResponse
     {
-        return response()->json([]);
+
+        return Response::json([]);
     }
 
     /**
