@@ -26,6 +26,25 @@ use OpenApi\Annotations as OA;
  *     securityScheme="BearerAuth",
  *     description="Paste your Bearer token here",
  * ),
+ *
+ * @OA\Response(
+ *     response="Code401",
+ *     description="Unauthorized",
+ *     @OA\JsonContent(type="object",
+ *         @OA\Property(type="string", property="message", example="401 Authentication Required")
+ *     )
+ * ),
+ *
+ * @OA\Response(
+ *     response="Code500",
+ *     description="Internal Server Error",
+ *     @OA\JsonContent(type="object",
+ *         @OA\Property(type="string", property="message", example="An internal server error occurred")
+ *     )
+ * ),
+ *
+ * @OA\Tag(name="user.unauthenticated", description="User (Unauthenticated)")
+ * @OA\Tag(name="user.authenticated", description="User (Authenticated)")
  */
 abstract class ApiV1Controller extends BaseController
 {

@@ -15,10 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// User Authentication, signup, sign-out
-Route::middleware(['auth:sanctum'])->prefix('v1/user/')->name('v1.user.')->group(function () {
+// User authentication, signup, email verification, reset password
+Route::middleware([])->prefix('v1/user/')->name('v1.user.')->group(function () {
     Route::post('/signup', [UserController::class, 'signup']);
     Route::post('/login', [UserController::class, 'login']);
+
+    Route::get('/activate', [UserController::class, 'activate']);
+    Route::post('/password-reset', [UserController::class, 'requestPasswordReset']);
+    Route::put('/password-reset', [UserController::class, 'performPasswordReset']);
+});
+
+// User authorization, logout
+Route::middleware(['auth:sanctum'])->prefix('v1/user/')->name('v1.user.')->group(function () {
+    Route::post('/logout', [UserController::class, 'logout']);
     Route::get('/', function (Request $request) {
         return $request->user();
     });
