@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Notifiable;
@@ -10,13 +11,16 @@ use Laravel\Sanctum\HasApiTokens;
 
 /**
  * Authenticate-able user model
+ *
  * @property int $id
  * @property string $name
  * @property string $email
  * @property string $password
  * @property string $email_verified_at
+ * @method static create(array $attributes = [])
+ * @method Builder update(array $values)
  */
-class User extends AuthUser
+class User extends AuthUser implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 

@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Requests\V1\SignupRequest;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use OpenApi\Annotations as OA;
 
 /**
  * User controller - manage user/identity actions
+ * @TODO: See https://github.com/laravel/breeze
  */
 class UserController extends ApiV1Controller
 {
@@ -26,8 +31,8 @@ class UserController extends ApiV1Controller
      *     @OA\RequestBody(required=true,
      *         @OA\MediaType(mediaType="application/json",
      *             @OA\Schema(type="object",
-     *                 @OA\Property(property="email", type="string", example="admin@example.com"),
-     *                 @OA\Property(property="username", type="string", example="John Doe"),
+     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
+     *                 @OA\Property(property="name", type="string", example="John Doe"),
      *                 @OA\Property(property="password", type="string", example="PasSw0rd"),
      *                 @OA\Property(property="passwordRepeat", type="string", example="PasSw0rd"),
      *                 @OA\Property(property="locale", type="string", example="en"),
@@ -36,13 +41,18 @@ class UserController extends ApiV1Controller
      *         ),
      *     ),
      *
-     *     @OA\Response(response="200",
-     *         description="OK",
+     *     @OA\Response(response="201",
+     *         description="Created",
      *         @OA\JsonContent(type="object",
      *             @OA\Property(type="boolean", property="success", example=true),
      *             @OA\Property(type="string",
      *                 property="message",
      *                 example="Your account has been created. You have to verify your e-mail to activate the account"
+     *             ),
+     *             @OA\Property(type="object", property="user",
+     *                 @OA\Property(type="integer", property="id", example=1),
+     *                 @OA\Property(type="string", property="name", example="John Doe"),
+     *                 @OA\Property(type="string", property="email", example="john.doe@example.com"),
      *             ),
      *         ),
      *     ),
@@ -64,7 +74,21 @@ class UserController extends ApiV1Controller
      */
     public function signup(SignupRequest $request): JsonResponse
     {
-        return Response::json([]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+//        $token = $user->createToken('apiToken')->plainTextToken;
+        Event::dispatch(new Registered($user));
+
+        return Response::json([
+            'success' => true,
+            'message' => 'Your account has been created. You have to verify your e-mail to activate the account',
+            'user' => $user,
+//            'token' => $token
+        ], 201);
     }
 
     /**
@@ -144,7 +168,7 @@ class UserController extends ApiV1Controller
      * @OA\Post(
      *     path="/api/v1/user/password-reset",
      *     summary="Request for password reset",
-     *     description="Request a token for reset password on an account. The token will be sent over e-mail to the
+     *     description="Request a token for reset password on an account. The token will be sent over e-mail to the \
      * specified e-mail address unless the email address is unrecognized (does not belong to a registered account).",
      *     tags={"user.unauthenticated"},
      *

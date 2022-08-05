@@ -35,7 +35,7 @@ class CreateUser extends Command
         $this->comment("The activation of the new account is processed immediately.");
         $this->comment("Recovering such accounts using the standard tools may cause issues.");
         $this->comment("YOU'VE BEEN WARNED!");
-        $this->comment("================================================================================");
+        $this->comment("=========================");
 
         // Enter username, if not present via command line option
         $name = $this->option('name') ?: $this->ask('Please enter a username');
