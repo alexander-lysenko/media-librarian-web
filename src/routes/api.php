@@ -16,11 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 // User authentication, signup, email verification, reset password
-Route::middleware([])->prefix('v1/user/')->name('v1.user.')->group(function () {
+Route::middleware(['api'])->prefix('v1/user/')->name('v1.user.')->group(function () {
     Route::post('/signup', [UserController::class, 'signup']);
     Route::post('/login', [UserController::class, 'login']);
 
-    Route::get('/activate', [UserController::class, 'activate']);
+    Route::get('/activate', [UserController::class, 'activate'])->name('verification.verify');
     Route::post('/password-reset', [UserController::class, 'requestPasswordReset']);
     Route::put('/password-reset', [UserController::class, 'performPasswordReset']);
 });

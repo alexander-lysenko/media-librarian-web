@@ -8,6 +8,10 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
+[*.php]
+ij_php_line_comment_at_first_column = false
+ij_php_line_comment_add_space = true
+
 [*.md]
 trim_trailing_whitespace = false
 

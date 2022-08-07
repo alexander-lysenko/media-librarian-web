@@ -63,7 +63,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            EnsureFrontendRequestsAreStateful::class,
+             // EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             SubstituteBindings::class,
         ],
@@ -78,9 +78,9 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => Authenticate::class,
-//        'auth.basic' => AuthenticateWithBasicAuth::class,
+       // 'auth.basic' => AuthenticateWithBasicAuth::class,
         'auth.bearer' => AuthenticateWithBearer::class,
-//        'auth.session' => AuthenticateSession::class,
+       // 'auth.session' => AuthenticateSession::class,
         'cache.headers' => SetCacheHeaders::class,
         'can' => Authorize::class,
         'guest' => RedirectIfAuthenticated::class,
