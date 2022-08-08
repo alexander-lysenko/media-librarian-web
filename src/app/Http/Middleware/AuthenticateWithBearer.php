@@ -24,4 +24,19 @@ class AuthenticateWithBearer extends Middleware
         throw new AuthenticationException($message, $guards);
     }
 
+    /**
+     * Get the path the user should be redirected to when they are not authenticated.
+     *
+     * @param Request $request
+     * @return string|null
+     */
+    protected function redirectTo($request): ?string
+    {
+        if (!$request->expectsJson()) {
+            return route('v1.user.login');
+        }
+
+        return null;
+    }
+
 }

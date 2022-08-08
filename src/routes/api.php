@@ -17,17 +17,17 @@ use Illuminate\Support\Facades\Route;
 
 // User authentication, signup, email verification, reset password
 Route::middleware(['api'])->prefix('v1/user/')->name('v1.user.')->group(function () {
-    Route::post('/signup', [UserController::class, 'signup']);
-    Route::post('/login', [UserController::class, 'login']);
+    Route::post('/signup', [UserController::class, 'signup'])->name('signup');
+    Route::post('/login', [UserController::class, 'login'])->name('login');
 
-    Route::get('/activate', [UserController::class, 'activate'])->name('verification.verify');
+    Route::get('/email-verify', [UserController::class, 'emailVerify'])->name('verification.verify');
     Route::post('/password-reset', [UserController::class, 'requestPasswordReset']);
     Route::put('/password-reset', [UserController::class, 'performPasswordReset']);
 });
 
 // User authorization, logout
-Route::middleware(['auth:sanctum'])->prefix('v1/user/')->name('v1.user.')->group(function () {
-    Route::post('/logout', [UserController::class, 'logout']);
+Route::middleware(['auth.bearer:sanctum'])->prefix('v1/user/')->name('v1.user.')->group(function () {
+    Route::post('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/', function (Request $request) {
         return $request->user();
     });
