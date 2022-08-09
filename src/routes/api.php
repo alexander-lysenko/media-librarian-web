@@ -27,13 +27,22 @@ Route::middleware(['api'])->prefix('v1/user/')->name('v1.user.')->group(function
 
 // User authorization, logout
 Route::middleware(['auth.bearer:sanctum'])->prefix('v1/user/')->name('v1.user.')->group(function () {
+    Route::get('/', [UserController::class, 'profile'])->name('profile');
+    // Route::put('/', [])->name('');
+    // Route::get('/change-email', [])->name('');
+    // Route::get('/change-password', [])->name('');
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-    Route::get('/', function (Request $request) {
-        return $request->user();
-    });
 });
 
 // Application routes
-Route::middleware([])->prefix('v1/')->name('v1')->group(function () {
-    Route::get('lib', fn() => "Hello");
+Route::middleware(['auth.bearer:sanctum'])->prefix('v1/')->name('v1')->group(function () {
+    Route::get('/libraries', fn() => "View Libraries");
+    Route::post('/libraries/create', fn() => "Create a Library");
+    Route::delete('/libraries/{id}', fn() => "Delete a Library");
+    Route::put('/library/{id}/clear', fn() => "Clear the selected Library");
+    Route::get('/library/{id}', fn() => "View entries in the selected Library");
+    Route::post('/library/{id}/add', fn() => "Add an entry to the selected Library");
+    Route::put('/library/{id}/entry/{id}', fn() => "Update an entry in the selected Library");
+    Route::delete('/library/{id}/entry/{id}', fn() => "Remove/Delete an entry from the selected Library");
+    Route::get('/library/{id}/entry/random', fn() => "Get a random entry from the selected Library");
 });

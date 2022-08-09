@@ -5,13 +5,12 @@ namespace App\Http\Controllers\V1;
 use App\Http\Requests\V1\EmailVerifyRequest;
 use App\Http\Requests\V1\SignupRequest;
 use App\Models\User;
+use App\Utils\Enum\UserStatusEnum;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use OpenApi\Annotations as OA;
 
@@ -108,17 +107,15 @@ class UserController extends ApiV1Controller
      *         description="Moved Temporarily",
      *         @OA\JsonContent(type="object",
      *             @OA\Property(type="string", property="redirectTo", example="/app"),
-     *             @OA\Property(type="string",
-     *                 property="message",
-     *                 example="Successfully logged in. Here is the authentication token."
-     *             ),
+     *             @OA\Property(type="string", property="message", example="Successfully logged in"),
      *             @OA\Property(type="string", property="token", example="token"),
+     *             @OA\Property(type="string", property="redirectTo", example="/login"),
      *         ),
      *     ),
      *
      *     @OA\Response(response="default", description="Unauthorized",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Invalid email or password")
+     *             @OA\Property(type="string", property="message", example="Incorrect email and/or password")
      *         ),
      *     ),
      * )
@@ -139,11 +136,12 @@ class UserController extends ApiV1Controller
             return Response::json([
                 'message' => 'Successfully logged in',
                 'token' => explode("|", $token)[1],
+                'redirectTo' => '/app',
             ], 302);
         }
 
         return Response::json([
-            'message' => 'Invalid email or password',
+            'message' => 'Incorrect email and/or password',
         ], 401);
     }
 
@@ -151,7 +149,7 @@ class UserController extends ApiV1Controller
      * @OA\Get(
      *     path="/api/v1/user/email-verify",
      *     summary="Activate an account by verifying their email using a verification key",
-     *     description="It is required to provide the verification key sent via e-mail after the successful signup.",
+     *     description="It is required to provide the verification key sent via e-mail after the successful signup",
      *     tags={"user.unauthenticated"},
      *
      *     @OA\Parameter(required=true, name="email", in="query",
@@ -205,7 +203,11 @@ class UserController extends ApiV1Controller
             ], 410);
         }
 
-        if ($user->markEmailAsVerified()) {
+        if (true /*match the verification key with email*/) {
+            $user->forceFill([
+                'status' => UserStatusEnum::STATUS_ACTIVE,
+                'email_verified_at' => $user->freshTimestamp(),
+            ])->save();
             event(new Verified($user));
         }
 
@@ -217,8 +219,8 @@ class UserController extends ApiV1Controller
     /**
      * @OA\Post(
      *     path="/api/v1/user/password-reset",
-     *     summary="Request a token for reset password on an account.",
-     *     description="The token will be sent over e-mail to the specified e-mail address.",
+     *     summary="Request a token for reset password on an account",
+     *     description="The token will be sent over e-mail to the specified e-mail address",
      *     tags={"user.unauthenticated"},
      *
      *     @OA\RequestBody(required=true,
@@ -249,8 +251,8 @@ class UserController extends ApiV1Controller
     /**
      * @OA\Put(
      *     path="/api/v1/user/password-reset",
-     *     summary="Perform the password reset using the token received over e-mail and a new desired password.",
-     *     description="The token expires 60 minutes after it was issued. The password should be confirmed.",
+     *     summary="Perform the password reset using the token received over e-mail and a new desired password",
+     *     description="The token expires 60 minutes after it was issued. The password should be confirmed",
      *     tags={"user.unauthenticated"},
      *
      *     @OA\Response(response="200", description="Work in Progress",
@@ -272,6 +274,40 @@ class UserController extends ApiV1Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/v1/user",
+     *     summary="Get User Info",
+     *     description="Request the full profile of the authenticated user",
+     *     tags={"user.authenticated"},
+     *     security={{"BearerAuth": {}}},
+     *
+     *     @OA\Response(response="200", description="OK",
+     *         @OA\JsonContent(type="object",
+     *             @OA\Property(type="object", property="user",
+     *                 @OA\Property(type="integer", property="id", example=1),
+     *                 @OA\Property(type="string", property="name", example="John Doe"),
+     *                 @OA\Property(type="string", property="email", example="john.doe@example.com"),
+     *                 @OA\Property(type="datetime", property="email_verified_at", example="2000-01-01 00:00:01"),
+     *                 @OA\Property(type="string", property="status", example="ACTIVE"),
+     *                 @OA\Property(type="datetime", property="deleted_at", example="2000-01-01 00:00:01"),
+     *                 @OA\Property(type="datetime", property="created_at", example="2000-01-01 00:00:01"),
+     *                 @OA\Property(type="datetime", property="updated_at", example="2000-01-01 00:00:01"),
+     *             ),
+     *         ),
+     *     ),
+     * )
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function profile(Request $request): JsonResponse
+    {
+        return Response::json([
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/v1/user/logout",
      *     summary="Logout",
@@ -281,9 +317,8 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="302", description="Found",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="boolean", property="success", example=true),
-     *             @OA\Property(type="string", property="redirectTo", example="/user/login"),
      *             @OA\Property(type="string", property="message", example="Successfully logged out"),
+     *             @OA\Property(type="string", property="redirectTo", example="/login"),
      *         ),
      *     ),
      *
@@ -296,13 +331,18 @@ class UserController extends ApiV1Controller
      *
      * WIP
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function logout(Request $request): RedirectResponse
+    public function logout(Request $request): JsonResponse
     {
-        // $request->session()->flush();
-        Auth::logout();
+        Auth::guard('web')->logout();
 
-        return Redirect::intended('/v1/user/loggin');
+        // Revoke the token that was used to authenticate the current request...
+        $request->user()->currentAccessToken()->delete();
+
+        return Response::json([
+            'message' => 'Successfully logged out',
+            'redirectTo' => '/login',
+        ], 302);
     }
 }
