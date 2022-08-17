@@ -25,7 +25,7 @@ class UserController extends ApiV1Controller
      *     path="/api/v1/user/signup",
      *     summary="Register a new user",
      *     description="Sign up a new user",
-     *     tags={"user.unauthenticated"},
+     *     tags={"guest"},
      *
      *     @OA\RequestBody(required=true,
      *         @OA\MediaType(mediaType="application/json",
@@ -91,7 +91,7 @@ class UserController extends ApiV1Controller
      *     path="/api/v1/user/login",
      *     summary="Login",
      *     description="Sign In / Authenticate a user",
-     *     tags={"user.unauthenticated"},
+     *     tags={"guest"},
      *
      *     @OA\RequestBody(required=true,
      *         @OA\MediaType(mediaType="application/json",
@@ -147,10 +147,10 @@ class UserController extends ApiV1Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/user/email-verify",
+     *     path="/api/v1/user/verify-email",
      *     summary="Activate an account by verifying their email using a verification key",
      *     description="It is required to provide the verification key sent via e-mail after the successful signup",
-     *     tags={"user.unauthenticated"},
+     *     tags={"guest"},
      *
      *     @OA\Parameter(required=true, name="email", in="query",
      *         @OA\Schema(type="string", example="john.doe@example.com")
@@ -193,9 +193,10 @@ class UserController extends ApiV1Controller
      * @param EmailVerifyRequest $request
      * @return JsonResponse
      */
-    public function emailVerify(EmailVerifyRequest $request): JsonResponse
+    public function performEmailVerify(EmailVerifyRequest $request): JsonResponse
     {
-        $user = User::query()->where('email', $request->email)->get()->first();
+        /** @var User $user */
+        $user = User::query()->where('email', $request->email)->first();
 
         if ($user->hasVerifiedEmail()) {
             return Response::json([
@@ -218,10 +219,67 @@ class UserController extends ApiV1Controller
 
     /**
      * @OA\Post(
+     *     path="/api/v1/user/verify-email",
+     *     summary="Resend email verification link",
+     *     description="Re-sends over email the verification key to activate an account",
+     *     tags={"guest"},
+     *
+     *     @OA\RequestBody(required=true,
+     *         @OA\MediaType(mediaType="application/json",
+     *             @OA\Schema(type="object",
+     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
+     *             ),
+     *         ),
+     *     ),
+     *
+     *     @OA\Response(response="200", description="Success",
+     *         @OA\JsonContent(type="object",
+     *             @OA\Property(type="string",
+     *                 property="message",
+     *                 example="Email has been verified. The user's account is active now"
+     *             ),
+     *         ),
+     *     ),
+     *
+     *     @OA\Response(response="422", description="Unprocessable Entity",
+     *         @OA\JsonContent(type="object",
+     *             @OA\Property(type="string", property="message", example="Account with this email was not found"),
+     *             @OA\Property(type="object",
+     *                 property="errors",
+     *                 @OA\Property(type="array", property="email",
+     *                     @OA\Items(type="string", example="Account with this email was not found")
+     *                 ),
+     *             ),
+     *         ),
+     *     ),
+     * )
+     *
+     * @param EmailVerifyRequest $request
+     * @return JsonResponse
+     */
+    public function requestEmailVerify(Request $request): JsonResponse
+    {
+        $validated = $request->validate([ // rules
+            'email' => ['required', 'email', 'exists:users,email'],
+        ], [ // messages
+            'email.exists' => 'Account with this email was not found',
+        ]);
+
+        /** @var User $user */
+        $user = User::query()->where('email', $validated['email'])->first();
+        $user->sendEmailVerificationNotification();
+
+        return Response::json([
+            'message' => 'success',
+        ]);
+    }
+
+    /**
+     * @OA\Post(
      *     path="/api/v1/user/password-reset",
      *     summary="Request a token for reset password on an account",
      *     description="The token will be sent over e-mail to the specified e-mail address",
-     *     tags={"user.unauthenticated"},
+     *     tags={"guest"},
      *
      *     @OA\RequestBody(required=true,
      *         @OA\MediaType(mediaType="application/json",
@@ -253,7 +311,7 @@ class UserController extends ApiV1Controller
      *     path="/api/v1/user/password-reset",
      *     summary="Perform the password reset using the token received over e-mail and a new desired password",
      *     description="The token expires 60 minutes after it was issued. The password should be confirmed",
-     *     tags={"user.unauthenticated"},
+     *     tags={"guest"},
      *
      *     @OA\Response(response="200", description="Work in Progress",
      *         @OA\JsonContent(type="object",
@@ -271,78 +329,5 @@ class UserController extends ApiV1Controller
         return Response::json([
             'message' => 'success',
         ]);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/v1/user",
-     *     summary="Get User Info",
-     *     description="Request the full profile of the authenticated user",
-     *     tags={"user.authenticated"},
-     *     security={{"BearerAuth": {}}},
-     *
-     *     @OA\Response(response="200", description="OK",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="object", property="user",
-     *                 @OA\Property(type="integer", property="id", example=1),
-     *                 @OA\Property(type="string", property="name", example="John Doe"),
-     *                 @OA\Property(type="string", property="email", example="john.doe@example.com"),
-     *                 @OA\Property(type="datetime", property="email_verified_at", example="2000-01-01 00:00:01"),
-     *                 @OA\Property(type="string", property="status", example="ACTIVE"),
-     *                 @OA\Property(type="datetime", property="deleted_at", example="2000-01-01 00:00:01"),
-     *                 @OA\Property(type="datetime", property="created_at", example="2000-01-01 00:00:01"),
-     *                 @OA\Property(type="datetime", property="updated_at", example="2000-01-01 00:00:01"),
-     *             ),
-     *         ),
-     *     ),
-     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
-     * )
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function profile(Request $request): JsonResponse
-    {
-        return Response::json([
-            'user' => $request->user(),
-        ]);
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/v1/user/logout",
-     *     summary="Logout",
-     *     description="Sign out / Deauthenticate a user",
-     *     tags={"user.authenticated"},
-     *     security={{"BearerAuth": {}}},
-     *
-     *     @OA\Response(response="302", description="Found",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Successfully logged out"),
-     *             @OA\Property(type="string", property="redirectTo", example="/login"),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
-     *     @OA\Response(response="default", description="Work in Progress",
-     *         @OA\JsonContent(type="object"),
-     *     ),
-     * )
-     *
-     * WIP
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function logout(Request $request): JsonResponse
-    {
-        Auth::guard('web')->logout();
-
-        // Revoke the token that was used to authenticate the current request...
-        $request->user()->currentAccessToken()->delete();
-
-        return Response::json([
-            'message' => 'Successfully logged out',
-            'redirectTo' => '/login',
-        ], 302);
     }
 }

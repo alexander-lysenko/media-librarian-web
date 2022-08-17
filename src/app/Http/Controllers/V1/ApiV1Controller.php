@@ -43,8 +43,8 @@ use OpenApi\Annotations as OA;
  *     )
  * ),
  *
- * @OA\Tag(name="user.unauthenticated", description="User (Unauthenticated)")
- * @OA\Tag(name="user.authenticated", description="User (Authenticated)")
+ * @OA\Tag(name="guest", description="Guest (Unauthenticated User)")
+ * @OA\Tag(name="profile", description="Profile (Authenticated User)")
  */
 abstract class ApiV1Controller extends BaseController
 {
