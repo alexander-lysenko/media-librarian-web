@@ -109,7 +109,6 @@ class UserController extends ApiV1Controller
      *             @OA\Property(type="string", property="redirectTo", example="/app"),
      *             @OA\Property(type="string", property="message", example="Successfully logged in"),
      *             @OA\Property(type="string", property="token", example="token"),
-     *             @OA\Property(type="string", property="redirectTo", example="/login"),
      *         ),
      *     ),
      *
@@ -130,13 +129,14 @@ class UserController extends ApiV1Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::guard('web')->attempt($credentials, $request->post('rememberMe', false))) {
+            $redirectTo = $request->user()->status === UserStatusEnum::STATUS_ACTIVE ? '/app' : '/profile';
             $token = $request->user()->createToken('apiToken')->plainTextToken;
 
             return Response::json([
                 'message' => 'Successfully logged in',
                 'token' => explode("|", $token)[1],
-                'redirectTo' => '/app',
+                'redirectTo' => $redirectTo,
             ], 302);
         }
 
@@ -295,6 +295,7 @@ class UserController extends ApiV1Controller
      *             ),
      *         ),
      *     ),
+     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
      * )
      *
      * @param Request $request
@@ -322,10 +323,9 @@ class UserController extends ApiV1Controller
      *         ),
      *     ),
      *
+     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
      *     @OA\Response(response="default", description="Work in Progress",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Work in Progress")
-     *         ),
+     *         @OA\JsonContent(type="object"),
      *     ),
      * )
      *

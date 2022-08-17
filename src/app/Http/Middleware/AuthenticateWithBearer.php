@@ -20,7 +20,7 @@ class AuthenticateWithBearer extends Middleware
      */
     protected function unauthenticated($request, array $guards): void
     {
-        $message = 'Authentication is required.';
+        $message = '401 Authentication Required';
         throw new AuthenticationException($message, $guards);
     }
 
@@ -32,11 +32,10 @@ class AuthenticateWithBearer extends Middleware
      */
     protected function redirectTo($request): ?string
     {
-        if (!$request->expectsJson()) {
+        if ($request->expectsJson()) {
             return route('v1.user.login');
         }
 
         return null;
     }
-
 }

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // User authentication, signup, email verification, reset password
-Route::middleware(['api'])->prefix('v1/user/')->name('v1.user.')->group(function () {
+Route::middleware(['guest'])->prefix('v1/user/')->name('v1.user.')->group(function () {
     Route::post('/signup', [UserController::class, 'signup'])->name('signup');
     Route::post('/login', [UserController::class, 'login'])->name('login');
 
