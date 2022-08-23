@@ -82,7 +82,6 @@ const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
       error={!!props.errorMessage}
       helperText={props.errorMessage || props.helperText}
       autoComplete="email"
-      autoFocus
       onChange={props.onChange}
       onBlur={props.onBlur}
       InputProps={{

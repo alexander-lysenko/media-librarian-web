@@ -7,7 +7,7 @@ import {
   FormHelperText,
   InputAdornment,
   InputLabel,
-  MenuItem,
+  MenuItem, PaletteMode,
   Select,
   SelectChangeEvent,
   TextField,
@@ -16,10 +16,11 @@ import React, { ChangeEvent, FocusEvent, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { object as yupShape, ref as yupRef, string } from "yup";
 
+import { registerFieldWithDebounceValidation } from "../../core/helpers/registerFieldWithDebounceValidation";
 import { yupSequentialStringSchema } from "../../core/helpers/yupSequentialStringSchema";
 import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
+import { useThemeStore } from "../../store/useThemeStore";
 import { Language } from "../../store/useTranslationStore";
-import { registerFieldWithDebounceValidation } from "../../core/helpers/registerFieldWithDebounceValidation";
 
 type ReactSetStateAction<T> = React.Dispatch<React.SetStateAction<T>>;
 type InputProps = {
@@ -75,6 +76,7 @@ const makeValidationSchema = (t: LocalizedStringFn, setEmailCheckingState: React
  */
 export const SignupForm = () => {
   const [emailChecking, setEmailChecking] = useState(false);
+  const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
   const { t, getLanguage, setLanguage } = useTranslation();
   const schema = makeValidationSchema(t, setEmailChecking);
@@ -93,8 +95,8 @@ export const SignupForm = () => {
     setLanguage(event.target.value as Language);
   };
 
-  const handleThemeSelect = (event: ChangeEvent) => {
-    console.log(event);
+  const handleThemeSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    setThemeMode(event.target.value as PaletteMode);
   };
 
   return (
@@ -135,7 +137,7 @@ export const SignupForm = () => {
       <ThemeSelect
         {...register("theme")}
         onChange={handleThemeSelect}
-        value={"light"}
+        value={themeMode}
         label={t("signupPage.theme")}
         helperText={t("signupPage.themeHint")}
       />
@@ -159,7 +161,6 @@ const UsernameTextField = React.forwardRef((props: Partial<InputProps>, ref) => 
       error={!!props.errorMessage}
       helperText={props.errorMessage || props.helperText}
       autoComplete="name"
-      autoFocus
       onChange={props.onChange}
       onBlur={props.onBlur}
       InputProps={{

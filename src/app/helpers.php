@@ -9,7 +9,7 @@ function vite_assets(): HtmlString
     if (app()->environment('local')) {
         return new HtmlString(<<<HTML
             <script type="module" src="{$devServerHost}/@vite/client"></script>
-            <script type="module" src="{$devServerHost}/frontend/index.ts"></script>
+            <script type="module" src="{$devServerHost}/index.ts"></script>
         HTML
         );
     }

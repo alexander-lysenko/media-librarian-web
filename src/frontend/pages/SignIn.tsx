@@ -7,6 +7,7 @@ import { Copyright } from "../components/Copyright";
 import { LoginForm } from "../components/forms/LoginForm";
 import { StickyFooter } from "../components/StickyFooter";
 import { useTranslation } from "../hooks/useTranslation";
+import { PasswordRecoveryDialog } from "../components/modals/PasswordRecoveryDialog";
 
 type Props = {
   children?: React.ReactNode;
@@ -17,6 +18,14 @@ type Props = {
  */
 export const SignIn = () => {
   const { t } = useTranslation();
+  const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = React.useState(false);
+
+  const handlePRDOpen = () => {
+    setPasswordRecoverDialogOpen(true);
+  };
+  const handlePRDClose = () => {
+    setPasswordRecoverDialogOpen(false);
+  };
 
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
@@ -32,7 +41,7 @@ export const SignIn = () => {
 
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link variant="body2" onClick={handlePRDOpen} sx={{ cursor: "pointer" }}>
                 {t("loginPage.forgotPassword")}
               </Link>
             </Grid>
@@ -47,6 +56,7 @@ export const SignIn = () => {
           <Copyright />
         </StickyFooter>
       </PageContainer>
+      <PasswordRecoveryDialog handleClose={handlePRDClose} open={passwordRecoverDialogOpen} />
     </Grid>
   );
 };
