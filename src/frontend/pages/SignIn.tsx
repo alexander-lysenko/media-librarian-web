@@ -5,9 +5,10 @@ import { NavLink } from "react-router-dom";
 
 import { Copyright } from "../components/Copyright";
 import { LoginForm } from "../components/forms/LoginForm";
+import { PasswordRecoveryDialog } from "../components/modals/PasswordRecoveryDialog";
 import { StickyFooter } from "../components/StickyFooter";
 import { useTranslation } from "../hooks/useTranslation";
-import { PasswordRecoveryDialog } from "../components/modals/PasswordRecoveryDialog";
+import { useSnackbar } from "../hooks/useSnackbar";
 
 type Props = {
   children?: React.ReactNode;
@@ -18,12 +19,22 @@ type Props = {
  */
 export const SignIn = () => {
   const { t } = useTranslation();
+  const snackbar = useSnackbar({
+    message: t("passwordRecovery.emailSuccessfullySent"),
+    variant: "success",
+  });
+
   const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = React.useState(false);
 
-  const handlePRDOpen = () => {
+  const handleRecoveryDialogOpen = () => {
     setPasswordRecoverDialogOpen(true);
   };
-  const handlePRDClose = () => {
+  const handleRecoveryDialogClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "backdropClick") {
+      event.preventDefault();
+
+      return false;
+    }
     setPasswordRecoverDialogOpen(false);
   };
 
@@ -41,7 +52,7 @@ export const SignIn = () => {
 
           <Grid container>
             <Grid item xs>
-              <Link variant="body2" onClick={handlePRDOpen} sx={{ cursor: "pointer" }}>
+              <Link variant="body2" onClick={handleRecoveryDialogOpen} sx={{ cursor: "pointer" }}>
                 {t("loginPage.forgotPassword")}
               </Link>
             </Grid>
@@ -56,7 +67,12 @@ export const SignIn = () => {
           <Copyright />
         </StickyFooter>
       </PageContainer>
-      <PasswordRecoveryDialog handleClose={handlePRDClose} open={passwordRecoverDialogOpen} />
+      <PasswordRecoveryDialog
+        handleSubmitted={snackbar.open}
+        handleClose={handleRecoveryDialogClose}
+        open={passwordRecoverDialogOpen}
+      />
+      {snackbar.component}
     </Grid>
   );
 };

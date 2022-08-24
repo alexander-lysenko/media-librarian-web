@@ -5,7 +5,9 @@
         "profile": "Profile"
     },
     "common": {
-        "all": "All"
+        "all": "All",
+        "cancel": "Cancel",
+        "submit": "Submit"
     },
     "dataTable": {
         "rowsPerPage": "Rows per page:",
@@ -31,6 +33,11 @@
         "signInBtn": "Sign In",
         "subtitle": "Log into your account to access your collections.",
         "title": "Sign In"
+    },
+    "passwordRecovery": {
+        "emailSuccessfullySent": "We have sent an e-mail for you. Please check your inbox.",
+        "subtitle": "To confirm the ownership of your account please enter the e-mail address your account is registered to. We will send you recovery instructions to this address.",
+        "title": "Password Recovery Request"
     },
     "signupPage": {
         "email": "Email Address",

@@ -7,7 +7,8 @@ import {
   FormHelperText,
   InputAdornment,
   InputLabel,
-  MenuItem, PaletteMode,
+  MenuItem,
+  PaletteMode,
   Select,
   SelectChangeEvent,
   TextField,
@@ -105,27 +106,27 @@ export const SignupForm = () => {
         {...register("username")}
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint")}
-        errorMessage={errors.username?.message as unknown as string}
+        errorMessage={errors.username?.message as string}
       />
       <EmailTextField
         {...register("email")}
         // {...registerFieldWithDebounceValidation("email", 1000, trigger, register)}
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint")}
-        errorMessage={errors.email?.message as unknown as string}
+        errorMessage={errors.email?.message as string}
         loadingState={emailChecking}
       />
       <PasswordTextField
         {...register("password")}
         label={t("signupPage.password")}
         helperText={t("signupPage.passwordHint")}
-        errorMessage={errors.password?.message as unknown as string}
+        errorMessage={errors.password?.message as string}
       />
       <PasswordTextField
         {...register("passwordRepeat")}
         label={t("signupPage.passwordRepeat")}
         helperText={t("signupPage.passwordRepeatHint")}
-        errorMessage={errors.passwordRepeat?.message as unknown as string}
+        errorMessage={errors.passwordRepeat?.message as string}
       />
       <LanguageSelect
         {...register("language")}

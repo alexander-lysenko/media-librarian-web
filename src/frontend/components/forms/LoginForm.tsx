@@ -51,12 +51,12 @@ export const LoginForm = () => {
       <EmailTextField
         {...register("email")}
         label={t("loginPage.email")}
-        errorMessage={errors.email?.message as unknown as string}
+        errorMessage={errors.email?.message as string}
       />
       <PasswordTextField
         {...register("password")}
         label={t("loginPage.password")}
-        errorMessage={errors.password?.message as unknown as string}
+        errorMessage={errors.password?.message as string}
       />
       <FormControlLabel
         control={<Checkbox color="primary" {...register("rememberMe")} />}
