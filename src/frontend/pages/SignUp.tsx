@@ -8,10 +8,6 @@ import { SignupForm } from "../components/forms/SignupForm";
 import { StickyFooter } from "../components/StickyFooter";
 import { useTranslation } from "../hooks/useTranslation";
 
-type Props = {
-  children?: React.ReactNode;
-};
-
 /**
  * Component representing the SignUp (Register) page
  */
@@ -65,7 +61,11 @@ const BackgroundContainer = () => (
   />
 );
 
-const PageContainer = ({ children }: Props) => (
+type PageContainerProps = {
+  children?: React.ReactNode;
+};
+
+const PageContainer = ({ children }: PageContainerProps) => (
   <Grid item xs={12} sm={8} md={5} xl={4} container direction="column" component={Paper} elevation={6} square>
     {children}
   </Grid>

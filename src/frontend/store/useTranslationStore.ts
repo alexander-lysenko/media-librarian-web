@@ -45,7 +45,7 @@ export const useLanguageStore = create<LanguageState>(
     }),
     {
       name: "localePreferences", // unique name
-      getStorage: () => sessionStorage,
+      getStorage: () => localStorage,
     },
   ),
 );

@@ -1,41 +1,41 @@
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
 import React from "react";
 import { NavLink } from "react-router-dom";
 
 import { Copyright } from "../components/Copyright";
 import { LoginForm } from "../components/forms/LoginForm";
-import { PasswordRecoveryDialog } from "../components/modals/PasswordRecoveryDialog";
+import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
+import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
 import { StickyFooter } from "../components/StickyFooter";
-import { useTranslation } from "../hooks/useTranslation";
 import { useSnackbar } from "../hooks/useSnackbar";
-
-type Props = {
-  children?: React.ReactNode;
-};
+import { useTranslation } from "../hooks/useTranslation";
 
 /**
  * Component representing the SignIn (Login) page
  */
 export const SignIn = () => {
   const { t } = useTranslation();
-  const snackbar = useSnackbar({
-    message: t("passwordRecovery.emailSuccessfullySent"),
-    variant: "success",
-  });
+  const snackbar = useSnackbar({});
 
   const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = React.useState(false);
+  const [passwordResetDialogOpen, setPasswordResetDialogOpen] = React.useState(false);
+
+  const emailConfirmedSnackbar = () => {
+    snackbar.show("success", t("passwordRecovery.emailSent"));
+  };
+  const passwordResetSnackbar = () => {
+    snackbar.show("success", t("passwordReset.successfullyReset"));
+  };
 
   const handleRecoveryDialogOpen = () => {
     setPasswordRecoverDialogOpen(true);
   };
-  const handleRecoveryDialogClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === "backdropClick") {
-      event.preventDefault();
-
-      return false;
-    }
+  const handleRecoveryDialogClose = () => {
     setPasswordRecoverDialogOpen(false);
+  };
+  const handleResetDialogClose = () => {
+    setPasswordResetDialogOpen(false);
   };
 
   return (
@@ -44,7 +44,7 @@ export const SignIn = () => {
       <PageContainer>
         <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
           <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
-            <LockOutlinedIcon />
+            <LockOutlined />
           </Avatar>
           <Typography variant="h5">{t("loginPage.title")}</Typography>
           <Typography variant="body2">{t("loginPage.subtitle")}</Typography>
@@ -67,12 +67,17 @@ export const SignIn = () => {
           <Copyright />
         </StickyFooter>
       </PageContainer>
-      <PasswordRecoveryDialog
-        handleSubmitted={snackbar.open}
+      <PasswordRecoveryRequestDialog
+        handleSubmitted={emailConfirmedSnackbar}
         handleClose={handleRecoveryDialogClose}
         open={passwordRecoverDialogOpen}
       />
-      {snackbar.component}
+      <PasswordResetDialog
+        handleSubmitted={passwordResetSnackbar}
+        handleClose={handleResetDialogClose}
+        open={passwordResetDialogOpen}
+      />
+      {snackbar.render()}
     </Grid>
   );
 };
@@ -94,7 +99,11 @@ const BackgroundContainer = () => (
   />
 );
 
-const PageContainer = ({ children }: Props) => (
+type PageContainerProps = {
+  children?: React.ReactNode;
+};
+
+const PageContainer = ({ children }: PageContainerProps) => (
   <Grid item xs={12} sm={8} md={5} xl={4} container direction="column" component={Paper} elevation={6} square>
     {children}
   </Grid>

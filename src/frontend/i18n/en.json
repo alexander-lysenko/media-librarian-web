@@ -7,6 +7,7 @@
     "common": {
         "all": "All",
         "cancel": "Cancel",
+        "save": "Save",
         "submit": "Submit"
     },
     "dataTable": {
@@ -17,8 +18,8 @@
         "emailInvalid": "Please provide a valid e-mail address",
         "emailNotUnique": "This email address has already been taken",
         "emailRequired": "Email Address is required",
-        "passwordMinLength": "Password is usually longer (min {n} symbols)",
-        "passwordRepeatNotMatch": "Passwords do not match",
+        "passwordMinLength": "Password should be a bit longer (min {n} symbols)",
+        "passwordRepeatNotMatch": "Passwords are not matching",
         "passwordRepeatRequired": "You must confirm your password, that's a rule",
         "passwordRequired": "Sorry but password cannot be blank",
         "usernameMinLength": "Expected a full Personal Name (min {n} symbols)",
@@ -35,9 +36,17 @@
         "title": "Sign In"
     },
     "passwordRecovery": {
-        "emailSuccessfullySent": "We have sent an e-mail for you. Please check your inbox.",
+        "emailSent": "We have sent an e-mail for you. Please check your inbox.",
         "subtitle": "To confirm the ownership of your account please enter the e-mail address your account is registered to. We will send you recovery instructions to this address.",
         "title": "Password Recovery Request"
+    },
+    "passwordReset": {
+        "backToSignIn": "Back To Sign In",
+        "newPassword": "New password",
+        "newPasswordRepeat": "Repeat new password",
+        "successfullyReset": "Password has been reset. You can sign in using your new password.",
+        "subtitle": "Alright, now you can set a new password for your account.",
+        "title": "Password Reset"
     },
     "signupPage": {
         "email": "Email Address",

@@ -3,6 +3,7 @@ import { AlternateEmailOutlined, Send } from "@mui/icons-material";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -52,34 +53,43 @@ const makeValidationSchema = (t: LocalizedStringFn) =>
  * @param { open, handleClose }
  * @constructor
  */
-export const PasswordRecoveryDialog = ({ open, handleClose, handleSubmitted }: Props) => {
+export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitted }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [loading, setLoading] = React.useState(false);
 
   const schema = makeValidationSchema(t);
-  const { register, formState, handleSubmit, reset } = useForm({
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
-  const { errors, isSubmitSuccessful } = formState;
-
-  React.useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset({ email: "" });
-    }
-  }, [isSubmitSuccessful, reset]);
 
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
-    setTimeout(() => console.log(data), 2000);
-    // Submit request
-    handleCloseWithReset(event as React.SyntheticEvent);
-    handleSubmitted(event as React.SyntheticEvent);
+    console.log(data);
+    setLoading(true);
+
+    setTimeout(() => {
+      // simulate request
+      handleCloseWithReset(event as React.SyntheticEvent);
+      handleSubmitted(event as React.SyntheticEvent);
+    }, 2000);
   };
 
   const handleCloseWithReset = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "backdropClick") {
+      event.preventDefault();
+      return false;
+    }
+
     reset({ email: "" });
+    setLoading(false);
     handleClose(event, reason);
   };
 
@@ -111,7 +121,12 @@ export const PasswordRecoveryDialog = ({ open, handleClose, handleSubmitted }: P
           <Button variant="text" onClick={handleCloseWithReset}>
             {t("common.cancel")}
           </Button>
-          <Button type="submit" variant="contained" endIcon={<Send />}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading}
+            endIcon={loading ? <CircularProgress size={14} /> : <Send />}
+          >
             {t("common.submit")}
           </Button>
         </DialogActions>

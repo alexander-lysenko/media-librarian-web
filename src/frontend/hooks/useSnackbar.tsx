@@ -1,19 +1,21 @@
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, AlertColor, Snackbar } from "@mui/material";
 import React from "react";
 
-type Props = {
-  message: React.ReactNode;
-  variant?: "success" | "info" | "warning" | "error";
+type SnackbarOptions = {
   enableCloseButton?: boolean;
   autoHideDuration?: number;
 };
 
-export const useSnackbar = (props: Props) => {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = () => {
-    setOpen(true);
-  };
+/**
+ * React custom hook for customizable snackbar, a.k.a toast popup.
+ * Designed to be used within a component. TODO: Make hook called globally (inter-components)
+ *
+ * @param {SnackbarOptions} props
+ */
+export const useSnackbar = (props: SnackbarOptions) => {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [style, setStyle] = React.useState<AlertColor>("success");
+  const [message, setMessage] = React.useState<React.ReactNode>("");
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
@@ -24,7 +26,13 @@ export const useSnackbar = (props: Props) => {
     setOpen(false);
   };
 
-  const snackbar = (
+  const handleShow = (type: AlertColor, message: React.ReactNode) => {
+    setStyle(type);
+    setMessage(message);
+    setOpen(true);
+  };
+
+  const render = () => (
     <Snackbar
       open={open}
       autoHideDuration={props.autoHideDuration ?? 5000}
@@ -33,17 +41,17 @@ export const useSnackbar = (props: Props) => {
     >
       <Alert
         variant="filled"
-        severity={props.variant}
+        severity={style}
         sx={{ width: "100%" }}
         onClose={props.enableCloseButton ?? true ? handleClose : undefined}
-        children={props.message}
+        children={message}
       />
     </Snackbar>
   );
 
   return {
     close: handleClose,
-    open: handleClick,
-    component: snackbar,
+    show: handleShow,
+    render,
   };
 };

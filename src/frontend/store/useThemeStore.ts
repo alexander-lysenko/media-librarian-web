@@ -25,7 +25,7 @@ export const useThemeStore = create<ThemeState>(
       setColor: (color: ColorOptions) => set(() => ({ color })),
     }),
     {
-      name: "uiThemePreferences",
+      name: "uiThemePreferences", // unique name
       getStorage: () => localStorage,
     },
   ),
