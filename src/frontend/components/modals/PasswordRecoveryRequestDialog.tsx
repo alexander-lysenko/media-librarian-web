@@ -143,7 +143,7 @@ const EmailTextField = React.forwardRef((props: InputProps & TextFieldProps, ref
       fullWidth
       size="small"
       margin="normal"
-      id="email"
+      id="passwordRecovery-email"
       name="email"
       label={props.label}
       error={!!props.errorMessage}

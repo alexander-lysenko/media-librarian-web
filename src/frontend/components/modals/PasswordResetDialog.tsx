@@ -77,7 +77,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
       return false;
     }
 
-    reset({ newPassword: "", newPasswordRepeat: "" });
+    reset();
     setLoading(false);
     handleClose(event, reason);
   };
@@ -110,23 +110,8 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
         <DialogContent>
           <DialogContentText variant={"body2"} sx={{ mb: 1 }}>
             {t("passwordReset.subtitle")}
-          </DialogContentText>{" "}
-          <TextField
-            fullWidth
-            size="small"
-            margin="normal"
-            id="email"
-            name="email"
-            disabled
-            value={"lol@kek.gii"}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <AlternateEmailOutlined />
-                </InputAdornment>
-              ),
-            }}
-          />
+          </DialogContentText>
+          <EmailTextField value={"lol@kek.gii"} />
           <PasswordTextField
             {...register("newPassword")}
             label={t("passwordReset.newPassword")}
@@ -157,6 +142,28 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
   );
 };
 
+const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+  return (
+    <TextField
+      inputRef={ref}
+      size="small"
+      margin="normal"
+      fullWidth
+      disabled
+      id="passwordReset-email"
+      name="email"
+      value={props.value}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <AlternateEmailOutlined />
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+});
+
 const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
@@ -165,12 +172,12 @@ const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => 
       margin="normal"
       fullWidth
       type="password"
-      id={props.name}
+      id={"passwordReset-" + props.name}
       name={props.name}
       label={props.label}
       error={!!props.errorMessage}
       helperText={props.errorMessage || props.helperText}
-      autoComplete="current-password"
+      autoComplete="off"
       onChange={props.onChange}
       onBlur={props.onBlur}
       InputProps={{

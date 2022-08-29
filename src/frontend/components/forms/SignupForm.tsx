@@ -1,8 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AlternateEmailOutlined, BadgeOutlined, HourglassBottomOutlined, PasswordOutlined } from "@mui/icons-material";
+import {
+  AlternateEmailOutlined,
+  BadgeOutlined,
+  HourglassBottomOutlined,
+  LockReset,
+  PasswordOutlined,
+  PersonAddAltOutlined,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   FormHelperText,
   InputAdornment,
@@ -13,7 +21,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, useState } from "react";
+import React from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { object as yupShape, ref as yupRef, string } from "yup";
 
@@ -28,8 +36,8 @@ type InputProps = {
   label: string;
   helperText?: string;
   name: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: FocusEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
   value?: string;
   errorMessage: string | undefined;
   loadingState?: boolean;
@@ -76,27 +84,37 @@ const makeValidationSchema = (t: LocalizedStringFn, setEmailCheckingState: React
  * Sign Up Form functional component
  */
 export const SignupForm = () => {
-  const [emailChecking, setEmailChecking] = useState(false);
+  const [emailChecking, setEmailChecking] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
   const { t, getLanguage, setLanguage } = useTranslation();
   const schema = makeValidationSchema(t, setEmailChecking);
 
-  const { register, trigger, formState, handleSubmit } = useForm({
+  const { register, trigger, formState, handleSubmit, reset } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
   const { errors } = formState;
 
-  const onValidSubmit: SubmitHandler<FieldValues> = (data) => console.log(data);
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
+  const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
+    console.log(data);
+    setLoading(true);
 
-  const handleLanguageSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    setTimeout(() => {
+      // Submit request
+      setLoading(false);
+      reset();
+    }, 2000);
+  };
+
+  const handleLanguageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLanguage(event.target.value as Language);
   };
 
-  const handleThemeSelect = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleThemeSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     setThemeMode(event.target.value as PaletteMode);
   };
 
@@ -142,7 +160,14 @@ export const SignupForm = () => {
         label={t("signupPage.theme")}
         helperText={t("signupPage.themeHint")}
       />
-      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        disabled={loading}
+        endIcon={loading ? <CircularProgress size={14} /> : <PersonAddAltOutlined />}
+        sx={{ mt: 3, mb: 2 }}
+      >
         {t("signupPage.signUpBtn")}
       </Button>
     </Box>

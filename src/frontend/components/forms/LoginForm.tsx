@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AlternateEmailOutlined, PasswordOutlined } from "@mui/icons-material";
-import { Box, Button, Checkbox, FormControlLabel, InputAdornment, TextField } from "@mui/material";
+import { AlternateEmailOutlined, LoginOutlined, PasswordOutlined } from "@mui/icons-material";
+import { Box, Button, Checkbox, CircularProgress, FormControlLabel, InputAdornment, TextField } from "@mui/material";
 import React, { ChangeEvent, FocusEvent } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { boolean, object as yupShape, string } from "yup";
@@ -35,15 +35,27 @@ const makeValidationSchema = (t: LocalizedStringFn) =>
  */
 export const LoginForm = () => {
   const { t } = useTranslation();
+
+  const [loading, setLoading] = React.useState(false);
+
   const schema = makeValidationSchema(t);
-  const { register, formState, handleSubmit } = useForm({
+  const { register, formState, handleSubmit, reset } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
   const { errors } = formState;
 
-  const onValidSubmit: SubmitHandler<FieldValues> = (data) => console.log(data);
+  const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
+    console.log(data);
+    setLoading(true);
+
+    setTimeout(() => {
+      // Submit request
+      setLoading(false);
+      reset();
+    }, 2000);
+  };
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
 
   return (
@@ -62,7 +74,14 @@ export const LoginForm = () => {
         control={<Checkbox color="primary" {...register("rememberMe")} />}
         label={t("loginPage.rememberMe")}
       />
-      <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        disabled={loading}
+        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlined />}
+        sx={{ mt: 3, mb: 2 }}
+      >
         {t("loginPage.signInBtn")}
       </Button>
     </Box>
