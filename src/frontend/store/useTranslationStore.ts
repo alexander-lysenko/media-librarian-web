@@ -1,5 +1,5 @@
-import create, { StateCreator } from "zustand";
-import { persist, PersistOptions } from "zustand/middleware";
+import create from "zustand";
+import { persist } from "zustand/middleware";
 
 import en from "../i18n/en.json";
 import ru from "../i18n/ru.json";
@@ -31,13 +31,8 @@ export const useTranslationStore = create<TranslationState>((set, get) => ({
   getLanguages: () => get().languages,
 }));
 
-type StorePersistFix = (
-  config: StateCreator<LanguageState>,
-  options: PersistOptions<LanguageState>,
-) => StateCreator<LanguageState>;
-
-export const useLanguageStore = create<LanguageState>(
-  (persist as unknown as StorePersistFix)(
+export const useLanguageStore = create<LanguageState>()(
+  persist(
     (set, get) => ({
       language: "en",
       setLanguage: (language: Language) => set(() => ({ language })),

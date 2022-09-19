@@ -1,6 +1,6 @@
 import { PaletteMode } from "@mui/material";
-import create, { StateCreator } from "zustand";
-import { persist, PersistOptions } from "zustand/middleware";
+import create from "zustand";
+import { persist } from "zustand/middleware";
 
 type ColorOptions = string;
 
@@ -11,13 +11,8 @@ export interface ThemeState {
   setColor: (color: ColorOptions) => void;
 }
 
-type StorePersistFix = (
-  config: StateCreator<ThemeState>,
-  options: PersistOptions<ThemeState>,
-) => StateCreator<ThemeState>;
-
-export const useThemeStore = create<ThemeState>(
-  (persist as unknown as StorePersistFix)(
+export const useThemeStore = create<ThemeState>()(
+  persist(
     (set, get) => ({
       mode: get()?.mode || "dark",
       color: get()?.color || "teal",

@@ -1,7 +1,10 @@
+/** @deprecated **/
+
 import { ChangeEvent, FocusEvent, FormEvent, useMemo } from "react";
 
 import { useFormValidationStore, ValuesList } from "../store/useFormValidationStore";
 
+/** @deprecated **/
 export const useFormValidation = () => {
   const {
     values,

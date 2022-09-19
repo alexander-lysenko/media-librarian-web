@@ -1,9 +1,9 @@
-import { userSignupUrl } from "../core/links";
+import { userLoginUrl } from "../core/links";
 import { baseApiRequest, BaseApiRequestConfig, BaseApiRequestEvents } from "../core/request/baseApiRequest";
 
 export const signupRequest = () => {
   const config: BaseApiRequestConfig = {
-    url: userSignupUrl,
+    url: userLoginUrl,
     method: "POST",
   };
 
