@@ -41,13 +41,26 @@ class ProfileController extends ApiV1Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function profile(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         return Response::json([
             'user' => $request->user(),
         ]);
     }
 
+    /**
+     *
+     */
+    public function update()
+    {
+    }
+
+    /**
+     *
+     */
+    public function changePassword()
+    {
+    }
 
     /**
      * @OA\Post(

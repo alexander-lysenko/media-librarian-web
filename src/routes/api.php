@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\V1\CollectionController;
+use App\Http\Controllers\V1\CollectionEntryController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,36 +17,53 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// User authentication, signup, email verification, reset password
-Route::middleware(['guest'])->prefix('v1/user/')->name('v1.user.')->group(function () {
-    Route::post('/signup', [UserController::class, 'signup'])->name('signup');
-    Route::post('/login', [UserController::class, 'login'])->name('login');
+// User authentication, guest routes (unauthenticated user)
+Route::middleware(['guest'])
+    ->prefix('v1/user/')->name('v1.user.')
+    ->controller(UserController::class)
+    ->group(function () {
+        Route::post('/signup', 'signup')->name('signup');
+        Route::post('/login', 'login')->name('login');
 
-    Route::post('/password-reset', [UserController::class, 'requestPasswordReset']);
-    Route::put('/password-reset', [UserController::class, 'performPasswordReset']);
+        Route::post('/password-reset', 'requestPasswordReset')->name('requestPasswordReset');
+        Route::put('/password-reset', 'performPasswordReset')->name('performPasswordReset');
 
-    Route::post('/verify-email', [UserController::class, 'requestEmailVerify'])->name('requestEmailVerify');
-    Route::get('/verify-email', [UserController::class, 'performEmailVerify'])->name('emailVerify');
-});
+        Route::post('/verify-email', 'requestEmailVerify')->name('requestEmailVerify');
+        Route::get('/verify-email', 'performEmailVerify')->name('emailVerify');
+    });
 
-// User authorization, logout
-Route::middleware(['auth.bearer:sanctum'])->prefix('v1/profile/')->name('v1.profile.')->group(function () {
-    Route::get('/', [ProfileController::class, 'profile'])->name('profile');
-    // Route::put('/', [])->name('');
-    // Route::get('/change-email', [])->name('');
-    // Route::get('/change-password', [])->name('');
-    Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-});
+// Profile routes (authenticated user)
+Route::middleware(['auth.bearer:sanctum'])
+    ->prefix('v1/profile/')->name('v1.profile.')
+    ->controller(ProfileController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('profile');
+        // Route::put('/', [])->name('');
+        // Route::get('/change-email', [])->name('');
+        // Route::get('/change-password', [])->name('');
+        Route::post('/logout', 'logout')->name('logout');
+    });
 
-// Application routes
-Route::middleware(['auth.bearer:sanctum'])->prefix('v1/')->name('v1')->group(function () {
-    Route::get('/libraries', fn() => "View Libraries");
-    Route::post('/libraries/create', fn() => "Create a Library");
-    Route::delete('/libraries/{id}', fn() => "Delete a Library");
-    Route::put('/library/{id}/clear', fn() => "Clear the selected Library");
-    Route::get('/library/{id}', fn() => "View entries in the selected Library");
-    Route::post('/library/{id}/add', fn() => "Add an entry to the selected Library");
-    Route::put('/library/{id}/entry/{eid}', fn() => "Update an entry in the selected Library");
-    Route::delete('/library/{id}/entry/{eid}', fn() => "Remove/Delete an entry from the selected Library");
-    Route::get('/library/{id}/entry/random', fn() => "Get a random entry from the selected Library");
-});
+// Collection routes (CRUD)
+Route::middleware(['auth.bearer:sanctum'])
+    ->prefix('v1/collection/')->name('v1.collection.')
+    ->controller(CollectionController::class)
+    ->group(function () {
+        Route::get('/', 'index');
+        Route::post('/create', 'create');
+        Route::get('/{id}', 'view');
+        Route::delete('/{id}', 'delete');
+        Route::post('/{id}/clear', 'clear');
+    });
+
+// Collection entry routes (CRUD)
+Route::middleware(['auth.bearer:sanctum'])
+    ->prefix('v1/collection/{id}/entry/')->name('v1.collectionEntry.')
+    ->controller(CollectionEntryController::class)
+    ->group(function () {
+        Route::post('/add', 'create');
+        Route::get('/{entry}', 'view');
+        Route::put('/{entry}', 'update');
+        Route::delete('/{entry}', 'delete');
+        Route::get('/random', 'random');
+    });
