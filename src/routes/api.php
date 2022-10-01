@@ -37,10 +37,10 @@ Route::middleware(['auth.bearer:sanctum'])
     ->prefix('v1/profile/')->name('v1.profile.')
     ->controller(ProfileController::class)
     ->group(function () {
-        Route::get('/', 'index')->name('profile');
-        // Route::put('/', [])->name('');
-        // Route::get('/change-email', [])->name('');
-        // Route::get('/change-password', [])->name('');
+        Route::get('/', 'index')->name('index');
+        Route::put('/update', 'update')->name('update');
+        Route::put('/change-password', 'changePassword')->name('changePassword');
+
         Route::post('/logout', 'logout')->name('logout');
     });
 
@@ -51,8 +51,10 @@ Route::middleware(['auth.bearer:sanctum'])
     ->group(function () {
         Route::get('/', 'index');
         Route::post('/create', 'create');
+
         Route::get('/{id}', 'view');
         Route::delete('/{id}', 'delete');
+
         Route::post('/{id}/clear', 'clear');
     });
 
@@ -62,8 +64,10 @@ Route::middleware(['auth.bearer:sanctum'])
     ->controller(CollectionEntryController::class)
     ->group(function () {
         Route::post('/add', 'create');
+
         Route::get('/{entry}', 'view');
         Route::put('/{entry}', 'update');
         Route::delete('/{entry}', 'delete');
+
         Route::get('/random', 'random');
     });

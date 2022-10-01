@@ -89,8 +89,8 @@ class UserController extends ApiV1Controller
     /**
      * @OA\Post(
      *     path="/api/v1/user/login",
-     *     summary="Login",
-     *     description="Sign In / Authenticate a user",
+     *     summary="Login (obtain an API token)",
+     *     description="Obtain an API (Bearer) token to execute the rest of requests as an authenticated user",
      *     tags={"guest"},
      *
      *     @OA\RequestBody(required=true,
@@ -205,10 +205,7 @@ class UserController extends ApiV1Controller
         }
 
         if (true /*match the verification key with email*/) {
-            $user->forceFill([
-                'status' => UserStatusEnum::STATUS_ACTIVE,
-                'email_verified_at' => $user->freshTimestamp(),
-            ])->save();
+            $user->markEmailAsVerified();
             event(new Verified($user));
         }
 
@@ -259,9 +256,11 @@ class UserController extends ApiV1Controller
      */
     public function requestEmailVerify(Request $request): JsonResponse
     {
-        $validated = $request->validate([ // rules
+        $validated = $request->validate([
+            // rules
             'email' => ['required', 'email', 'exists:users,email'],
-        ], [ // messages
+        ], [
+            // messages
             'email.exists' => 'Account with this email was not found',
         ]);
 

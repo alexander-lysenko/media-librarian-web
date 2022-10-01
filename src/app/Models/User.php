@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\MustVerifyEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailInterface;
+use App\Utils\Enum\UserStatusEnum;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as AuthUser;
@@ -21,9 +22,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static create(array $attributes = [])
  * @method Builder update(array $values)
  */
-class User extends AuthUser implements MustVerifyEmailInterface
+class User extends AuthUser implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, MustVerifyEmail;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -57,4 +58,50 @@ class User extends AuthUser implements MustVerifyEmailInterface
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    /**
+     * Determine if the user has verified their email address.
+     *
+     * @return bool
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the given user's email as verified.
+     *
+     * @return bool
+     */
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'status' => UserStatusEnum::STATUS_ACTIVE,
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        // $this->notify(new VerifyEmail);
+
+        // TODO: Implement sendEmailVerificationNotification() method.
+        // https://stackoverflow.com/questions/52416804/how-to-customize-the-email-verification-email-from-laravel-5-7
+    }
+
+    /**
+     * Get the email address that should be used for verification.
+     *
+     * @return string
+     */
+    public function getEmailForVerification(): string
+    {
+        return $this->email;
+    }
 }

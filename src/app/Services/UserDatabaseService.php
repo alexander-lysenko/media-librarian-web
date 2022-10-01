@@ -20,14 +20,19 @@ class UserDatabaseService
     private int $userId;
 
     /**
+     * Reusable connection to the user's database
+     */
+    private ?Connection $connection;
+
+    /**
      * UserDatabaseService constructor.
      */
     public function __construct()
     {
     }
 
-
     /**
+     * Sets a user's ID. It is required to make a connection to the database of a specified user by its ID
      * @param int $userId
      * @return UserDatabaseService
      */
@@ -39,10 +44,10 @@ class UserDatabaseService
 
     /**
      * Generate a Connection instance to the database storage for a specific user
-     * @return Connection
+     * @return void
      * @throws ConfigurationException
      */
-    public function getDbConnection(): Connection
+    public function setDbConnection(): void
     {
         if (!$this->userId) {
             throw new ConfigurationException('Required property "userId" is missing');
@@ -56,6 +61,20 @@ class UserDatabaseService
         $connection->setSchemaGrammar(new SQLiteSchemaGrammar());
         $connection->setQueryGrammar(new SQLiteQueryGrammar());
 
-        return $connection;
+        $this->$connection = $connection;
+    }
+
+    /**
+     * Get the user's database connection or create it when it is not generated before
+     * @return Connection
+     * @throws ConfigurationException
+     */
+    public function getDbConnection(): Connection
+    {
+        if (!$this->connection) {
+            $this->setDbConnection();
+        }
+
+        return $this->connection;
     }
 }
