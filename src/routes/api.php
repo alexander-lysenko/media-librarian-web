@@ -71,3 +71,5 @@ Route::middleware(['auth.bearer:sanctum'])
 
         Route::get('/random', 'random');
     });
+
+Route::middleware(['auth.bearer:sanctum'])->get("v1/test", [\App\Http\Controllers\V1\TestController::class, 'test']);

@@ -4,8 +4,11 @@ namespace App\Services;
 
 use App\Exceptions\ConfigurationException;
 use Illuminate\Database\Connection;
-use Illuminate\Database\Schema\Grammars\SQLiteGrammar as SQLiteSchemaGrammar;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\SQLiteGrammar as SQLiteQueryGrammar;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\Grammars\SQLiteGrammar as SQLiteSchemaGrammar;
 use PDO;
 
 /**
@@ -22,7 +25,7 @@ class UserDatabaseService
     /**
      * Reusable connection to the user's database
      */
-    private ?Connection $connection;
+    private ?Connection $connection = null;
 
     /**
      * UserDatabaseService constructor.
@@ -43,38 +46,76 @@ class UserDatabaseService
     }
 
     /**
+     * Get the user's database connection or create it when it is not generated before
+     * @return Connection
+     */
+    public function getDbConnection(): Connection
+    {
+        if ($this->connection === null) {
+            try {
+                $this->setDbConnection();
+            } catch (ConfigurationException) {
+                // Todo: handle (write a log)
+            }
+        }
+
+        return $this->connection;
+    }
+
+    /**
      * Generate a Connection instance to the database storage for a specific user
      * @return void
      * @throws ConfigurationException
      */
-    public function setDbConnection(): void
+    private function setDbConnection(): void
     {
         if (!$this->userId) {
             throw new ConfigurationException('Required property "userId" is missing');
         }
 
-        $database_path = storage_path("app/databases/collections-{$this->userId}.sqlite");
-        $dsn = "sqlite:{$database_path}";
+        $database_path = storage_path("app/databases/collections-$this->userId.sqlite");
+        $dsn = "sqlite:$database_path";
 
         $pdo = new PDO($dsn);
         $connection = new Connection($pdo);
         $connection->setSchemaGrammar(new SQLiteSchemaGrammar());
         $connection->setQueryGrammar(new SQLiteQueryGrammar());
 
-        $this->$connection = $connection;
+        $this->connection = $connection;
+
+        // $this->testConnection(); // Doesn't work
     }
 
     /**
-     * Get the user's database connection or create it when it is not generated before
-     * @return Connection
-     * @throws ConfigurationException
+     * Creates and executes a test query under the established connection.
+     * Actually checks the presence of the table required for storing collection structure
+     *  and creates the table if it doesn't exist
+     * @return void
      */
-    public function getDbConnection(): Connection
+    private function testConnection(): void
     {
-        if (!$this->connection) {
-            $this->setDbConnection();
+        $tableName = 'sqlite_collection'; // object name reserved for internal use
+        $connection = $this->connection;
+        try {
+            $connection->query()->select('id')->from($tableName)->first();
+        } catch (QueryException) {
+            $schema = $connection->getSchemaBuilder();
+            if (!$schema->hasTable($tableName)) {
+                $schema->create($tableName, function (Blueprint $table) {
+                    $table->id();
+                    $table->string('tbl_name');
+                    $table->jsonb('schema');
+                });
+            }
         }
+    }
 
-        return $this->connection;
+    /**
+     * Creates a query builder from an existing connection (shorthand for $connection->query())
+     * @return Builder
+     */
+    public function getQuery(): Builder
+    {
+        return $this->connection->query();
     }
 }
