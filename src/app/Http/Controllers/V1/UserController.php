@@ -43,14 +43,14 @@ class UserController extends ApiV1Controller
      *     @OA\Response(response="201",
      *         description="Created",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string",
-     *                 property="message",
+     *             @OA\Property(property="message",
+     *                 type="string",
      *                 example="Your account has been created. You have to verify your e-mail to activate the account"
      *             ),
      *             @OA\Property(type="object", property="user",
-     *                 @OA\Property(type="integer", property="id", example=1),
-     *                 @OA\Property(type="string", property="name", example="John Doe"),
-     *                 @OA\Property(type="string", property="email", example="john.doe@example.com"),
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="John Doe"),
+     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
      *             ),
      *         ),
      *     ),
@@ -58,8 +58,8 @@ class UserController extends ApiV1Controller
      *     @OA\Response(response="422",
      *         description="Unprocessable Entity",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="object", property="errors",
-     *                 @OA\Property(type="array", property="email",
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="email", type="array",
      *                     @OA\Items(type="string", example="Email is required"),
      *                 ),
      *             ),
@@ -106,15 +106,15 @@ class UserController extends ApiV1Controller
      *     @OA\Response(response="302",
      *         description="Moved Temporarily",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="redirectTo", example="/app"),
-     *             @OA\Property(type="string", property="message", example="Successfully logged in"),
-     *             @OA\Property(type="string", property="token", example="token"),
+     *             @OA\Property(property="redirectTo", type="string", example="/app"),
+     *             @OA\Property(property="message", type="string", example="Successfully logged in"),
+     *             @OA\Property(property="token", type="string", example="token"),
      *         ),
      *     ),
      *
      *     @OA\Response(response="default", description="Unauthorized",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Incorrect email and/or password")
+     *             @OA\Property(property="message", type="string", example="Incorrect email and/or password")
      *         ),
      *     ),
      * )
@@ -161,8 +161,8 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="200", description="Success",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string",
-     *                 property="message",
+     *             @OA\Property(property="message",
+     *                 type="string",
      *                 example="Email has been verified. The user's account is active now"
      *             ),
      *         ),
@@ -170,8 +170,8 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="410", description="Gone",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string",
-     *                 property="message",
+     *             @OA\Property(property="message",
+     *                 type="string",
      *                 example="The user's email is already verified or the verification key is expired"
      *             ),
      *         ),
@@ -179,10 +179,9 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="422", description="Unprocessable Entity",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Account with this email was not found"),
-     *             @OA\Property(type="object",
-     *                 property="errors",
-     *                 @OA\Property(type="array", property="email",
+     *             @OA\Property(property="message", type="string", example="Account with this email was not found"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="email", type="array",
      *                     @OA\Items(type="string", example="Account with this email was not found")
      *                 ),
      *             ),
@@ -231,8 +230,8 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="200", description="Success",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string",
-     *                 property="message",
+     *             @OA\Property(property="message",
+     *                 type="string",
      *                 example="Email has been verified. The user's account is active now"
      *             ),
      *         ),
@@ -240,10 +239,9 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="422", description="Unprocessable Entity",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Account with this email was not found"),
-     *             @OA\Property(type="object",
-     *                 property="errors",
-     *                 @OA\Property(type="array", property="email",
+     *             @OA\Property(property="message", type="string", example="Account with this email was not found"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="email", type="array",
      *                     @OA\Items(type="string", example="Account with this email was not found")
      *                 ),
      *             ),
@@ -289,7 +287,7 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="200", description="Work in Progress",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Work in Progress")
+     *             @OA\Property(property="message", type="string", example="Work in Progress")
      *         ),
      *     ),
      * )
@@ -314,7 +312,7 @@ class UserController extends ApiV1Controller
      *
      *     @OA\Response(response="200", description="Work in Progress",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Work in Progress")
+     *             @OA\Property(property="message", type="string", example="Work in Progress")
      *         ),
      *     ),
      * )

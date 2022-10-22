@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\ConfigurationException;
+use App\Models\SqliteCollectionMeta;
 use App\Utils\Enum\InputDataTypeEnum;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder;
@@ -13,7 +14,6 @@ use Illuminate\Database\Schema\ColumnDefinition;
 use Illuminate\Database\Schema\Grammars\SQLiteGrammar as SQLiteSchemaGrammar;
 use Illuminate\Support\Facades\Auth;
 use PDO;
-use Psy\Util\Json;
 
 /**
  * User Database Service
@@ -127,7 +127,13 @@ class UserDatabaseService
         return $this->connection->query();
     }
 
-    public function insertMetadata(string $tableName, mixed $meta): bool
+    /**
+     * Inserts an entry into collection metadata table and returns the primary key of the entry
+     * @param string $tableName
+     * @param mixed $meta
+     * @return int
+     */
+    public function insertMetadataReturningId(string $tableName, mixed $meta): int
     {
         $schema = $this->connection->query()
             ->select('sql')
@@ -137,11 +143,30 @@ class UserDatabaseService
             ->pluck('sql')
             ->first();
 
-        return $this->connection->table($this->collectionMetaTable)->insert([
+        $model = new SqliteCollectionMeta([
             'tbl_name' => $tableName,
             'schema' => $schema,
-            'meta' => Json::encode($meta),
+            'meta' => json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
         ]);
+        $model->setDatabaseService($this)->save();
+
+        return $model->id;
+    }
+
+    /**
+     * Selects the full row(s) of metadata for one or all collection(s).
+     * If $tableName not specified, the result contains metadata for all collections.
+     * @param string|null $tableName
+     * @return SqliteCollectionMeta[]
+     */
+    public function getMetadata(?string $tableName = null): array
+    {
+        $metadataQuery = (new SqliteCollectionMeta)->setDatabaseService($this)->newQuery();
+        if (!empty($tableName)) {
+            $metadataQuery->where('tbl_name', '=', $tableName);
+        }
+
+        return $metadataQuery->get()->all();
     }
 
     /**

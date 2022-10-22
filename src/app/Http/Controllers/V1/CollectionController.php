@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Requests\V1\CreateCollectionRequest;
 use App\Services\UserDatabaseService;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use OpenApi\Annotations as OA;
@@ -16,10 +17,60 @@ class CollectionController extends ApiV1Controller
 {
 
     /**
+     * @OA\Get(
+     *     path="/api/v1/collection",
+     *     summary="Get All Collections",
+     *     description="The response contains the list of ID and name of all collections already created
+    and the columns that included in each collection.",
+     *     tags={"collection"},
+     *     security={{"BearerAuth": {}}},
      *
+     *     @OA\Response(response="200", description="OK",
+     *         @OA\JsonContent(type="object",
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Movies"),
+     *                     @OA\Property(property="fields",
+     *                         type="object",
+     *                         example={
+     *                             "Movie Title": "line",
+     *                             "Origin Title": "line",
+     *                             "Release Date": "date",
+     *                             "Description": "text",
+     *                             "IMDB URL": "url",
+     *                             "IMDB Rating": "rating_10stars",
+     *                             "My Rating": "rating_5stars",
+     *                             "Watched": "checkmark",
+     *                             "Watched At": "datetime",
+     *                             "Chance to Advice": "priority",
+     *                         },
+     *                     ),
+     *                 ),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
+     * )
+     *
+     * @param Request $request
+     * @param UserDatabaseService $databaseService
+     * @return JsonResource
      */
-    public function index()
+    public function index(Request $request, UserDatabaseService $databaseService): JsonResource
     {
+        $databaseService->setUserId($request->user()->id);
+        $metadataRows = $databaseService->getMetadata();
+        $response = array_map(function ($row) {
+            $item = [];
+
+            $item['id'] = $row->id;
+            $item['name'] = $row->tbl_name;
+            $item['fields'] = json_decode($row->meta, true);
+            return $item;
+        }, $metadataRows);
+
+        return new JsonResource($response);
     }
 
     /**
@@ -74,8 +125,8 @@ class CollectionController extends ApiV1Controller
      *
      *     @OA\Response(response="200", description="OK",
      *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="object",
-     *                 property="data",
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="title", type="string", example="Movies"),
      *                 @OA\Property(property="fields",
      *                     type="object",
@@ -119,9 +170,10 @@ class CollectionController extends ApiV1Controller
                 $databaseService->createTableColumnByType($table, $name, $type);
             }
         });
-        $databaseService->insertMetadata($title, $metadata);
+        $collectionId = $databaseService->insertMetadataReturningId($title, $metadata);
 
         return new JsonResource([
+            'id' => $collectionId,
             'title' => $title,
             'fields' => $metadata,
         ]);
