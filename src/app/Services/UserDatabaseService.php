@@ -13,6 +13,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
 use Illuminate\Database\Schema\Grammars\SQLiteGrammar as SQLiteSchemaGrammar;
 use Illuminate\Support\Facades\Auth;
+use JsonException;
 use PDO;
 
 /**
@@ -132,6 +133,7 @@ class UserDatabaseService
      * @param string $tableName
      * @param mixed $meta
      * @return int
+     * @throws JsonException
      */
     public function insertMetadataReturningId(string $tableName, mixed $meta): int
     {
@@ -146,7 +148,7 @@ class UserDatabaseService
         $model = new SqliteCollectionMeta([
             'tbl_name' => $tableName,
             'schema' => $schema,
-            'meta' => json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            'meta' => json_encode($meta, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
         ]);
         $model->setDatabaseService($this)->save();
 

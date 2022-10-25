@@ -63,6 +63,7 @@ Route::middleware(['auth.bearer:sanctum'])
     ->prefix('v1/collection/{id}/entry/')->name('v1.collectionEntry.')
     ->controller(CollectionEntryController::class)
     ->group(function () {
+        Route::get('/', 'index');
         Route::post('/add', 'create');
 
         Route::get('/{entry}', 'view');
