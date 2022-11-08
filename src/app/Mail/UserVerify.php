@@ -36,7 +36,7 @@ class UserVerify extends Mailable
         return $this
             ->view('emails.user-verify')
             ->with([
-                'username' => $this->user->name,
+                // 'username' => $this->user->name,
             ]);
     }
 }
