@@ -31,12 +31,21 @@ class SqliteCollectionMeta extends Model
     protected $table = 'sqlite_collection_meta';
 
     /** @inheritdoc */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /** @inheritdoc */
     protected $connection = null;
 
     private UserDatabaseService $dbService;
+
+    /**
+     * @inheritdoc
+     * @return null
+     */
+    public function getUpdatedAtColumn()
+    {
+        return null;
+    }
 
     /**
      * Get an instance of UserDatabaseService from te app's bootstrap to create a database connection on-the-fly.

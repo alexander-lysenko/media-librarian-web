@@ -5,11 +5,13 @@ namespace App\Http\Controllers\V1;
 use App\Http\Requests\V1\CreateCollectionRequest;
 use App\Services\UserDatabaseService;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
-use JsonException;
 use OpenApi\Annotations as OA;
+use SQLiteException;
+use Throwable;
 
 /**
  * Collections controller - manage list of collections, CRUD operations for the collections
@@ -18,11 +20,11 @@ class CollectionController extends ApiV1Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/v1/collection",
+     *     path="/api/v1/collections",
      *     summary="Get All Collections",
      *     description="The response contains the list of ID and name of all collections already created
     and the columns that included in each collection.",
-     *     tags={"collection"},
+     *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
      *
      *     @OA\Response(response="200", description="OK",
@@ -55,10 +57,9 @@ class CollectionController extends ApiV1Controller
      *
      * @param Request $request
      * @param UserDatabaseService $databaseService
-     * @return JsonResource
-     * @throws JsonException
+     * @return JsonResponse
      */
-    public function index(Request $request, UserDatabaseService $databaseService): JsonResource
+    public function index(Request $request, UserDatabaseService $databaseService): JsonResponse
     {
         $databaseService->setUserId($request->user()->id);
         $metadataRows = $databaseService->getMetadata();
@@ -67,29 +68,34 @@ class CollectionController extends ApiV1Controller
 
             $item['id'] = $row->id;
             $item['name'] = $row->tbl_name;
-            $item['fields'] = json_decode($row->meta, true, 512, JSON_THROW_ON_ERROR);
+            $item['fields'] = json_decode($row->meta, true, 512, JSON_OBJECT_AS_ARRAY);
 
             return $item;
         }, $metadataRows);
 
-        return new JsonResource($response);
+        $resource = new JsonResource($response);
+
+        return $resource->response();
     }
 
     /**
      * @OA\Post(
-     *     path="/api/v1/collection/create",
+     *     path="/api/v1/collections",
      *     summary="Create a New Collection",
      *     description="The structure of the new collection is created from the parameters passed in request body.",
-     *     tags={"collection"},
+     *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
      *
      *     @OA\RequestBody(required=true,
      *         @OA\MediaType(mediaType="application/json",
      *             @OA\Schema(type="object",
      *                 @OA\Property(property="title", type="string", example="Movies"),
-     *                 @OA\Property(property="fields",
-     *                     type="array",
+     *                 @OA\Property(property="fields", type="array",
      *                     description="See the schema to view the available types to be passed",
+     *                     @OA\Items(
+     *                         @OA\Property(property="name", type="string", example="Movie Title"),
+     *                         @OA\Property(property="type", ref="#/components/schemas/DataTypes", example="line"),
+     *                     ),
      *                     example={
      *                         {"name":"Movie Title", "type":"line"},
      *                         {"name":"Origin Title", "type":"line"},
@@ -102,30 +108,12 @@ class CollectionController extends ApiV1Controller
      *                         {"name":"Watched At", "type":"datetime"},
      *                         {"name":"Chance to Advice", "type":"priority"},
      *                     },
-     *                     @OA\Items(
-     *                         @OA\Property(property="name", type="string", example="Movie Title"),
-     *                         @OA\Property(property="type",
-     *                             type="string",
-     *                             example="line",
-     *                             enum={
-     *                                 "line",
-     *                                 "text",
-     *                                 "date",
-     *                                 "datetime",
-     *                                 "url",
-     *                                 "checkmark",
-     *                                 "rating_5stars",
-     *                                 "rating_10stars",
-     *                                 "priority"
-     *                             },
-     *                         ),
-     *                     ),
      *                 ),
      *             ),
      *         ),
      *     ),
      *
-     *     @OA\Response(response="200", description="OK",
+     *     @OA\Response(response="201", description="Created",
      *         @OA\JsonContent(type="object",
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
@@ -153,10 +141,10 @@ class CollectionController extends ApiV1Controller
      *
      * @param CreateCollectionRequest $request
      * @param UserDatabaseService $databaseService
-     * @return JsonResource
-     * @throws JsonException
+     * @return JsonResponse
+     * @throws Throwable
      */
-    public function create(CreateCollectionRequest $request, UserDatabaseService $databaseService): JsonResource
+    public function create(CreateCollectionRequest $request, UserDatabaseService $databaseService): JsonResponse
     {
         $databaseService->setUserId($request->user()->id);
         $db = $databaseService->getDbConnection();
@@ -164,7 +152,7 @@ class CollectionController extends ApiV1Controller
         $title = $request->input('title');
         $metadata = Arr::pluck($request->input('fields'), 'type', 'name');
 
-        $db->getSchemaBuilder()->create($title, function (Blueprint $table) use ($metadata, $databaseService) {
+        $createTableSchema = function (Blueprint $table) use ($metadata, $databaseService) {
             foreach ($metadata as $name => $type) {
                 if ($name === array_key_first($metadata)) {
                     $table->lineString($name)->unique();
@@ -172,23 +160,36 @@ class CollectionController extends ApiV1Controller
                 }
                 $databaseService->createTableColumnByType($table, $name, $type);
             }
-        });
-        $collectionId = $databaseService->insertMetadataReturningId($title, $metadata);
+        };
 
-        return new JsonResource([
+        try {
+            $db->beginTransaction();
+            $db->getSchemaBuilder()->create($title, $createTableSchema);
+            $collectionId = $databaseService->insertMetadataReturningId($title, $metadata);
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw new SQLiteException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+
+        $resource = new JsonResource([
             'id' => $collectionId,
             'title' => $title,
             'fields' => $metadata,
         ]);
+
+        return $resource->response()->setStatusCode(201);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/v1/collection/{id}/view",
+     *     path="/api/v1/collections/{id}",
      *     summary="View the Metadata of a Collection",
-     *     description="",
-     *     tags={"collection"},
+     *     description="View the structure of the already existing collection.",
+     *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
+     *
+     *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
      *
      *     @OA\Response(response="200", description="OK",
      *         @OA\JsonContent(type="object",
@@ -197,23 +198,31 @@ class CollectionController extends ApiV1Controller
      * )
      *
      * @param int $id
+     * @param Request $request
      * @param UserDatabaseService $databaseService
-     * @return JsonResource
+     * @return JsonResponse
      */
-    public function view(int $id, UserDatabaseService $databaseService): JsonResource
+    public function view(int $id, Request $request, UserDatabaseService $databaseService): JsonResponse
     {
-        return new JsonResource([
+        $databaseService->setUserId($request->user()->id);
+        $db = $databaseService->getDbConnection();
+
+        $resource = new JsonResource([
             'id' => $id,
         ]);
+
+        return $resource->response();
     }
 
     /**
      * @OA\Delete(
-     *     path="/api/v1/collection/{id}/delete",
+     *     path="/api/v1/collections/{id}",
      *     summary="Delete a Collection (WIP)",
      *     description="Remove the specified collection along with all items included. The operation cannot be undone.",
-     *     tags={"collection"},
+     *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
+     *
+     *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
      *
      *     @OA\Response(response="200", description="OK",
      *         @OA\JsonContent(type="object",
@@ -233,13 +242,15 @@ class CollectionController extends ApiV1Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/v1/collection/{id}/clear",
+     * @OA\Patch(
+     *     path="/api/v1/collections/{id}",
      *     summary="Clear a Collection (WIP)",
      *     description="Remove all items from the specified collection but not the collection itself.
     The operation cannot be undone.",
-     *     tags={"collection"},
+     *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
+     *
+     *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
      *
      *     @OA\Response(response="200", description="OK",
      *         @OA\JsonContent(type="object",

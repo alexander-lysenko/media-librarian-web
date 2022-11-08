@@ -36,6 +36,14 @@ use OpenApi\Annotations as OA;
  * ),
  *
  * @OA\Response(
+ *     response="Code422",
+ *     description="Unprocessable Entity",
+ *     @OA\JsonContent(type="object",
+ *         @OA\Property(type="string", property="message", example="The given data was invalid")
+ *     )
+ * ),
+ *
+ * @OA\Response(
  *     response="Code500",
  *     description="Internal Server Error",
  *     @OA\JsonContent(type="object",
@@ -45,6 +53,23 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Tag(name="guest", description="Guest (Unauthenticated User)")
  * @OA\Tag(name="profile", description="Profile (Authenticated User)")
+ * @OA\Tag(name="collections", description="Manage collections")
+ * @OA\Tag(name="entries", description="Manage entries of a collection")
+ *
+ * @OA\Schema(schema="DataTypes",
+ *     type="string",
+ *     enum={
+ *         "line",
+ *         "text",
+ *         "date",
+ *         "datetime",
+ *         "url",
+ *         "checkmark",
+ *         "rating_5stars",
+ *         "rating_10stars",
+ *         "priority"
+ *     },
+ * )
  */
 abstract class ApiV1Controller extends BaseController
 {

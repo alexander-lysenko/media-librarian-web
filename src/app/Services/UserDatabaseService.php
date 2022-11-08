@@ -95,8 +95,8 @@ class UserDatabaseService
 
     /**
      * Creates and executes a test query under the established connection.
-     * Actually checks the presence of the table required for storing collection metadata
-     *  and creates the table if it doesn't exist
+     * Actually checks the presence of the table required to store the metadata of a created collection,
+     *  and then creates the table if it doesn't exist.
      * @return void
      */
     private function testConnection(): void
@@ -113,6 +113,7 @@ class UserDatabaseService
                     $table->string('tbl_name');
                     $table->jsonb('schema');
                     $table->jsonb('meta')->nullable();
+                    $table->timestamp('created_at');
                 });
                 $connection->statement('PRAGMA writable_schema = RESET');
             }
@@ -133,7 +134,6 @@ class UserDatabaseService
      * @param string $tableName
      * @param mixed $meta
      * @return int
-     * @throws JsonException
      */
     public function insertMetadataReturningId(string $tableName, mixed $meta): int
     {
@@ -148,7 +148,7 @@ class UserDatabaseService
         $model = new SqliteCollectionMeta([
             'tbl_name' => $tableName,
             'schema' => $schema,
-            'meta' => json_encode($meta, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            'meta' => json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
         ]);
         $model->setDatabaseService($this)->save();
 
@@ -157,15 +157,17 @@ class UserDatabaseService
 
     /**
      * Selects the full row(s) of metadata for one or all collection(s).
-     * If $tableName not specified, the result contains metadata for all collections.
+     * The certain collection can be found by its ID or full name provided via params.
+     * If neither `id` nor `tableName` not specified, the result contains metadata for all collections.
+     * @param int|null $id
      * @param string|null $tableName
      * @return SqliteCollectionMeta[]
      */
-    public function getMetadata(?string $tableName = null): array
+    public function getMetadata(?int $id = null, ?string $tableName = null): array
     {
-        $metadataQuery = (new SqliteCollectionMeta)->setDatabaseService($this)->newQuery();
+        $metadataQuery = (new SqliteCollectionMeta())->setDatabaseService($this)->newQuery();
         if (!empty($tableName)) {
-            $metadataQuery->where('tbl_name', '=', $tableName);
+            $metadataQuery->orWhere('tbl_name', '=', $tableName);
         }
 
         return $metadataQuery->get()->all();

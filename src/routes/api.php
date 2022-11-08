@@ -32,43 +32,39 @@ Route::middleware(['guest'])
         Route::get('/verify-email', 'performEmailVerify')->name('emailVerify');
     });
 
-// Profile routes (authenticated user)
+// Routes for profile (as authenticated user)
 Route::middleware(['auth.bearer:sanctum'])
     ->prefix('v1/profile/')->name('v1.profile.')
-    ->controller(ProfileController::class)
     ->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::put('/update', 'update')->name('update');
-        Route::put('/change-password', 'changePassword')->name('changePassword');
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::put('/', [ProfileController::class, 'update'])->name('update');
+        Route::put('/change-password', [ProfileController::class, 'changePassword'])->name('changePassword');
 
-        Route::post('/logout', 'logout')->name('logout');
+        Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');
     });
 
-// Collection routes (CRUD)
+// Routes for Collections (CRUD)
 Route::middleware(['auth.bearer:sanctum'])
-    ->prefix('v1/collection/')->name('v1.collection.')
-    ->controller(CollectionController::class)
+    ->prefix('v1/collections/')->name('v1.collections.')
     ->group(function () {
-        Route::get('/', 'index');
-        Route::post('/create', 'create');
+        Route::get('/', [CollectionController::class, 'index'])->name('index');
+        Route::post('/', [CollectionController::class, 'create'])->name('create');
 
-        Route::get('/{id}', 'view');
-        Route::delete('/{id}', 'delete');
-
-        Route::post('/{id}/clear', 'clear');
+        Route::get('/{id}', [CollectionController::class, 'view'])->name('view');
+        Route::delete('/{id}', [CollectionController::class, 'delete'])->name('delete');
+        Route::patch('/{id}', [CollectionController::class, 'clear'])->name('clear');
     });
 
-// Collection entry routes (CRUD)
+// Routes for Collection entries (CRUD)
 Route::middleware(['auth.bearer:sanctum'])
-    ->prefix('v1/collection/{id}/entry/')->name('v1.collectionEntry.')
-    ->controller(CollectionEntryController::class)
+    ->prefix('v1/collections/{id}/entries/')->name('v1.collections.entries.')
     ->group(function () {
-        Route::get('/', 'index');
-        Route::post('/add', 'create');
+        Route::get('/', [CollectionEntryController::class, 'index'])->name('index');
+        Route::post('/', [CollectionEntryController::class, 'create'])->name('create');
 
-        Route::get('/{entry}', 'view');
-        Route::put('/{entry}', 'update');
-        Route::delete('/{entry}', 'delete');
+        Route::get('/{entry}', [CollectionEntryController::class, 'view'])->name('view');
+        Route::put('/{entry}', [CollectionEntryController::class, 'update'])->name('update');
+        Route::delete('/{entry}', [CollectionEntryController::class, 'delete'])->name('delete');
 
-        Route::get('/random', 'random');
+        Route::get('/random', [CollectionEntryController::class, 'random'])->name('random');
     });
