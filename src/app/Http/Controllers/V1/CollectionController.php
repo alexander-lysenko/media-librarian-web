@@ -8,6 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
+use JsonException;
 use OpenApi\Annotations as OA;
 
 /**
@@ -15,7 +16,6 @@ use OpenApi\Annotations as OA;
  */
 class CollectionController extends ApiV1Controller
 {
-
     /**
      * @OA\Get(
      *     path="/api/v1/collection",
@@ -56,17 +56,19 @@ class CollectionController extends ApiV1Controller
      * @param Request $request
      * @param UserDatabaseService $databaseService
      * @return JsonResource
+     * @throws JsonException
      */
     public function index(Request $request, UserDatabaseService $databaseService): JsonResource
     {
         $databaseService->setUserId($request->user()->id);
         $metadataRows = $databaseService->getMetadata();
-        $response = array_map(function ($row) {
+        $response = array_map(static function ($row) {
             $item = [];
 
             $item['id'] = $row->id;
             $item['name'] = $row->tbl_name;
-            $item['fields'] = json_decode($row->meta, true);
+            $item['fields'] = json_decode($row->meta, true, 512, JSON_THROW_ON_ERROR);
+
             return $item;
         }, $metadataRows);
 
@@ -152,6 +154,7 @@ class CollectionController extends ApiV1Controller
      * @param CreateCollectionRequest $request
      * @param UserDatabaseService $databaseService
      * @return JsonResource
+     * @throws JsonException
      */
     public function create(CreateCollectionRequest $request, UserDatabaseService $databaseService): JsonResource
     {
@@ -180,23 +183,78 @@ class CollectionController extends ApiV1Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/v1/collection/{id}/view",
+     *     summary="View the Metadata of a Collection",
+     *     description="",
+     *     tags={"collection"},
+     *     security={{"BearerAuth": {}}},
      *
+     *     @OA\Response(response="200", description="OK",
+     *         @OA\JsonContent(type="object",
+     *         ),
+     *     ),
+     * )
+     *
+     * @param int $id
+     * @param UserDatabaseService $databaseService
+     * @return JsonResource
      */
-    public function view()
+    public function view(int $id, UserDatabaseService $databaseService): JsonResource
     {
+        return new JsonResource([
+            'id' => $id,
+        ]);
     }
 
     /**
+     * @OA\Delete(
+     *     path="/api/v1/collection/{id}/delete",
+     *     summary="Delete a Collection (WIP)",
+     *     description="Remove the specified collection along with all items included. The operation cannot be undone.",
+     *     tags={"collection"},
+     *     security={{"BearerAuth": {}}},
      *
+     *     @OA\Response(response="200", description="OK",
+     *         @OA\JsonContent(type="object",
+     *         ),
+     *     ),
+     * )
+     *
+     * @param int $id
+     * @param UserDatabaseService $databaseService
+     * @return JsonResource
      */
-    public function delete()
+    public function delete(int $id, UserDatabaseService $databaseService): JsonResource
     {
+        return new JsonResource([
+            'id' => $id,
+        ]);
     }
 
     /**
+     * @OA\Post(
+     *     path="/api/v1/collection/{id}/clear",
+     *     summary="Clear a Collection (WIP)",
+     *     description="Remove all items from the specified collection but not the collection itself.
+    The operation cannot be undone.",
+     *     tags={"collection"},
+     *     security={{"BearerAuth": {}}},
      *
+     *     @OA\Response(response="200", description="OK",
+     *         @OA\JsonContent(type="object",
+     *         ),
+     *     ),
+     * )
+     *
+     * @param int $id
+     * @param UserDatabaseService $databaseService
+     * @return JsonResource
      */
-    public function clear()
+    public function clear(int $id, UserDatabaseService $databaseService): JsonResource
     {
+        return new JsonResource([
+            'id' => $id,
+        ]);
     }
 }
