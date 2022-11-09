@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\AuthenticateWithBearer;
+use App\Http\Middleware\DatabaseSwitch;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -69,6 +70,7 @@ class Kernel extends HttpKernel
              // EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             SubstituteBindings::class,
+            DatabaseSwitch::class,
         ],
     ];
 

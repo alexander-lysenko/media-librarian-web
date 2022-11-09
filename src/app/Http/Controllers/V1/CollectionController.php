@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Requests\V1\CreateCollectionRequest;
-use App\Services\UserDatabaseService;
+use App\Models\SqliteCollectionMeta;
+use Carbon\Carbon;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
 use OpenApi\Annotations as OA;
-use SQLiteException;
 use Throwable;
 
 /**
@@ -52,18 +52,21 @@ class CollectionController extends ApiV1Controller
      *             ),
      *         ),
      *     ),
+     *
      *     @OA\Response(response=401, ref="#/components/responses/Code401"),
+     *     @OA\Response(response=422, ref="#/components/responses/Code422"),
+     *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
      *
      * @param Request $request
-     * @param UserDatabaseService $databaseService
      * @return JsonResponse
      */
-    public function index(Request $request, UserDatabaseService $databaseService): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $databaseService->setUserId($request->user()->id);
-        $metadataRows = $databaseService->getMetadata();
-        $response = array_map(static function ($row) {
+        $request->hasValidSignature(); // stub
+
+        $metadataRows = SqliteCollectionMeta::query()->get()->all();
+        $collections = array_map(static function ($row) {
             $item = [];
 
             $item['id'] = $row->id;
@@ -73,7 +76,7 @@ class CollectionController extends ApiV1Controller
             return $item;
         }, $metadataRows);
 
-        $resource = new JsonResource($response);
+        $resource = new JsonResource($collections);
 
         return $resource->response();
     }
@@ -136,47 +139,57 @@ class CollectionController extends ApiV1Controller
      *             ),
      *         ),
      *     ),
+     *
      *     @OA\Response(response=401, ref="#/components/responses/Code401"),
+     *     @OA\Response(response=422, ref="#/components/responses/Code422"),
+     *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
      *
      * @param CreateCollectionRequest $request
-     * @param UserDatabaseService $databaseService
      * @return JsonResponse
      * @throws Throwable
      */
-    public function create(CreateCollectionRequest $request, UserDatabaseService $databaseService): JsonResponse
+    public function create(CreateCollectionRequest $request): JsonResponse
     {
-        $databaseService->setUserId($request->user()->id);
-        $db = $databaseService->getDbConnection();
+        $sqliteCollectionMeta = new SqliteCollectionMeta();
+        $connection = $sqliteCollectionMeta->getConnection();
 
-        $title = $request->input('title');
-        $metadata = Arr::pluck($request->input('fields'), 'type', 'name');
+        $connection->transaction(function () use ($connection, $request, $sqliteCollectionMeta, &$resource) {
+            $title = $request->input('title');
+            $metadata = Arr::pluck($request->input('fields'), 'type', 'name');
 
-        $createTableSchema = function (Blueprint $table) use ($metadata, $databaseService) {
-            foreach ($metadata as $name => $type) {
-                if ($name === array_key_first($metadata)) {
-                    $table->lineString($name)->unique();
-                    continue;
+            $createTableSchema = function (Blueprint $table) use ($metadata, $sqliteCollectionMeta) {
+                $table->id();
+                foreach ($metadata as $name => $type) {
+                    if ($name === array_key_first($metadata)) {
+                        $table->lineString($name)->unique();
+                        continue;
+                    }
+                    $sqliteCollectionMeta->createTableColumnByType($table, $name, $type);
                 }
-                $databaseService->createTableColumnByType($table, $name, $type);
-            }
-        };
+            };
+            $connection->getSchemaBuilder()->create($title, $createTableSchema);
 
-        try {
-            $db->beginTransaction();
-            $db->getSchemaBuilder()->create($title, $createTableSchema);
-            $collectionId = $databaseService->insertMetadataReturningId($title, $metadata);
-            $db->commit();
-        } catch (Throwable $e) {
-            $db->rollBack();
-            throw new SQLiteException($e->getMessage(), $e->getCode(), $e->getPrevious());
-        }
+            $schema = $connection->query()
+                ->select('sql')
+                ->from('sqlite_master')
+                ->where('type', '=', 'table')
+                ->where('name', $title)
+                ->pluck('sql')
+                ->first();
 
-        $resource = new JsonResource([
-            'id' => $collectionId,
-            'title' => $title,
-            'fields' => $metadata,
-        ]);
+            $sqliteCollectionMeta->fill([
+                'tbl_name' => $title,
+                'schema' => $schema,
+                'meta' => json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            ])->save();
+
+            $resource = new JsonResource([
+                'id' => $sqliteCollectionMeta->id,
+                'title' => $title,
+                'fields' => $metadata,
+            ]);
+        });
 
         return $resource->response()->setStatusCode(201);
     }
@@ -193,23 +206,64 @@ class CollectionController extends ApiV1Controller
      *
      *     @OA\Response(response="200", description="OK",
      *         @OA\JsonContent(type="object",
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="title", type="string", example="Movies"),
+     *                 @OA\Property(property="fields",
+     *                     type="object",
+     *                     example={
+     *                         "Movie Title": "line",
+     *                         "Origin Title": "line",
+     *                         "Release Date": "date",
+     *                         "Description": "text",
+     *                         "IMDB URL": "url",
+     *                         "IMDB Rating": "rating_10stars",
+     *                         "My Rating": "rating_5stars",
+     *                         "Watched": "checkmark",
+     *                         "Watched At": "datetime",
+     *                         "Chance to Advice": "priority",
+     *                     },
+     *                 ),
+     *             ),
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="created_at", type="string", example="1970-01-01 00:00:00"),
+     *                 @OA\Property(property="items_count", type="integer", example=1),
+     *             ),
      *         ),
      *     ),
+     *
+     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
+     *     @OA\Response(response=422, ref="#/components/responses/Code422"),
+     *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
      *
      * @param int $id
      * @param Request $request
-     * @param UserDatabaseService $databaseService
      * @return JsonResponse
      */
-    public function view(int $id, Request $request, UserDatabaseService $databaseService): JsonResponse
+    public function view(int $id, Request $request): JsonResponse
     {
-        $databaseService->setUserId($request->user()->id);
-        $db = $databaseService->getDbConnection();
+        /** @var SqliteCollectionMeta $sqliteCollectionMeta */
+        $sqliteCollectionMeta = SqliteCollectionMeta::query()
+            ->where('id', '=', $id)
+            ->first();
+        $connection = $sqliteCollectionMeta->getConnection();
+
+        $itemsCount = $connection->query()
+            ->select($connection->raw('count(*) as count'))
+            ->from("{$sqliteCollectionMeta->tbl_name}")
+            ->value('count');
+        $createdAt = new Carbon($sqliteCollectionMeta->created_at);
 
         $resource = new JsonResource([
-            'id' => $id,
+            'id' => $sqliteCollectionMeta->id,
+            'title' => $sqliteCollectionMeta->tbl_name,
+            'fields' => json_decode($sqliteCollectionMeta->meta, JSON_OBJECT_AS_ARRAY),
         ]);
+        $resource->with['meta'] = [
+            'created_at' => $createdAt->format('Y-m-d H:i:s'),
+            'items_count' => intval($itemsCount),
+        ];
 
         return $resource->response();
     }
@@ -224,17 +278,15 @@ class CollectionController extends ApiV1Controller
      *
      *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
      *
-     *     @OA\Response(response="200", description="OK",
-     *         @OA\JsonContent(type="object",
-     *         ),
-     *     ),
+     *     @OA\Response(response="204", description="No Content"),
+     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
+     *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
      *
      * @param int $id
-     * @param UserDatabaseService $databaseService
      * @return JsonResource
      */
-    public function delete(int $id, UserDatabaseService $databaseService): JsonResource
+    public function delete(int $id): JsonResource
     {
         return new JsonResource([
             'id' => $id,
@@ -259,10 +311,9 @@ class CollectionController extends ApiV1Controller
      * )
      *
      * @param int $id
-     * @param UserDatabaseService $databaseService
      * @return JsonResource
      */
-    public function clear(int $id, UserDatabaseService $databaseService): JsonResource
+    public function clear(int $id): JsonResource
     {
         return new JsonResource([
             'id' => $id,

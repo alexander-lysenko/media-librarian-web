@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Services\UserDatabaseService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,9 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(UserDatabaseService::class, function () {
-            return new UserDatabaseService();
-        });
+        // $this->app->singleton(CustomService::class, function () {
+        //     return new CustomService();
+        // });
     }
 
     /**

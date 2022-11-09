@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Services\UserDatabaseService;
-use Illuminate\Database\Connection;
+use App\Utils\Enum\InputDataTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\App;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\ColumnDefinition;
 
 /**
  * The model represents the collection metadata table. Designed for SQLite database
@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\App;
  * @property string $tbl_name
  * @property string $schema
  * @property string $meta
+ * @property string $created_at
  */
 class SqliteCollectionMeta extends Model
 {
@@ -25,6 +26,7 @@ class SqliteCollectionMeta extends Model
         'tbl_name',
         'schema',
         'meta',
+        'created_at',
     ];
 
     /** @inheritdoc */
@@ -34,11 +36,11 @@ class SqliteCollectionMeta extends Model
     public $timestamps = true;
 
     /** @inheritdoc */
-    protected $connection = null;
-
-    private UserDatabaseService $dbService;
+    protected $connection = "sqlite_user_dependent";
 
     /**
+     * The method is overridden. The table is designed to use `createdAt` only from `timestamps` set.
+     * The field `updatedAt` should be ignored.
      * @inheritdoc
      * @return null
      */
@@ -48,43 +50,25 @@ class SqliteCollectionMeta extends Model
     }
 
     /**
-     * Get an instance of UserDatabaseService from te app's bootstrap to create a database connection on-the-fly.
-     * The service will be ready to create a connection for the user's database
-     * If $userId is not specified, the ID of the authenticated user (from Request::$user) will be used.
-     * @param int|null $userId
-     * @return $this
+     * Allows the collection creating tool to map the field's input type with a specific data type.
+     * Creates a table column with the specified data type depending on the field's input type.
+     * @param Blueprint $table
+     * @param string $name
+     * @param string $type
+     * @return ColumnDefinition
      */
-    protected function makeDatabaseService(?int $userId = null): self
+    public function createTableColumnByType(Blueprint $table, string $name, string $type): ColumnDefinition
     {
-        $this->dbService = App::make(UserDatabaseService::class);
-        if (!empty($userId)) {
-            $this->dbService->setUserId($userId);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set an instance of UserDatabaseService to create a database connection on-the-fly.
-     * @param UserDatabaseService $service
-     * @return $this
-     */
-    public function setDatabaseService(UserDatabaseService $service): self
-    {
-        $this->dbService = $service;
-
-        return $this;
-    }
-
-    /**
-     * The way to get a database connection has been overridden to substitute a generated connection
-     * to the database of a specific user.
-     * @see setDatabaseService
-     * @see makeDatabaseService
-     * @return Connection
-     */
-    public function getConnection(): Connection
-    {
-        return $this->dbService->getDbConnection();
+        return match ($type) {
+            InputDataTypeEnum::LINE_INPUT => $table->lineString($name)->nullable(),
+            InputDataTypeEnum::TEXT_INPUT => $table->text($name)->nullable(),
+            InputDataTypeEnum::DATE_INPUT => $table->date($name)->nullable(),
+            InputDataTypeEnum::DATETIME_INPUT => $table->timestamp($name)->nullable(),
+            InputDataTypeEnum::URL_INPUT => $table->string($name)->nullable(),
+            InputDataTypeEnum::CHECKBOX_INPUT => $table->boolean($name)->nullable(),
+            InputDataTypeEnum::RATING5_INPUT => $table->unsignedTinyInteger($name)->nullable(),
+            InputDataTypeEnum::RATING10_INPUT => $table->unsignedSmallInteger($name)->nullable(),
+            InputDataTypeEnum::PRIORITY_INPUT => $table->tinyInteger($name)->nullable(),
+        };
     }
 }

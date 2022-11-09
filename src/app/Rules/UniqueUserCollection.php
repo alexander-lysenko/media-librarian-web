@@ -2,9 +2,8 @@
 
 namespace App\Rules;
 
-use App\Services\UserDatabaseService;
+use App\Models\SqliteCollectionMeta;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Facades\App;
 
 class UniqueUserCollection implements Rule
 {
@@ -27,10 +26,9 @@ class UniqueUserCollection implements Rule
      */
     public function passes($attribute, $value): bool
     {
-        /** @var UserDatabaseService $dbService */
-        $dbService = App::make(UserDatabaseService::class);
+        $sqliteCollectionMeta = new SqliteCollectionMeta();
 
-        return !$dbService->getDbConnection()->getSchemaBuilder()->hasTable($value);
+        return !$sqliteCollectionMeta->getConnection()->getSchemaBuilder()->hasTable($value);
     }
 
     /**
