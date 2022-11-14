@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Http\Requests\V1\CollectionIdRequest;
 use App\Http\Requests\V1\CreateCollectionRequest;
 use App\Models\SqliteCollectionMeta;
 use Carbon\Carbon;
@@ -76,6 +77,7 @@ class CollectionController extends ApiV1Controller
             return $item;
         }, $metadataRows);
 
+        /** @noinspection OneTimeUseVariablesInspection */
         $resource = new JsonResource($collections);
 
         return $resource->response();
@@ -237,21 +239,20 @@ class CollectionController extends ApiV1Controller
      *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
      *
-     * @param int $id
-     * @param Request $request
+     * @param CollectionIdRequest $request
      * @return JsonResponse
      */
-    public function view(int $id, Request $request): JsonResponse
+    public function view(CollectionIdRequest $request): JsonResponse
     {
         /** @var SqliteCollectionMeta $sqliteCollectionMeta */
         $sqliteCollectionMeta = SqliteCollectionMeta::query()
-            ->where('id', '=', $id)
+            ->where('id', '=', $request->id)
             ->first();
         $connection = $sqliteCollectionMeta->getConnection();
 
         $itemsCount = $connection->query()
             ->select($connection->raw('count(*) as count'))
-            ->from("{$sqliteCollectionMeta->tbl_name}")
+            ->from($sqliteCollectionMeta->tbl_name)
             ->value('count');
         $createdAt = new Carbon($sqliteCollectionMeta->created_at);
 
@@ -262,7 +263,7 @@ class CollectionController extends ApiV1Controller
         ]);
         $resource->with['meta'] = [
             'created_at' => $createdAt->format('Y-m-d H:i:s'),
-            'items_count' => intval($itemsCount),
+            'items_count' => (int)$itemsCount,
         ];
 
         return $resource->response();
@@ -283,13 +284,13 @@ class CollectionController extends ApiV1Controller
      *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
      *
-     * @param int $id
+     * @param CollectionIdRequest $request
      * @return JsonResource
      */
-    public function delete(int $id): JsonResource
+    public function delete(CollectionIdRequest $request): JsonResource
     {
         return new JsonResource([
-            'id' => $id,
+            'id' => $request->id,
         ]);
     }
 
@@ -310,13 +311,13 @@ class CollectionController extends ApiV1Controller
      *     ),
      * )
      *
-     * @param int $id
+     * @param CollectionIdRequest $request
      * @return JsonResource
      */
-    public function clear(int $id): JsonResource
+    public function clear(CollectionIdRequest $request): JsonResource
     {
         return new JsonResource([
-            'id' => $id,
+            'id' => $request->id,
         ]);
     }
 }

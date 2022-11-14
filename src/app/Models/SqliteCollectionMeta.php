@@ -42,9 +42,9 @@ class SqliteCollectionMeta extends Model
      * The method is overridden. The table is designed to use `createdAt` only from `timestamps` set.
      * The field `updatedAt` should be ignored.
      * @inheritdoc
-     * @return null
+     * @return string|null
      */
-    public function getUpdatedAtColumn()
+    public function getUpdatedAtColumn(): ?string
     {
         return null;
     }

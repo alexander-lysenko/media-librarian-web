@@ -7,6 +7,9 @@ use App\Utils\Enum\InputDataTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * A request entity to validate the data passed to create a new collection
+ */
 class CreateCollectionRequest extends FormRequest
 {
     /**
@@ -27,10 +30,10 @@ class CreateCollectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string',  new UniqueUserCollection()],
+            'title' => ['required', 'string', new UniqueUserCollection()],
             'fields.*' => ['required', 'array:name,type', 'max:30'],
 
-            'fields.*.name' => ['required', 'string', 'distinct'],
+            'fields.*.name' => ['required', 'string', 'distinct:ignore_case'],
             'fields.*.type' => ['required', 'string', Rule::in(InputDataTypeEnum::TYPE_UI_NAME)],
             'fields.0.type' => [Rule::in(InputDataTypeEnum::LINE_INPUT)],
         ];
