@@ -8,32 +8,32 @@ return new class extends Migration {
     /**
      * @var string
      */
-    private string $tableName = 'password_resets';
+    private string $tableName = 'posters';
 
     /**
      * Run the migrations.
+     *
      * @return void
      */
     public function up(): void
     {
         Schema::create($this->tableName, static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('email');
-            $table->string('token', 64)->unique();
-            $table->timestamp('created_at')->nullable();
+            $table->integer('user_id');
+            $table->integer('collection_id');
+            $table->integer('entry_id');
+            $table->string('uri');
+            $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
+     *
      * @return void
      */
     public function down(): void
     {
-        Schema::table($this->tableName, static function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropIfExists();
-        });
+        Schema::dropIfExists($this->tableName);
     }
 };

@@ -39,8 +39,8 @@ class SqliteCollectionMeta extends Model
     protected $connection = "sqlite_user_dependent";
 
     /**
-     * The method is overridden. The table is designed to use `createdAt` only from `timestamps` set.
-     * The field `updatedAt` should be ignored.
+     * The method is overridden. The table is designed to use only `createdAt` from `timestamps` set.
+     * The field `updatedAt` is to be ignored.
      * @inheritdoc
      * @return string|null
      */

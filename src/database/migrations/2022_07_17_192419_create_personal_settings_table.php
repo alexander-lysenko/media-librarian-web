@@ -4,18 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /** @var string */
+return new class extends Migration {
+    /**
+     * @var string
+     */
     private string $tableName = 'personal_settings';
 
     /**
-     * Run the migration.
+     * Run the migrations.
      * @return void
      */
     public function up(): void
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
+        Schema::create($this->tableName, static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('locale', 5)->default('en');
@@ -28,12 +29,12 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migration.
+     * Reverse the migrations.
      * @return void
      */
     public function down(): void
     {
-        Schema::table($this->tableName, function (Blueprint $table) {
+        Schema::table($this->tableName, static function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropIfExists();
         });

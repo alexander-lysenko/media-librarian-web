@@ -23,6 +23,16 @@ class CollectionIdRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    public function prepareForValidation(): void
+    {
+        $this->merge(['id' => $this->route('id')]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
@@ -32,7 +42,19 @@ class CollectionIdRequest extends FormRequest
         $collectionMetaClass = SqliteCollectionMeta::class;
 
         return [
-            'id' => ['required', 'integer', 'min:1', "exists:{$collectionMetaClass},id", Rule::exists()],
+            'id' => ['required', 'integer', 'min:1', Rule::exists($collectionMetaClass, 'id')],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'id.exists' => 'The entry with provided :attribute does not exist.',
         ];
     }
 }

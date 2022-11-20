@@ -4,18 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /** @var string */
+return new class extends Migration {
+    /**
+     * @var string
+     */
     private string $tableName = 'personal_access_tokens';
 
     /**
-     * Run the migration.
+     * Run the migrations.
      * @return void
      */
     public function up(): void
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
+        Schema::create($this->tableName, static function (Blueprint $table) {
             $table->id();
             $table->morphs('tokenable');
             $table->string('name');
@@ -27,7 +28,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migration.
+     * Reverse the migrations.
      * @return void
      */
     public function down(): void

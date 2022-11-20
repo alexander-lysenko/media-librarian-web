@@ -28,7 +28,7 @@ class CollectionController extends ApiV1Controller
      *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
      *
-     *     @OA\Response(response="200", description="OK",
+     *     @OA\Response(response=200, description="OK",
      *         @OA\JsonContent(type="object",
      *             @OA\Property(property="data", type="array",
      *                 @OA\Items(type="object",
@@ -206,7 +206,7 @@ class CollectionController extends ApiV1Controller
      *
      *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
      *
-     *     @OA\Response(response="200", description="OK",
+     *     @OA\Response(response=200, description="OK",
      *         @OA\JsonContent(type="object",
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
@@ -254,7 +254,7 @@ class CollectionController extends ApiV1Controller
             ->select($connection->raw('count(*) as count'))
             ->from($sqliteCollectionMeta->tbl_name)
             ->value('count');
-        $createdAt = new Carbon($sqliteCollectionMeta->created_at);
+        $createdAtCarbon = new Carbon($sqliteCollectionMeta->created_at);
 
         $resource = new JsonResource([
             'id' => $sqliteCollectionMeta->id,
@@ -262,7 +262,7 @@ class CollectionController extends ApiV1Controller
             'fields' => json_decode($sqliteCollectionMeta->meta, JSON_OBJECT_AS_ARRAY),
         ]);
         $resource->with['meta'] = [
-            'created_at' => $createdAt->format('Y-m-d H:i:s'),
+            'created_at' => $createdAtCarbon->format('Y-m-d H:i:s'),
             'items_count' => (int)$itemsCount,
         ];
 
@@ -272,32 +272,49 @@ class CollectionController extends ApiV1Controller
     /**
      * @OA\Delete(
      *     path="/api/v1/collections/{id}",
-     *     summary="Delete a Collection (WIP)",
+     *     summary="Delete a Collection",
      *     description="Remove the specified collection along with all items included. The operation cannot be undone.",
      *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
      *
      *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
      *
-     *     @OA\Response(response="204", description="No Content"),
+     *     @OA\Response(response=204, description="No Content"),
      *     @OA\Response(response=401, ref="#/components/responses/Code401"),
      *     @OA\Response(response=500, ref="#/components/responses/Code500"),
+     *     @OA\Response(response=200, description="This is a stub",
+     *         @OA\JsonContent(type="string",
+     *             example="Response code 200 is never returned here. This is added to control `Accept` header"
+     *         ),
+     *     ),
      * )
      *
      * @param CollectionIdRequest $request
-     * @return JsonResource
+     * @return JsonResponse
+     * @throws Throwable
      */
-    public function delete(CollectionIdRequest $request): JsonResource
+    public function delete(CollectionIdRequest $request): JsonResponse
     {
-        return new JsonResource([
-            'id' => $request->id,
-        ]);
+        /** @var SqliteCollectionMeta $sqliteCollectionMeta */
+        $sqliteCollectionMeta = SqliteCollectionMeta::query()
+            ->where('id', '=', $request->id)
+            ->first();
+        $connection = $sqliteCollectionMeta->getConnection();
+
+        $connection->transaction(function () use ($connection, $sqliteCollectionMeta) {
+            // Remove posters (use background job)
+
+            $connection->getSchemaBuilder()->drop($sqliteCollectionMeta->tbl_name);
+            $sqliteCollectionMeta->delete();
+        });
+
+        return new JsonResponse(null, 204);
     }
 
     /**
      * @OA\Patch(
      *     path="/api/v1/collections/{id}",
-     *     summary="Clear a Collection (WIP)",
+     *     summary="Clear (truncate) a Collection",
      *     description="Remove all items from the specified collection but not the collection itself.
     The operation cannot be undone.",
      *     tags={"collections"},
@@ -305,19 +322,53 @@ class CollectionController extends ApiV1Controller
      *
      *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
      *
-     *     @OA\Response(response="200", description="OK",
+     *     @OA\Response(response=200, description="OK",
      *         @OA\JsonContent(type="object",
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="title", type="string", example="Movies"),
+     *             ),
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="status", type="string", example="truncated"),
+     *                 @OA\Property(property="items_affected", type="integer", example=10),
+     *             ),
      *         ),
      *     ),
+     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
+     *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
      *
      * @param CollectionIdRequest $request
-     * @return JsonResource
+     * @return JsonResponse
+     * @throws Throwable
      */
-    public function clear(CollectionIdRequest $request): JsonResource
+    public function clear(CollectionIdRequest $request): JsonResponse
     {
-        return new JsonResource([
-            'id' => $request->id,
+        /** @var SqliteCollectionMeta $sqliteCollectionMeta */
+        $sqliteCollectionMeta = SqliteCollectionMeta::query()
+            ->where('id', '=', $request->id)
+            ->first();
+        $connection = $sqliteCollectionMeta->getConnection();
+
+        $connection->transaction(function () use ($connection, $sqliteCollectionMeta, &$itemsAffected) {
+            // Remove posters (use background job)
+
+            $itemsAffected = $connection->query()
+                ->select($connection->raw('count(*) as count'))
+                ->from($sqliteCollectionMeta->tbl_name)
+                ->value('count');
+            $connection->table($sqliteCollectionMeta->tbl_name)->truncate();
+        });
+
+        $resource = new JsonResource([
+            'id' => $sqliteCollectionMeta->id,
+            'title' => $sqliteCollectionMeta->tbl_name,
         ]);
+        $resource->with['meta'] = [
+            'status' => 'truncated',
+            'items_affected' => (int)$itemsAffected,
+        ];
+
+        return $resource->response(200);
     }
 }
