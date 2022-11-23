@@ -3,6 +3,7 @@ FROM alpine:3.16
 # Copy configurations
 COPY ./docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY ./etc/.bashrc /root/.bashrc
+COPY ./etc/.bashrc /var/lib/nginx/.bashrc
 COPY ./nginx /etc/nginx
 COPY ./php-fpm.conf /etc/php8/php-fpm.conf
 COPY ./etc/xdebug.ini /etc/php8/conf.d/50-xdebug.ini
