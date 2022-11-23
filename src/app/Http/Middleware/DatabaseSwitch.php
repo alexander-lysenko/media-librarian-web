@@ -40,7 +40,7 @@ class DatabaseSwitch
             $userId = $request->user()->id;
 
             $dbConfig = Config::get('database.connections.sqlite');
-            $dbConfig['database'] = storage_path("app/databases/collections-$userId.sqlite");
+            $dbConfig['database'] = storage_path("databases/collections-$userId.sqlite");
 
             // This will create database if it does not exist
             if (!file_exists($dbConfig['database'])) {
