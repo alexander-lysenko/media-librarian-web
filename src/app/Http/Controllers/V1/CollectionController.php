@@ -16,6 +16,8 @@ use Throwable;
 
 /**
  * Collections controller - manage list of collections, CRUD operations for the collections
+ *
+ * @OA\Tag(name="collections", description="Manage collections")
  */
 class CollectionController extends ApiV1Controller
 {
@@ -204,7 +206,7 @@ class CollectionController extends ApiV1Controller
      *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
      *
-     *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
+     *     @OA\Parameter(ref="#/components/parameters/collectionId"),
      *
      *     @OA\Response(response=200, description="OK",
      *         @OA\JsonContent(type="object",
@@ -277,14 +279,14 @@ class CollectionController extends ApiV1Controller
      *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
      *
-     *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
+     *     @OA\Parameter(ref="#/components/parameters/collectionId"),
      *
      *     @OA\Response(response=204, description="No Content"),
      *     @OA\Response(response=401, ref="#/components/responses/Code401"),
      *     @OA\Response(response=500, ref="#/components/responses/Code500"),
-     *     @OA\Response(response=200, description="This is a stub",
+     *     @OA\Response(response=200, description="This is a stub (Such response is never returned)",
      *         @OA\JsonContent(type="string",
-     *             example="Response code 200 is never returned here. This is added to control `Accept` header"
+     *             example="This stub is added to control `Accept` header. The default response is 204 (No Content)"
      *         ),
      *     ),
      * )
@@ -320,7 +322,7 @@ class CollectionController extends ApiV1Controller
      *     tags={"collections"},
      *     security={{"BearerAuth": {}}},
      *
-     *     @OA\Parameter(name="id", in="path", @OA\Schema(type="integer", example="1")),
+     *     @OA\Parameter(ref="#/components/parameters/collectionId"),
      *
      *     @OA\Response(response=200, description="OK",
      *         @OA\JsonContent(type="object",

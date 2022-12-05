@@ -24,7 +24,25 @@ use OpenApi\Annotations as OA;
  *     scheme="bearer",
  *     name="api_bearer_token",
  *     securityScheme="BearerAuth",
- *     description="Paste your Bearer token here",
+ *     description="Paste your Bearer token here. You can obtain a token at the endpoint: `/api/v1/user/login`",
+ * ),
+ *
+ * @OA\Parameter(
+ *     parameter="collectionId",
+ *     name="id",
+ *     in="path",
+ *     required=true,
+ *     description="The ID of an existing collection",
+ *     @OA\Schema(type="integer", example=1),
+ * ),
+ *
+ * @OA\Parameter(
+ *     parameter="entryId",
+ *     name="entry",
+ *     in="path",
+ *     required=true,
+ *     description="The ID of an existing entry",
+ *     @OA\Schema(type="integer", example=1),
  * ),
  *
  * @OA\Response(
@@ -53,8 +71,6 @@ use OpenApi\Annotations as OA;
  *
  * @OA\Tag(name="guest", description="Guest (Unauthenticated User)")
  * @OA\Tag(name="profile", description="Profile (Authenticated User)")
- * @OA\Tag(name="collections", description="Manage collections")
- * @OA\Tag(name="entries", description="Manage entries of a collection")
  *
  * @OA\Schema(schema="DataTypes",
  *     type="string",
