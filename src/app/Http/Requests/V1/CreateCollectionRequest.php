@@ -2,13 +2,16 @@
 
 namespace App\Http\Requests\V1;
 
-use App\Rules\UniqueUserCollection;
+use App\Rules\UniqueUserCollectionRule;
 use App\Utils\Enum\InputDataTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * A request entity to validate the data passed to create a new collection
+ *
+ * @property string $title
+ * @property array $fields
  */
 class CreateCollectionRequest extends FormRequest
 {
@@ -30,7 +33,7 @@ class CreateCollectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', new UniqueUserCollection()],
+            'title' => ['required', 'string', new UniqueUserCollectionRule()],
             'fields.*' => ['required', 'array:name,type', 'max:30'],
 
             'fields.*.name' => ['required', 'string', 'distinct:ignore_case'],

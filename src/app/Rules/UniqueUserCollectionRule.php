@@ -5,7 +5,10 @@ namespace App\Rules;
 use App\Models\SqliteCollectionMeta;
 use Illuminate\Contracts\Validation\Rule;
 
-class UniqueUserCollection implements Rule
+/**
+ * A request validation rule to check that the name of a collection is unique
+ */
+class UniqueUserCollectionRule implements Rule
 {
     /**
      * Create a new rule instance.

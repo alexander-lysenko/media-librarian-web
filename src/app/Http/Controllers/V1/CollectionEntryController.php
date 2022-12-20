@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Http\Requests\V1\CreateCollectionEntryRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
 
 /**
@@ -25,6 +28,19 @@ class CollectionEntryController extends ApiV1Controller
      *     @OA\RequestBody(required=true,
      *         @OA\MediaType(mediaType="application/json",
      *             @OA\Schema(type="object",
+     *                 @OA\Property(property="contents", type="object",
+     *                     @OA\Property(property="Movie Title", type="string", example="Лицо со шрамом"),
+     *                     @OA\Property(property="Origin Title", type="string", example="Scarface"),
+     *                     @OA\Property(property="Release Date", type="string", example="1983-12-01"),
+     *                     @OA\Property(property="Description", type="text",
+     *      example="In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed."),
+     *                     @OA\Property(property="IMDB URL", type="string", example="https://www.imdb.com/title/tt0086250/"),
+     *                     @OA\Property(property="IMDB Rating", type="integer", example=8),
+     *                     @OA\Property(property="My Rating", type="integer", example=5),
+     *                     @OA\Property(property="Watched", type="boolean", example=true),
+     *                     @OA\Property(property="Watched At", type="string", example="2020-01-01 00:00:01"),
+     *                     @OA\Property(property="Chance to Advice", type="integer", example="5"),
+     *                 ),
      *             ),
      *         ),
      *     ),
@@ -37,9 +53,16 @@ class CollectionEntryController extends ApiV1Controller
      *     @OA\Response(response=401, ref="#/components/responses/Code401"),
      *     @OA\Response(response=500, ref="#/components/responses/Code500"),
      * )
+     *
+     * @param CreateCollectionEntryRequest $request
+     * @return JsonResponse
      */
-    public function create()
+    public function create(CreateCollectionEntryRequest $request): JsonResponse
     {
+        $resource = new JsonResource([]);
+        $resource::wrap('entry');
+
+        return $resource->response()->setStatusCode(201);
     }
 
     /**
