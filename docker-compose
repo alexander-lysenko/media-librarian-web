@@ -33,7 +33,7 @@ function create_domain_name_mapping() {
     VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
 
     if [[ "$VIRTUAL_NET_EXISTS" = "" ]]; then
-        echo -n "Virtual network interface is not set up. Creating a new one... "
+        echo -n "Setting up virtual network interface... "
         CN=$(echo $NGINX_IP | cut -d . -f 4)
         sudo sh -c "ifconfig docker0:ng_$CN $NGINX_IP"
         echo "Done"
@@ -57,8 +57,8 @@ case "$1" in
     sudo echo "Running in background..."
     ;;
 "down")
-#    echo "Down is disabled. Use './docker-compose stop' to stop containers"
-#    exit
+    echo "Command 'down' is disabled by security reasons. Use './docker-compose stop' to stop containers"
+    exit
     ;;
 "*") ;;
 
