@@ -35,7 +35,7 @@ function install_composer_dependencies() {
 
 function apply_migrations() {
     echo "== Applying Migrations =="
-#    cd /app && php artisan migrate
+    cd /app && php artisan migrate
 }
 
 # Entrypoint for webapp container

@@ -51,20 +51,17 @@ class CreateCollectionEntryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $collectionMetaClass = SqliteCollectionMeta::class;
-
-        $id = $this->validate([
-            'id' => ['required', 'integer', 'min:1', Rule::exists($collectionMetaClass, 'id')],
+        $preValidated = $this->validate([
+            'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteCollectionMeta::class, 'id')],
         ]); // ['id' => "1"] // Example of the variable's value on validation succeed
 
         /*
          * If the above validation fails, an exception will be thrown and the rules below will never run.
-         * If the above validation succeeds, the validated value may be used in the rules below.
+         * If the above validation succeeds, the validated values may be used in the rules below.
          */
 
         return [
-            /* todo: find a way to replace CollectionEntryStructureRule with match-case rule by type */
-            'contents' => ['required', new CollectionEntryStructureRule()],
+            'contents' => ['required', new CollectionEntryStructureRule($preValidated['id'])],
         ];
     }
 }
