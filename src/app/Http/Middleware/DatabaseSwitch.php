@@ -17,6 +17,8 @@ use PDO;
  */
 class DatabaseSwitch
 {
+    public const CONNECTION_PATH = "sqlite_user_dependent";
+
     /**
      * Create a new filter instance.
      *
@@ -35,6 +37,8 @@ class DatabaseSwitch
      */
     public function handle(Request $request, Closure $next): mixed
     {
+        $newConnectionPath = implode('.', ['database.connections', self::CONNECTION_PATH]);
+
         // Check if user logged in (This will work for an authenticated user only)
         if ($request->user()) {
             $userId = $request->user()->id;
@@ -50,7 +54,7 @@ class DatabaseSwitch
                 $connection->disconnect();
             }
 
-            Config::set("database.connections.sqlite_user_dependent", $dbConfig);
+            Config::set($newConnectionPath, $dbConfig);
             $this->testConnection();
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Http\Middleware\DatabaseSwitch;
 use App\Models\SqliteCollectionMeta;
 use Illuminate\Contracts\Validation\Rule as RuleInterface;
 use Illuminate\Support\Facades\Validator;
@@ -74,7 +75,8 @@ class CollectionEntryStructureRule implements RuleInterface
         }
 
         // Add the "unique" validation rule for the title of a collection's entry (first field of an entry)
-        $rules[$firstField][] = Rule::unique("sqlite_user_dependent.".$collectionModel->tbl_name, $firstField)
+        $tableWithConnection = implode('.', [DatabaseSwitch::CONNECTION_PATH, $collectionModel->tbl_name]);
+        $rules[$firstField][] = Rule::unique($tableWithConnection, $firstField)
             ->ignore($this->collectionEntryId);
 
         // Perform all the validations
