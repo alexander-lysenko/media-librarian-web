@@ -90,7 +90,10 @@ class CollectionEntryController extends ApiV1Controller
      */
     public function create(CreateCollectionEntryRequest $request): JsonResponse
     {
-        $resource = new JsonResource([]);
+        $id = $request->validated('id'); // todo: replace with ID of inserted record
+
+        $response = array_merge(['id' => $id], $request->validated('contents'));
+        $resource = new JsonResource($response);
         $resource::wrap('entry');
 
         return $resource->response()->setStatusCode(201);
