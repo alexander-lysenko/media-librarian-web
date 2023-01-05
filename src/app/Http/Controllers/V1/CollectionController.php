@@ -18,12 +18,28 @@ use Throwable;
  * Collections controller - manage list of collections, CRUD operations for the collections
  *
  * @OA\Tag(name="collections", description="Manage collections")
+ *
+ * @OA\Schema(schema="CollectionExample",
+ *     type="object",
+ *     description="Key-value pair representing data types and describing the structure of a collection's table",
+ *     example={
+ *         "Movie Title": "line",
+ *         "Origin Title": "line",
+ *         "Release Date": "date",
+ *         "Description": "text",
+ *         "IMDB URL": "url",
+ *         "IMDB Rating": "rating_10stars",
+ *         "My Rating": "rating_5stars",
+ *         "Watched": "checkmark",
+ *         "Watched At": "datetime",
+ *         "Chance to Advice": "priority",
+ *     },
+ * )
  */
 class CollectionController extends ApiV1Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/v1/collections",
+     * @OA\Get(path="/api/v1/collections",
      *     summary="Get All Collections",
      *     description="The response contains the list of ID and name of all collections already created
     and the columns that included in each collection.",
@@ -36,21 +52,7 @@ class CollectionController extends ApiV1Controller
      *                 @OA\Items(type="object",
      *                     @OA\Property(property="id", type="integer", example=1),
      *                     @OA\Property(property="name", type="string", example="Movies"),
-     *                     @OA\Property(property="fields",
-     *                         type="object",
-     *                         example={
-     *                             "Movie Title": "line",
-     *                             "Origin Title": "line",
-     *                             "Release Date": "date",
-     *                             "Description": "text",
-     *                             "IMDB URL": "url",
-     *                             "IMDB Rating": "rating_10stars",
-     *                             "My Rating": "rating_5stars",
-     *                             "Watched": "checkmark",
-     *                             "Watched At": "datetime",
-     *                             "Chance to Advice": "priority",
-     *                         },
-     *                     ),
+     *                     @OA\Property(property="fields", ref="#/components/schemas/CollectionExample"),
      *                 ),
      *             ),
      *         ),
@@ -86,8 +88,7 @@ class CollectionController extends ApiV1Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/v1/collections",
+     * @OA\Post(path="/api/v1/collections",
      *     summary="Create a New Collection",
      *     description="The structure of the new collection is created from the parameters passed in request body.",
      *     tags={"collections"},
@@ -125,21 +126,7 @@ class CollectionController extends ApiV1Controller
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="title", type="string", example="Movies"),
-     *                 @OA\Property(property="fields",
-     *                     type="object",
-     *                     example={
-     *                         "Movie Title": "line",
-     *                         "Origin Title": "line",
-     *                         "Release Date": "date",
-     *                         "Description": "text",
-     *                         "IMDB URL": "url",
-     *                         "IMDB Rating": "rating_10stars",
-     *                         "My Rating": "rating_5stars",
-     *                         "Watched": "checkmark",
-     *                         "Watched At": "datetime",
-     *                         "Chance to Advice": "priority",
-     *                     },
-     *                 ),
+     *                 @OA\Property(property="fields", ref="#/components/schemas/CollectionExample"),
      *             ),
      *         ),
      *     ),
@@ -199,8 +186,7 @@ class CollectionController extends ApiV1Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/v1/collections/{id}",
+     * @OA\Get(path="/api/v1/collections/{id}",
      *     summary="View the Metadata of a Collection",
      *     description="View the structure of the already existing collection.",
      *     tags={"collections"},
@@ -213,21 +199,7 @@ class CollectionController extends ApiV1Controller
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="title", type="string", example="Movies"),
-     *                 @OA\Property(property="fields",
-     *                     type="object",
-     *                     example={
-     *                         "Movie Title": "line",
-     *                         "Origin Title": "line",
-     *                         "Release Date": "date",
-     *                         "Description": "text",
-     *                         "IMDB URL": "url",
-     *                         "IMDB Rating": "rating_10stars",
-     *                         "My Rating": "rating_5stars",
-     *                         "Watched": "checkmark",
-     *                         "Watched At": "datetime",
-     *                         "Chance to Advice": "priority",
-     *                     },
-     *                 ),
+     *                 @OA\Property(property="fields", ref="#/components/schemas/CollectionExample"),
      *             ),
      *             @OA\Property(property="meta", type="object",
      *                 @OA\Property(property="created_at", type="string", example="1970-01-01 00:00:00"),
@@ -272,8 +244,7 @@ class CollectionController extends ApiV1Controller
     }
 
     /**
-     * @OA\Delete(
-     *     path="/api/v1/collections/{id}",
+     * @OA\Delete(path="/api/v1/collections/{id}",
      *     summary="Delete a Collection",
      *     description="Remove the specified collection along with all items included. The operation cannot be undone.",
      *     tags={"collections"},
@@ -314,8 +285,7 @@ class CollectionController extends ApiV1Controller
     }
 
     /**
-     * @OA\Patch(
-     *     path="/api/v1/collections/{id}",
+     * @OA\Patch(path="/api/v1/collections/{id}",
      *     summary="Clear (truncate) a Collection",
      *     description="Remove all items from the specified collection but not the collection itself.
     The operation cannot be undone.",

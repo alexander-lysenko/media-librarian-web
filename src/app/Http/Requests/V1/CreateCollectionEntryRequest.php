@@ -64,4 +64,16 @@ class CreateCollectionEntryRequest extends FormRequest
             'contents' => ['required', new CollectionEntryStructureRule($preValidated['id'])],
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return array_merge(parent::messages(), [
+            'id.exists' => 'The collection with provided :attribute does not exist.',
+        ]);
+    }
 }

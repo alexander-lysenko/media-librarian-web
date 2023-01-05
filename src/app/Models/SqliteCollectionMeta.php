@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Middleware\DatabaseSwitch;
 use App\Utils\Enum\InputDataTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +37,7 @@ class SqliteCollectionMeta extends Model
     public $timestamps = true;
 
     /** @inheritdoc */
-    protected $connection = "sqlite_user_dependent";
+    protected $connection = DatabaseSwitch::CONNECTION_PATH;
 
     /**
      * The method is overridden. The table is designed to use only `createdAt` from `timestamps` set.

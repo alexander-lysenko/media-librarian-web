@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Http\Middleware\DatabaseSwitch;
 use App\Models\SqliteCollectionMeta;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -45,15 +46,15 @@ class CollectionEntryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $collectionMetaClass = SqliteCollectionMeta::class;
         $collectionTableName = SqliteCollectionMeta::query()
             ->where('id', '=', $this->id)
             ->pluck('tbl_name')
             ->first();
+        $collectionTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $collectionTableName]);
 
         return [
-            'id' => ['required', 'integer', 'min:1', Rule::exists($collectionMetaClass, 'id')],
-            'entry' => ['required', 'integer', 'min:1', Rule::exists($collectionTableName, 'id')],
+            'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteCollectionMeta::class, 'id')],
+            'entry' => ['required', 'integer', 'min:1', Rule::exists($collectionTablePath, 'id')],
         ];
     }
 
