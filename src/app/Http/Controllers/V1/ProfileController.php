@@ -6,38 +6,46 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
+
+#[OA\Tag(name: 'profile', description: 'Profile (Authenticated User)')]
+#[OA\Schema(
+    schema: 'Profile',
+    properties: [
+        new OA\Property(property: 'user', properties: [
+            new OA\Property(property: 'id', type: 'integer', example: 1),
+            new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+            new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+            new OA\Property(property: 'email_verified_at', type: 'datetime', example: '2000-01-01 00:00:01'),
+            new OA\Property(property: 'status', type: 'string', example: 'ACTIVE'),
+            new OA\Property(property: 'deleted_at', type: 'datetime', example: '2000-01-01 00:00:01'),
+            new OA\Property(property: 'created_at', type: 'datetime', example: '2000-01-01 00:00:01'),
+            new OA\Property(property: 'updated_at', type: 'datetime', example: '2000-01-01 00:00:01'),
+        ]),
+    ]
+)]
 
 /**
  * Profile controller - manage account/profile actions
  */
 class ProfileController extends ApiV1Controller
 {
+    #[OA\Get(
+        path: '/api/v1/profile',
+        description: 'Request the full profile of the authenticated user',
+        summary: 'Get User Info',
+        security: self::SECURITY_SCHEME_BEARER,
+        tags: ['profile'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OK',
+                content: new OA\JsonContent(ref: self::SCHEMA_PROFILE_REF),
+            ),
+            new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
+        ]
+    )]
     /**
-     * @OA\Get(
-     *     path="/api/v1/profile",
-     *     summary="Get User Info",
-     *     description="Request the full profile of the authenticated user",
-     *     tags={"profile"},
-     *     security={{"BearerAuth": {}}},
-     *
-     *     @OA\Response(response="200", description="OK",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="object", property="user",
-     *                 @OA\Property(type="integer", property="id", example=1),
-     *                 @OA\Property(type="string", property="name", example="John Doe"),
-     *                 @OA\Property(type="string", property="email", example="john.doe@example.com"),
-     *                 @OA\Property(type="datetime", property="email_verified_at", example="2000-01-01 00:00:01"),
-     *                 @OA\Property(type="string", property="status", example="ACTIVE"),
-     *                 @OA\Property(type="datetime", property="deleted_at", example="2000-01-01 00:00:01"),
-     *                 @OA\Property(type="datetime", property="created_at", example="2000-01-01 00:00:01"),
-     *                 @OA\Property(type="datetime", property="updated_at", example="2000-01-01 00:00:01"),
-     *             ),
-     *         ),
-     *     ),
-     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
-     * )
-     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -62,24 +70,24 @@ class ProfileController extends ApiV1Controller
     {
     }
 
+    #[OA\Post(
+        path: '/api/v1/profile/logout',
+        description: 'Sign out / De-authenticate a user',
+        summary: 'Logout',
+        security: self::SECURITY_SCHEME_BEARER,
+        tags: ['profile'],
+        responses: [
+            new OA\Response(response: 'default',
+                description: '302 Found',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'message', type: 'string', example: 'Successfully logged out'),
+                    new OA\Property(property: 'redirectTo', type: 'string', example: '/login'),
+                ])
+            ),
+            new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
+        ]
+    )]
     /**
-     * @OA\Post(
-     *     path="/api/v1/profile/logout",
-     *     summary="Logout",
-     *     description="Sign out / Deauthenticate a user",
-     *     tags={"profile"},
-     *     security={{"BearerAuth": {}}},
-     *
-     *     @OA\Response(response="default", description="Found",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(type="string", property="message", example="Successfully logged out"),
-     *             @OA\Property(type="string", property="redirectTo", example="/login"),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response=401, ref="#/components/responses/Code401"),
-     * )
-     *
      * @param Request $request
      * @return JsonResponse
      */

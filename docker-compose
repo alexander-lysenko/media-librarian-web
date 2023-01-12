@@ -6,62 +6,67 @@ NGINX_IP=192.168.240.9
 VHOSTS_FMT="media-librarian-dev.com"
 
 function setup_env_file() {
-    # Check if exists .env and copy from .env.example
-    if [ ! -f "$DIRNAME"/src/.env ]; then
-        CURRENT_USER=$(whoami)
-        echo -n "Trying to copy .env.example -> .env ..."
+  # Check if .env file exists. If not, create a new one from .env.example
+  if [ ! -f "$DIRNAME"/src/.env ]; then
+    CURRENT_USER=$(whoami)
+    echo -n "Trying to copy .env.example -> .env ..."
 
-        cp -n "$DIRNAME"/src/.env.example "$DIRNAME"/src/.env
-        sudo chown "$CURRENT_USER":"$CURRENT_USER" "$DIRNAME"/src/.env
-        echo "Done"
-    else
-        echo "Creating environment from the file: $DIRNAME/src/.env"
-    fi
+    cp -n "$DIRNAME"/src/.env.example "$DIRNAME"/src/.env
+    sudo chown "$CURRENT_USER":"$CURRENT_USER" "$DIRNAME"/src/.env
+    echo "Done"
+  else
+    echo "Creating environment from the file: $DIRNAME/src/.env"
+  fi
 }
 
 function create_domain_name_mapping() {
-    echo "Mapping virtual host names"
+  echo "Mapping virtual host names"
 
-    # update /etc/hosts
-    echo -n "Updating /etc/hosts... "
-    sudo sh -c "cat /etc/hosts | grep -v \"$NGINX_IP\" > /tmp/hosts.new"
-    echo -e "$NGINX_IP\t$VHOSTS_FMT" | sudo tee -a /tmp/hosts.new > /dev/null
-    sudo sh -c "cat /tmp/hosts.new > /etc/hosts && rm /tmp/hosts.new"
+  # update /etc/hosts
+  echo -n "Updating /etc/hosts... "
+  sudo sh -c "cat /etc/hosts | grep -v \"$NGINX_IP\" > /tmp/hosts.new"
+  echo -e "$NGINX_IP\t$VHOSTS_FMT" | sudo tee -a /tmp/hosts.new >/dev/null
+  sudo sh -c "cat /tmp/hosts.new > /etc/hosts && rm /tmp/hosts.new"
+  echo "Done"
+
+  # Check interface for nginx exists
+  VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
+
+  if [[ "$VIRTUAL_NET_EXISTS" = "" ]]; then
+    echo -n "Setting up virtual network interface... "
+    CN=$(echo $NGINX_IP | cut -d . -f 4)
+    sudo sh -c "ifconfig docker0:ng_$CN $NGINX_IP"
     echo "Done"
-
-    # Check interface for nginx exists
-    VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
-
-    if [[ "$VIRTUAL_NET_EXISTS" = "" ]]; then
-        echo -n "Setting up virtual network interface... "
-        CN=$(echo $NGINX_IP | cut -d . -f 4)
-        sudo sh -c "ifconfig docker0:ng_$CN $NGINX_IP"
-        echo "Done"
-    else
-        echo "Virtual network interface is up."
-    fi
+  else
+    echo "Virtual network interface is up."
+  fi
 }
 
 opts=""
 case "$1" in
 "build")
-    sudo echo "Building..."
-    create_domain_name_mapping
-    ;;
+  sudo echo "Building..."
+  create_domain_name_mapping
+  ;;
 "up")
-    sudo echo "Booting..."
-    create_domain_name_mapping
-    setup_env_file
-    ;;
+  sudo echo "Booting..."
+  create_domain_name_mapping
+  setup_env_file
+  ;;
 "start")
-    sudo echo "Running in background..."
-    ;;
+  sudo echo "Running in background..."
+  ;;
 "down")
+  if [ "$2" = "--force" ]; then
+    echo "Using --force: Containers are going to be destroyed"
+    set -- "down"
+  else
     echo "Command 'down' is disabled by security reasons. Use './docker-compose stop' to stop containers"
+    echo "If you still wish to destroy the containers, run this command with --force argument"
     exit
-    ;;
+  fi
+  ;;
 "*") ;;
-
 esac
 
 # shellcheck disable=SC2086

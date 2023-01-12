@@ -8,18 +8,19 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
+# noinspection ALL
 [*.php]
 ij_php_line_comment_at_first_column = false
 ij_php_line_comment_add_space = true
 
+# noinspection ALL
 [*.md]
 trim_trailing_whitespace = false
 
+# noinspection ALL
 [*.{yml,yaml,ts,tsx}]
 indent_size = 2
 
+# noinspection ALL
 [{package.json,composer.json,tsconfig.json,.eslintrc.json}]
 indent_size = 2
-
-[docker-compose.yml]
-indent_size = 4

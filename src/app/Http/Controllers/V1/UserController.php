@@ -12,61 +12,71 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(name: 'guest', description: 'Guest (Unauthenticated User)')]
 /**
  * User controller - manage user/identity actions
  * @TODO: See https://github.com/laravel/breeze
  */
 class UserController extends ApiV1Controller
 {
+    #[OA\Post(
+        path: '/api/v1/user/signup',
+        description: 'Sign up a new user',
+        summary: 'Register a new user',
+        // requestBody: new OA\RequestBody(
+        //     required: true,
+        //     content: new OA\JsonContent(
+        //         properties: [
+        //
+        //         ]
+        //     )
+        // ),
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                    new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                    new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
+                    new OA\Property(property: 'passwordRepeat', type: 'string', example: 'PasSw0rd'),
+                    new OA\Property(property: 'locale', type: 'string', example: 'en'),
+                    new OA\Property(property: 'theme', type: 'string', example: 'dark'),
+                ]
+            )
+        ),
+        tags: ['guest'],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Created',
+            //     @OA\JsonContent(type:"object",
+            //         @OA\Property(property:"message",
+            //             type:"string",
+            //             example:"Your account has been created. You have to verify your e-mail to activate the account"
+            //         ),
+            //         @OA\Property(type:"object", property:"user",
+            //             @OA\Property(property:"id", type:"integer", example:1),
+            //             @OA\Property(property:"name", type:"string", example:"John Doe"),
+            //             @OA\Property(property:"email", type:"string", example:"john.doe@example.com"),
+            //         ),
+            //     ),
+            ),
+
+            // @OA\Response(response:"422",
+            //     description:"Unprocessable Entity",
+            //     @OA\JsonContent(type:"object",
+            //         @OA\Property(property:"errors", type:"object",
+            //             @OA\Property(property:"email", type:"array",
+            //                 @OA\Items(type:"string", example:"Email is required"),
+            //             ),
+            //         ),
+            //     ),
+            // ),
+        ]
+    )]
     /**
-     * @OA\Post(
-     *     path="/api/v1/user/signup",
-     *     summary="Register a new user",
-     *     description="Sign up a new user",
-     *     tags={"guest"},
-     *
-     *     @OA\RequestBody(required=true,
-     *         @OA\MediaType(mediaType="application/json",
-     *             @OA\Schema(type="object",
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="password", type="string", example="PasSw0rd"),
-     *                 @OA\Property(property="passwordRepeat", type="string", example="PasSw0rd"),
-     *                 @OA\Property(property="locale", type="string", example="en"),
-     *                 @OA\Property(property="theme", type="string", example="dark"),
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response="201",
-     *         description="Created",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message",
-     *                 type="string",
-     *                 example="Your account has been created. You have to verify your e-mail to activate the account"
-     *             ),
-     *             @OA\Property(type="object", property="user",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response="422",
-     *         description="Unprocessable Entity",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="errors", type="object",
-     *                 @OA\Property(property="email", type="array",
-     *                     @OA\Items(type="string", example="Email is required"),
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     * ),
-     *
      * @param SignupRequest $request
      * @return JsonResponse
      */
@@ -86,39 +96,40 @@ class UserController extends ApiV1Controller
         ], 201);
     }
 
+    #[OA\Post(
+        path: '/api/v1/user/login',
+        description: 'Obtain an API (Bearer) token to execute the rest of requests as an authenticated user',
+        summary: 'Login (obtain an API token)',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                    new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
+                    new OA\Property(property: 'rememberMe', type: 'boolean', example: true),
+                ]
+            )
+        ),
+        tags: ['guest'],
+        responses: [
+            new OA\Response(
+                response: 302,
+                description: 'Moved Temporarily',
+            //     @OA\JsonContent(type:"object",
+            //         @OA\Property(property:"redirectTo", type:"string", example:"/app"),
+            //         @OA\Property(property:"message", type:"string", example:"Successfully logged in"),
+            //         @OA\Property(property:"token", type:"string", example:"token"),
+            //     ),
+            ),
+            //
+            // @OA\Response(response:"default", description:"Unauthorized",
+            //     @OA\JsonContent(type:"object",
+            //         @OA\Property(property:"message", type:"string", example:"Incorrect email and/or password")
+            //     ),
+            // ),
+        ]
+    )]
     /**
-     * @OA\Post(
-     *     path="/api/v1/user/login",
-     *     summary="Login (obtain an API token)",
-     *     description="Obtain an API (Bearer) token to execute the rest of requests as an authenticated user",
-     *     tags={"guest"},
-     *
-     *     @OA\RequestBody(required=true,
-     *         @OA\MediaType(mediaType="application/json",
-     *             @OA\Schema(type="object",
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="password", type="string", example="PasSw0rd"),
-     *                 @OA\Property(property="rememberMe", type="boolean", example=true),
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response="302",
-     *         description="Moved Temporarily",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="redirectTo", type="string", example="/app"),
-     *             @OA\Property(property="message", type="string", example="Successfully logged in"),
-     *             @OA\Property(property="token", type="string", example="token"),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response="default", description="Unauthorized",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message", type="string", example="Incorrect email and/or password")
-     *         ),
-     *     ),
-     * )
-     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -135,7 +146,7 @@ class UserController extends ApiV1Controller
 
             return Response::json([
                 'message' => 'Successfully logged in',
-                'token' => explode("|", $token)[1],
+                'token' => explode('|', $token)[1],
                 'redirectTo' => $redirectTo,
             ], 302);
         }
@@ -145,44 +156,44 @@ class UserController extends ApiV1Controller
         ], 401);
     }
 
-    /**
+    /*
      * @OA\Get(
-     *     path="/api/v1/user/verify-email",
-     *     summary="Activate an account by verifying their email using a verification key",
-     *     description="It is required to provide the verification key sent via e-mail after the successful signup",
-     *     tags={"guest"},
+     *     path:"/api/v1/user/verify-email",
+     *     summary:"Activate an account by verifying their email using a verification key",
+     *     description:"It is required to provide the verification key sent via e-mail after the successful signup",
+     *     tags: ['guest'],
      *
-     *     @OA\Parameter(required=true, name="email", in="query",
-     *         @OA\Schema(type="string", example="john.doe@example.com")
+     *     @OA\Parameter(required:true, name:"email", in:"query",
+     *         @OA\Schema(type:"string", example:"john.doe@example.com")
      *     ),
-     *     @OA\Parameter(required=true, name="verificationKey", in="query",
-     *         @OA\Schema(type="string", example="57c131437cc7885444087a775884d453")
+     *     @OA\Parameter(required:true, name:"verificationKey", in:"query",
+     *         @OA\Schema(type:"string", example:"57c131437cc7885444087a775884d453")
      *     ),
      *
-     *     @OA\Response(response="200", description="Success",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message",
-     *                 type="string",
-     *                 example="Email has been verified. The user's account is active now"
+     *     @OA\Response(response:"200", description:"Success",
+     *         @OA\JsonContent(type:"object",
+     *             @OA\Property(property:"message",
+     *                 type:"string",
+     *                 example:"Email has been verified. The user's account is active now"
      *             ),
      *         ),
      *     ),
      *
-     *     @OA\Response(response="410", description="Gone",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message",
-     *                 type="string",
-     *                 example="The user's email is already verified or the verification key is expired"
+     *     @OA\Response(response:"410", description:"Gone",
+     *         @OA\JsonContent(type:"object",
+     *             @OA\Property(property:"message",
+     *                 type:"string",
+     *                 example:"The user's email is already verified or the verification key is expired"
      *             ),
      *         ),
      *     ),
      *
-     *     @OA\Response(response="422", description="Unprocessable Entity",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message", type="string", example="Account with this email was not found"),
-     *             @OA\Property(property="errors", type="object",
-     *                 @OA\Property(property="email", type="array",
-     *                     @OA\Items(type="string", example="Account with this email was not found")
+     *     @OA\Response(response:"422", description:"Unprocessable Entity",
+     *         @OA\JsonContent(type:"object",
+     *             @OA\Property(property:"message", type:"string", example:"Account with this email was not found"),
+     *             @OA\Property(property:"errors", type:"object",
+     *                 @OA\Property(property:"email", type:"array",
+     *                     @OA\Items(type:"string", example:"Account with this email was not found")
      *                 ),
      *             ),
      *         ),
@@ -213,36 +224,36 @@ class UserController extends ApiV1Controller
         ]);
     }
 
-    /**
+    /*
      * @OA\Post(
-     *     path="/api/v1/user/verify-email",
-     *     summary="Resend email verification link",
-     *     description="Re-sends over email the verification key to activate an account",
-     *     tags={"guest"},
+     *     path:"/api/v1/user/verify-email",
+     *     summary:"Resend email verification link",
+     *     description:"Re-sends over email the verification key to activate an account",
+     *     tags: ['guest'],
      *
-     *     @OA\RequestBody(required=true,
-     *         @OA\MediaType(mediaType="application/json",
-     *             @OA\Schema(type="object",
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
+     *     @OA\RequestBody(required:true,
+     *         @OA\MediaType(mediaType:"application/json",
+     *             @OA\Schema(type:"object",
+     *                 @OA\Property(property:"email", type:"string", example:"john.doe@example.com"),
      *             ),
      *         ),
      *     ),
      *
-     *     @OA\Response(response="200", description="Success",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message",
-     *                 type="string",
-     *                 example="Email has been verified. The user's account is active now"
+     *     @OA\Response(response:"200", description:"Success",
+     *         @OA\JsonContent(type:"object",
+     *             @OA\Property(property:"message",
+     *                 type:"string",
+     *                 example:"Email has been verified. The user's account is active now"
      *             ),
      *         ),
      *     ),
      *
-     *     @OA\Response(response="422", description="Unprocessable Entity",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message", type="string", example="Account with this email was not found"),
-     *             @OA\Property(property="errors", type="object",
-     *                 @OA\Property(property="email", type="array",
-     *                     @OA\Items(type="string", example="Account with this email was not found")
+     *     @OA\Response(response:"422", description:"Unprocessable Entity",
+     *         @OA\JsonContent(type:"object",
+     *             @OA\Property(property:"message", type:"string", example:"Account with this email was not found"),
+     *             @OA\Property(property:"errors", type:"object",
+     *                 @OA\Property(property:"email", type:"array",
+     *                     @OA\Items(type:"string", example:"Account with this email was not found")
      *                 ),
      *             ),
      *         ),
@@ -271,23 +282,23 @@ class UserController extends ApiV1Controller
         ]);
     }
 
-    /**
+    /*
      * @OA\Post(
-     *     path="/api/v1/user/password-reset",
-     *     summary="Request a token for reset password on an account",
-     *     description="The token will be sent over e-mail to the specified e-mail address",
-     *     tags={"guest"},
+     *     path:"/api/v1/user/password-reset",
+     *     summary:"Request a token for reset password on an account",
+     *     description:"The token will be sent over e-mail to the specified e-mail address",
+     *     tags: ['guest'],
      *
-     *     @OA\RequestBody(required=true,
-     *         @OA\MediaType(mediaType="application/json",
-     *             @OA\Schema(type="object",
+     *     @OA\RequestBody(required:true,
+     *         @OA\MediaType(mediaType:"application/json",
+     *             @OA\Schema(type:"object",
      *             ),
      *         ),
      *     ),
      *
-     *     @OA\Response(response="200", description="Work in Progress",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message", type="string", example="Work in Progress")
+     *     @OA\Response(response:"200", description:"Work in Progress",
+     *         @OA\JsonContent(type:"object",
+     *             @OA\Property(property:"message", type:"string", example:"Work in Progress")
      *         ),
      *     ),
      * )
@@ -303,16 +314,16 @@ class UserController extends ApiV1Controller
         ]);
     }
 
-    /**
+    /*
      * @OA\Put(
-     *     path="/api/v1/user/password-reset",
-     *     summary="Perform the password reset using the token received over e-mail and a new desired password",
-     *     description="The token expires 60 minutes after it was issued. The password should be confirmed",
-     *     tags={"guest"},
+     *     path:"/api/v1/user/password-reset",
+     *     summary:"Perform the password reset using the token received over e-mail and a new desired password",
+     *     description:"The token expires 60 minutes after it was issued. The password should be confirmed",
+     *     tags: ['guest'],
      *
-     *     @OA\Response(response="200", description="Work in Progress",
-     *         @OA\JsonContent(type="object",
-     *             @OA\Property(property="message", type="string", example="Work in Progress")
+     *     @OA\Response(response:"200", description:"Work in Progress",
+     *         @OA\JsonContent(type:"object",
+     *             @OA\Property(property:"message", type:"string", example:"Work in Progress")
      *         ),
      *     ),
      * )
