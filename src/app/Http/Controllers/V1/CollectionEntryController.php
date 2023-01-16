@@ -40,20 +40,30 @@ class CollectionEntryController extends ApiV1Controller
         path: '/api/v1/collections/{id}/entries',
         description: 'View all entries from the specified collection. By default the selection is paginated. ' .
         'The selection can be filtered by any of collection fields using customizable search rules.',
-        summary: 'View all/filtered entries of a collection',
+        summary: 'View All/Filtered Entries of a Collection',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['entries'],
-        parameters: [new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF)],
+        parameters: [
+            new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF),
+            new OA\Parameter(ref: self::PARAM_PAGE_REF),
+            new OA\Parameter(ref: self::PARAM_PER_PAGE_REF),
+        ],
         responses: [
             new OA\Response(
-                response: 201,
-                description: 'WIP',
+                response: 200,
+                description: 'OK',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(
                         property: 'entries',
                         type: 'array',
                         items: new OA\Items(ref: self::SCHEMA_COLLECTION_ENTRY_REF)
                     ),
+                    new OA\Property(property: 'pagination', properties: [
+                        new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                        new OA\Property(property: 'lastPage', type: 'integer', example: 15),
+                        new OA\Property(property: 'perPage', type: 'integer', example: 20),
+                        new OA\Property(property: 'total', type: 'integer', example: 299),
+                    ]),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -67,10 +77,21 @@ class CollectionEntryController extends ApiV1Controller
      */
     public function index(CollectionIdRequest $request): JsonResponse
     {
-        $entries = $this->getCollectionTableQuery($request->id)->simplePaginate();
-        // todo: improve pagination
-        $resource = new JsonResource($entries);
-        // $resource::wrap('entries');
+        // Todo: Add search model, filtering, sorting
+        $paginatedResource = $this
+            ->getCollectionTableQuery($request->id)
+            ->paginate(perPage: $request->get('perPage'), page: $request->get('page'));
+
+        $pagination = [
+            'currentPage' => $paginatedResource->currentPage(),
+            'lastPage' => $paginatedResource->lastPage(),
+            'perPage' => $paginatedResource->perPage(),
+            'total' => $paginatedResource->total(),
+        ];
+
+        $resource = new JsonResource($paginatedResource->items());
+        $resource::wrap('entries');
+        $resource->with['pagination'] = $pagination;
 
         return $resource->response();
     }
@@ -238,13 +259,7 @@ class CollectionEntryController extends ApiV1Controller
         ],
 
         responses: [
-            new OA\Response(
-                response: 200,
-                description: 'WIP',
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'message', type: 'string', example: 'WIP'),
-                ])
-            ),
+            new OA\Response(ref: self::RESPONSE_204_REF, response: 204),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
             new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
@@ -256,6 +271,7 @@ class CollectionEntryController extends ApiV1Controller
      */
     public function delete(CollectionEntryRequest $request): JsonResponse
     {
+        $id = $this->getCollectionTableQuery($request->id)->delete($request->entry);
         return new JsonResponse(null, 204);
     }
 

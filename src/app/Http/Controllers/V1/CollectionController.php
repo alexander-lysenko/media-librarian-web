@@ -292,7 +292,7 @@ class CollectionController extends ApiV1Controller
         path: '/api/v1/collections/{id}',
         description: 'Remove all items from the specified collection but not the collection itself. ' .
         'The operation cannot be undone.',
-        summary: 'Clear (truncate) a Collection',
+        summary: 'Clear (Truncate) a Collection',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['collections'],
         parameters: [new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF)],

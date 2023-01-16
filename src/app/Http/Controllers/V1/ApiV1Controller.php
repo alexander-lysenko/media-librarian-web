@@ -56,6 +56,8 @@ abstract class ApiV1Controller extends BaseController
 
     public const PARAM_COLLECTION_ID_REF = '#/components/parameters/collectionId';
     public const PARAM_ENTRY_ID_REF = '#/components/parameters/entryId';
+    public const PARAM_PAGE_REF = '#/components/parameters/page';
+    public const PARAM_PER_PAGE_REF = '#/components/parameters/perPage';
 
     public const RESPONSE_204_REF = '#/components/responses/Code204';
     // public const RESPONSE_400_REF = '#/components/responses/Code400';
@@ -89,4 +91,24 @@ abstract class ApiV1Controller extends BaseController
         schema: new OA\Schema(type: 'integer', example: 1),
     )]
     private string $entryId = self::PARAM_ENTRY_ID_REF;
+
+    #[OA\Parameter(
+        parameter: 'page',
+        name: 'page',
+        description: 'Pagination (set current page)',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'integer', example: 1),
+    )]
+    private string $page = self::PARAM_PAGE_REF;
+
+    #[OA\Parameter(
+        parameter: 'perPage',
+        name: 'perPage',
+        description: 'Pagination (set entries per page)',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'integer', default: 50, enum: [0, 25, 50, 100, 250]),
+    )]
+    private string $perPage = self::PARAM_PER_PAGE_REF;
 }
