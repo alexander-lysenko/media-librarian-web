@@ -16,11 +16,12 @@ use OpenApi\Attributes as OA;
             new OA\Property(property: 'id', type: 'integer', example: 1),
             new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
             new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
-            new OA\Property(property: 'email_verified_at', type: 'datetime', example: '2000-01-01 00:00:01'),
-            new OA\Property(property: 'status', type: 'string', example: 'ACTIVE'),
-            new OA\Property(property: 'deleted_at', type: 'datetime', example: '2000-01-01 00:00:01'),
             new OA\Property(property: 'created_at', type: 'datetime', example: '2000-01-01 00:00:01'),
             new OA\Property(property: 'updated_at', type: 'datetime', example: '2000-01-01 00:00:01'),
+            new OA\Property(property: 'email_verified_at', type: 'datetime', example: '2000-01-01 00:00:01'),
+            new OA\Property(property: 'deleted_at', type: 'datetime', example: '2000-01-01 00:00:01'),
+            new OA\Property(property: 'status', type: 'string', example: 'ACTIVE'),
+            new OA\Property(property: 'avatar', type: 'string', example: 'data:image/svg+xml;base64,PD9...PC9zdmc+'),
         ]),
     ]
 )]
