@@ -6,6 +6,7 @@ use App\Http\Middleware\DatabaseSwitch;
 use App\Utils\Enum\InputDataTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
 
@@ -58,7 +59,7 @@ class SqliteCollectionMeta extends Model
      * @param string $type
      * @return ColumnDefinition
      */
-    public function createTableColumnByType(Blueprint $table, string $name, string $type): ColumnDefinition
+    public static function createTableColumnByType(Blueprint $table, string $name, string $type): ColumnDefinition
     {
         return match ($type) {
             InputDataTypeEnum::LINE_INPUT => $table->lineString($name)->nullable(),
@@ -71,5 +72,18 @@ class SqliteCollectionMeta extends Model
             InputDataTypeEnum::RATING10_INPUT => $table->unsignedSmallInteger($name)->nullable(),
             InputDataTypeEnum::PRIORITY_INPUT => $table->tinyInteger($name)->nullable(),
         };
+    }
+
+    /**
+     * Composes a query builder starting from a collection table found by its ID.
+     * @param int $collectionId - the collection ID from SqliteCollectionMeta
+     * @return Builder - an Illuminate\Database\Query\Builder instance
+     */
+    public static function getCollectionTableQuery(int $collectionId): Builder
+    {
+        /** @var SqliteCollectionMeta $collectionMetaEntry */
+        $collectionMetaEntry = static::query()->where('id', '=', $collectionId)->first();
+
+        return $collectionMetaEntry->getConnection()->table($collectionMetaEntry->tbl_name);
     }
 }

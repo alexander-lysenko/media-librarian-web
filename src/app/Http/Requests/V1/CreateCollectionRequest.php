@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * A request entity to validate the data passed to create a new collection
+ * A request entity to validate the data passed to CREATE a new collection
  *
  * @property string $title
  * @property array $fields
@@ -17,7 +17,6 @@ class CreateCollectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
      * @return bool
      */
     public function authorize(): bool
@@ -27,7 +26,6 @@ class CreateCollectionRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
      * @return array<string, mixed>
      */
     public function rules(): array

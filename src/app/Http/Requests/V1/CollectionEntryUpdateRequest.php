@@ -4,16 +4,17 @@ namespace App\Http\Requests\V1;
 
 use App\Http\Middleware\DatabaseSwitch;
 use App\Models\SqliteCollectionMeta;
+use App\Rules\CollectionEntryStructureRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * A request entity to validate the ID of an existing entry from an existing collection
- * during view/update/delete the entry
+ * A request entity to validate the data passed to UPDATE an existing entry into an existing collection
  * @property int $id
  * @property int $entry
+ * @property array $contents
  */
-class CollectionEntryRequest extends FormRequest
+class CollectionEntryUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -58,8 +59,12 @@ class CollectionEntryRequest extends FormRequest
             ->first();
         $collectionTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $collectionTableName]);
 
-        return [
+        $entryValidated = $this->validate([
             'entry' => ['required', 'integer', 'min:1', Rule::exists($collectionTablePath, 'id')],
+        ]);
+
+        return [
+            'contents' => ['required', new CollectionEntryStructureRule($idValidated['id'], $entryValidated['entry'])],
         ];
     }
 }

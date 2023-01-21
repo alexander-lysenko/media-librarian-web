@@ -2,7 +2,7 @@
   "name": "media-librarian-web",
   "version": "0.0.0",
   "private": true,
-  "license": "ISC",
+  "license": "none",
   "author": "Alexander L",
   "main": "frontend/index.ts",
   "scripts": {

@@ -1,12 +1,10 @@
 {
-  "name": "laravel/laravel",
+  "name": "alexander-lysenko/media-librarian-web",
   "type": "project",
-  "description": "The Laravel Framework.",
-  "keywords": [
-    "framework",
-    "laravel"
-  ],
-  "license": "MIT",
+  "description": "Media Librarian (WEB)",
+  "version": "0.0.0",
+  "keywords": [],
+  "license": "none",
   "require": {
     "darkaonline/l5-swagger": "^8.4",
     "ext-pdo": "*",

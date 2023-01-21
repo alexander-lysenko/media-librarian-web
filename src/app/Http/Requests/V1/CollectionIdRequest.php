@@ -45,16 +45,4 @@ class CollectionIdRequest extends FormRequest
             'id' => ['required', 'integer', 'min:1', Rule::exists($collectionMetaClass, 'id')],
         ];
     }
-
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'id.exists' => 'The entry with provided :attribute does not exist.',
-        ];
-    }
 }

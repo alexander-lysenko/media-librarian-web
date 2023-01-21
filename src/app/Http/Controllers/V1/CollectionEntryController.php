@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Requests\V1\CollectionEntryRequest;
+use App\Http\Requests\V1\CollectionEntryUpdateRequest;
 use App\Http\Requests\V1\CollectionIdRequest;
-use App\Http\Requests\V1\CreateCollectionEntryRequest;
+use App\Http\Requests\V1\CollectionEntryCreateRequest;
+use App\Http\Resources\CollectionEntryResource;
 use App\Models\SqliteCollectionMeta;
+use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -78,8 +81,7 @@ class CollectionEntryController extends ApiV1Controller
     public function index(CollectionIdRequest $request): JsonResponse
     {
         // Todo: Add search model, filtering, sorting
-        $paginatedResource = $this
-            ->getCollectionTableQuery($request->id)
+        $paginatedResource = SqliteCollectionMeta::getCollectionTableQuery($request->id)
             ->paginate(perPage: $request->get('perPage'), page: $request->get('page'));
 
         $pagination = [
@@ -89,6 +91,7 @@ class CollectionEntryController extends ApiV1Controller
             'total' => $paginatedResource->total(),
         ];
 
+        // TODO: replace with CollectionPaginatedResource
         $resource = new JsonResource($paginatedResource->items());
         $resource::wrap('entries');
         $resource->with['pagination'] = $pagination;
@@ -144,19 +147,21 @@ class CollectionEntryController extends ApiV1Controller
         ]
     )]
     /**
-     * @param CreateCollectionEntryRequest $request
+     * @param CollectionEntryCreateRequest $request
      * @return JsonResponse
      */
-    public function create(CreateCollectionEntryRequest $request): JsonResponse
+    public function create(CollectionEntryCreateRequest $request): JsonResponse
     {
         $contents = $request->contents;
-        $id = $this->getCollectionTableQuery($request->id)->insertGetId($contents);
+        $id = SqliteCollectionMeta::getCollectionTableQuery($request->id)->insertGetId($contents);
         // todo: implement file uploading
 
         $response = array_merge(['id' => $id], $contents);
         $resource = new JsonResource($response);
         $resource::wrap('entry');
 
+        // todo: add poster
+        $resource->with['poster'] = '';
         return $resource->response()->setStatusCode(201);
     }
 
@@ -173,7 +178,7 @@ class CollectionEntryController extends ApiV1Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'WIP',
+                description: 'OK',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'entry', ref: self::SCHEMA_COLLECTION_ENTRY_REF),
                 ])
@@ -185,10 +190,19 @@ class CollectionEntryController extends ApiV1Controller
     )]
     /**
      * @param CollectionEntryRequest $request
-     * @return void
+     * @return JsonResponse
      */
-    public function view(CollectionEntryRequest $request)
+    public function view(CollectionEntryRequest $request): JsonResponse
     {
+        $entry = SqliteCollectionMeta::getCollectionTableQuery($request->id)
+            ->where('id', '=', $request->entry)
+            ->get()
+            ->first();
+
+        $resource = new CollectionEntryResource($entry);
+        // todo: add poster
+        $resource->with['poster'] = '';
+        return $resource->response();
     }
 
     #[OA\Put(path: '/api/v1/collections/{id}/entries/{entry}',
@@ -240,11 +254,19 @@ class CollectionEntryController extends ApiV1Controller
         ]
     )]
     /**
-     * @param CreateCollectionEntryRequest $request
-     * @return void
+     * @param CollectionEntryUpdateRequest $request
+     * @return JsonResponse
      */
-    public function update(CreateCollectionEntryRequest $request)
+    public function update(CollectionEntryUpdateRequest $request): JsonResponse
     {
+        $updatedEntry = SqliteCollectionMeta::getCollectionTableQuery($request->id)
+            ->where('id', '=', $request->entry)
+            ->update($request->validated('contents'));
+
+        $resource = new JsonResource($request->validated('contents'));
+        // todo: add poster
+        $resource->with['poster'] = '';
+        return $resource->response();
     }
 
     #[OA\Delete(
@@ -271,7 +293,7 @@ class CollectionEntryController extends ApiV1Controller
      */
     public function delete(CollectionEntryRequest $request): JsonResponse
     {
-        $id = $this->getCollectionTableQuery($request->id)->delete($request->entry);
+        SqliteCollectionMeta::getCollectionTableQuery($request->id)->delete($request->entry);
         return new JsonResponse(null, 204);
     }
 
@@ -298,26 +320,21 @@ class CollectionEntryController extends ApiV1Controller
     /**
      * @param CollectionIdRequest $request
      * @return JsonResponse
+     * @throws Exception
      */
     public function random(CollectionIdRequest $request): JsonResponse
     {
         // todo: find the best solution to get random entry
-        $resource = new JsonResource([]);
-        $resource::wrap('entry');
+        $randomId = random_int(1, 1);
 
+        $entry = SqliteCollectionMeta::getCollectionTableQuery($request->id)
+            ->where('id', '=', $randomId)
+            ->get()
+            ->first();
+
+        $resource = new CollectionEntryResource($entry);
+        // todo: add poster
+        $resource->with['poster'] = '';
         return $resource->response();
-    }
-
-    /**
-     * Composes a query builder starting from a collection table found by its ID.
-     * @param int $id - the collection ID from SqliteCollectionMeta
-     * @return Builder - an Illuminate\Database\Query\Builder instance
-     */
-    private function getCollectionTableQuery(int $id): Builder
-    {
-        /** @var SqliteCollectionMeta $sqliteCollectionMeta */
-        $sqliteCollectionMeta = SqliteCollectionMeta::query()->where('id', '=', $id)->first();
-
-        return $sqliteCollectionMeta->getConnection()->table($sqliteCollectionMeta->tbl_name);
     }
 }

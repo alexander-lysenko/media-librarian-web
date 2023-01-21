@@ -152,6 +152,12 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'id' => [
+            'exists' => 'The collection with provided ID does not exist.'
+        ],
+        'entry' => [
+            'exists' => 'The entry with provided ID does not exist.'
+        ],
     ],
 
     /*

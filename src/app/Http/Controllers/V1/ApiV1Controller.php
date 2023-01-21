@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
     description: 'Internal API v1 Documentation for the Media Librarian Web App',
     title: 'Media Librarian Web: API',
     contact: new OA\Contact(name: 'admin@example.com', email: 'admin@example.com'),
-    license: new OA\License('ISC'),
+    license: new OA\License(name: 'Not licensed yet', identifier: 'none', url: ''),
 ), OA\SecurityScheme(
     securityScheme: 'BearerAuth',
     type: 'http',
