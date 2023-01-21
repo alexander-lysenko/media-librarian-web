@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Http\Requests\V1\CollectionEntryCreateRequest;
 use App\Http\Requests\V1\CollectionEntryRequest;
 use App\Http\Requests\V1\CollectionEntryUpdateRequest;
 use App\Http\Requests\V1\CollectionIdRequest;
-use App\Http\Requests\V1\CollectionEntryCreateRequest;
 use App\Http\Resources\CollectionEntryResource;
 use App\Models\SqliteCollectionMeta;
 use Exception;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'entries', description: 'Manage the entries of a collection')]
-#[OA\Schema(schema: 'CollectionEntryExample',
+#[OA\Schema(
+    schema: 'CollectionEntryExample',
     properties: [
         new OA\Property(property: 'id', type: 'integer', example: 1),
         new OA\Property(property: 'Movie Title', type: 'string', example: 'Лицо со шрамом'),
@@ -103,7 +104,7 @@ class CollectionEntryController extends ApiV1Controller
         path: '/api/v1/collections/{id}/entries',
         description: 'Create a new entry into the specified collection.' .
         ' The structure of the new entry must match the structure of the collection that a new entry is created into.',
-        summary: 'Add a new entry',
+        summary: 'Add a New Entry',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
@@ -168,7 +169,7 @@ class CollectionEntryController extends ApiV1Controller
     #[OA\Get(
         path: '/api/v1/collections/{id}/entries/{entry}',
         description: 'Find an entry by its ID in the specified collection.',
-        summary: 'View/Open an entry',
+        summary: 'View/Open an Entry',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['entries'],
         parameters: [
@@ -181,6 +182,7 @@ class CollectionEntryController extends ApiV1Controller
                 description: 'OK',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'entry', ref: self::SCHEMA_COLLECTION_ENTRY_REF),
+                    new OA\Property(property: 'poster', type: 'string', example: 'https://localhost/1.jpg'),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -205,9 +207,10 @@ class CollectionEntryController extends ApiV1Controller
         return $resource->response();
     }
 
-    #[OA\Put(path: '/api/v1/collections/{id}/entries/{entry}',
+    #[OA\Put(
+        path: '/api/v1/collections/{id}/entries/{entry}',
         description: 'Update an entry by its ID in the specified collection.',
-        summary: 'Update an entry',
+        summary: 'Update an Entry',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
@@ -246,6 +249,7 @@ class CollectionEntryController extends ApiV1Controller
                 description: 'WIP',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'entry', ref: self::SCHEMA_COLLECTION_ENTRY_REF),
+                    new OA\Property(property: 'poster', type: 'string', example: 'https://localhost/1.jpg'),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -259,7 +263,7 @@ class CollectionEntryController extends ApiV1Controller
      */
     public function update(CollectionEntryUpdateRequest $request): JsonResponse
     {
-        $updatedEntry = SqliteCollectionMeta::getCollectionTableQuery($request->id)
+        SqliteCollectionMeta::getCollectionTableQuery($request->id)
             ->where('id', '=', $request->entry)
             ->update($request->validated('contents'));
 
@@ -272,7 +276,7 @@ class CollectionEntryController extends ApiV1Controller
     #[OA\Delete(
         path: '/api/v1/collections/{id}/entries/{entry}',
         description: 'Delete/Erase an entry by its ID from the specified collection.',
-        summary: 'Delete an entry',
+        summary: 'Delete an Entry',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['entries'],
         parameters: [
@@ -299,17 +303,21 @@ class CollectionEntryController extends ApiV1Controller
 
     #[OA\Get(
         path: '/api/v1/collections/{id}/entries/random',
-        description: 'Find any random entry in the specified collection.',
-        summary: 'Get a random entry',
+        description: 'Finds any random entry in the specified collection. ' .
+        'The more items the collection contains, the more randomized the selection will be. ' .
+        'To achieve the best performance, the query is limited to 1 entry picked from random offset, ' .
+        'The offset\'s upper bound is the total (count) of items in the collection, count is cached for 60 seconds.',
+        summary: 'Get a Random Entry',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['entries'],
         parameters: [new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF)],
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'WIP',
+                description: 'OK',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'entry', ref: self::SCHEMA_COLLECTION_ENTRY_REF),
+                    new OA\Property(property: 'poster', type: 'string', example: 'https://localhost/1.jpg'),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -324,11 +332,15 @@ class CollectionEntryController extends ApiV1Controller
      */
     public function random(CollectionIdRequest $request): JsonResponse
     {
-        // todo: find the best solution to get random entry
-        $randomId = random_int(1, 1);
+        $cacheKey = "items-count-{$request->user()->id}-$request->id";
+        $totalRows = Cache::remember($cacheKey, 60, static function () use ($request) {
+            return SqliteCollectionMeta::getCollectionTableQuery($request->id)->count('id');
+        });
+        $randomOffset = random_int(0, $totalRows - 1);
 
         $entry = SqliteCollectionMeta::getCollectionTableQuery($request->id)
-            ->where('id', '=', $randomId)
+            ->limit(1)
+            ->offset($randomOffset)
             ->get()
             ->first();
 
