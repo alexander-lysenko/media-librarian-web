@@ -11,9 +11,16 @@ use Illuminate\Validation\Rule;
  * A request entity to validate the data passed to CREATE a new entry into an existing collection
  * @property int $id
  * @property array $contents
+ * @property mixed $poster
  */
 class CollectionEntryCreateRequest extends FormRequest
 {
+    /**
+     * Indicates whether validation should stop after the first rule failure.
+     * @var bool
+     */
+    protected $stopOnFirstFailure = true;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -31,6 +38,9 @@ class CollectionEntryCreateRequest extends FormRequest
     {
         $this->merge([
             'id' => $this->route('id'),
+            'contents' => $this->isJson()
+                ? $this->input('contents')
+                : json_decode((string)$this->input('contents'), true),
         ]);
     }
 
@@ -51,7 +61,8 @@ class CollectionEntryCreateRequest extends FormRequest
         ]);
 
         return [
-            'contents' => ['required', new CollectionEntryStructureRule($preValidated['id'])],
+            'contents' => ['required', 'array', new CollectionEntryStructureRule($preValidated['id'])],
+            'poster' => ['nullable', 'file', 'mimes:jpg,png'],
         ];
     }
 }

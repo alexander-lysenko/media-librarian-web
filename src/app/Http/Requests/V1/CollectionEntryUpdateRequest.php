@@ -54,7 +54,7 @@ class CollectionEntryUpdateRequest extends FormRequest
         ]);
 
         $collectionTableName = SqliteCollectionMeta::query()
-            ->where('id', '=', $idValidated['id'])
+            ->where('id', $idValidated['id'])
             ->pluck('tbl_name')
             ->first();
         $collectionTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $collectionTableName]);

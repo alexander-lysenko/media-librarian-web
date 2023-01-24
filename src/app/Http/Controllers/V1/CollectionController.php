@@ -227,9 +227,7 @@ class CollectionController extends ApiV1Controller
     public function view(CollectionIdRequest $request): JsonResponse
     {
         /** @var SqliteCollectionMeta $sqliteCollectionMeta */
-        $sqliteCollectionMeta = SqliteCollectionMeta::query()
-            ->where('id', '=', $request->id)
-            ->first();
+        $sqliteCollectionMeta = SqliteCollectionMeta::query()->where('id', $request->id)->first();
         $connection = $sqliteCollectionMeta->getConnection();
 
         $itemsCount = $connection->query()
@@ -273,9 +271,7 @@ class CollectionController extends ApiV1Controller
     public function delete(CollectionIdRequest $request): JsonResponse
     {
         /** @var SqliteCollectionMeta $sqliteCollectionMeta */
-        $sqliteCollectionMeta = SqliteCollectionMeta::query()
-            ->where('id', '=', $request->id)
-            ->first();
+        $sqliteCollectionMeta = SqliteCollectionMeta::query()->where('id', $request->id)->first();
         $connection = $sqliteCollectionMeta->getConnection();
 
         $connection->transaction(function () use ($connection, $sqliteCollectionMeta) {
@@ -324,9 +320,7 @@ class CollectionController extends ApiV1Controller
     public function clear(CollectionIdRequest $request): JsonResponse
     {
         /** @var SqliteCollectionMeta $sqliteCollectionMeta */
-        $sqliteCollectionMeta = SqliteCollectionMeta::query()
-            ->where('id', '=', $request->id)
-            ->first();
+        $sqliteCollectionMeta = SqliteCollectionMeta::query()->where('id', $request->id)->first();
         $connection = $sqliteCollectionMeta->getConnection();
 
         $connection->transaction(function () use ($connection, $sqliteCollectionMeta, &$itemsAffected) {

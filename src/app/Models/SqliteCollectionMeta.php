@@ -82,7 +82,7 @@ class SqliteCollectionMeta extends Model
     public static function getCollectionTableQuery(int $collectionId): Builder
     {
         /** @var SqliteCollectionMeta $collectionMetaEntry */
-        $collectionMetaEntry = static::query()->where('id', '=', $collectionId)->first();
+        $collectionMetaEntry = static::query()->where('id', $collectionId)->first();
 
         return $collectionMetaEntry->getConnection()->table($collectionMetaEntry->tbl_name);
     }

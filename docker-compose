@@ -1,22 +1,24 @@
 #!/bin/bash
 
 DIRNAME=$(dirname "$0")
+NGINX_IP="192.168.240.9"
+HOST_NAME="media-librarian-dev.com"
+
 CONFIG="$DIRNAME"/docker-compose.yml
-NGINX_IP=192.168.240.9
-VHOSTS_FMT="media-librarian-dev.com"
+DONE_STDOUT="\033[1;32m DONE \033[0m"
 
 function setup_env_file() {
   # Check if .env file exists. If not, create a new one from .env.example
   if [ ! -f "$DIRNAME"/src/.env ]; then
     CURRENT_USER=$(whoami)
-    echo -n "Trying to copy .env.example -> .env ..."
+    echo -n "Dotenv file is not found! Trying to make a copy from $DIRNAME/src/.env.example ..."
 
     cp -n "$DIRNAME"/src/.env.example "$DIRNAME"/src/.env
     sudo chown "$CURRENT_USER":"$CURRENT_USER" "$DIRNAME"/src/.env
-    echo "Done"
   else
-    echo "Creating environment from the file: $DIRNAME/src/.env"
+    echo -n "Creating environment from the file: $DIRNAME/src/.env ..."
   fi
+  echo -e "$DONE_STDOUT"
 }
 
 function create_domain_name_mapping() {
@@ -24,10 +26,10 @@ function create_domain_name_mapping() {
 
   # update /etc/hosts
   echo -n "Updating /etc/hosts... "
-  sudo sh -c "cat /etc/hosts | grep -v \"$NGINX_IP\" > /tmp/hosts.new"
-  echo -e "$NGINX_IP\t$VHOSTS_FMT" | sudo tee -a /tmp/hosts.new >/dev/null
-  sudo sh -c "cat /tmp/hosts.new > /etc/hosts && rm /tmp/hosts.new"
-  echo "Done"
+  sudo sh -c "cat /etc/hosts | grep -v \"$NGINX_IP\" > /tmp/hosts.tmp"
+  echo -e "$NGINX_IP\t$HOST_NAME" | sudo tee -a /tmp/hosts.tmp >/dev/null
+  sudo sh -c "cat /tmp/hosts.tmp > /etc/hosts && rm /tmp/hosts.tmp"
+  echo "$DONE_STDOUT"
 
   # Check interface for nginx exists
   VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
@@ -36,7 +38,7 @@ function create_domain_name_mapping() {
     echo -n "Setting up virtual network interface... "
     CN=$(echo $NGINX_IP | cut -d . -f 4)
     sudo sh -c "ifconfig docker0:ng_$CN $NGINX_IP"
-    echo "Done"
+    echo -e "$DONE_STDOUT"
   else
     echo "Virtual network interface is up."
   fi
@@ -61,10 +63,20 @@ case "$1" in
     echo "Using --force: Containers are going to be destroyed"
     set -- "down"
   else
-    echo "Command 'down' is disabled by security reasons. Use './docker-compose stop' to stop containers"
-    echo "If you still wish to destroy the containers, run this command with --force argument"
+    echo "Command 'down' is disabled by security reasons. Use './docker-compose stop' to stop containers."
+    echo "If you still wish to destroy the containers, run './docker-compose down --force'"
     exit
   fi
+  ;;
+"shell")
+  echo -n "Running container's shell as root..."
+  set -- "exec webapp /bin/bash"
+  echo -e "$DONE_STDOUT"
+  ;;
+"login")
+  echo -n "Running container's shell as user 'nginx'..."
+  set -- "exec --user nginx webapp /bin/bash"
+  echo -e "$DONE_STDOUT"
   ;;
 "*") ;;
 esac
