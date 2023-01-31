@@ -7,6 +7,7 @@ use App\Http\Requests\V1\CollectionEntryRequest;
 use App\Http\Requests\V1\CollectionEntryUpdateRequest;
 use App\Http\Requests\V1\CollectionIdRequest;
 use App\Http\Resources\CollectionEntryResource;
+use App\Jobs\PosterUploadJob;
 use App\Models\SqliteCollectionMeta;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -277,6 +278,12 @@ class CollectionEntryController extends ApiV1Controller
 
         $resource = new JsonResource($request->validated('contents'));
         // todo: upload poster and return its URL
+        PosterUploadJob::dispatch(
+            userId: $request->user()->id,
+            collectionId: $request->id,
+            entryId: $request->entry,
+            poster: '',
+        );
         $resource->with['poster'] = '';
         return $resource->response();
     }

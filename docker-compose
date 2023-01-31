@@ -29,7 +29,7 @@ function create_domain_name_mapping() {
   sudo sh -c "cat /etc/hosts | grep -v \"$NGINX_IP\" > /tmp/hosts.tmp"
   echo -e "$NGINX_IP\t$HOST_NAME" | sudo tee -a /tmp/hosts.tmp >/dev/null
   sudo sh -c "cat /tmp/hosts.tmp > /etc/hosts && rm /tmp/hosts.tmp"
-  echo "$DONE_STDOUT"
+  echo -e "$DONE_STDOUT"
 
   # Check interface for nginx exists
   VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
