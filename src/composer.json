@@ -6,7 +6,6 @@
   "keywords": [],
   "license": "none",
   "require": {
-    "aws/aws-sdk-php-laravel": "^3.7.0",
     "darkaonline/l5-swagger": "^8.4",
     "ext-pdo": "*",
     "ext-sqlite3": "*",
