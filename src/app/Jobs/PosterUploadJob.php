@@ -54,11 +54,11 @@ class PosterUploadJob implements ShouldQueue
         imagepng($gdImage, $tmpFilePath, 8);
 
         // Compose file path
-        $fileName = hash('crc32b', $posterContents);
+        $fileName = hash_file('crc32b', $tmpFilePath);
         $filePath = "$this->userId/$this->collectionId/$this->entryId/$fileName.png";
 
         // Upload file to S3
-        if (Storage::disk('s3')->put($filePath, $tmpFile)) {
+        if (Storage::disk('local')->put($filePath, $tmpFile)) {
             // Save a record into database
             $posterEntry = new Poster([
                 'user_id' => $this->userId,
@@ -67,6 +67,7 @@ class PosterUploadJob implements ShouldQueue
                 'uri' => $filePath,
             ]);
             $posterEntry->save();
+            imagedestroy($gdImage);
             unlink($tmpFilePath);
         } else {
             $this->fail("An error occurred during saving file $filePath");

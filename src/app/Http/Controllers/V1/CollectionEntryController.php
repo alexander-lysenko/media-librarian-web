@@ -18,9 +18,11 @@ use OpenApi\Attributes as OA;
 #[OA\Tag(name: 'entries', description: 'Manage the entries of a collection')]
 #[OA\Schema(
     schema: 'CollectionEntryExample',
-    description: '',
+    description: 'Example of a collection entry passed into response.' .
+    'Every key except `id` represents the structure of collection created previously.' .
+    'Keys map may be different and it depends on the chosen collection.',
     properties: [
-        new OA\Property(property: 'id', type: 'integer', example: 1),
+        new OA\Property(property: 'id', description: '', type: 'integer', example: 1),
         new OA\Property(property: 'Movie Title', type: 'string', example: 'Лицо со шрамом (1983)'),
         new OA\Property(property: 'Origin Title', type: 'string', example: 'Scarface'),
         new OA\Property(property: 'Release Date', type: 'string', example: '1983-12-01'),
@@ -38,7 +40,7 @@ use OpenApi\Attributes as OA;
     ]
 ), OA\Schema(
     schema: 'CollectionEntryRequestExample',
-    description: 'Collection entry request example',
+    description: 'Example of payload to update a collection entry or create a new one.',
     properties: [
         new OA\Property(property: 'Movie Title', example: 'Лицо со шрамом (1983)'),
         new OA\Property(property: 'Origin Title', example: 'Scarface'),
@@ -236,16 +238,29 @@ class CollectionEntryController extends ApiV1Controller
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(properties: [
-                new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
-                new OA\Property(
-                    property: 'poster',
-                    ref: self::SCHEMA_POSTER_BASE64_REF,
-                    description: "Attach a poster (in Base64 string format).\n\n" .
-                    'To convert an image into base64 (for development purposes), ' .
-                    'you can use this service: https://www.base64-image.de/',
-                ),
-            ])
+            content: [
+                new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(properties: [
+                    new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
+                    new OA\Property(
+                        property: 'poster',
+                        description: 'Attach a poster (binary file)',
+                        type: 'string',
+                        format: 'binary'
+                    ),
+                ])),
+                new OA\JsonContent(properties: [
+                    new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
+                    new OA\Property(
+                        property: 'poster',
+                        description: "Attach a poster (in Base64 string format).\n\n" .
+                        'To convert an image into base64 (for development purposes), ' .
+                        'you can use this service: https://www.base64-image.de/',
+                        type: 'string',
+                        format: 'base64',
+                        example: null
+                    ),
+                ]),
+            ]
         ),
         tags: ['entries'],
         parameters: [
@@ -298,7 +313,6 @@ class CollectionEntryController extends ApiV1Controller
             new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF),
             new OA\Parameter(ref: self::PARAM_ENTRY_ID_REF),
         ],
-
         responses: [
             new OA\Response(ref: self::RESPONSE_204_REF, response: 204),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
