@@ -9,13 +9,15 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class S3PosterSaveJob implements ShouldQueue
+/**
+ * A background job to remove posters from a dedicated storage
+ */
+class PosterRemoveJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
-     *
      * @return void
      */
     public function __construct()
@@ -25,10 +27,9 @@ class S3PosterSaveJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         //
     }

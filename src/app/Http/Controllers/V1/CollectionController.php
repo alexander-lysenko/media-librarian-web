@@ -17,6 +17,7 @@ use Throwable;
 #[OA\Tag(name: 'collections', description: 'Manage collections')]
 #[OA\Schema(
     schema: 'DataTypes',
+    description: 'List of available types to be used for building inputs',
     type: 'string',
     enum: ['line', 'text', 'date', 'datetime', 'url', 'checkmark', 'rating_5stars', 'rating_10stars', 'priority'],
 ), OA\Schema(
