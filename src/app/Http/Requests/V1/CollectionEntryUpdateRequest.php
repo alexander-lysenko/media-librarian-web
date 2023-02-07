@@ -5,6 +5,7 @@ namespace App\Http\Requests\V1;
 use App\Http\Middleware\DatabaseSwitch;
 use App\Models\SqliteCollectionMeta;
 use App\Rules\CollectionEntryStructureRule;
+use App\Utils\FileHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -31,9 +32,15 @@ class CollectionEntryUpdateRequest extends FormRequest
      */
     public function prepareForValidation(): void
     {
+        $poster = null;
+        if (!empty($this->input('poster'))) {
+            $poster = FileHelper::fromBase64($this->input('poster'));
+        }
+
         $this->merge([
             'id' => $this->route('id'),
             'entry' => $this->route('entry'),
+            'poster' => $poster,
         ]);
     }
 
@@ -65,6 +72,7 @@ class CollectionEntryUpdateRequest extends FormRequest
 
         return [
             'contents' => ['required', new CollectionEntryStructureRule($idValidated['id'], $entryValidated['entry'])],
+            'poster' => ['nullable', 'file', 'max:4096', 'mimes:jpg,png'],
         ];
     }
 }

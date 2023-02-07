@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -45,25 +46,48 @@ class PosterUploadJob implements ShouldQueue
 
         // Process image using GD extension
         $gdImage = imagecreatefromstring(base64_decode($posterContents));
+
         $width = imagesx($gdImage);
         $height = imagesy($gdImage);
+        Log::info("Source image dimensions: $width x $height");
+
         if (max($width, $height) > self::MAX_DIMENSION_PIXELS) {
-            $scaleFactor = self::MAX_DIMENSION_PIXELS / (max($width, $height) ?: self::MAX_DIMENSION_PIXELS);
-            $gdImage = imagescale($gdImage, $width / $scaleFactor);
+            Log::info('Image is larger than required, resizing...');
+            // Scale factor is usually more than 1.00
+            $scaleFactor = max($width, $height) / self::MAX_DIMENSION_PIXELS;
+            Log::info("Scale Factor: $scaleFactor");
+            $gdImage = imagescale(
+                image: $gdImage,
+                width: round($width / $scaleFactor),
+                height: round($height / $scaleFactor)
+            );
+
+            $width = imagesx($gdImage);
+            $height = imagesy($gdImage);
+            Log::info("Resized image dimensions: $width x $height");
+        } else {
+            Log::info('Keep original image dimensions');
         }
-        imagepng($gdImage, $tmpFilePath, 8);
+
+        // Export image into WEBP
+        imagewebp($gdImage, $tmpFilePath, 90);
 
         // Compose file path
         $fileName = hash_file('crc32b', $tmpFilePath);
-        $filePath = "$this->userId/$this->collectionId/$this->entryId/$fileName.png";
+        $filePath = implode('/', [
+            "user_$this->userId",
+            "collection_$this->collectionId",
+            "$this->entryId-$fileName.webp",
+        ]);
 
-        // Upload file to S3
+        // Upload file to S3 // todo: replace 'local' with 's3'
         if (Storage::disk('local')->put($filePath, $tmpFile)) {
             // Save a record into database
-            $posterEntry = new Poster([
+            $posterEntry = Poster::query()->firstOrNew([
                 'user_id' => $this->userId,
                 'collection_id' => $this->collectionId,
                 'entry_id' => $this->entryId,
+            ], [
                 'uri' => $filePath,
             ]);
             $posterEntry->save();

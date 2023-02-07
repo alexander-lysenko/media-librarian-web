@@ -117,6 +117,9 @@ abstract class ApiV1Controller extends BaseController
 
     #[OA\Schema(
         schema: 'PosterBase64Example',
+        description: "Attach a poster (in Base64 string format).\n\n" .
+        'To convert an image into base64 (for development purposes), ' .
+        'you can use this service: https://www.base64-image.de/',
         type: 'string',
         format: 'base64',
         example: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAsLDAoMCg4NCw4MDg0OERQPDA4QFxwaFBgTGxYWERs' .

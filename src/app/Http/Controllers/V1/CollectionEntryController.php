@@ -250,15 +250,7 @@ class CollectionEntryController extends ApiV1Controller
                 ])),
                 new OA\JsonContent(properties: [
                     new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
-                    new OA\Property(
-                        property: 'poster',
-                        description: "Attach a poster (in Base64 string format).\n\n" .
-                        'To convert an image into base64 (for development purposes), ' .
-                        'you can use this service: https://www.base64-image.de/',
-                        type: 'string',
-                        format: 'base64',
-                        example: null
-                    ),
+                    new OA\Property(property: 'poster', ref: self::SCHEMA_POSTER_BASE64_REF),
                 ]),
             ]
         ),
@@ -291,13 +283,14 @@ class CollectionEntryController extends ApiV1Controller
             ->where('id', $request->entry)
             ->update($request->validated('contents'));
 
+
         $resource = new JsonResource($request->validated('contents'));
         // todo: upload poster and return its URL
         PosterUploadJob::dispatch(
             userId: $request->user()->id,
             collectionId: $request->id,
             entryId: $request->entry,
-            poster: '',
+            poster: $request->get('poster'),
         );
         $resource->with['poster'] = '';
         return $resource->response();
