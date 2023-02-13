@@ -52,7 +52,7 @@ class PosterUploadJob implements ShouldQueue
         Log::info("Source image dimensions: $width x $height");
 
         if (max($width, $height) > self::MAX_DIMENSION_PIXELS) {
-            Log::info('Image is larger than required, resizing...');
+            Log::info('Image is larger than expected, downscale is required');
             // Scale factor is usually more than 1.00
             $scaleFactor = max($width, $height) / self::MAX_DIMENSION_PIXELS;
             Log::info("Scale Factor: $scaleFactor");
@@ -66,7 +66,7 @@ class PosterUploadJob implements ShouldQueue
             $height = imagesy($gdImage);
             Log::info("Resized image dimensions: $width x $height");
         } else {
-            Log::info('Keep original image dimensions');
+            Log::info("Keep original image dimensions: $width x $height");
         }
 
         // Export image into WEBP
@@ -82,6 +82,7 @@ class PosterUploadJob implements ShouldQueue
 
         // Upload file to S3 // todo: replace 'local' with 's3'
         if (Storage::disk('local')->put($filePath, $tmpFile)) {
+            Log::info("File saved successfully: $filePath");
             // Save a record into database
             $posterEntry = Poster::query()->firstOrNew([
                 'user_id' => $this->userId,
@@ -90,7 +91,9 @@ class PosterUploadJob implements ShouldQueue
             ], [
                 'uri' => $filePath,
             ]);
+            $posterEntry->updateTimestamps();
             $posterEntry->save();
+            Log::info('Recording an entry about the uploaded file...');
             imagedestroy($gdImage);
             unlink($tmpFilePath);
         } else {

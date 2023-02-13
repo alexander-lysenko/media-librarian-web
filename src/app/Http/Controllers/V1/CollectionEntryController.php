@@ -28,7 +28,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'Release Date', type: 'string', example: '1983-12-01'),
         new OA\Property(
             property: 'Description',
-            type: 'text',
+            type: 'string',
             example: 'In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed.'
         ),
         new OA\Property(property: 'IMDB URL', type: 'string', example: 'https://www.imdb.com/title/tt0086250/'),
@@ -132,15 +132,6 @@ class CollectionEntryController extends ApiV1Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: [
-                new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(properties: [
-                    new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
-                    new OA\Property(
-                        property: 'poster',
-                        description: 'Attach a poster (binary file)',
-                        type: 'string',
-                        format: 'binary'
-                    ),
-                ])),
                 new OA\JsonContent(properties: [
                     new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
                     new OA\Property(
@@ -239,15 +230,6 @@ class CollectionEntryController extends ApiV1Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: [
-                new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(properties: [
-                    new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
-                    new OA\Property(
-                        property: 'poster',
-                        description: 'Attach a poster (binary file)',
-                        type: 'string',
-                        format: 'binary'
-                    ),
-                ])),
                 new OA\JsonContent(properties: [
                     new OA\Property(property: 'contents', ref: self::SCHEMA_COLLECTION_ENTRY_REQUEST_REF),
                     new OA\Property(property: 'poster', ref: self::SCHEMA_POSTER_BASE64_REF),
