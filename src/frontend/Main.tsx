@@ -12,6 +12,7 @@ import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { useThemeStore } from "./store/useThemeStore";
 import { getDesignTokens } from "./theme";
+import { AppRoutes } from "./core";
 
 const rootElement = document.getElementById("root") as Element;
 const root = createRoot(rootElement);
@@ -26,10 +27,10 @@ const Main: React.FC = () => {
       <Router>
         <Routes>
           <Route path={"/"} element={<Landing />} />
-          <Route path={"/login"} element={<SignIn />} />
-          <Route path={"/signup"} element={<SignUp />} />
-          <Route path={"/app"} element={<App />} />
-          <Route path={"/profile"} element={<Profile />} />
+          <Route path={AppRoutes.login} element={<SignIn />} />
+          <Route path={AppRoutes.signup} element={<SignUp />} />
+          <Route path={AppRoutes.appHome} element={<App />} />
+          <Route path={AppRoutes.profile} element={<Profile />} />
         </Routes>
       </Router>
     </ThemeProvider>

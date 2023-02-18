@@ -4,12 +4,20 @@ use Illuminate\Support\HtmlString;
 
 function vite_assets(): HtmlString
 {
-    $devServerHost = env('UI_SERVER_HOST', "http://localhost:3000");
+    $devServerHost = env('UI_SERVER_HOST', 'http://localhost') . ':3000';
 
     if (app()->environment('local')) {
         return new HtmlString(<<<HTML
-            <script type="module" src="{$devServerHost}/@vite/client"></script>
-            <script type="module" src="{$devServerHost}/index.ts"></script>
+            <script type="module">
+                import RefreshRuntime from "$devServerHost/@react-refresh";
+                // noinspection JSUnresolvedFunction
+                RefreshRuntime.injectIntoGlobalHook(window);
+                window.\$RefreshReg\$ = () => {};
+                window.\$RefreshSig\$ = () => (type) => type;
+                window.__vite_plugin_react_preamble_installed__ = true;
+            </script>
+            <script type="module" src="$devServerHost/@vite/client"></script>
+            <script type="module" src="$devServerHost/index.ts"></script>
         HTML
         );
     }

@@ -13,7 +13,9 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { Link } from "react-router-dom";
 
+import { AppRoutes } from "../core";
 import { stringAvatar } from "../core/helpers/stringAvatar";
 import { useTranslation } from "../hooks/useTranslation";
 
@@ -33,13 +35,17 @@ export const NavbarProfiler = () => {
     setAnchorElUser(null);
   };
 
+  const handleSignOut = () => {
+    console.log("Signed Out");
+  };
+
   const username = "User Name";
   const email = "username@example.com";
   const { sx, children } = stringAvatar(username);
   const avatarSrc = "https://source.unsplash.com/random/56x56?cosplay,avatar";
 
   return (
-    <Box sx={{ flexGrow: 0 }}>
+    <Box sx={{ flexGrow: 0, ml: 2 }}>
       <Tooltip title={t("app.openProfileMenu")}>
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
           <Avatar alt={username} src={avatarSrc} sx={sx} children={children} />
@@ -67,13 +73,13 @@ export const NavbarProfiler = () => {
           </ListItemText>
         </ListItem>
         <Divider variant="middle" sx={{ my: 1 }} />
-        <MenuItem key="toProfile">
+        <MenuItem key="toProfile" component={Link} to={AppRoutes.profile}>
           <ListItemIcon>
             <BadgeOutlined />
           </ListItemIcon>
           <ListItemText disableTypography>{t("app.profile")}</ListItemText>
         </MenuItem>
-        <MenuItem key="toLogOut">
+        <MenuItem key="toLogOut" onClick={handleSignOut}>
           <ListItemIcon>
             <LogoutOutlined />
           </ListItemIcon>

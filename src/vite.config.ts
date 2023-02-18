@@ -9,6 +9,9 @@ export default defineConfig(({ command }) => ({
   root: command === "serve" ? "./frontend" : "",
   publicDir: "fake_dir_so_nothing_gets_copied",
   plugins: [react()],
+  define: {
+    "process.env": process.env,
+  },
   build: {
     manifest: true,
     outDir: "public/build",
@@ -17,8 +20,8 @@ export default defineConfig(({ command }) => ({
     },
   },
   server: {
-    open: true,
-    host: true,
+    open: false,
+    host: "192.168.240.9",
     port: 3000,
   },
 }));

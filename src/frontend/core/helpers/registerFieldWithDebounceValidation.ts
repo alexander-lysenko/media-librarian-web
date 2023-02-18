@@ -1,7 +1,14 @@
 import { debounce } from "lodash";
-import { FieldPath, RegisterOptions, UseFormRegister, UseFormRegisterReturn, UseFormTrigger } from "react-hook-form";
+import {
+  FieldPath,
+  FieldValues,
+  RegisterOptions,
+  UseFormRegister,
+  UseFormRegisterReturn,
+  UseFormTrigger,
+} from "react-hook-form";
 
-export const registerFieldWithDebounceValidation = <TFieldValues>(
+export const registerFieldWithDebounceValidation = <TFieldValues extends FieldValues>(
   name: FieldPath<TFieldValues>,
   delay: number,
   trigger: UseFormTrigger<TFieldValues>,

@@ -1,3 +1,10 @@
+export enum AppRoutes {
+  appHome = "/app",
+  login = "/login",
+  signup = "/signup",
+  profile = "/profile",
+}
+
 export enum DataType {
   text = "text",
   varchar255 = "varchar(255)",

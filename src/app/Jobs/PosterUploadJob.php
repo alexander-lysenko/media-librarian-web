@@ -22,6 +22,15 @@ class PosterUploadJob implements ShouldQueue
     private const MAX_DIMENSION_PIXELS = 1280;
 
     /**
+     * Calculate the number of seconds to wait before retrying the job.
+     * @return int
+     */
+    public function backoff(): int
+    {
+        return 3;
+    }
+
+    /**
      * Create a new job instance.
      * @return void
      */

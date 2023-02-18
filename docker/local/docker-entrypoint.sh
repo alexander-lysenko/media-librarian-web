@@ -2,7 +2,7 @@
 
 function run_services() {
   echo "== Registering services =="
-  openrc -q
+  openrc -q 1> /dev/null
   rc-update add nginx
   rc-update add php-fpm81
 
@@ -38,13 +38,33 @@ function apply_migrations() {
   cd /app && php artisan migrate
 }
 
+function run_job_worker_default() {
+  echo "== Starting Job Worker (default) =="
+  cd /app && php artisan queue:work -v &
+}
+
+# Entrypoint for background container
+function background() {
+  install_composer_dependencies && apply_migrations
+  run_job_worker_default
+
+  trap "echo 'A critical error occurred. Background cannot continue working'; exit 1" HUP INT QUIT TERM
+
+  echo "=========="
+  echo "Background is Up!"
+
+  while true; do
+    sleep 1
+  done
+  exit 0
+}
+
 # Entrypoint for webapp container
 function webapp() {
   clean_webapp_logs
   run_services
-  install_composer_dependencies && apply_migrations
 
-  trap "echo 'A critical error occurred. Web App is unable to start'; exit 1" HUP INT QUIT TERM
+  trap "echo 'A critical error occurred. Webapp cannot continue working'; exit 1" HUP INT QUIT TERM
 
   echo "=========="
   echo "Web App is Up! Please make sure the front end is built from the latest version"
@@ -56,6 +76,9 @@ function webapp() {
 }
 
 case "$1" in
+"background")
+  background
+  ;;
 "webapp")
   webapp
   ;;

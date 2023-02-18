@@ -1,6 +1,6 @@
 import { PaletteMode } from "@mui/material";
-import create from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type ColorOptions = string;
 
@@ -21,7 +21,7 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: "uiThemePreferences", // unique name
-      getStorage: () => localStorage,
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 );

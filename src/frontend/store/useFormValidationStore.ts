@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 
 import { ValidatorInterface } from "../core/formValidation/validatiors";
 

@@ -1,5 +1,5 @@
-import create from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 import en from "../i18n/en.json";
 import ru from "../i18n/ru.json";
@@ -40,7 +40,7 @@ export const useLanguageStore = create<LanguageState>()(
     }),
     {
       name: "localePreferences", // unique name
-      getStorage: () => localStorage,
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 );

@@ -1,5 +1,5 @@
-import create from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface CredentialsState {
   account: number;
@@ -16,9 +16,7 @@ export const useCredentialsStore = create<CredentialsState>()(
     }),
     {
       name: "credentials", // unique name
-      getStorage: () => localStorage,
-      serialize: (state) => JSON.stringify(state),
-      deserialize: (value) => JSON.parse(value),
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 );
