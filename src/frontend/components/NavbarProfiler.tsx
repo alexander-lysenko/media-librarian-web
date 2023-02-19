@@ -1,7 +1,6 @@
 import { BadgeOutlined, LogoutOutlined } from "@mui/icons-material";
 import {
   Avatar,
-  Box,
   Divider,
   IconButton,
   ListItem,
@@ -10,7 +9,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -42,17 +41,17 @@ export const NavbarProfiler = () => {
   const username = "User Name";
   const email = "username@example.com";
   const { sx, children } = stringAvatar(username);
-  const avatarSrc = "https://source.unsplash.com/random/56x56?cosplay,avatar";
+  const avatarSrc = "https://source.unsplash.com/TkJbk1I22hE/56x56";
 
   return (
-    <Box sx={{ flexGrow: 0, ml: 2 }}>
+    <>
       <Tooltip title={t("app.openProfileMenu")}>
-        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, ml: 1 }}>
           <Avatar alt={username} src={avatarSrc} sx={sx} children={children} />
         </IconButton>
       </Tooltip>
       <Menu
-        PaperProps={{ sx: { width: 250 } }}
+        PaperProps={{ sx: { width: 240 } }}
         sx={{ mt: { xs: 5, sm: 6 } }}
         id="menu-appbar"
         keepMounted
@@ -86,6 +85,6 @@ export const NavbarProfiler = () => {
           <ListItemText disableTypography>{t("app.logout")}</ListItemText>
         </MenuItem>
       </Menu>
-    </Box>
+    </>
   );
 };

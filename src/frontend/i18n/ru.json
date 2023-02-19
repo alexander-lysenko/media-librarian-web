@@ -1,6 +1,7 @@
 {
     "app": {
         "logout": "Выйти из аккаунта",
+        "unreadNotifications": "{n} новых уведомлений",
         "openProfileMenu": "Открыть меню профиля",
         "profile": "Профиль"
     },

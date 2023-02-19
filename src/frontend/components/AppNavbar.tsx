@@ -1,10 +1,22 @@
-import { AppBar, Badge, Box, Button, Container, IconButton, styled, Toolbar, useScrollTrigger } from "@mui/material";
-import React, { cloneElement, ReactElement } from "react";
-
-import { NavbarProfiler } from "./NavbarProfiler";
-import { Link } from "react-router-dom";
-import { AppRoutes } from "../core";
 import { MenuOutlined, NotificationsOutlined } from "@mui/icons-material";
+import {
+  AppBar,
+  Badge,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  styled,
+  Toolbar,
+  Tooltip,
+  useScrollTrigger,
+} from "@mui/material";
+import React, { cloneElement, ReactElement } from "react";
+import { Link } from "react-router-dom";
+
+import { AppRoutes } from "../core";
+import { NavbarProfiler } from "./NavbarProfiler";
+import { useTranslation } from "../hooks/useTranslation";
 
 interface Props {
   children?: ReactElement;
@@ -14,15 +26,17 @@ function ElevationScroll(props: Props) {
   const { children } = props;
   const trigger = useScrollTrigger({
     disableHysteresis: true,
-    threshold: 0
+    threshold: 0,
   });
 
   return cloneElement(children as ReactElement, {
-    elevation: trigger ? 4 : 0
+    elevation: trigger ? 4 : 0,
   });
 }
 
 export const AppNavbar = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <ElevationScroll>
@@ -30,28 +44,31 @@ export const AppNavbar = () => {
           <Container maxWidth="xl">
             <Toolbar>
               <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                <IconButton
-                  size="large"
-                  onClick={() => ({})}
-                  color="inherit"
-                >
+                <IconButton size="large" onClick={() => ({})} color="inherit">
                   <MenuOutlined />
                 </IconButton>
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                <Button variant={"text"} component={Link} to={AppRoutes.appHome}>
+                <Button variant="text" color="inherit" component={Link} to={AppRoutes.appHome}>
                   {"MUI"}
                 </Button>
-                <Link to={AppRoutes.login}>Login</Link>
-                <Link to={AppRoutes.signup}>Sign Up</Link>
-                <Link to={AppRoutes.profile}>Profile</Link>
-                {"MUI"}
+                <Button variant="text" color="inherit" component={Link} to={AppRoutes.login}>
+                  {"Login"}
+                </Button>
+                <Button variant="text" color="inherit" component={Link} to={AppRoutes.signup}>
+                  {"Sign Up"}
+                </Button>
+                <Button variant="text" color="inherit" component={Link} to={AppRoutes.profile}>
+                  {"Profile"}
+                </Button>
               </Box>
-              <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-                <Badge badgeContent={1024} color="error">
-                  <NotificationsOutlined />
-                </Badge>
-              </IconButton>
+              <Tooltip title={t("app.unreadNotifications", { n: 1024 })}>
+                <IconButton size="large" color="inherit">
+                  <Badge badgeContent={1024} color="error">
+                    <NotificationsOutlined />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
               <NavbarProfiler />
             </Toolbar>
           </Container>

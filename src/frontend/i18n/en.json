@@ -1,6 +1,7 @@
 {
     "app": {
         "logout": "Log Out",
+        "unreadNotifications": "{n} New Notifications",
         "openProfileMenu": "Open Profile Menu",
         "profile": "Profile"
     },
