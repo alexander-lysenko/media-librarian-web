@@ -40,9 +40,9 @@ export const AppNavbar = () => {
   return (
     <>
       <ElevationScroll>
-        <AppBar position="fixed" sx={{ mb: 2 }}>
+        <AppBar position="fixed" sx={{ mb: 3 }}>
           <Container maxWidth="xl">
-            <Toolbar>
+            <Toolbar disableGutters>
               <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
                 <IconButton size="large" onClick={() => ({})} color="inherit">
                   <MenuOutlined />

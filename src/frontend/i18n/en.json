@@ -49,6 +49,10 @@
         "subtitle": "Alright, now you can set a new password for your account.",
         "title": "Password Reset"
     },
+    "profile": {
+        "basicDetails": "Basic Details",
+        "myLibraries": "My Libraries"
+    },
     "signupPage": {
         "email": "Email Address",
         "emailAsLoginHint": "Your e-mail address will be used as your account name.",

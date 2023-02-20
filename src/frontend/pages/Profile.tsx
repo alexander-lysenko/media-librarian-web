@@ -1,27 +1,14 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  CardMedia,
-  Container,
-  Grid,
-  IconButton,
-  Paper,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import React from "react";
-import { Link } from "react-router-dom";
-import { AppNavbar } from "../components/AppNavbar";
-import { AppRoutes } from "../core";
+import { Avatar, Box, Container, Grid, IconButton, Paper, SvgIcon, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { AppNavbar, PaperCardHeader } from "../components";
 import { stringAvatar } from "../core/helpers/stringAvatar";
 import { useTranslation } from "../hooks/useTranslation";
-import { PaperCardHeader } from "../components";
-import { Fingerprint, PermContactCalendar } from "@mui/icons-material";
+import {
+  ArrowDropDownOutlined,
+  ArrowDropUpOutlined,
+  PermContactCalendarOutlined,
+  PhotoAlbumOutlined,
+} from "@mui/icons-material";
 
 const username = "User Name";
 const email = "username@example.com";
@@ -29,33 +16,35 @@ const avatarSrc = "https://source.unsplash.com/TkJbk1I2 2hE/240x240";
 
 export const Profile = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { sx, children } = stringAvatar(username);
   const avatarSizes = {
     height: { xs: 64, sm: 128, md: 240 },
     width: { xs: 64, sm: 128, md: 240 },
   };
 
+  const [profileOpen, setProfileOpen] = useState(true);
+  const [libOpen, setLibOpen] = useState(false);
+
   return (
     <>
       <AppNavbar />
       <Container maxWidth="xl">
-        <Paper elevation={3}>
+        <Paper elevation={3} sx={{ my: 3 }}>
           <PaperCardHeader
-            title={t("Basic Details")}
-            icon={PermContactCalendar}
-            secondaryText={"text"}
+            title={t("profile.basicDetails")}
+            icon={PermContactCalendarOutlined}
+            secondaryText={"lorem ipsum dolor sit amet"}
             action={
-              <IconButton size="small">
-                <Fingerprint />
+              <IconButton size="small" onClick={() => setProfileOpen(!profileOpen)}>
+                <SvgIcon component={profileOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined} fontSize="inherit" />
               </IconButton>
             }
           />
-          <Grid container spacing={1} sx={{ p: 3 }}>
+          <Grid container spacing={{ xs: 2, sm: 3, md: 6 }} display={profileOpen ? "flex" : "none"} sx={{ p: 3 }}>
             <Grid item xs="auto">
-              <Avatar sx={{ ...sx, ...avatarSizes }} src={avatarSrc}></Avatar>
+              <Avatar sx={{ ...sx, ...avatarSizes }} src={avatarSrc} children={children} />
             </Grid>
-            <Grid item xs sx={{ ml: 2 }}>
+            <Grid item xs>
               <Typography>User Name</Typography>
               <Typography>username@example.com</Typography>
               2222
@@ -65,15 +54,19 @@ export const Profile = () => {
             </Grid>
           </Grid>
         </Paper>
-        {/*<Card variant="outlined">*/}
-        {/*  <CardHeader>Header</CardHeader>*/}
-        {/*  <CardMedia>media</CardMedia>*/}
-        {/*  <CardContent>User Name</CardContent>*/}
-        {/*  <CardActions>*/}
-        {/*    <Button size="small">Share</Button>*/}
-        {/*    <Button size="small">Learn More</Button>*/}
-        {/*  </CardActions>*/}
-        {/*</Card>*/}
+        <Paper elevation={3} sx={{ my: 3 }}>
+          <PaperCardHeader
+            title={t("profile.myLibraries")}
+            icon={PhotoAlbumOutlined}
+            secondaryText={"lorem ipsum dolor sit amet"}
+            action={
+              <IconButton size="small" onClick={() => setLibOpen(!libOpen)}>
+                <SvgIcon component={libOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined} fontSize="inherit" />
+              </IconButton>
+            }
+          />
+          <Box display={libOpen ? "block" : "none"}>Content</Box>
+        </Paper>
       </Container>
       <Container maxWidth={"xl"} sx={{ mt: 3 }}>
         <img
