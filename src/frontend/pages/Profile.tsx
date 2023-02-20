@@ -1,26 +1,26 @@
-import { Avatar, Box, Container, Grid, IconButton, Paper, SvgIcon, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { AppNavbar, PaperCardHeader } from "../components";
-import { stringAvatar } from "../core/helpers/stringAvatar";
-import { useTranslation } from "../hooks/useTranslation";
 import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
   PermContactCalendarOutlined,
   PhotoAlbumOutlined,
 } from "@mui/icons-material";
+import { Avatar, Box, Button, Container, IconButton, Paper, SvgIcon, Typography } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import React, { useState } from "react";
+
+import { AppNavbar, PaperCardHeader } from "../components";
+import { stringAvatar } from "../core/helpers/stringAvatar";
+import { useTranslation } from "../hooks/useTranslation";
 
 const username = "User Name";
 const email = "username@example.com";
 const avatarSrc = "https://source.unsplash.com/TkJbk1I2 2hE/240x240";
 
+/**
+ * Component representing the Profile page
+ */
 export const Profile = () => {
   const { t } = useTranslation();
-  const { sx, children } = stringAvatar(username);
-  const avatarSizes = {
-    height: { xs: 64, sm: 128, md: 240 },
-    width: { xs: 64, sm: 128, md: 240 },
-  };
 
   const [profileOpen, setProfileOpen] = useState(true);
   const [libOpen, setLibOpen] = useState(false);
@@ -40,19 +40,39 @@ export const Profile = () => {
               </IconButton>
             }
           />
-          <Grid container spacing={{ xs: 2, sm: 3, md: 6 }} display={profileOpen ? "flex" : "none"} sx={{ p: 3 }}>
-            <Grid item xs="auto">
-              <Avatar sx={{ ...sx, ...avatarSizes }} src={avatarSrc} children={children} />
-            </Grid>
-            <Grid item xs>
-              <Typography>User Name</Typography>
-              <Typography>username@example.com</Typography>
-              2222
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              4444
-            </Grid>
-          </Grid>
+          <Grid2 container spacing={2} display={profileOpen ? "flex" : "none"} sx={{ p: 3 }}>
+            <Profiler username={username} email={email} avatar={avatarSrc} />
+            <Grid2 xs>
+              <Typography>Date</Typography>
+              <Typography>11</Typography>
+              <Typography>Count</Typography>
+              <Typography>11</Typography>
+              <Typography>Running</Typography>
+              <Typography>11</Typography>
+            </Grid2>
+            <Grid2 xs={12} md={4}>
+              <Grid2 xs={12}>
+                <Button variant={"contained"} color={"primary"}>
+                  {"Change email"}
+                </Button>
+              </Grid2>
+              <Grid2 xs={12}>
+                <Button variant={"contained"} color={"primary"}>
+                  {"Change password"}
+                </Button>
+              </Grid2>
+              <Grid2 xs={12}>
+                <Button variant={"contained"} color={"primary"}>
+                  {"Locale: en"}
+                </Button>
+              </Grid2>
+              <Grid2 xs={12}>
+                <Button variant={"contained"} color={"primary"}>
+                  {"Theme: Dark"}
+                </Button>
+              </Grid2>
+            </Grid2>
+          </Grid2>
         </Paper>
         <Paper elevation={3} sx={{ my: 3 }}>
           <PaperCardHeader
@@ -76,4 +96,40 @@ export const Profile = () => {
       </Container>
     </>
   );
+};
+
+const Profiler = ({ username, email, avatar }: { username: string; email: string; avatar: string }) => {
+  const { sx, children } = stringAvatar(username);
+  const avatarSizes = { height: { xs: 64, sm: 128 }, width: { xs: 64, sm: 128 } };
+
+  return (
+    <Grid2
+      container
+      xs={12}
+      sm={6}
+      md={4}
+      spacing={2}
+      sx={{ display: "flex", alignContent: "start", maxWidth: { sm: 360 } }}
+    >
+      <Grid2 xs="auto" sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+        <Avatar sx={{ ...sx, ...avatarSizes }} src={avatar} children={children} />
+      </Grid2>
+      <Grid2 container xs sm={12} spacing={0} direction="column">
+        <Grid2 xs sm={12} display="flex" justifyContent={{ xs: "start", sm: "center" }}>
+          <Typography variant="h6" noWrap title={username}>
+            {username}
+          </Typography>
+        </Grid2>
+        <Grid2 xs sm={12} display="flex" justifyContent={{ xs: "start", sm: "center" }}>
+          <Typography variant="subtitle2" noWrap title={email}>
+            {email}
+          </Typography>
+        </Grid2>
+      </Grid2>
+    </Grid2>
+  );
+};
+
+const ProfileForm = () => {
+  return <></>;
 };
