@@ -1,4 +1,3 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import {
   AlternateEmailOutlined,
   BadgeOutlined,
@@ -22,10 +21,9 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, Dispatch, FocusEvent, forwardRef, SetStateAction, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
-import { object as yupShape, ref as yupRef, string } from "yup";
 
-import { yupSequentialStringSchema } from "../../core/helpers/yupSequentialStringSchema";
-import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
+import { useSignupFormValidation } from "../../hooks/useSignupFormValidation";
+import { useTranslation } from "../../hooks/useTranslation";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language } from "../../store/useTranslationStore";
 
@@ -40,60 +38,28 @@ type InputProps = {
   errorMessage?: string | undefined;
 };
 
-const makeValidationSchema = (t: LocalizedStringFn, setEmailCheckingState: ReactSetStateAction<boolean>) => {
-  return yupShape({
-    email: yupSequentialStringSchema([
-      string().required(t("formValidation.emailRequired")).email(t("formValidation.emailInvalid")).lowercase().trim(),
-      string().test({
-        name: "checkEmailUnique",
-        message: t("formValidation.emailNotUnique"),
-        test: (email) => {
-          console.log("Email unique check: simulating...");
-          return new Promise((resolve) => {
-            setEmailCheckingState(true);
-            setTimeout(() => {
-              resolve(email !== "admin@example.com");
-              setEmailCheckingState(false);
-            }, 1000);
-          });
-          // // async validation example #2
-          // return fetch(`is-email-unique/${email}`).then(async (res) => {
-          //   const { isEmailUnique } = await res.json();
-          //   return isEmailUnique;
-          // });
-        },
-      }),
-    ]),
-    username: string()
-      .required(t("formValidation.usernameRequired"))
-      .min(3, t("formValidation.usernameMinLength", { n: 3 }))
-      .trim(),
-    password: string()
-      .required(t("formValidation.passwordRequired"))
-      .min(8, t("formValidation.passwordMinLength", { n: 8 })),
-    passwordRepeat: string()
-      .required(t("formValidation.passwordRepeatRequired"))
-      .oneOf([yupRef("password")], t("formValidation.passwordRepeatNotMatch")),
-  });
-};
-
 /**
  * Sign Up Form functional component
  */
 export const SignupForm = () => {
+  const { t, getLanguage, setLanguage } = useTranslation();
+
   const [emailChecking, setEmailChecking] = useState(false);
   const [loading, setLoading] = useState(false);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
-  const { t, getLanguage, setLanguage } = useTranslation();
-  const schema = makeValidationSchema(t, setEmailChecking);
-
-  const { register, trigger, formState, handleSubmit, reset } = useForm({
-    resolver: yupResolver(schema),
+  const { register, getValues, trigger, formState, handleSubmit, reset, getFieldState } = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
+
   const { errors } = formState;
+  const { registerField, registerFieldDebounced } = useSignupFormValidation({
+    register,
+    trigger,
+    getValues,
+    getFieldState,
+  });
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
@@ -107,6 +73,10 @@ export const SignupForm = () => {
     }, 2000);
   };
 
+  const handleReset = () => {
+    reset();
+  };
+
   const handleLanguageSelect = (event: ChangeEvent<HTMLInputElement>) => {
     setLanguage(event.target.value as Language);
   };
@@ -118,40 +88,39 @@ export const SignupForm = () => {
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
       <UsernameTextField
-        {...register("username")}
+        {...registerField("username")}
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint")}
         errorMessage={errors.username?.message as string}
       />
       <EmailTextField
-        {...register("email")}
-        // {...registerFieldWithDebounceValidation("email", 1000, trigger, register)}
+        {...registerField("email")}
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint")}
         errorMessage={errors.email?.message as string}
         loadingState={emailChecking}
       />
       <PasswordTextField
-        {...register("password")}
+        {...registerField("password")}
         label={t("signupPage.password")}
         helperText={t("signupPage.passwordHint")}
         errorMessage={errors.password?.message as string}
       />
       <PasswordTextField
-        {...register("passwordRepeat")}
+        {...registerField("passwordRepeat")}
         label={t("signupPage.passwordRepeat")}
         helperText={t("signupPage.passwordRepeatHint")}
         errorMessage={errors.passwordRepeat?.message as string}
       />
       <LanguageSelect
-        {...register("language")}
+        {...registerField("language")}
         onChange={handleLanguageSelect}
         value={getLanguage()}
         label={t("signupPage.language")}
         helperText={t("signupPage.languageHint")}
       />
       <ThemeSelect
-        {...register("theme")}
+        {...registerField("theme")}
         onChange={handleThemeSelect}
         value={themeMode}
         label={t("signupPage.theme")}
@@ -167,6 +136,7 @@ export const SignupForm = () => {
       >
         {t("signupPage.signUpBtn")}
       </Button>
+      <Button onClick={handleReset}>Reset</Button>
     </Box>
   );
 };
