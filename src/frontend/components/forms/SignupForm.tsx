@@ -3,7 +3,6 @@ import {
   AlternateEmailOutlined,
   BadgeOutlined,
   HourglassBottomOutlined,
-  LockReset,
   PasswordOutlined,
   PersonAddAltOutlined,
 } from "@mui/icons-material";
@@ -21,26 +20,24 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React from "react";
+import React, { ChangeEvent, Dispatch, FocusEvent, forwardRef, SetStateAction, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { object as yupShape, ref as yupRef, string } from "yup";
 
-import { registerFieldWithDebounceValidation } from "../../core/helpers/registerFieldWithDebounceValidation";
 import { yupSequentialStringSchema } from "../../core/helpers/yupSequentialStringSchema";
 import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language } from "../../store/useTranslationStore";
 
-type ReactSetStateAction<T> = React.Dispatch<React.SetStateAction<T>>;
+type ReactSetStateAction<T> = Dispatch<SetStateAction<T>>;
 type InputProps = {
   label: string;
   helperText?: string;
   name: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
   value?: string;
-  errorMessage: string | undefined;
-  loadingState?: boolean;
+  errorMessage?: string | undefined;
 };
 
 const makeValidationSchema = (t: LocalizedStringFn, setEmailCheckingState: ReactSetStateAction<boolean>) => {
@@ -84,8 +81,8 @@ const makeValidationSchema = (t: LocalizedStringFn, setEmailCheckingState: React
  * Sign Up Form functional component
  */
 export const SignupForm = () => {
-  const [emailChecking, setEmailChecking] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
   const { t, getLanguage, setLanguage } = useTranslation();
@@ -100,7 +97,7 @@ export const SignupForm = () => {
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+    console.log("Form is valid", data);
     setLoading(true);
 
     setTimeout(() => {
@@ -110,11 +107,11 @@ export const SignupForm = () => {
     }, 2000);
   };
 
-  const handleLanguageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLanguageSelect = (event: ChangeEvent<HTMLInputElement>) => {
     setLanguage(event.target.value as Language);
   };
 
-  const handleThemeSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThemeSelect = (event: ChangeEvent<HTMLInputElement>) => {
     setThemeMode(event.target.value as PaletteMode);
   };
 
@@ -174,7 +171,7 @@ export const SignupForm = () => {
   );
 };
 
-const UsernameTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+const UsernameTextField = forwardRef((props: InputProps, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -200,7 +197,7 @@ const UsernameTextField = React.forwardRef((props: Partial<InputProps>, ref) => 
   );
 });
 
-const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+const EmailTextField = forwardRef((props: InputProps & { loadingState: boolean }, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -226,7 +223,7 @@ const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
   );
 });
 
-const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+const PasswordTextField = forwardRef((props: InputProps, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -253,7 +250,7 @@ const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => 
   );
 });
 
-const LanguageSelect = React.forwardRef((props: Partial<InputProps>, ref) => {
+const LanguageSelect = forwardRef((props: InputProps, ref) => {
   const { languages } = useTranslation();
 
   return (
@@ -279,7 +276,7 @@ const LanguageSelect = React.forwardRef((props: Partial<InputProps>, ref) => {
   );
 });
 
-const ThemeSelect = React.forwardRef((props: Partial<InputProps>, ref) => {
+const ThemeSelect = forwardRef((props: InputProps, ref) => {
   const { t } = useTranslation();
 
   return (
