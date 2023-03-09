@@ -26,8 +26,8 @@ import { useSignupFormValidation } from "../../hooks/useSignupFormValidation";
 import { useTranslation } from "../../hooks/useTranslation";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language } from "../../store/useTranslationStore";
+import { useSignupFormStore } from "../../store/useSignupFormStore";
 
-type ReactSetStateAction<T> = Dispatch<SetStateAction<T>>;
 type InputProps = {
   label: string;
   helperText?: string;
@@ -44,7 +44,7 @@ type InputProps = {
 export const SignupForm = () => {
   const { t, getLanguage, setLanguage } = useTranslation();
 
-  const [emailChecking, setEmailChecking] = useState(false);
+  const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
   const [loading, setLoading] = useState(false);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
@@ -94,7 +94,7 @@ export const SignupForm = () => {
         errorMessage={errors.username?.message as string}
       />
       <EmailTextField
-        {...registerField("email")}
+        {...registerFieldDebounced("email", 1000)}
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint")}
         errorMessage={errors.email?.message as string}

@@ -1,7 +1,7 @@
-import { debounce } from "lodash";
-import { FieldValues, RegisterOptions, UseFormGetFieldState, UseFormRegister, ValidateResult } from "react-hook-form";
+import { FieldValues, RegisterOptions, UseFormGetFieldState, UseFormRegister } from "react-hook-form";
 import { UseFormGetValues, UseFormTrigger } from "react-hook-form/dist/types/form";
 
+import { useSignupFormStore } from "../store/useSignupFormStore";
 import { useTranslation } from "./useTranslation";
 
 type UseFormProps<T extends FieldValues> = {
@@ -28,27 +28,26 @@ export const useSignupFormValidation = ({ register, trigger, getValues, getField
         message: t("formValidation.emailInvalid"),
       },
       validate: {
-        uniqueValidation: debounce(async (email: string) => {
-          // https://github.com/react-hook-form/react-hook-form/issues/40#issuecomment-532881592
-          console.log("Email unique check: simulating...");
-          const b = await new Promise<string | true>((resolve) => {
-            // setEmailCheckingState(true);
+        uniqueValidation: async (value: string) => {
+          const setEmailCheckingState = useSignupFormStore.getState().setEmailUniqueProcessing;
+          setEmailCheckingState(true);
+
+          const hasEmailTaken = await new Promise<boolean>((resolve) => {
             setTimeout(() => {
-              resolve(email !== "admin@example.com" || t("formValidation.emailNotUnique"));
-              console.log("Done", email);
-              // setEmailCheckingState(false);
+              resolve(value === "admin@example.com");
             }, 1000);
           });
-          console.log(b);
-          return b;
-        }, 1000),
+
+          setEmailCheckingState(false);
+          return !hasEmailTaken || t("formValidation.emailNotUnique");
+        },
       },
     },
     password: {
-      // required: t("formValidation.passwordRequired"),
-      // minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
+      required: t("formValidation.passwordRequired"),
+      minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
       validate: {
-        required: (value: string) => value !== "" || t("formValidation.passwordRequired"),
+        // required: (value: string) => value !== "" || t("formValidation.passwordRequired"),
         matchesPasswords: () => {
           const prevField = "passwordRepeat";
           const { isDirty, invalid } = getFieldState(prevField);
@@ -57,7 +56,7 @@ export const useSignupFormValidation = ({ register, trigger, getValues, getField
           }
           return true;
         },
-        minLength: (value: string) => value.length >= 8 || t("formValidation.passwordMinLength", { n: 8 }),
+        // minLength: (value: string) => value.length >= 8 || t("formValidation.passwordMinLength", { n: 8 }),
       },
     },
     passwordRepeat: {
@@ -69,44 +68,12 @@ export const useSignupFormValidation = ({ register, trigger, getValues, getField
         },
       },
     },
-    // _username: string()
-    //   .required(t("formValidation.usernameRequired"))
-    //   .min(3, t("formValidation.usernameMinLength", { n: 3 }))
-    //   .trim(),
-    // _email: yupSequentialStringSchema([
-    //   string().required(t("formValidation.emailRequired")).email(t("formValidation.emailInvalid")).lowercase().trim(),
-    //   string().test({
-    //     name: "checkEmailUnique",
-    //     message: t("formValidation.emailNotUnique"),
-    //     test: (email) => {
-    //       console.log("Email unique check: simulating...");
-    //       return new Promise((resolve) => {
-    //         setEmailCheckingState(true);
-    //         setTimeout(() => {
-    //           resolve(email !== "admin@example.com");
-    //           setEmailCheckingState(false);
-    //         }, 1000);
-    //       });
-    //       // // async validation example #2
-    //       // return fetch(`is-email-unique/${email}`).then(async (res) => {
-    //       //   const { isEmailUnique } = await res.json();
-    //       //   return isEmailUnique;
-    //       // });
-    //     }
-    //   })
-    // ]),
-    // _password: string()
-    //   .required(t("formValidation.passwordRequired"))
-    //   .min(8, t("formValidation.passwordMinLength", { n: 8 })),
-    // _passwordRepeat: string()
-    //   .required(t("formValidation.passwordRepeatRequired"))
-    //   .oneOf([yupRef("password")], t("formValidation.passwordRepeatNotMatch"))
   };
   const registerField = (fieldName: string) => ({ ...register(fieldName, rules[fieldName] || undefined) });
 
-  const registerFieldDebounced = (fieldName: string, delay: number) => ({
+  const registerFieldDebounced = (fieldName: string, wait: number) => ({
     ...register(fieldName, rules[fieldName] || undefined),
-    onChange: debounce(async () => await trigger(fieldName), delay, { leading: true }),
+    // onChange: debounce(async () => await trigger(fieldName), wait, { trailing: true }),
   });
 
   return { registerField, registerFieldDebounced };
