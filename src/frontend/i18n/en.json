@@ -20,9 +20,9 @@
         "emailNotUnique": "This email address has already been taken",
         "emailRequired": "Email Address is required",
         "passwordMinLength": "Password should be a bit longer (min {n} symbols)",
-        "passwordRepeatNotMatch": "Passwords are not matching",
+        "passwordRepeatNotMatch": "Passwords do not match",
         "passwordRepeatRequired": "You must confirm your password, that's a rule",
-        "passwordRequired": "Sorry but password cannot be blank",
+        "passwordRequired": "Password cannot be blank",
         "usernameMinLength": "Expected a full Personal Name (min {n} symbols)",
         "usernameRequired": "Personal Name is required"
     },

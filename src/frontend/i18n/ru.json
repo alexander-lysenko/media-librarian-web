@@ -22,7 +22,7 @@
         "passwordMinLength": "Минимальная длина пароля - {n} символов",
         "passwordRepeatNotMatch": "Пароли не совпадают",
         "passwordRepeatRequired": "Пароль необходимо подтвердить, таковы правила",
-        "passwordRequired": "Очень жаль, но пароль придется ввести",
+        "passwordRequired": "Пароль тоже придется ввести",
         "usernameMinLength": "Попробуйте ввести полное имя (не менее {n} символов)",
         "usernameRequired": "Поле с именем не должно оставаться пустым"
     },

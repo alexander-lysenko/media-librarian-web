@@ -1,4 +1,12 @@
-import { FieldValues, RegisterOptions, UseFormGetFieldState, UseFormRegister } from "react-hook-form";
+import { debounce } from "@mui/material/utils";
+import {
+  ChangeHandler,
+  FieldValues,
+  RegisterOptions,
+  UseFormGetFieldState,
+  UseFormRegister,
+  UseFormRegisterReturn,
+} from "react-hook-form";
 import { UseFormGetValues, UseFormTrigger } from "react-hook-form/dist/types/form";
 
 import { useSignupFormStore } from "../store/useSignupFormStore";
@@ -7,11 +15,11 @@ import { useTranslation } from "./useTranslation";
 type UseFormProps<T extends FieldValues> = {
   register: UseFormRegister<T>;
   trigger: UseFormTrigger<T>;
-  getValues: UseFormGetValues<T>;
   getFieldState: UseFormGetFieldState<T>;
+  getValues?: UseFormGetValues<T>;
 };
 
-export const useSignupFormValidation = ({ register, trigger, getValues, getFieldState }: UseFormProps<FieldValues>) => {
+export const useSignupFormValidation = ({ register, trigger, getFieldState }: UseFormProps<FieldValues>) => {
   const { t } = useTranslation();
 
   const rules: Record<string, RegisterOptions> = {
@@ -32,6 +40,7 @@ export const useSignupFormValidation = ({ register, trigger, getValues, getField
           const setEmailCheckingState = useSignupFormStore.getState().setEmailUniqueProcessing;
           setEmailCheckingState(true);
 
+          // todo: replace with a real API request
           const hasEmailTaken = await new Promise<boolean>((resolve) => {
             setTimeout(() => {
               resolve(value === "admin@example.com");
@@ -47,7 +56,6 @@ export const useSignupFormValidation = ({ register, trigger, getValues, getField
       required: t("formValidation.passwordRequired"),
       minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
       validate: {
-        // required: (value: string) => value !== "" || t("formValidation.passwordRequired"),
         matchesPasswords: () => {
           const prevField = "passwordRepeat";
           const { isDirty, invalid } = getFieldState(prevField);
@@ -56,25 +64,32 @@ export const useSignupFormValidation = ({ register, trigger, getValues, getField
           }
           return true;
         },
-        // minLength: (value: string) => value.length >= 8 || t("formValidation.passwordMinLength", { n: 8 }),
       },
     },
     passwordRepeat: {
       required: t("formValidation.passwordRepeatRequired"),
       validate: {
-        matchesPasswords: (value: string) => {
-          const { password } = getValues();
+        matchesPasswords: (value: string, formValues: FieldValues) => {
+          const { password } = formValues;
           return password === value || t("formValidation.passwordRepeatNotMatch");
         },
       },
     },
   };
-  const registerField = (fieldName: string) => ({ ...register(fieldName, rules[fieldName] || undefined) });
 
-  const registerFieldDebounced = (fieldName: string, wait: number) => ({
+  const registerField = (fieldName: string): UseFormRegisterReturn => ({
     ...register(fieldName, rules[fieldName] || undefined),
-    // onChange: debounce(async () => await trigger(fieldName), wait, { trailing: true }),
   });
+
+  const registerFieldDebounced = (fieldName: string, wait: number): UseFormRegisterReturn => {
+    const registerReturn = register(fieldName, rules[fieldName] || undefined);
+    const { onChange: onChangeRegular } = registerReturn;
+    const onChange: ChangeHandler = debounce(async (event) => {
+      await onChangeRegular(event);
+    }, wait);
+
+    return { ...registerReturn, onChange };
+  };
 
   return { registerField, registerFieldDebounced };
 };

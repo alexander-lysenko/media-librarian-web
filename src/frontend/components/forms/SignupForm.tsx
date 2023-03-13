@@ -19,14 +19,14 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, Dispatch, FocusEvent, forwardRef, SetStateAction, useState } from "react";
+import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 
 import { useSignupFormValidation } from "../../hooks/useSignupFormValidation";
 import { useTranslation } from "../../hooks/useTranslation";
+import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language } from "../../store/useTranslationStore";
-import { useSignupFormStore } from "../../store/useSignupFormStore";
 
 type InputProps = {
   label: string;
@@ -73,9 +73,9 @@ export const SignupForm = () => {
     }, 2000);
   };
 
-  const handleReset = () => {
-    reset();
-  };
+  // const handleReset = () => {
+  //   reset();
+  // };
 
   const handleLanguageSelect = (event: ChangeEvent<HTMLInputElement>) => {
     setLanguage(event.target.value as Language);
@@ -136,7 +136,7 @@ export const SignupForm = () => {
       >
         {t("signupPage.signUpBtn")}
       </Button>
-      <Button onClick={handleReset}>Reset</Button>
+      {/*<Button onClick={handleReset}>Reset</Button>*/}
     </Box>
   );
 };
