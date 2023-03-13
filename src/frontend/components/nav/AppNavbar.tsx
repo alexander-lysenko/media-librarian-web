@@ -14,9 +14,9 @@ import {
 import React, { cloneElement, ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { AppRoutes } from "../core";
+import { AppRoutes } from "../../core/enums";
+import { useTranslation } from "../../hooks/useTranslation";
 import { NavbarProfiler } from "./NavbarProfiler";
-import { useTranslation } from "../hooks/useTranslation";
 
 interface Props {
   children?: ReactElement;

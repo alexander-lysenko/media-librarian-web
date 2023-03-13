@@ -9,23 +9,22 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grow,
   InputAdornment,
-  Slide,
   TextField,
   TextFieldProps,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
-import React from "react";
+import React, { ChangeEvent, FocusEvent, forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { object as yupShape, string } from "yup";
 
 import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
 
 type Props = {
-  handleSubmitted: (event: React.SyntheticEvent | Event) => void;
-  handleClose: (event: React.SyntheticEvent | Event, reason?: string) => void;
+  handleSubmitted: (event: SyntheticEvent | Event) => void;
+  handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
 };
 
@@ -33,8 +32,8 @@ type InputProps = {
   label: string;
   helperText?: string;
   name: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (event: FocusEvent<HTMLInputElement>) => void;
   value?: string;
   errorMessage: string | undefined;
 };
@@ -57,7 +56,7 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
   const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const schema = makeValidationSchema(t);
   const {
@@ -77,12 +76,12 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
 
     setTimeout(() => {
       // simulate request
-      handleCloseWithReset(event as React.SyntheticEvent);
-      handleSubmitted(event as React.SyntheticEvent);
+      handleCloseWithReset(event as SyntheticEvent);
+      handleSubmitted(event as SyntheticEvent);
     }, 2000);
   };
 
-  const handleCloseWithReset = (event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === "backdropClick") {
       event.preventDefault();
       return false;
@@ -99,8 +98,7 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
       fullWidth
       onClose={handleCloseWithReset}
       fullScreen={fullScreen}
-      TransitionComponent={Slide}
-      TransitionProps={{ direction: "up" } as TransitionProps}
+      TransitionComponent={Grow}
       transitionDuration={120}
     >
       <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit)} sx={{ mt: 1 }}>
@@ -135,7 +133,7 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
   );
 };
 
-const EmailTextField = React.forwardRef((props: InputProps & TextFieldProps, ref) => {
+const EmailTextField = forwardRef((props: InputProps & TextFieldProps, ref) => {
   return (
     <TextField
       inputRef={ref}

@@ -9,7 +9,7 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import React, { useState } from "react";
 
 import { AppNavbar, PaperCardHeader } from "../components";
-import { stringAvatar } from "../core/helpers/stringAvatar";
+import { stringAvatar } from "../core";
 import { useTranslation } from "../hooks/useTranslation";
 
 const username = "User Name";

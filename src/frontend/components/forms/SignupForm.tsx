@@ -22,7 +22,7 @@ import {
 import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 
-import { useSignupFormValidation } from "../../hooks/useSignupFormValidation";
+import { useSignupFormValidation } from "../../hooks";
 import { useTranslation } from "../../hooks/useTranslation";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";

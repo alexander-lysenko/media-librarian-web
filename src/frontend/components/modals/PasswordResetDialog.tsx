@@ -9,14 +9,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grow,
   InputAdornment,
-  Slide,
   TextField,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
-import React from "react";
+import React, { forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { object as yupShape, ref as yupRef, string } from "yup";
 
@@ -57,7 +56,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
   const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validationSchema = makeValidationSchema(t);
   const {
@@ -71,7 +70,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
     reValidateMode: "onChange",
   });
 
-  const handleCloseWithReset = (event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === "backdropClick" || reason === "escapeKeyDown") {
       event.preventDefault();
       return false;
@@ -88,8 +87,8 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
 
     setTimeout(() => {
       // Submit request
-      handleCloseWithReset(event as React.SyntheticEvent);
-      handleSubmitted(event as React.SyntheticEvent);
+      handleCloseWithReset(event as SyntheticEvent);
+      handleSubmitted(event as SyntheticEvent);
     }, 2000);
   };
 
@@ -99,8 +98,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
       fullWidth
       onClose={handleCloseWithReset}
       fullScreen={fullScreen}
-      TransitionComponent={Slide}
-      TransitionProps={{ direction: "up" } as TransitionProps}
+      TransitionComponent={Grow}
       transitionDuration={120}
     >
       <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit)} sx={{ mt: 1 }}>
@@ -142,7 +140,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
   );
 };
 
-const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+const EmailTextField = forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -164,7 +162,7 @@ const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
   );
 });
 
-const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+const PasswordTextField = forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
       inputRef={ref}

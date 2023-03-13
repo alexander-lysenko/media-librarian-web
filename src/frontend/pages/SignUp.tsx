@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 
 import { Copyright } from "../components/Copyright";
 import { SignupForm } from "../components/forms/SignupForm";
-import { StickyFooter } from "../components/StickyFooter";
+import { StickyFooter } from "../components/ui/StickyFooter";
 import { useTranslation } from "../hooks/useTranslation";
 
 /**

@@ -12,7 +12,7 @@ import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { useThemeStore } from "./store/useThemeStore";
 import { getDesignTokens } from "./theme";
-import { AppRoutes } from "./core";
+import { AppRoutes } from "./core/enums";
 
 const rootElement = document.getElementById("root") as Element;
 const root = createRoot(rootElement);

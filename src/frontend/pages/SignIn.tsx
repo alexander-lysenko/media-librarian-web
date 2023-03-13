@@ -1,15 +1,15 @@
 import { LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
-import React from "react";
+import { LoginForm } from "../components/forms/LoginForm";
+import React, { ReactNode, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-import { Copyright } from "../components/Copyright";
-import { LoginForm } from "../components/forms/LoginForm";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
-import { StickyFooter } from "../components/StickyFooter";
 import { useSnackbar } from "../hooks/useSnackbar";
 import { useTranslation } from "../hooks/useTranslation";
+import { StickyFooter } from "../components/ui/StickyFooter";
+import { Copyright } from "../components/Copyright";
 
 /**
  * Component representing the SignIn (Login) page
@@ -18,8 +18,8 @@ export const SignIn = () => {
   const { t } = useTranslation();
   const snackbar = useSnackbar({});
 
-  const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = React.useState(false);
-  const [passwordResetDialogOpen, setPasswordResetDialogOpen] = React.useState(false);
+  const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = useState<boolean>(false);
+  const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState<boolean>(false);
 
   const emailConfirmedSnackbar = () => {
     snackbar.show("success", t("passwordRecovery.emailSent"));
@@ -100,7 +100,7 @@ const BackgroundContainer = () => (
 );
 
 type PageContainerProps = {
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 const PageContainer = ({ children }: PageContainerProps) => (

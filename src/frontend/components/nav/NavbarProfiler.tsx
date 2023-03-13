@@ -9,14 +9,14 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { AppRoutes } from "../core";
-import { stringAvatar } from "../core/helpers/stringAvatar";
-import { useTranslation } from "../hooks/useTranslation";
+import { stringAvatar } from "../../core";
+import { AppRoutes } from "../../core/enums";
+import { useTranslation } from "../../hooks/useTranslation";
 
 /**
  * Profile Avatar and menu designed to use inside AppBar

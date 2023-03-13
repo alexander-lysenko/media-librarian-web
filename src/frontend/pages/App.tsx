@@ -1,17 +1,13 @@
-import { MenuOpenOutlined, MenuOutlined } from "@mui/icons-material";
-import { AppBar, Box, Container, IconButton, Paper, Toolbar } from "@mui/material";
-import React from "react";
+import { Container, Paper } from "@mui/material";
+import React, { useState } from "react";
 
-import { NavbarProfiler } from "../components/NavbarProfiler";
-import { SidebarDrawer } from "../components/SidebarDrawer";
+import { AppNavbar } from "../components";
 import { ColoredRating } from "../components/tables/ColoredRating";
 import { DataTable } from "../components/tables/DataTable";
 import { DataColumn, DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
-// import { SidebarDrawer } from "../components/SidebarDrawer";
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
-import { AppNavbar } from "../components/AppNavbar";
 
 const columns: DataColumn[] = [
   {
@@ -46,7 +42,7 @@ const columns: DataColumn[] = [
 
 const dataRows: DataRow[] = movies;
 export const App = () => {
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore();
   const libStore = useLibraryTableStore();
 

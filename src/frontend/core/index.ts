@@ -1,3 +1,1 @@
-export * from "./enums";
-export * from "./links";
-export * from "./types";
+export { stringAvatar } from "./helpers/stringAvatar";

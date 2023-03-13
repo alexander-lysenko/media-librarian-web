@@ -9,8 +9,8 @@ import {
 } from "react-hook-form";
 import { UseFormGetValues, UseFormTrigger } from "react-hook-form/dist/types/form";
 
-import { useSignupFormStore } from "../store/useSignupFormStore";
-import { useTranslation } from "./useTranslation";
+import { useSignupFormStore } from "../../store/useSignupFormStore";
+import { useTranslation } from "../useTranslation";
 
 type UseFormProps<T extends FieldValues> = {
   register: UseFormRegister<T>;
