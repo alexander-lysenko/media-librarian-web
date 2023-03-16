@@ -22,8 +22,7 @@ import {
 import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 
-import { useSignupFormValidation } from "../../hooks";
-import { useTranslation } from "../../hooks/useTranslation";
+import { useSignupFormValidation, useTranslation } from "../../hooks";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language } from "../../store/useTranslationStore";
@@ -43,23 +42,17 @@ type InputProps = {
  */
 export const SignupForm = () => {
   const { t, getLanguage, setLanguage } = useTranslation();
+  const [loading, setLoading] = useState(false);
 
   const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
-  const [loading, setLoading] = useState(false);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
-  const { register, getValues, trigger, formState, handleSubmit, reset, getFieldState } = useForm({
+  const { register, trigger, formState, handleSubmit, reset, getFieldState } = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
-
+  const { registerField, registerFieldDebounced } = useSignupFormValidation({ register, trigger, getFieldState });
   const { errors } = formState;
-  const { registerField, registerFieldDebounced } = useSignupFormValidation({
-    register,
-    trigger,
-    getValues,
-    getFieldState,
-  });
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
@@ -133,9 +126,8 @@ export const SignupForm = () => {
         disabled={loading}
         endIcon={loading ? <CircularProgress size={14} /> : <PersonAddAltOutlined />}
         sx={{ mt: 3, mb: 2 }}
-      >
-        {t("signupPage.signUpBtn")}
-      </Button>
+        children={t("signupPage.signUpBtn")}
+      />
       {/*<Button onClick={handleReset}>Reset</Button>*/}
     </Box>
   );

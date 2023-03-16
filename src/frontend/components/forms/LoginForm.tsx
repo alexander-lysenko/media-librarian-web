@@ -1,11 +1,9 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import { AlternateEmailOutlined, LoginOutlined, PasswordOutlined } from "@mui/icons-material";
 import { Box, Button, Checkbox, CircularProgress, FormControlLabel, InputAdornment, TextField } from "@mui/material";
-import React, { ChangeEvent, FocusEvent } from "react";
+import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
-import { boolean, object as yupShape, string } from "yup";
 
-import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
+import { useLoginFormValidation, useTranslation } from "../../hooks";
 
 type InputProps = {
   label: string;
@@ -17,33 +15,18 @@ type InputProps = {
   errorMessage: string | undefined;
 };
 
-const makeValidationSchema = (t: LocalizedStringFn) =>
-  yupShape({
-    email: string()
-      .required(t("formValidation.emailRequired"))
-      .email(t("formValidation.emailInvalid"))
-      .lowercase()
-      .trim(),
-    password: string()
-      .required(t("formValidation.passwordRequired"))
-      .min(8, t("formValidation.passwordMinLength", { n: 8 })),
-    rememberMe: boolean(),
-  });
-
 /**
  * Sign In (aka Login) Form functional component
  */
 export const LoginForm = () => {
   const { t } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const [loading, setLoading] = React.useState(false);
-
-  const schema = makeValidationSchema(t);
   const { register, formState, handleSubmit, reset } = useForm({
-    resolver: yupResolver(schema),
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
+  const { registerField } = useLoginFormValidation({ register });
   const { errors } = formState;
 
   const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
@@ -61,17 +44,17 @@ export const LoginForm = () => {
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
       <EmailTextField
-        {...register("email")}
+        {...registerField("email")}
         label={t("loginPage.email")}
         errorMessage={errors.email?.message as string}
       />
       <PasswordTextField
-        {...register("password")}
+        {...registerField("password")}
         label={t("loginPage.password")}
         errorMessage={errors.password?.message as string}
       />
       <FormControlLabel
-        control={<Checkbox color="primary" {...register("rememberMe")} />}
+        control={<Checkbox color="primary" {...registerField("rememberMe")} />}
         label={t("loginPage.rememberMe")}
       />
       <Button
@@ -81,14 +64,13 @@ export const LoginForm = () => {
         disabled={loading}
         endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlined />}
         sx={{ mt: 3, mb: 2 }}
-      >
-        {t("loginPage.signInBtn")}
-      </Button>
+        children={t("loginPage.signInBtn")}
+      />
     </Box>
   );
 };
 
-const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+const EmailTextField = forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -114,7 +96,7 @@ const EmailTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
   );
 });
 
-const PasswordTextField = React.forwardRef((props: Partial<InputProps>, ref) => {
+const PasswordTextField = forwardRef((props: Partial<InputProps>, ref) => {
   return (
     <TextField
       inputRef={ref}

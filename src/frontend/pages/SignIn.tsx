@@ -1,25 +1,30 @@
 import { LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
-import { LoginForm } from "../components/forms/LoginForm";
 import React, { ReactNode, useState } from "react";
 import { NavLink } from "react-router-dom";
 
+import { StickyFooter } from "../components";
+import { Copyright } from "../components/Copyright";
+import { LoginForm } from "../components/forms/LoginForm";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
+import { useTranslation } from "../hooks";
 import { useSnackbar } from "../hooks/useSnackbar";
-import { useTranslation } from "../hooks/useTranslation";
-import { StickyFooter } from "../components/ui/StickyFooter";
-import { Copyright } from "../components/Copyright";
 
 /**
  * Component representing the SignIn (Login) page
  */
 export const SignIn = () => {
+  const { search } = window.location;
+  const searchParams = new URLSearchParams(search);
+
   const { t } = useTranslation();
   const snackbar = useSnackbar({});
 
   const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = useState<boolean>(false);
-  const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState<boolean>(false);
+  const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState<boolean>(
+    searchParams.has("action") && searchParams.get("action") === "recover",
+  );
 
   const emailConfirmedSnackbar = () => {
     snackbar.show("success", t("passwordRecovery.emailSent"));

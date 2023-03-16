@@ -1,4 +1,3 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import { AlternateEmailOutlined, LockOutlined, LockReset } from "@mui/icons-material";
 import {
   Box,
@@ -17,9 +16,8 @@ import {
 } from "@mui/material";
 import React, { forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { object as yupShape, ref as yupRef, string } from "yup";
 
-import { LocalizedStringFn, useTranslation } from "../../hooks/useTranslation";
+import { useSignupFormValidation, useTranslation } from "../../hooks";
 
 type Props = {
   handleSubmitted: (event: React.SyntheticEvent | Event) => void;
@@ -37,16 +35,6 @@ type InputProps = {
   errorMessage: string | undefined;
 };
 
-const makeValidationSchema = (t: LocalizedStringFn) =>
-  yupShape({
-    newPassword: string()
-      .required(t("formValidation.passwordRequired"))
-      .min(8, t("formValidation.passwordMinLength", { n: 8 })),
-    newPasswordRepeat: string()
-      .required(t("formValidation.passwordRepeatRequired"))
-      .oneOf([yupRef("newPassword")], t("formValidation.passwordRepeatNotMatch")),
-  });
-
 /**
  * Password Reset Dialog
  * @param { open, handleClose }
@@ -58,17 +46,12 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState<boolean>(false);
 
-  const validationSchema = makeValidationSchema(t);
-  const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
+  const { register, trigger, formState, getFieldState, reset, handleSubmit } = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
+  const { registerField } = useSignupFormValidation({ register, trigger, getFieldState });
+  const { errors } = formState;
 
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === "backdropClick" || reason === "escapeKeyDown") {
@@ -111,12 +94,12 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
           </DialogContentText>
           <EmailTextField value={"lol@kek.gii"} />
           <PasswordTextField
-            {...register("newPassword")}
+            {...registerField("newPassword")}
             label={t("passwordReset.newPassword")}
             errorMessage={errors.newPassword?.message as string}
           />
           <PasswordTextField
-            {...register("newPasswordRepeat")}
+            {...registerField("newPasswordRepeat")}
             label={t("passwordReset.newPasswordRepeat")}
             errorMessage={errors.newPasswordRepeat?.message as string}
           />
@@ -131,9 +114,8 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
             fullWidth={fullScreen}
             disabled={loading}
             endIcon={loading ? <CircularProgress size={14} /> : <LockReset />}
-          >
-            {t("common.save")}
-          </Button>
+            children={t("common.save")}
+          />
         </DialogActions>
       </Box>
     </Dialog>

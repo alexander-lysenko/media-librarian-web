@@ -1,25 +1,12 @@
 import { debounce } from "@mui/material/utils";
-import {
-  ChangeHandler,
-  FieldValues,
-  RegisterOptions,
-  UseFormGetFieldState,
-  UseFormRegister,
-  UseFormRegisterReturn,
-} from "react-hook-form";
-import { UseFormGetValues, UseFormTrigger } from "react-hook-form/dist/types/form";
+import { ChangeHandler, FieldValues, RegisterOptions, UseFormRegisterReturn, UseFormReturn } from "react-hook-form";
 
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useTranslation } from "../useTranslation";
 
-type UseFormProps<T extends FieldValues> = {
-  register: UseFormRegister<T>;
-  trigger: UseFormTrigger<T>;
-  getFieldState: UseFormGetFieldState<T>;
-  getValues?: UseFormGetValues<T>;
-};
+type UseFormProps = Pick<UseFormReturn, "register" | "trigger" | "getFieldState">;
 
-export const useSignupFormValidation = ({ register, trigger, getFieldState }: UseFormProps<FieldValues>) => {
+export const useSignupFormValidation = ({ register, trigger, getFieldState }: UseFormProps) => {
   const { t } = useTranslation();
 
   const rules: Record<string, RegisterOptions> = {
@@ -77,6 +64,7 @@ export const useSignupFormValidation = ({ register, trigger, getFieldState }: Us
     },
   };
 
+  // noinspection DuplicatedCode
   const registerField = (fieldName: string): UseFormRegisterReturn => ({
     ...register(fieldName, rules[fieldName] || undefined),
   });
