@@ -1,3 +1,2 @@
-export * from "./forms/useLoginFormValidation";
-export * from "./forms/useSignupFormValidation";
+export { useFormValidation } from "./useFormValidation";
 export { useTranslation } from "./useTranslation";

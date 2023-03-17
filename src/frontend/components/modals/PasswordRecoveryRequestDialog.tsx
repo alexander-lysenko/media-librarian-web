@@ -18,7 +18,7 @@ import {
 import React, { ChangeEvent, FocusEvent, forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import { useLoginFormValidation, useTranslation } from "../../hooks";
+import { useFormValidation, useTranslation } from "../../hooks";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
@@ -47,11 +47,12 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { register, reset, handleSubmit, formState } = useForm({
+  const usePasswordRecoveryRequestForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
-  const { registerField } = useLoginFormValidation({ register });
+  const { registerField } = useFormValidation("passwordRecoveryRequest", usePasswordRecoveryRequestForm);
+  const { formState, reset, handleSubmit } = usePasswordRecoveryRequestForm;
   const { errors } = formState;
 
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {

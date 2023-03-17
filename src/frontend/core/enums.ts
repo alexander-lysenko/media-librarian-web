@@ -31,3 +31,10 @@ export enum dbToAppTypeEnum {
   date = "date",
   datetime = "datetime",
 }
+
+export enum RegisteredFormNamesEnum {
+  signup = "signup",
+  login = "login",
+  passwordRecoveryRequest = "passwordRecoveryRequest",
+  passwordRecovery = "passwordRecovery",
+}

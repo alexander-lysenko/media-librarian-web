@@ -3,7 +3,7 @@ import { Box, Button, Checkbox, CircularProgress, FormControlLabel, InputAdornme
 import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 
-import { useLoginFormValidation, useTranslation } from "../../hooks";
+import { useFormValidation, useTranslation } from "../../hooks";
 
 type InputProps = {
   label: string;
@@ -22,22 +22,35 @@ export const LoginForm = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { register, formState, handleSubmit, reset } = useForm({
+  const useLoginForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
-  const { registerField } = useLoginFormValidation({ register });
+  const { registerField } = useFormValidation("login", useLoginForm);
+  const { formState, handleSubmit, reset, setError } = useLoginForm;
   const { errors } = formState;
 
-  const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
+  const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
     setLoading(true);
 
-    setTimeout(() => {
-      // Submit request
-      setLoading(false);
-      reset();
-    }, 2000);
+    const submitted = await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Submit request
+        // resolve(true);
+        reject({ message: "Invalid username or password" });
+      }, 2000);
+    })
+      .then(() => {
+        reset();
+      })
+      .catch((reason) => {
+        reset({ password: "" });
+        setError("password", reason);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
 

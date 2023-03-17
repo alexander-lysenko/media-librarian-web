@@ -22,7 +22,7 @@ import {
 import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 
-import { useSignupFormValidation, useTranslation } from "../../hooks";
+import { useFormValidation, useTranslation } from "../../hooks";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language } from "../../store/useTranslationStore";
@@ -47,11 +47,12 @@ export const SignupForm = () => {
   const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
-  const { register, trigger, formState, handleSubmit, reset, getFieldState } = useForm({
+  const useSignupForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
-  const { registerField, registerFieldDebounced } = useSignupFormValidation({ register, trigger, getFieldState });
+  const { registerField, registerFieldDebounced } = useFormValidation("signup", useSignupForm);
+  const { formState, handleSubmit, setError, reset } = useSignupForm;
   const { errors } = formState;
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
