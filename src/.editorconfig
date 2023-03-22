@@ -25,3 +25,7 @@ indent_size = 2
 # noinspection ALL
 [{package.json,composer.json,tsconfig.json,.eslintrc.json}]
 indent_size = 2
+
+# noinspection ALL
+[frontend/i18n/lang/*.json]
+indent_size = 2

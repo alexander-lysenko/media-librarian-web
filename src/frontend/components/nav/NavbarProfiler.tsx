@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 
 import { stringAvatar } from "../../core";
 import { AppRoutes } from "../../core/enums";
-import { useTranslation } from "../../hooks/useTranslation";
+import { useTranslation } from "react-i18next";
 
 /**
  * Profile Avatar and menu designed to use inside AppBar

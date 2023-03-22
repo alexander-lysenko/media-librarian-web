@@ -12,10 +12,10 @@ import {
   useScrollTrigger,
 } from "@mui/material";
 import React, { cloneElement, ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { AppRoutes } from "../../core/enums";
-import { useTranslation } from "../../hooks/useTranslation";
 import { NavbarProfiler } from "./NavbarProfiler";
 
 interface Props {

@@ -2,8 +2,9 @@ import { AlternateEmailOutlined, LoginOutlined, PasswordOutlined } from "@mui/ic
 import { Box, Button, Checkbox, CircularProgress, FormControlLabel, InputAdornment, TextField } from "@mui/material";
 import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
-import { useFormValidation, useTranslation } from "../../hooks";
+import { useFormValidation } from "../../hooks";
 
 type InputProps = {
   label: string;
@@ -83,7 +84,7 @@ export const LoginForm = () => {
   );
 };
 
-const EmailTextField = forwardRef((props: Partial<InputProps>, ref) => {
+const EmailTextField = forwardRef((props: InputProps, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -109,7 +110,7 @@ const EmailTextField = forwardRef((props: Partial<InputProps>, ref) => {
   );
 });
 
-const PasswordTextField = forwardRef((props: Partial<InputProps>, ref) => {
+const PasswordTextField = forwardRef((props: InputProps, ref) => {
   return (
     <TextField
       inputRef={ref}

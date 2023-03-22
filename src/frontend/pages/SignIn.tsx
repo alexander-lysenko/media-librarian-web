@@ -1,6 +1,7 @@
 import { LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
 import React, { ReactNode, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
 import { StickyFooter } from "../components";
@@ -8,7 +9,6 @@ import { Copyright } from "../components/Copyright";
 import { LoginForm } from "../components/forms/LoginForm";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
-import { useTranslation } from "../hooks";
 import { useSnackbar } from "../hooks/useSnackbar";
 
 /**

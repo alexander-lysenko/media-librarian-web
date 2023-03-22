@@ -16,8 +16,9 @@ import {
 } from "@mui/material";
 import React, { forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
-import { useFormValidation, useTranslation } from "../../hooks";
+import { useFormValidation } from "../../hooks";
 
 type Props = {
   handleSubmitted: (event: React.SyntheticEvent | Event) => void;
@@ -96,12 +97,12 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
           <EmailTextField value={"lol@kek.gii"} />
           <PasswordTextField
             {...registerField("newPassword")}
-            label={t("passwordReset.newPassword")}
+            label={t("passwordReset.newPassword") as string}
             errorMessage={errors.newPassword?.message as string}
           />
           <PasswordTextField
             {...registerField("newPasswordRepeat")}
-            label={t("passwordReset.newPasswordRepeat")}
+            label={t("passwordReset.newPasswordRepeat") as string}
             errorMessage={errors.newPasswordRepeat?.message as string}
           />
         </DialogContent>

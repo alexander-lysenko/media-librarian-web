@@ -17,8 +17,9 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, FocusEvent, forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
-import { useFormValidation, useTranslation } from "../../hooks";
+import { useFormValidation } from "../../hooks";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;

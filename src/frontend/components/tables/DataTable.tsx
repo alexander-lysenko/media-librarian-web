@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   DataTableBaseProps,
@@ -21,7 +22,6 @@ import {
   DataTablePaginationProps,
   DataTableStyleProps,
 } from "../../core/types";
-import { useTranslation } from "../../hooks/useTranslation";
 
 type RowsPerPageOptions = Array<number | { label: string; value: number }> | [];
 
@@ -69,13 +69,18 @@ const DataTablePagination = (props: CustomTablePaginationProps) => {
       count={count}
       page={page}
       rowsPerPage={rowsPerPage}
-      rowsPerPageOptions={detectAvailableRowsPerPageOptions(count, t("common.all"))}
+      rowsPerPageOptions={detectAvailableRowsPerPageOptions(count, t("common.all") as string)}
       onPageChange={onPageChange}
       onRowsPerPageChange={onRowsPerPageChange}
       SelectProps={{ inputProps: { sx: { py: 2 } } }}
       labelRowsPerPage={t("dataTable.rowsPerPage")}
-      labelDisplayedRows={({ from, to, count }) =>
-        t("dataTable.viewingEntries", { from, to, count: count !== -1 ? count : `> ${to}` })
+      labelDisplayedRows={({ from, to, count, page }) =>
+        t("dataTable.viewingEntries", {
+          from,
+          to,
+          total: count !== -1 ? count : `> ${to}`,
+          page: page + 1,
+        })
       }
       getItemAriaLabel={(type) => type}
     />
@@ -197,7 +202,7 @@ export const DataTable = (props: DataTableProps) => {
           )}
         </TableContainer>
         <DataTablePagination
-          count={rows.length}
+          count={2000}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}

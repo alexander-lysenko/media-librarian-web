@@ -1,9 +1,16 @@
 import { debounce } from "@mui/material/utils";
-import { ChangeHandler, FieldValues, RegisterOptions, UseFormRegisterReturn, UseFormReturn } from "react-hook-form";
+import {
+  ChangeHandler,
+  FieldValues,
+  Message,
+  RegisterOptions,
+  UseFormRegisterReturn,
+  UseFormReturn,
+} from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { RegisteredFormNamesEnum } from "../core/enums";
 import { useSignupFormStore } from "../store/useSignupFormStore";
-import { useTranslation } from "./";
 
 type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
 
@@ -16,14 +23,14 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
     login: {
       email: {
         setValueAs: (value: string) => value.trim().toLowerCase(),
-        required: t("formValidation.emailRequired"),
+        required: t("formValidation.emailRequired") as Message,
         pattern: {
           value: emailPattern,
           message: t("formValidation.emailInvalid"),
         },
       },
       password: {
-        required: t("formValidation.passwordRequired"),
+        required: t("formValidation.passwordRequired") as Message,
       },
       rememberMe: {
         setValueAs: (value: string) => !!value,
@@ -34,7 +41,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         required: true,
       },
       newPassword: {
-        required: t("formValidation.passwordRequired"),
+        required: t("formValidation.passwordRequired") as Message,
         minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
         validate: {
           matchesPasswords: () => {
@@ -44,16 +51,19 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
             if (isDirty || invalid) {
               trigger(prevField).then(() => true);
             }
+
             return true;
           },
         },
       },
       newPasswordRepeat: {
-        required: t("formValidation.passwordRepeatRequired"),
+        required: t("formValidation.passwordRepeatRequired") as Message,
         validate: {
           matchesPasswords: (value: string, formValues: FieldValues) => {
+            const message = t("formValidation.passwordRepeatNotMatch");
             const { password } = formValues;
-            return password === value || t("formValidation.passwordRepeatNotMatch");
+
+            return password === value || message;
           },
         },
       },
@@ -61,7 +71,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
     passwordRecoveryRequest: {
       email: {
         setValueAs: (value: string) => value.trim().toLowerCase(),
-        required: t("formValidation.emailRequired"),
+        required: t("formValidation.emailRequired") as Message,
         pattern: {
           value: emailPattern,
           message: t("formValidation.emailInvalid"),
@@ -71,12 +81,12 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
     signup: {
       username: {
         setValueAs: (value: string) => value.trim(),
-        required: t("formValidation.usernameRequired"),
+        required: t("formValidation.usernameRequired") as Message,
         minLength: { value: 3, message: t("formValidation.usernameMinLength", { n: 3 }) },
       },
       email: {
         setValueAs: (value: string) => value.trim().toLowerCase(),
-        required: t("formValidation.emailRequired"),
+        required: t("formValidation.emailRequired") as Message,
         pattern: {
           value: emailPattern,
           message: t("formValidation.emailInvalid"),
@@ -84,6 +94,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         validate: {
           uniqueValidation: async (value: string) => {
             const setEmailCheckingState = useSignupFormStore.getState().setEmailUniqueProcessing;
+            const message = t("formValidation.emailNotUnique");
             setEmailCheckingState(true);
 
             // todo: replace with a real API request
@@ -94,12 +105,12 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
             });
 
             setEmailCheckingState(false);
-            return !hasEmailTaken || t("formValidation.emailNotUnique");
+            return !hasEmailTaken || message;
           },
         },
       },
       password: {
-        required: t("formValidation.passwordRequired"),
+        required: t("formValidation.passwordRequired") as Message,
         minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
         validate: {
           matchesPasswords: () => {
@@ -109,16 +120,19 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
             if (isDirty || invalid) {
               trigger(prevField).then(() => true);
             }
+
             return true;
           },
         },
       },
       passwordRepeat: {
-        required: t("formValidation.passwordRepeatRequired"),
+        required: t("formValidation.passwordRepeatRequired") as Message,
         validate: {
           matchesPasswords: (value: string, formValues: FieldValues) => {
+            const message = t("formValidation.passwordRepeatNotMatch");
             const { password } = formValues;
-            return password === value || t("formValidation.passwordRepeatNotMatch");
+
+            return password === value || message;
           },
         },
       },

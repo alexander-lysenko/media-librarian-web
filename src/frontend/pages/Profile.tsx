@@ -10,7 +10,7 @@ import React, { useState } from "react";
 
 import { AppNavbar, PaperCardHeader } from "../components";
 import { stringAvatar } from "../core";
-import { useTranslation } from "../hooks/useTranslation";
+import { useTranslation } from "react-i18next";
 
 const username = "User Name";
 const email = "username@example.com";

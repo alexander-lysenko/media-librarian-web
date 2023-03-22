@@ -1,23 +1,30 @@
 import { createTheme, StyledEngineProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-import * as React from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+import { AppRoutes } from "./core/enums";
 import { App } from "./pages/App";
 import { Landing } from "./pages/Landing";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { useThemeStore } from "./store/useThemeStore";
+import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
-import { AppRoutes } from "./core/enums";
+
+const i18n = useTranslationStore.getState().i18nInstance;
+const getLanguage = useLanguageStore.getState().getLanguage;
+
+// init i18n (needs to be bundled ;))
+i18n.init({ lng: getLanguage() }).then(() => null);
 
 const rootElement = document.getElementById("root") as Element;
 const root = createRoot(rootElement);
 
-const Main: React.FC = () => {
+const Main = () => {
   const colorMode = useThemeStore((state) => state.mode);
 
   return (

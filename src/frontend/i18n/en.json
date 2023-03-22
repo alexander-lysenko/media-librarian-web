@@ -1,78 +1,78 @@
 {
-    "app": {
-        "logout": "Log Out",
-        "unreadNotifications": "{n} New Notifications",
-        "openProfileMenu": "Open Profile Menu",
-        "profile": "Profile"
-    },
-    "common": {
-        "all": "All",
-        "cancel": "Cancel",
-        "save": "Save",
-        "submit": "Submit"
-    },
-    "dataTable": {
-        "rowsPerPage": "Rows per page:",
-        "viewingEntries": "{from} - {to} of {count}"
-    },
-    "formValidation": {
-        "emailInvalid": "Please provide a valid e-mail address",
-        "emailNotUnique": "This email address has already been taken",
-        "emailRequired": "Email Address is required",
-        "passwordMinLength": "Password should be a bit longer (min {n} symbols)",
-        "passwordRepeatNotMatch": "Passwords do not match",
-        "passwordRepeatRequired": "You must confirm your password, that's a rule",
-        "passwordRequired": "Password cannot be blank",
-        "usernameMinLength": "Expected a full Personal Name (min {n} symbols)",
-        "usernameRequired": "Personal Name is required"
-    },
-    "loginPage": {
-        "email": "Email Address",
-        "forgotPassword": "Forgot password?",
-        "needSignUp": "Need to create an account?",
-        "password": "Password",
-        "rememberMe": "Remember Me",
-        "signInBtn": "Sign In",
-        "subtitle": "Log into your account to access your collections.",
-        "title": "Sign In"
-    },
-    "passwordRecovery": {
-        "emailSent": "We have sent an e-mail for you. Please check your inbox.",
-        "subtitle": "To confirm the ownership of your account please enter the e-mail address your account is registered to. We will send you recovery instructions to this address.",
-        "title": "Password Recovery Request"
-    },
-    "passwordReset": {
-        "backToSignIn": "Back To Sign In",
-        "newPassword": "New password",
-        "newPasswordRepeat": "Repeat new password",
-        "successfullyReset": "Password has been reset. You can sign in using your new password.",
-        "subtitle": "Alright, now you can set a new password for your account.",
-        "title": "Password Reset"
-    },
-    "profile": {
-        "basicDetails": "Basic Details",
-        "myLibraries": "My Libraries"
-    },
-    "signupPage": {
-        "email": "Email Address",
-        "emailAsLoginHint": "Your e-mail address will be used as your account name.",
-        "language": "Language",
-        "languageHint": "Choose the default interface language. You can always change it in your profile.",
-        "password": "Password",
-        "passwordHint": "At least 8 characters, mixed alpha-numeric set.",
-        "passwordRepeat": "Repeat Password",
-        "passwordRepeatHint": "Should match the password entry from the prior field.",
-        "signIn": "Sign in to an existing account",
-        "signUpBtn": "Sign Up",
-        "subtitle": "Create your free account. Start collecting anything.",
-        "theme": "UI Theme",
-        "themeHint": "Choose the default interface theme. You can always change it in your profile.",
-        "title": "Sign Up",
-        "username": "Personal Name",
-        "usernameHint": "Tell us your name or how you'd like to be addressed."
-    },
-    "theme": {
-        "presetDark": "Dark",
-        "presetLight": "Light"
-    }
+  "app": {
+    "logout": "Log Out",
+    "unreadNotifications": "{{n}} New Notifications",
+    "openProfileMenu": "Open Profile Menu",
+    "profile": "Profile"
+  },
+  "common": {
+    "all": "All",
+    "cancel": "Cancel",
+    "save": "Save",
+    "submit": "Submit"
+  },
+  "dataTable": {
+    "rowsPerPage": "Rows per page:",
+    "viewingEntries": "{{from}} - {{to}} of {{total}}, page {{page}}"
+  },
+  "formValidation": {
+    "emailInvalid": "Please provide a valid e-mail address",
+    "emailNotUnique": "This email address has already been taken",
+    "emailRequired": "Email Address is required",
+    "passwordMinLength": "Password should be a bit longer (min {{n}} symbols)",
+    "passwordRepeatNotMatch": "Passwords do not match",
+    "passwordRepeatRequired": "You must confirm your password, that's a rule",
+    "passwordRequired": "Password cannot be blank",
+    "usernameMinLength": "Expected a full Personal Name (min {{n}} symbols)",
+    "usernameRequired": "Personal Name is required"
+  },
+  "loginPage": {
+    "email": "Email Address",
+    "forgotPassword": "Forgot password?",
+    "needSignUp": "Need to create an account?",
+    "password": "Password",
+    "rememberMe": "Remember Me",
+    "signInBtn": "Sign In",
+    "subtitle": "Log into your account to access your collections.",
+    "title": "Sign In"
+  },
+  "passwordRecovery": {
+    "emailSent": "We have sent an e-mail for you. Please check your inbox.",
+    "subtitle": "To confirm the ownership of your account please enter the e-mail address your account is registered to. We will send you recovery instructions to this address.",
+    "title": "Password Recovery Request"
+  },
+  "passwordReset": {
+    "backToSignIn": "Back To Sign In",
+    "newPassword": "New password",
+    "newPasswordRepeat": "Repeat new password",
+    "successfullyReset": "Password has been reset. You can sign in using your new password.",
+    "subtitle": "Alright, now you can set a new password for your account.",
+    "title": "Password Reset"
+  },
+  "profile": {
+    "basicDetails": "Basic Details",
+    "myLibraries": "My Libraries"
+  },
+  "signupPage": {
+    "email": "Email Address",
+    "emailAsLoginHint": "Your e-mail address will be used as your account name.",
+    "language": "Language",
+    "languageHint": "Choose an interface language. You can always change it in your profile.",
+    "password": "Password",
+    "passwordHint": "At least 8 characters, mixed alpha-numeric set.",
+    "passwordRepeat": "Repeat Password",
+    "passwordRepeatHint": "Should match the password entry from the prior field.",
+    "signIn": "Sign in to an existing account",
+    "signUpBtn": "Sign Up",
+    "subtitle": "Create your free account. Start collecting anything.",
+    "theme": "UI Theme",
+    "themeHint": "Choose an interface theme. You can always change it in your profile.",
+    "title": "Sign Up",
+    "username": "Personal Name",
+    "usernameHint": "Tell us your name or how you'd like to be addressed."
+  },
+  "theme": {
+    "presetDark": "Dark",
+    "presetLight": "Light"
+  }
 }

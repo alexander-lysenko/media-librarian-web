@@ -1,12 +1,12 @@
 import { PersonAddAltRounded } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
+import { StickyFooter } from "../components";
 import { Copyright } from "../components/Copyright";
 import { SignupForm } from "../components/forms/SignupForm";
-import { StickyFooter } from "../components/ui/StickyFooter";
-import { useTranslation } from "../hooks/useTranslation";
 
 /**
  * Component representing the SignUp (Register) page

@@ -21,11 +21,12 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
-import { useFormValidation, useTranslation } from "../../hooks";
+import { useFormValidation } from "../../hooks";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
-import { Language } from "../../store/useTranslationStore";
+import { Language, useLanguageStore, useTranslationStore } from "../../store/useTranslationStore";
 
 type InputProps = {
   label: string;
@@ -41,18 +42,19 @@ type InputProps = {
  * Sign Up Form functional component
  */
 export const SignupForm = () => {
-  const { t, getLanguage, setLanguage } = useTranslation();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
+  const [language, setLanguage] = useLanguageStore((state) => [state.language, state.setLanguage]);
 
   const useSignupForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
   const { registerField, registerFieldDebounced } = useFormValidation("signup", useSignupForm);
-  const { formState, handleSubmit, setError, reset } = useSignupForm;
+  const { formState, handleSubmit, reset } = useSignupForm;
   const { errors } = formState;
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
@@ -84,41 +86,41 @@ export const SignupForm = () => {
       <UsernameTextField
         {...registerField("username")}
         label={t("signupPage.username")}
-        helperText={t("signupPage.usernameHint")}
+        helperText={t("signupPage.usernameHint") as string}
         errorMessage={errors.username?.message as string}
       />
       <EmailTextField
         {...registerFieldDebounced("email", 1000)}
         label={t("signupPage.email")}
-        helperText={t("signupPage.emailAsLoginHint")}
+        helperText={t("signupPage.emailAsLoginHint") as string}
         errorMessage={errors.email?.message as string}
         loadingState={emailChecking}
       />
       <PasswordTextField
         {...registerField("password")}
         label={t("signupPage.password")}
-        helperText={t("signupPage.passwordHint")}
+        helperText={t("signupPage.passwordHint") as string}
         errorMessage={errors.password?.message as string}
       />
       <PasswordTextField
         {...registerField("passwordRepeat")}
         label={t("signupPage.passwordRepeat")}
-        helperText={t("signupPage.passwordRepeatHint")}
+        helperText={t("signupPage.passwordRepeatHint") as string}
         errorMessage={errors.passwordRepeat?.message as string}
       />
       <LanguageSelect
         {...registerField("language")}
         onChange={handleLanguageSelect}
-        value={getLanguage()}
+        value={language}
         label={t("signupPage.language")}
-        helperText={t("signupPage.languageHint")}
+        helperText={t("signupPage.languageHint") as string}
       />
       <ThemeSelect
         {...registerField("theme")}
         onChange={handleThemeSelect}
         value={themeMode}
         label={t("signupPage.theme")}
-        helperText={t("signupPage.themeHint")}
+        helperText={t("signupPage.themeHint") as string}
       />
       <Button
         type="submit"
@@ -214,7 +216,7 @@ const PasswordTextField = forwardRef((props: InputProps, ref) => {
 });
 
 const LanguageSelect = forwardRef((props: InputProps, ref) => {
-  const { languages } = useTranslation();
+  const languages = useTranslationStore((state) => state.languages);
 
   return (
     <FormControl fullWidth size="small" margin="dense">
