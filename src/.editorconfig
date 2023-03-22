@@ -27,5 +27,5 @@ indent_size = 2
 indent_size = 2
 
 # noinspection ALL
-[frontend/i18n/lang/*.json]
+[frontend/i18n/*.json]
 indent_size = 2

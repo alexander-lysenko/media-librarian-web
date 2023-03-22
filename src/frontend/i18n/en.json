@@ -8,6 +8,7 @@
   "common": {
     "all": "All",
     "cancel": "Cancel",
+    "holdToSeePass": "Long tap to make password visible",
     "save": "Save",
     "submit": "Submit"
   },

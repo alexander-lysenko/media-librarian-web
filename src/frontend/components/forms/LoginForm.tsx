@@ -1,5 +1,15 @@
-import { AlternateEmailOutlined, LoginOutlined, PasswordOutlined } from "@mui/icons-material";
-import { Box, Button, Checkbox, CircularProgress, FormControlLabel, InputAdornment, TextField } from "@mui/material";
+import { AlternateEmailOutlined, LoginOutlined, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  Collapse,
+  FormControlLabel,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -35,11 +45,12 @@ export const LoginForm = () => {
     console.log(data);
     setLoading(true);
 
-    const submitted = await new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       setTimeout(() => {
         // Submit request
         // resolve(true);
-        reject({ message: "Invalid username or password" });
+        // reject({ message: "Invalid username or password" });
+        reject({ message: "503 Service temporary unavailable. Please try again later." });
       }, 2000);
     })
       .then(() => {
@@ -47,7 +58,8 @@ export const LoginForm = () => {
       })
       .catch((reason) => {
         reset({ password: "" });
-        setError("password", reason);
+        // setError("password", reason);
+        setError("root.serverError", reason);
       })
       .finally(() => {
         setLoading(false);
@@ -57,6 +69,11 @@ export const LoginForm = () => {
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
+      <Collapse in={!!errors.root?.serverError} unmountOnExit>
+        <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ mt: 2 }}>
+          {errors.root?.serverError.message as string}
+        </Alert>
+      </Collapse>
       <EmailTextField
         {...registerField("email")}
         label={t("loginPage.email")}
@@ -111,13 +128,20 @@ const EmailTextField = forwardRef((props: InputProps, ref) => {
 });
 
 const PasswordTextField = forwardRef((props: InputProps, ref) => {
+  const { t } = useTranslation();
+  const [passVisible, setPassVisible] = useState<boolean>(false);
+
+  const handlePassVisible = () => setPassVisible(true);
+  const handlePassHide = () => setPassVisible(false);
+  const togglePassVisible = () => setPassVisible(!passVisible);
+
   return (
     <TextField
       inputRef={ref}
       fullWidth
       size="small"
       margin="normal"
-      type="password"
+      type={passVisible ? "text" : "password"}
       id="password"
       name="password"
       label={props.label}
@@ -128,9 +152,16 @@ const PasswordTextField = forwardRef((props: InputProps, ref) => {
       onBlur={props.onBlur}
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
-            <PasswordOutlined />
-          </InputAdornment>
+          <InputAdornment
+            position="end"
+            sx={{ cursor: "pointer" }}
+            title={t("common.holdToSeePass")}
+            onMouseDown={handlePassVisible}
+            onMouseUp={handlePassHide}
+            onMouseLeave={handlePassHide}
+            onTouchStart={togglePassVisible}
+            children={passVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+          />
         ),
       }}
     />

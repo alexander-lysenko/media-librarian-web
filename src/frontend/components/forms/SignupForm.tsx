@@ -2,13 +2,16 @@ import {
   AlternateEmailOutlined,
   BadgeOutlined,
   HourglassBottomOutlined,
-  PasswordOutlined,
   PersonAddAltOutlined,
+  VisibilityOffOutlined,
+  VisibilityOutlined,
 } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
+  Collapse,
   FormControl,
   FormHelperText,
   InputAdornment,
@@ -83,6 +86,11 @@ export const SignupForm = () => {
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
+      <Collapse in={!!errors.root?.serverError} unmountOnExit>
+        <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ mt: 2 }}>
+          {errors.root?.serverError.message as string}
+        </Alert>
+      </Collapse>
       <UsernameTextField
         {...registerField("username")}
         label={t("signupPage.username")}
@@ -189,13 +197,20 @@ const EmailTextField = forwardRef((props: InputProps & { loadingState: boolean }
 });
 
 const PasswordTextField = forwardRef((props: InputProps, ref) => {
+  const { t } = useTranslation();
+  const [passVisible, setPassVisible] = useState<boolean>(false);
+
+  const handlePassVisible = () => setPassVisible(true);
+  const handlePassHide = () => setPassVisible(false);
+  const togglePassVisible = () => setPassVisible(!passVisible);
+
   return (
     <TextField
       inputRef={ref}
       size="small"
       margin="dense"
       fullWidth
-      type="password"
+      type={passVisible ? "text" : "password"}
       id={props.name}
       name={props.name}
       label={props.label}
@@ -206,9 +221,16 @@ const PasswordTextField = forwardRef((props: InputProps, ref) => {
       onBlur={props.onBlur}
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
-            <PasswordOutlined />
-          </InputAdornment>
+          <InputAdornment
+            position="end"
+            sx={{ cursor: "pointer" }}
+            title={t("common.holdToSeePass")}
+            onMouseDown={handlePassVisible}
+            onMouseUp={handlePassHide}
+            onMouseLeave={handlePassHide}
+            onTouchStart={togglePassVisible}
+            children={passVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+          />
         ),
       }}
     />
