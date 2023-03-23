@@ -1,9 +1,14 @@
 {
   "app": {
     "logout": "Выйти из аккаунта",
-    "unreadNotifications": "{{n}} новых уведомлений",
+    "noNewNotifications": "Тишь да гладь, ничего нового",
     "openProfileMenu": "Открыть меню профиля",
-    "profile": "Профиль"
+    "profile": "Профиль",
+    "unreadNotifications_few": "{{count}} новых уведомления",
+    "unreadNotifications_many": "{{count}} новых уведомлений",
+    "unreadNotifications_one": "{{count}} новое уведомление",
+    "unreadNotifications_other": "{{count}} новых уведомлений",
+    "unreadNotifications_zero": "Новых уведомлений нет"
   },
   "common": {
     "all": "Все",

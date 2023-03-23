@@ -1,9 +1,14 @@
 {
   "app": {
     "logout": "Log Out",
-    "unreadNotifications": "{{n}} New Notifications",
+    "noNewNotifications": "You've all caught up!",
     "openProfileMenu": "Open Profile Menu",
-    "profile": "Profile"
+    "profile": "Profile",
+    "unreadNotifications_few": "{{count}} New Notifications",
+    "unreadNotifications_many": "{{count}} New Notifications",
+    "unreadNotifications_one": "{{count}} New Notification",
+    "unreadNotifications_other": "{{count}} New Notifications",
+    "unreadNotifications_zero": "No new notifications"
   },
   "common": {
     "all": "All",
