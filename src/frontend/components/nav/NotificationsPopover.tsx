@@ -13,7 +13,7 @@ export const NotificationsPopover = () => {
     setOpen(!open);
   };
 
-  const notificationsCount = 0;
+  const notificationsCount = 100;
 
   return (
     <>

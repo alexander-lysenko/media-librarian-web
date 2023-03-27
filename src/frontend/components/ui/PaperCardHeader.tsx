@@ -1,13 +1,24 @@
 import { SvgIconComponent } from "@mui/icons-material";
-import { Divider, Grid, Icon, SxProps, Typography } from "@mui/material";
+import {
+  Divider,
+  Grid,
+  Icon,
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  SxProps,
+  Typography,
+} from "@mui/material";
+import { IconButtonProps } from "@mui/material/IconButton/IconButton";
 import React, { ReactNode } from "react";
 
 type Props = {
   title: string | ReactNode;
   secondaryText?: string | ReactNode;
-  icon?: SvgIconComponent;
-  action?: ReactNode;
-  spacing?: number;
+  itemIcon?: SvgIconComponent;
+  actionIcon?: SvgIconComponent;
+  actionEvents?: IconButtonProps;
   sx?: SxProps;
 };
 
@@ -19,25 +30,18 @@ type Props = {
  * - A secondary text - next to the primary text (aligned right)
  * @param {string | ReactNode } title
  * @param {string | ReactNode | null} secondaryText
- * @param {SvgIconComponent | null} icon
- * @param {ReactNode | null} action
- * @param {number | null} spacing
+ * @param {SvgIconComponent | null} itemIcon
+ * @param {SvgIconComponent | null} actionIcon
+ * @param {IconButtonProps | null} actionEvents
  * @param {SxProps | null} sx
  * @constructor
  */
-export const PaperCardHeader = ({ title, secondaryText, icon, action, spacing, sx }: Props) => {
-  const defaultSx: SxProps = { py: 1, px: 3 };
-  const mergedSx: SxProps = { ...defaultSx, ...sx };
-
+export const PaperCardHeader = ({ title, secondaryText, itemIcon, actionIcon, actionEvents, sx }: Props) => {
   return (
-    <>
-      <Grid container rowSpacing={0} columnSpacing={spacing ?? 2} alignItems="center" wrap="nowrap" sx={mergedSx}>
-        {icon && (
-          <Grid item sx={{ lineHeight: 0 }}>
-            <Icon component={icon} />
-          </Grid>
-        )}
-        <Grid container item xs zeroMinWidth columnSpacing={2} alignItems="center">
+    <ListItem component="div" dense divider>
+      {itemIcon && <ListItemIcon children={<Icon component={itemIcon} />} />}
+      <ListItemText>
+        <Grid container columnSpacing={2} alignItems="center">
           <Grid item xs={12} sm>
             <Typography variant="button" noWrap paragraph sx={{ mb: 0 }}>
               {title}
@@ -56,9 +60,12 @@ export const PaperCardHeader = ({ title, secondaryText, icon, action, spacing, s
             </Grid>
           )}
         </Grid>
-        {action && <Grid item>{action}</Grid>}
-      </Grid>
-      <Divider />
-    </>
+      </ListItemText>
+      {actionIcon && (
+        <IconButton size="small" {...actionEvents}>
+          <Icon component={actionIcon} />
+        </IconButton>
+      )}
+    </ListItem>
   );
 };

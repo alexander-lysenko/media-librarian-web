@@ -57,7 +57,25 @@
   },
   "profile": {
     "basicDetails": "Basic Details",
-    "myLibraries": "My Libraries"
+    "myLibraries": "My Libraries",
+    "aboutThisProfile": "About This Profile",
+    "preferences": "Preferences",
+    "preferencesEnum": {
+      "email": "Change e-mail address",
+      "password": "Update password",
+      "theme": "Interface theme",
+      "locale": "Language"
+    },
+    "detailsEnum": {
+      "registrationDate": "Registration Date",
+      "accountStatus": "Status",
+      "emailStatus": "E-mail status"
+    },
+    "accountStatusEnum": {
+      "created": "Inactive or just created",
+      "active": "Active",
+      "banned": "Banned"
+    }
   },
   "signupPage": {
     "email": "Email Address",

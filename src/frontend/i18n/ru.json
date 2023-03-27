@@ -57,7 +57,25 @@
   },
   "profile": {
     "basicDetails": "Основная информация",
-    "myLibraries": "Мои библиотеки"
+    "myLibraries": "Мои библиотеки",
+    "aboutThisProfile": "Детали профиля",
+    "preferences": "Настройки аккаунта",
+    "preferencesEnum": {
+      "email": "Изменить e-mail адрес",
+      "password": "Обновить пароль",
+      "theme": "Тема оформления",
+      "locale": "Язык"
+    },
+    "detailsEnum": {
+      "registrationDate": "Дата регистрации",
+      "accountStatus": "Статус",
+      "emailStatus": "Статус почтового ящика"
+    },
+    "accountStatusEnum": {
+      "created": "Неактивен или только что создан",
+      "active": "Активен",
+      "banned": "Забанен"
+    }
   },
   "signupPage": {
     "email": "Адрес электронной почты",

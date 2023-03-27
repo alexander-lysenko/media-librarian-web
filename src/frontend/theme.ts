@@ -41,4 +41,13 @@ export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
     ...(mode === "light" ? lightPalette : darkPalette),
   },
   typography,
+  components: {
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          minWidth: 40,
+        },
+      },
+    },
+  },
 });
