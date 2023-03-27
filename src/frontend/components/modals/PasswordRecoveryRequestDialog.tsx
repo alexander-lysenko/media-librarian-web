@@ -87,20 +87,16 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
       transitionDuration={120}
     >
       <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit)} sx={{ mt: 1 }}>
-        <DialogTitle variant={"h5"} sx={{ textAlign: "center" }}>
-          {t("passwordRecovery.title")}
-        </DialogTitle>
+        <DialogTitle variant={"h5"}>{t("passwordRecovery.title")}</DialogTitle>
         <DialogContent>
-          <DialogContentText variant={"body2"} sx={{ mb: 1 }}>
-            {t("passwordRecovery.subtitle")}
-          </DialogContentText>
+          <DialogContentText>{t("passwordRecovery.subtitle")}</DialogContentText>
           <EmailTextField
             {...registerField("email")}
             label={t("loginPage.email")}
             errorMessage={errors.email?.message as string}
           />
         </DialogContent>
-        <DialogActions sx={{ mx: 2, mb: 1 }}>
+        <DialogActions>
           <Button variant="text" onClick={handleCloseWithReset}>
             {t("common.cancel")}
           </Button>

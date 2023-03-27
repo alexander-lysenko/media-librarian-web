@@ -87,13 +87,9 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
       transitionDuration={120}
     >
       <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit)} sx={{ mt: 1 }}>
-        <DialogTitle variant={"h5"} sx={{ textAlign: "center" }}>
-          {t("passwordReset.title")}
-        </DialogTitle>
+        <DialogTitle variant={"h5"}>{t("passwordReset.title")}</DialogTitle>
         <DialogContent>
-          <DialogContentText variant={"body2"} sx={{ mb: 1 }}>
-            {t("passwordReset.subtitle")}
-          </DialogContentText>
+          <DialogContentText>{t("passwordReset.subtitle")}</DialogContentText>
           <EmailTextField value={"lol@kek.gii"} />
           <PasswordTextField
             {...registerField("newPassword")}
@@ -106,7 +102,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
             errorMessage={errors.newPasswordRepeat?.message as string}
           />
         </DialogContent>
-        <DialogActions sx={{ mx: 2, mb: 1, justifyContent: "space-between" }}>
+        <DialogActions>
           <Button variant="text" fullWidth={fullScreen} onClick={handleCloseWithReset}>
             {t("passwordReset.backToSignIn")}
           </Button>
