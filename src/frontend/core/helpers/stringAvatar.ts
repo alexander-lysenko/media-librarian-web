@@ -20,11 +20,9 @@ function stringToColor(string: string) {
   return color;
 }
 
-export function stringAvatar(name: string): AvatarProps {
-  return {
-    sx: {
-      backgroundColor: stringToColor(name),
-    },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
-  };
-}
+export const stringAvatar = (name: string): AvatarProps => ({
+  sx: {
+    backgroundColor: stringToColor(name),
+  },
+  children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+});

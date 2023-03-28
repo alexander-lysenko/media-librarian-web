@@ -57,7 +57,7 @@ export const Profile = () => {
           <PaperCardHeader
             title={t("profile.basicDetails")}
             itemIcon={PermContactCalendarOutlined}
-            secondaryText={"lorem ipsum dolor sit amet"}
+            // secondaryText={"lorem ipsum dolor sit amet"}
             actionIcon={profileOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
             actionEvents={{ onClick: () => setProfileOpen(!profileOpen) }}
           />
@@ -123,7 +123,10 @@ const ProfileActions = () => {
 
   return (
     <List dense disablePadding component="div">
-      <ListSubheader component="div">{t("profile.preferences")}</ListSubheader>
+      <ListSubheader disableSticky component="div">
+        {t("profile.preferences")}
+      </ListSubheader>
+      <Divider />
       <ListItemButton divider>
         <ListItemIcon children={<EmailOutlined />} />
         <ListItemText
@@ -158,7 +161,10 @@ const AccountInfo = () => {
 
   return (
     <List dense disablePadding component="div">
-      <ListSubheader component="div">{t("profile.aboutThisProfile")}</ListSubheader>
+      <ListSubheader disableSticky component="div">
+        {t("profile.aboutThisProfile")}
+      </ListSubheader>
+      <Divider />
       <ListItem>
         <ListItemIcon children={<CalendarMonthOutlined />} />
         <ListItemText primary={t("profile.detailsEnum.registrationDate")} secondary={createdAt} />

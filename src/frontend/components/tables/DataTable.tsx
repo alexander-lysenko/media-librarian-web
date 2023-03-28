@@ -16,22 +16,24 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import { detectRowsPerPageOptions } from "../../core";
 import {
   DataTableBaseProps,
   DataTableEventsProps,
   DataTablePaginationProps,
+  DataTableSortingProps,
   DataTableStyleProps,
 } from "../../core/types";
 
-type RowsPerPageOptions = Array<number | { label: string; value: number }> | [];
-
 type DataTableProps = DataTableBaseProps &
-  DataTableStyleProps &
-  DataTablePaginationProps & {
+  DataTableStyleProps & {
+    sorting: DataTableSortingProps;
+    pagination: DataTablePaginationProps;
     loading: boolean;
   };
 
-type TableContentsProps = Pick<DataTableBaseProps, "columns" | "rows" | "sort" | "selectedItem"> &
+type TableContentsProps = Pick<DataTableBaseProps, "columns" | "rows" | "selectedItem"> &
+  Pick<DataTableSortingProps, "sort"> &
   Pick<DataTableStyleProps, "tableSx"> &
   DataTableEventsProps;
 
@@ -39,17 +41,6 @@ type CustomTablePaginationProps = Pick<
   TablePaginationProps,
   "count" | "page" | "rowsPerPage" | "onPageChange" | "onRowsPerPageChange"
 >;
-
-const detectAvailableRowsPerPageOptions = (len: number, labelForAll?: string): RowsPerPageOptions => {
-  const rPpOpts: RowsPerPageOptions = [];
-  len > 10 && rPpOpts.push({ label: "10", value: 10 } as never);
-  len > 25 && rPpOpts.push({ label: "25", value: 25 } as never);
-  len > 50 && rPpOpts.push({ label: "50", value: 50 } as never);
-  len > 100 && rPpOpts.push({ label: "100", value: 100 } as never);
-  labelForAll && rPpOpts.push({ label: labelForAll, value: -1 } as never);
-
-  return rPpOpts;
-};
 
 const LoadingOverlay = () => {
   return (
@@ -69,7 +60,7 @@ const DataTablePagination = (props: CustomTablePaginationProps) => {
       count={count}
       page={page}
       rowsPerPage={rowsPerPage}
-      rowsPerPageOptions={detectAvailableRowsPerPageOptions(count, t("common.all") as string)}
+      rowsPerPageOptions={detectRowsPerPageOptions(count, t("common.all") as string)}
       onPageChange={onPageChange}
       onRowsPerPageChange={onRowsPerPageChange}
       SelectProps={{ inputProps: { sx: { py: 2 } } }}
@@ -89,6 +80,7 @@ const DataTablePagination = (props: CustomTablePaginationProps) => {
 
 const TableContents = (props: TableContentsProps) => {
   const { tableSx, columns, rows, sort, selectedItem, onSort, onRowClick } = props;
+
   return (
     <Table stickyHeader size="small" sx={tableSx}>
       <TableHead>
@@ -112,27 +104,25 @@ const TableContents = (props: TableContentsProps) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {rows.map((row, index) => {
-          return (
-            <TableRow
-              key={index}
-              hover
-              selected={index === selectedItem}
-              onClick={onRowClick(index)}
-              children={columns.map((column) => (
-                <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
-                  {column.component
-                    ? column.component(row[column.id] as never)
-                    : ((value) => (
-                        <Typography variant="body2" noWrap>
-                          {value}
-                        </Typography>
-                      ))(row[column.id] as never)}
-                </TableCell>
-              ))}
-            />
-          );
-        })}
+        {rows.map((row, index) => (
+          <TableRow
+            key={index}
+            hover
+            selected={index === selectedItem}
+            onClick={onRowClick(index)}
+            children={columns.map((column) => (
+              <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
+                {column.component
+                  ? column.component(row[column.id] as never)
+                  : ((value) => (
+                      <Typography variant="body2" noWrap>
+                        {value}
+                      </Typography>
+                    ))(row[column.id] as never)}
+              </TableCell>
+            ))}
+          />
+        ))}
       </TableBody>
     </Table>
   );
@@ -142,30 +132,19 @@ const TableContents = (props: TableContentsProps) => {
  * Data Table component, displays Library items
  */
 export const DataTable = (props: DataTableProps) => {
-  const {
-    columns,
-    rows,
-    sort,
-    page,
-    rowsPerPage,
-    loading,
-    selectedItem,
-    setSelectedItem,
-    setPage,
-    setRowsPerPage,
-    setSort,
-    containerSx,
-    tableSx,
-  } = props;
+  const { columns, rows, sorting, pagination, loading, selectedItem, setSelectedItem, containerSx, tableSx } = props;
+  const { sort, setSort } = sorting;
+  const { page, rowsPerPage, setPage, setRowsPerPage } = pagination;
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
     event?.preventDefault();
+
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
   };
 
   const handleSorting = (columnId: string) => (event: React.MouseEvent<unknown>) => {
@@ -202,7 +181,7 @@ export const DataTable = (props: DataTableProps) => {
           )}
         </TableContainer>
         <DataTablePagination
-          count={2000}
+          count={rows.length}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}

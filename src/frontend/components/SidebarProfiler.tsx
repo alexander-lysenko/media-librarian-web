@@ -15,7 +15,7 @@ import {
 import { SxProps } from "@mui/system";
 import React from "react";
 
-import { stringAvatar } from "../core/helpers/stringAvatar";
+import { stringAvatar } from "../core";
 
 const { sx, children } = stringAvatar("User Name");
 const profileSx: SxProps = { p: 2, backgroundImage: "url(https://source.unsplash.com/7OCUyev2M9E/256x155)" };

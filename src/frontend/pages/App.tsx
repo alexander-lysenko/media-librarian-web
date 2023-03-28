@@ -40,7 +40,12 @@ const columns: DataColumn[] = [
   },
 ];
 
-const dataRows: DataRow[] = movies;
+const dataRows: DataRow[] = Array.from(movies);
+
+for (let i = 0; i <= 50; i++) {
+  dataRows.push(...Array.from(movies));
+}
+
 export const App = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore();
@@ -50,22 +55,23 @@ export const App = () => {
   return (
     <>
       <AppNavbar />
-      <Container>
-        <Paper elevation={1} sx={{ px: { xs: 3, md: 6 } }}>
+      <Container maxWidth="xl">
+        <Paper elevation={1}>
           <DataTable
             columns={columns}
-            rows={dataRows.concat(dataRows, dataRows, dataRows, dataRows, dataRows, dataRows, dataRows, dataRows)}
+            rows={dataRows}
             containerSx={{ height: "80vh" }}
             loading={loading}
-            page={libStore.page}
-            rowsPerPage={libStore.rowsPerPage}
+            sorting={{ sort: libStore.sort, setSort: libStore.setSort }}
+            pagination={{
+              page: libStore.page,
+              rowsPerPage: libStore.rowsPerPage,
+              total: libStore.total,
+              setPage: libStore.setPage,
+              setRowsPerPage: libStore.setRowsPerPage,
+            }}
             selectedItem={libStore.selectedItem}
-            setPage={libStore.setPage}
-            setRowsPerPage={libStore.setRowsPerPage}
             setSelectedItem={libStore.setSelectedItem}
-            setSort={libStore.setSort}
-            sort={libStore.sort}
-            total={libStore.total}
           />
         </Paper>
       </Container>

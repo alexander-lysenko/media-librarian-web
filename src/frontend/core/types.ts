@@ -24,6 +24,19 @@ export type SortOptions = {
   direction: SortDirection;
 };
 
+export type DataTableBaseProps = {
+  columns: DataColumn[];
+  rows: DataRow[];
+
+  selectedItem: number | null;
+  setSelectedItem?: (item: number | null) => void;
+};
+
+export type DataTableSortingProps = {
+  sort: SortOptions | undefined;
+  setSort?: (sort?: SortOptions) => void;
+};
+
 export type DataTablePaginationProps = {
   page: number;
   rowsPerPage: number;
@@ -34,14 +47,16 @@ export type DataTablePaginationProps = {
   setTotal?: (total: number) => void;
 };
 
-export type DataTableBaseProps = {
+export type DataTableHeaderProps = {
   columns: DataColumn[];
-  rows: DataRow[];
-
   sort: SortOptions | undefined;
-  selectedItem: number | null;
-
   setSort?: (sort?: SortOptions) => void;
+};
+
+export type DataTableContentsProps = {
+  columns: DataColumn[];
+  row: DataRow;
+  selectedItem: number | null;
   setSelectedItem?: (item: number | null) => void;
 };
 
