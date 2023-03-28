@@ -27,12 +27,14 @@ export type SortOptions = {
 export type DataTableBaseProps = {
   columns: DataColumn[];
   rows: DataRow[];
+};
 
+export type DataTableSelectedItemState = {
   selectedItem: number | null;
   setSelectedItem?: (item: number | null) => void;
 };
 
-export type DataTableSortingProps = {
+export type DataTableSortingState = {
   sort: SortOptions | undefined;
   setSort?: (sort?: SortOptions) => void;
 };
@@ -47,10 +49,8 @@ export type DataTablePaginationProps = {
   setTotal?: (total: number) => void;
 };
 
-export type DataTableHeaderProps = {
+export type DataTableHeaderProps = DataTableSortingState & {
   columns: DataColumn[];
-  sort: SortOptions | undefined;
-  setSort?: (sort?: SortOptions) => void;
 };
 
 export type DataTableContentsProps = {

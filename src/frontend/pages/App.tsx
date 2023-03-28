@@ -8,6 +8,7 @@ import { DataColumn, DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
+// import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 
 const columns: DataColumn[] = [
   {
@@ -62,7 +63,12 @@ export const App = () => {
             rows={dataRows}
             containerSx={{ height: "80vh" }}
             loading={loading}
-            sorting={{ sort: libStore.sort, setSort: libStore.setSort }}
+            selectedItem={libStore.selectedItem}
+            setSelectedItem={libStore.setSelectedItem}
+            sorting={{
+              sort: libStore.sort,
+              setSort: libStore.setSort,
+            }}
             pagination={{
               page: libStore.page,
               rowsPerPage: libStore.rowsPerPage,
@@ -70,8 +76,6 @@ export const App = () => {
               setPage: libStore.setPage,
               setRowsPerPage: libStore.setRowsPerPage,
             }}
-            selectedItem={libStore.selectedItem}
-            setSelectedItem={libStore.setSelectedItem}
           />
         </Paper>
       </Container>

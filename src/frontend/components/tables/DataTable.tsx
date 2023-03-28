@@ -7,74 +7,41 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
-  TablePaginationProps,
   TableRow,
   TableSortLabel,
   Typography,
 } from "@mui/material";
 import React from "react";
-import { useTranslation } from "react-i18next";
 
-import { detectRowsPerPageOptions } from "../../core";
 import {
   DataTableBaseProps,
   DataTableEventsProps,
   DataTablePaginationProps,
-  DataTableSortingProps,
+  DataTableSelectedItemState,
+  DataTableSortingState,
   DataTableStyleProps,
 } from "../../core/types";
+import { DataTablePagination } from "./DataTablePagination";
 
 type DataTableProps = DataTableBaseProps &
-  DataTableStyleProps & {
-    sorting: DataTableSortingProps;
+  DataTableStyleProps &
+  DataTableSelectedItemState & {
+    sorting: DataTableSortingState;
     pagination: DataTablePaginationProps;
     loading: boolean;
   };
 
-type TableContentsProps = Pick<DataTableBaseProps, "columns" | "rows" | "selectedItem"> &
-  Pick<DataTableSortingProps, "sort"> &
+type TableContentsProps = DataTableBaseProps &
+  Pick<DataTableSelectedItemState, "selectedItem"> &
+  Pick<DataTableSortingState, "sort"> &
   Pick<DataTableStyleProps, "tableSx"> &
   DataTableEventsProps;
-
-type CustomTablePaginationProps = Pick<
-  TablePaginationProps,
-  "count" | "page" | "rowsPerPage" | "onPageChange" | "onRowsPerPageChange"
->;
 
 const LoadingOverlay = () => {
   return (
     <Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <CircularProgress disableShrink />
     </Box>
-  );
-};
-
-const DataTablePagination = (props: CustomTablePaginationProps) => {
-  const { count, page, rowsPerPage, onPageChange, onRowsPerPageChange } = props;
-  const { t } = useTranslation();
-
-  return (
-    <TablePagination
-      component="div"
-      count={count}
-      page={page}
-      rowsPerPage={rowsPerPage}
-      rowsPerPageOptions={detectRowsPerPageOptions(count, t("common.all") as string)}
-      onPageChange={onPageChange}
-      onRowsPerPageChange={onRowsPerPageChange}
-      SelectProps={{ inputProps: { sx: { py: 2 } } }}
-      labelRowsPerPage={t("dataTable.rowsPerPage")}
-      labelDisplayedRows={({ from, to, count, page }) =>
-        t("dataTable.viewingEntries", {
-          from,
-          to,
-          total: count !== -1 ? count : `> ${to}`,
-          page: page + 1,
-        })
-      }
-      getItemAriaLabel={(type) => type}
-    />
   );
 };
 
