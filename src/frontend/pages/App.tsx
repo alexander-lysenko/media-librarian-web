@@ -8,12 +8,13 @@ import { DataColumn, DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
-// import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
+import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 
 const columns: DataColumn[] = [
   {
     id: "Название",
     label: "Название",
+    contentCellSx: { maxWidth: 150 },
   },
   {
     id: "Описание",
@@ -22,17 +23,20 @@ const columns: DataColumn[] = [
   },
   {
     id: "Дата выхода",
-    label: "Дата выхода",
-    headerCellSx: { textAlign: "right" },
+    label: "Дата выхода Дата выхода",
+    headerCellSx: { textAlign: "right", maxWidth: 50 },
+    contentCellSx: { textAlign: "right" },
   },
   {
     id: "Дата просмотра",
     label: "Дата просмотра",
+    contentCellSx: { maxWidth: 150 },
   },
   {
     id: "Оценка",
     label: "Оценка",
     component: (value: number) => <ColoredRating readOnly size={5} value={value} />,
+    contentCellSx: { maxWidth: 50 },
   },
   {
     id: "Отзыв",
@@ -53,15 +57,15 @@ export const App = () => {
   const libStore = useLibraryTableStore();
 
   console.log(libStore);
+  console.log(dataRows);
   return (
     <>
       <AppNavbar />
       <Container maxWidth="xl">
         <Paper elevation={1}>
-          <DataTable
+          <DataTableVirtualized
             columns={columns}
             rows={dataRows}
-            containerSx={{ height: "80vh" }}
             loading={loading}
             selectedItem={libStore.selectedItem}
             setSelectedItem={libStore.setSelectedItem}
@@ -75,6 +79,15 @@ export const App = () => {
               total: libStore.total,
               setPage: libStore.setPage,
               setRowsPerPage: libStore.setRowsPerPage,
+            }}
+            componentProps={{
+              table: {
+                size: "small",
+                sx: { height: 400 },
+              },
+              tableContainer: {
+                sx: { height: 400 },
+              },
             }}
           />
         </Paper>
