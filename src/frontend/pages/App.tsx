@@ -9,6 +9,7 @@ import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
+import { DataTableWindowed } from "../components/tables/DataTableWindowed";
 
 const columns: DataColumn[] = [
   {
@@ -47,7 +48,7 @@ const columns: DataColumn[] = [
 
 const dataRows: DataRow[] = Array.from(movies);
 
-for (let i = 0; i <= 50; i++) {
+for (let i = 0; i <= 10; i++) {
   dataRows.push(...Array.from(movies));
 }
 
@@ -56,14 +57,12 @@ export const App = () => {
   const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore();
   const libStore = useLibraryTableStore();
 
-  console.log(libStore);
-  console.log(dataRows);
   return (
     <>
       <AppNavbar />
       <Container maxWidth="xl">
-        <Paper elevation={1}>
-          <DataTableVirtualized
+        <Paper elevation={3}>
+          <DataTableWindowed
             columns={columns}
             rows={dataRows}
             loading={loading}
@@ -80,15 +79,16 @@ export const App = () => {
               setPage: libStore.setPage,
               setRowsPerPage: libStore.setRowsPerPage,
             }}
-            componentProps={{
-              table: {
-                size: "small",
-                sx: { height: 400 },
-              },
-              tableContainer: {
-                sx: { height: 400 },
-              },
-            }}
+            containerSx={{ height: { xs: "calc(100vh - 140px)", sm: "calc(100vh - 156px)" } }}
+            // componentProps={{
+            //   table: {
+            //     size: "small",
+            //     sx: { height: 400 },
+            //   },
+            //   tableContainer: {
+            //     sx: { height: 400 },
+            //   },
+            // }}
           />
         </Paper>
       </Container>

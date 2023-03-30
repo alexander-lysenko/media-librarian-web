@@ -16,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { ComponentType, forwardRef } from "react";
+import React, { ComponentType, forwardRef, memo, useMemo } from "react";
 import { TableComponents, TableVirtuoso } from "react-virtuoso";
 
 import {
@@ -82,14 +82,15 @@ export const DataTableVirtualized = (props: DataTableProps) => {
     setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
   };
 
-  console.log("hello");
   return (
     <Box sx={{ width: "100%" }}>
       <TableVirtuoso
         style={{ height: "70vh" }}
         data={rows}
+        overscan={1}
+        increaseViewportBy={1}
         context={componentProps}
-        components={{ ...VirtuosoTableComponents }}
+        components={virtuosoTableComponents}
         fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
         itemContent={(index, row) => (
           <>
@@ -125,12 +126,20 @@ export const DataTableVirtualized = (props: DataTableProps) => {
   );
 };
 
-const VirtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
+const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
   Scroller: forwardRef(({ context, ...props }, ref) => {
     return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
   }),
   TableHead: forwardRef(({ context, ...props }, ref) => {
-    return <TableHead {...context?.tableHead} {...props} ref={ref} />;
+    const theme = useTheme();
+    return (
+      <TableHead
+        {...context?.tableHead}
+        {...props}
+        sx={{ backgroundColor: theme.palette.background.paper, ...context?.tableHead?.sx }}
+        ref={ref}
+      />
+    );
   }),
   TableBody: forwardRef(({ context, children }, ref) => {
     return <TableBody {...context?.tableBody} children={children} ref={ref} />;
@@ -138,11 +147,11 @@ const VirtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
   Table: ({ context, children, style }) => {
     return <Table {...context?.table} children={children} style={style} />;
   },
-  TableRow: ({ item: _item, ...props }) => {
-    return <TableRow {...props} />;
+  TableRow: ({ item: _item, context, ...props }) => {
+    return <TableRow {...context?.tableRow} {...props} style={{ height: 29 }} />;
   },
   FillerRow: ({ height }) => {
-    return <tr children={<td colSpan={2} style={{ height, border: "none" }} />} />;
+    return <tr children={<td colSpan={6} style={{ height }} />} />;
   },
 };
 

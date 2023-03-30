@@ -49,5 +49,15 @@ export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
         },
       },
     },
+    MuiTablePagination: {
+      styleOverrides: {
+        root: {
+          "& .MuiTablePagination-toolbar": {
+            height: 48,
+            minHeight: 48,
+          },
+        },
+      },
+    },
   },
 });

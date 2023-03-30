@@ -1,8 +1,9 @@
-import { TablePagination, TablePaginationProps } from "@mui/material";
+import { TablePagination, TablePaginationProps, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { detectRowsPerPageOptions } from "../../core";
+import { LabelDisplayedRowsArgs } from "@mui/material/TablePagination/TablePagination";
 
 type CustomTablePaginationProps = Pick<
   TablePaginationProps,
@@ -12,6 +13,16 @@ type CustomTablePaginationProps = Pick<
 export const DataTablePagination = (props: CustomTablePaginationProps) => {
   const { count, page, rowsPerPage, onPageChange, onRowsPerPageChange } = props;
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isLargeViewport = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const labelDisplayedRows = ({ from, to, count, page }: LabelDisplayedRowsArgs) =>
+    t("dataTable.viewingEntries", {
+      from,
+      to,
+      total: count !== -1 ? count : `> ${to}`,
+      page: page + 1,
+    });
 
   return (
     <TablePagination
@@ -19,20 +30,12 @@ export const DataTablePagination = (props: CustomTablePaginationProps) => {
       count={count}
       page={page}
       rowsPerPage={rowsPerPage}
-      rowsPerPageOptions={detectRowsPerPageOptions(count, t("common.all") as string)}
+      getItemAriaLabel={(type) => type}
       onPageChange={onPageChange}
       onRowsPerPageChange={onRowsPerPageChange}
-      SelectProps={{ inputProps: { sx: { py: 2 } } }}
-      labelRowsPerPage={t("dataTable.rowsPerPage")}
-      labelDisplayedRows={({ from, to, count, page }) =>
-        t("dataTable.viewingEntries", {
-          from,
-          to,
-          total: count !== -1 ? count : `> ${to}`,
-          page: page + 1,
-        })
-      }
-      getItemAriaLabel={(type) => type}
+      rowsPerPageOptions={detectRowsPerPageOptions(count, t("common.all") as string)}
+      labelRowsPerPage={isLargeViewport ? t("dataTable.rowsPerPage") : null}
+      labelDisplayedRows={labelDisplayedRows}
     />
   );
 };

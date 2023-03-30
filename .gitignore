@@ -7,3 +7,4 @@ docker-compose.staging.yml
 docker-compose-staging
 docker-compose.prod.yml
 docker-compose-prod
+package-lock.json

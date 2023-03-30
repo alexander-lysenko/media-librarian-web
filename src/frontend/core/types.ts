@@ -10,6 +10,7 @@ export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType exten
   : never;
 
 export type DataRow = Record<string, unknown>;
+export type DataRowNew = { id: string } & Record<string, unknown>;
 
 export type DataColumn = {
   id: string;
