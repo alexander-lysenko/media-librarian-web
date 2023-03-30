@@ -11,7 +11,7 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import React, { forwardRef } from "react";
+import React, { CSSProperties, forwardRef, Fragment, ReactNode, useRef } from "react";
 
 import {
   DataColumn,
@@ -25,9 +25,11 @@ import {
 } from "../../core/types";
 import { DataTablePagination } from "./DataTablePagination";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeList, ListItemKeySelector } from "react-window";
+import { FixedSizeGrid, FixedSizeList, ListItemKeySelector } from "react-window";
 import { SxProps } from "@mui/system";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { TableTypeMap } from "@mui/material/Table/Table";
 
 type DataTableProps = DataTableBaseProps &
   DataTableStyleProps &
@@ -47,16 +49,17 @@ type TableBodyProps = Omit<TableContentsProps, "tableSx" | "sort" | "onSort">;
 
 type TableHeadRowProps = {
   columns: DataColumn[];
-  sort: DataTableSortingState["sort"];
-  onSort: DataTableEventsProps["onSort"];
+  sort?: DataTableSortingState["sort"];
+  onSort?: DataTableEventsProps["onSort"];
 };
 
 type TableBodyRowProps = {
   row: DataRow;
   columns: DataColumn[];
-  selected: boolean;
-  onRowClick: (event: React.MouseEvent<unknown>) => void;
-  sx: SxProps;
+  selected?: boolean | false;
+  onRowClick?: (event: React.MouseEvent<unknown>) => void;
+  sx?: SxProps;
+  style?: CSSProperties;
 };
 
 /**
@@ -94,7 +97,7 @@ export const DataTableWindowed = (props: DataTableProps) => {
 
   return (
     <>
-      <TableContainer sx={{ ...containerSx /*, position: "relative"*/ }}>
+      <TableContainer sx={{ ...containerSx, position: "relative" }}>
         {loading ? (
           <LoadingOverlayInner />
         ) : (
@@ -120,7 +123,7 @@ export const DataTableWindowed = (props: DataTableProps) => {
   );
 };
 
-const TableContents = (props: TableContentsProps) => {
+const TableContents2 = (props: TableContentsProps) => {
   const { tableSx, columns, rows, sort, selectedItem, onSort, onRowClick } = props;
 
   return (
@@ -128,6 +131,51 @@ const TableContents = (props: TableContentsProps) => {
       <TableHeadRow columns={columns} sort={sort} onSort={onSort} />
       <TableBodyWindowed rows={rows} columns={columns} onRowClick={onRowClick} selectedItem={selectedItem} />
     </Table>
+  );
+};
+
+const TableContents = (props: TableContentsProps) => {
+  const { tableSx, columns, rows, sort, selectedItem, onSort, onRowClick } = props;
+  const itemKey: ListItemKeySelector<DataRow[]> = (index, data) => {
+    return (data[index].id as number | undefined) || index;
+  };
+
+  const Wrapper = ({ children, ...props }: any) => {
+    console.log(props);
+    return (
+      <Table stickyHeader size="small" sx={{ height: "100%", ...tableSx }} {...props}>
+        <TableHeadRow columns={columns} sort={sort} onSort={onSort} />
+        {children}
+      </Table>
+    );
+  };
+
+  return (
+    <AutoSizer id="auto-sizer">
+      {({ height, width }) => (
+        <FixedSizeList
+          height={height as number}
+          width={width as number}
+          outerElementType={Wrapper}
+          innerElementType={TableBody}
+          itemCount={rows.length}
+          itemSize={28}
+          itemKey={itemKey}
+          itemData={rows}
+        >
+          {({ index, data, style }) => (
+            <TableBodyRow
+              key={index}
+              row={data[index]}
+              columns={columns}
+              selected={index === selectedItem}
+              onRowClick={onRowClick(index)}
+              style={style}
+            />
+          )}
+        </FixedSizeList>
+      )}
+    </AutoSizer>
   );
 };
 
@@ -141,7 +189,7 @@ const TableHeadRow = ({ columns, sort, onSort }: TableHeadRowProps) => {
 
           return (
             <TableCell key={column.id} sx={column.headerCellSx} sortDirection={sortDirection}>
-              <TableSortLabel active={isSortActive} direction={sortDirection} onClick={onSort(column.id)}>
+              <TableSortLabel active={isSortActive} direction={sortDirection} onClick={onSort?.(column.id)}>
                 <Typography variant="subtitle2" noWrap children={column.label} />
               </TableSortLabel>
             </TableCell>
@@ -188,9 +236,9 @@ const TableBodyWindowed = ({ rows, columns, selectedItem, onRowClick }: TableBod
   );
 };
 
-const TableBodyRow = ({ row, columns, selected, onRowClick, sx }: TableBodyRowProps) => {
+const TableBodyRow = ({ row, columns, selected, onRowClick, sx, style }: TableBodyRowProps) => {
   return (
-    <TableRow hover selected={selected} onClick={onRowClick} sx={sx} component="tr">
+    <TableRow hover selected={selected} onClick={onRowClick} sx={sx} style={style} component="tr">
       {columns.map((column) => (
         <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
           {column.component

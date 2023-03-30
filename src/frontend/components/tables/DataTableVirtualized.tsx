@@ -16,18 +16,19 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { ComponentType, forwardRef, memo, useMemo } from "react";
+import React, { forwardRef, useRef } from "react";
 import { TableComponents, TableVirtuoso } from "react-virtuoso";
 
 import {
+  DataColumn,
   DataRow,
   DataTableBaseProps,
-  DataTableContentsProps,
   DataTableEventsProps,
   DataTableHeaderProps,
   DataTablePaginationProps,
   DataTableSelectedItemState,
   DataTableSortingState,
+  DataTableStyleProps,
 } from "../../core/types";
 import { DataTablePagination } from "./DataTablePagination";
 
@@ -40,6 +41,7 @@ type ContextProps = {
 };
 
 type DataTableProps = DataTableBaseProps &
+  DataTableStyleProps &
   DataTableSelectedItemState & {
     componentProps: ContextProps;
     sorting: DataTableSortingState;
@@ -48,7 +50,6 @@ type DataTableProps = DataTableBaseProps &
   };
 
 type TableHeaderProps = DataTableHeaderProps & Pick<DataTableEventsProps, "onSort">;
-type TableContentsProps = DataTableContentsProps & TableRowProps & Pick<DataTableEventsProps, "onRowClick">;
 
 /**
  * Data Table component with virtualization
@@ -56,7 +57,7 @@ type TableContentsProps = DataTableContentsProps & TableRowProps & Pick<DataTabl
  */
 export const DataTableVirtualized = (props: DataTableProps) => {
   // noinspection DuplicatedCode
-  const { columns, rows, sorting, pagination, selectedItem, setSelectedItem, componentProps } = props;
+  const { columns, rows, sorting, pagination, selectedItem, setSelectedItem, componentProps, containerSx } = props;
   const { sort, setSort } = sorting;
   const { page, rowsPerPage, setPage, setRowsPerPage } = pagination;
 
@@ -84,37 +85,18 @@ export const DataTableVirtualized = (props: DataTableProps) => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <TableVirtuoso
-        style={{ height: "70vh" }}
-        data={rows}
-        overscan={1}
-        increaseViewportBy={1}
-        context={componentProps}
-        components={virtuosoTableComponents}
-        fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
-        itemContent={(index, row) => (
-          <>
-            {columns.map((column) => (
-              <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
-                {column.component
-                  ? column.component(row[column.id] as never)
-                  : ((value) => (
-                      <Typography variant="body2" noWrap>
-                        {value}
-                      </Typography>
-                    ))(row[column.id] as never)}
-              </TableCell>
-            ))}
-            {/*<RowContent*/}
-            {/*  row={row}*/}
-            {/*  index={index}*/}
-            {/*  columns={columns}*/}
-            {/*  selectedItem={selectedItem}*/}
-            {/*  onRowClick={handleSelectItem}*/}
-            {/*/>*/}
-          </>
-        )}
-      />
+      <TableContainer sx={{ ...containerSx, position: "relative" }}>
+        <TableVirtuoso
+          style={{ height: "100%" }}
+          data={rows}
+          overscan={1}
+          increaseViewportBy={1}
+          context={componentProps}
+          components={virtuosoTableComponents}
+          fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
+          itemContent={(index, row) => <RowContent row={row} key={index} columns={columns} />}
+        />
+      </TableContainer>
       <DataTablePagination
         count={rows.length}
         page={page}
@@ -127,9 +109,9 @@ export const DataTableVirtualized = (props: DataTableProps) => {
 };
 
 const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
-  Scroller: forwardRef(({ context, ...props }, ref) => {
-    return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
-  }),
+  // Scroller: forwardRef(({ context, ...props }, ref) => {
+  //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
+  // }),
   TableHead: forwardRef(({ context, ...props }, ref) => {
     const theme = useTheme();
     return (
@@ -151,43 +133,37 @@ const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
     return <TableRow {...context?.tableRow} {...props} style={{ height: 29 }} />;
   },
   FillerRow: ({ height }) => {
-    return <tr children={<td colSpan={6} style={{ height }} />} />;
+    return <tr children={<td colSpan={2} style={{ height }} />} />;
   },
 };
 
 const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
   return (
     <TableRow>
-      {columns.map((column) => {
-        return (
-          <TableCell key={column.id} sx={column.headerCellSx} sortDirection="asc">
-            <TableSortLabel
-              active={sort?.column === column.id}
-              direction={sort?.column === column.id ? sort?.direction : "asc"}
-              onClick={onSort(column.id)}
-              children={
-                <Typography variant="subtitle2" noWrap paragraph={false}>
-                  {column.label}
-                </Typography>
-              }
-            />
-          </TableCell>
-        );
-      })}
+      {columns.map((column) => (
+        <TableCell key={column.id} sx={{ px: 1, ...column.headerCellSx }} sortDirection={sort?.direction}>
+          <TableSortLabel
+            active={sort?.column === column.id}
+            direction={sort?.column === column.id ? sort?.direction : "asc"}
+            onClick={onSort(column.id)}
+            hideSortIcon
+            sx={{ width: "100%" }}
+            children={
+              <Typography variant="subtitle2" noWrap paragraph={false}>
+                {column.label}
+              </Typography>
+            }
+          />
+        </TableCell>
+      ))}
     </TableRow>
   );
 };
 
-const RowContent = (props: TableContentsProps) => {
-  const { index, row, selectedItem, columns, onRowClick } = props;
-
+const RowContent = ({ row, columns }: { row: DataRow; columns: DataColumn[] }) => {
   return (
-    <TableRow
-      key={index}
-      hover
-      selected={index === selectedItem}
-      onClick={onRowClick(index)}
-      children={columns.map((column) => (
+    <>
+      {columns.map((column) => (
         <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
           {column.component
             ? column.component(row[column.id] as never)
@@ -198,6 +174,6 @@ const RowContent = (props: TableContentsProps) => {
               ))(row[column.id] as never)}
         </TableCell>
       ))}
-    />
+    </>
   );
 };

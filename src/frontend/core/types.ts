@@ -31,12 +31,12 @@ export type DataTableBaseProps = {
 };
 
 export type DataTableSelectedItemState = {
-  selectedItem: number | null;
+  selectedItem?: number | null;
   setSelectedItem?: (item: number | null) => void;
 };
 
 export type DataTableSortingState = {
-  sort: SortOptions | undefined;
+  sort?: SortOptions | undefined;
   setSort?: (sort?: SortOptions) => void;
 };
 
