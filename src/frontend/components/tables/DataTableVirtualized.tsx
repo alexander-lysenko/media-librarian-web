@@ -1,6 +1,7 @@
 import {
   Box,
   Paper,
+  SxProps,
   Table,
   TableBody,
   TableBodyProps,
@@ -16,7 +17,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { forwardRef, useRef } from "react";
+import React, { forwardRef, memo } from "react";
 import { TableComponents, TableVirtuoso } from "react-virtuoso";
 
 import {
@@ -54,6 +55,7 @@ type TableHeaderProps = DataTableHeaderProps & Pick<DataTableEventsProps, "onSor
 /**
  * Data Table component with virtualization
  * @see https://github.com/petyosi/react-virtuoso/issues/609
+ * @see https://github.com/petyosi/react-virtuoso/issues/204
  */
 export const DataTableVirtualized = (props: DataTableProps) => {
   // noinspection DuplicatedCode
@@ -89,8 +91,8 @@ export const DataTableVirtualized = (props: DataTableProps) => {
         <TableVirtuoso
           style={{ height: "100%" }}
           data={rows}
-          overscan={1}
-          increaseViewportBy={1}
+          overscan={10}
+          increaseViewportBy={10}
           context={componentProps}
           components={virtuosoTableComponents}
           fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
@@ -109,9 +111,9 @@ export const DataTableVirtualized = (props: DataTableProps) => {
 };
 
 const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
-  // Scroller: forwardRef(({ context, ...props }, ref) => {
-  //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
-  // }),
+  Scroller: forwardRef(({ context, ...props }, ref) => {
+    return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
+  }),
   TableHead: forwardRef(({ context, ...props }, ref) => {
     const theme = useTheme();
     return (
@@ -126,9 +128,9 @@ const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
   TableBody: forwardRef(({ context, children }, ref) => {
     return <TableBody {...context?.tableBody} children={children} ref={ref} />;
   }),
-  Table: ({ context, children, style }) => {
+  Table: memo(({ context, children, style }) => {
     return <Table {...context?.table} children={children} style={style} />;
-  },
+  }),
   TableRow: ({ item: _item, context, ...props }) => {
     return <TableRow {...context?.tableRow} {...props} style={{ height: 29 }} />;
   },
@@ -140,8 +142,8 @@ const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
 const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
   return (
     <TableRow>
-      {columns.map((column) => (
-        <TableCell key={column.id} sx={{ px: 1, ...column.headerCellSx }} sortDirection={sort?.direction}>
+      {columns.map((column, index) => (
+        <TableCell key={column.id + index} sx={{ px: 1, ...column.headerCellSx }} sortDirection={sort?.direction}>
           <TableSortLabel
             active={sort?.column === column.id}
             direction={sort?.column === column.id ? sort?.direction : "asc"}
@@ -163,17 +165,13 @@ const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
 const RowContent = ({ row, columns }: { row: DataRow; columns: DataColumn[] }) => {
   return (
     <>
-      {columns.map((column) => (
-        <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
-          {column.component
-            ? column.component(row[column.id] as never)
-            : ((value) => (
-                <Typography variant="body2" noWrap>
-                  {value}
-                </Typography>
-              ))(row[column.id] as never)}
-        </TableCell>
-      ))}
+      {columns.map((column, index) => {
+        return (
+          <TableCell key={column.id + index} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
+            <column.component value={row[column.id] as never} />
+          </TableCell>
+        );
+      })}
     </>
   );
 };

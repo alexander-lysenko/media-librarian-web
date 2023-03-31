@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material";
-import React from "react";
+import React, { ComponentType, FunctionComponent, MemoExoticComponent, ReactNode } from "react";
 
 export type Anchor = "top" | "left" | "bottom" | "right";
 
@@ -15,7 +15,7 @@ export type DataRowNew = { id: string } & Record<string, unknown>;
 export type DataColumn = {
   id: string;
   label?: string;
-  component?: (props: never) => React.ReactNode;
+  component: MemoExoticComponent<ComponentType<{ value: never }>> | ComponentType<{ value: never }>;
   headerCellSx?: SxProps;
   contentCellSx?: SxProps;
 };

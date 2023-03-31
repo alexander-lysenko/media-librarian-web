@@ -1,5 +1,5 @@
-import { Container, Paper } from "@mui/material";
-import React, { memo, useState } from "react";
+import { Container, Paper, Typography } from "@mui/material";
+import React, { forwardRef, memo, useState } from "react";
 
 import { AppNavbar } from "../components";
 import { ColoredRating } from "../components/tables/ColoredRating";
@@ -16,39 +16,122 @@ const columns: DataColumn[] = [
     id: "Название",
     label: "Название",
     contentCellSx: { maxWidth: 150 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
   },
   {
     id: "Описание",
     label: "Описание",
     contentCellSx: { maxWidth: 250 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
   },
   {
     id: "Дата выхода",
     label: "Дата выхода Дата выхода",
     headerCellSx: { textAlign: "right", maxWidth: 150 },
     contentCellSx: { textAlign: "right", maxWidth: 150 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
   },
   {
     id: "Дата просмотра",
     label: "Дата просмотра",
     contentCellSx: { maxWidth: 150 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
   },
   {
     id: "Оценка",
     label: "Оценка",
-    component: (value: number) => <ColoredRating readOnly size={5} value={value} />,
+    component: ({ value }: { value: number }) => <ColoredRating readOnly size={5} value={value} />,
     contentCellSx: { maxWidth: 150 },
   },
   {
     id: "Отзыв",
     label: "Отзыв",
     contentCellSx: { maxWidth: 250 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
+  },
+  //
+  {
+    id: "Название",
+    label: "Название",
+    contentCellSx: { maxWidth: 150 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
+  },
+  {
+    id: "Описание",
+    label: "Описание",
+    contentCellSx: { maxWidth: 250 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
+  },
+  {
+    id: "Дата выхода",
+    label: "Дата выхода Дата выхода",
+    headerCellSx: { textAlign: "right", maxWidth: 150 },
+    contentCellSx: { textAlign: "right", maxWidth: 150 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
+  },
+  {
+    id: "Дата просмотра",
+    label: "Дата просмотра",
+    contentCellSx: { maxWidth: 150 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
+  },
+  {
+    id: "Оценка",
+    label: "Оценка",
+    component: ({ value }: { value: number }) => <ColoredRating readOnly size={5} value={value} />,
+    contentCellSx: { maxWidth: 150 },
+  },
+  {
+    id: "Отзыв",
+    label: "Отзыв",
+    contentCellSx: { maxWidth: 250 },
+    component: ({ value }: { value: string }) => (
+      <Typography variant="body2" noWrap>
+        {value}
+      </Typography>
+    ),
   },
 ];
 
 const dataRows: DataRow[] = Array.from(movies);
 
-for (let i = 0; i <= 100; i++) {
+for (let i = 0; i <= 1000; i++) {
   dataRows.push(...Array.from(movies));
 }
 
