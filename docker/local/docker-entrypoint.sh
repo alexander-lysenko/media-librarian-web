@@ -1,14 +1,9 @@
 #!/bin/bash
 
 function run_services() {
-  echo "== Registering services =="
-  openrc -q 1> /dev/null
-  rc-update add nginx
-  rc-update add php-fpm81
-
-  echo "== Starting services =="
-  rc-service nginx start
-  rc-service php-fpm81 start
+  echo "== Starting supervisord and web services =="
+  # Let supervisord start nginx & php-fpm81
+  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 }
 
 function clean_webapp_logs() {
@@ -18,6 +13,7 @@ function clean_webapp_logs() {
   echo -n "" >/logs/php-error.log
   echo -n "" >/logs/php-fpm-access.log
   echo -n "" >/logs/php-fpm-error.log
+  echo -n "" >/logs/supervisord.log
   echo -n "" >/logs/xdebug.log
   # Make an ability to read the log files outside the container
   chown -R nginx:www-data /logs
