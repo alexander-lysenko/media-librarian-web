@@ -17,7 +17,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { forwardRef, memo } from "react";
+import React, { ForwardedRef, forwardRef, memo } from "react";
 import { TableComponents, TableVirtuoso } from "react-virtuoso";
 
 import {
@@ -134,9 +134,9 @@ const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
   TableRow: ({ item: _item, context, ...props }) => {
     return <TableRow {...context?.tableRow} {...props} style={{ height: 29 }} />;
   },
-  FillerRow: ({ height }) => {
-    return <tr children={<td colSpan={2} style={{ height }} />} />;
-  },
+  FillerRow: forwardRef(({ height }, ref: ForwardedRef<HTMLTableRowElement>) => {
+    return <tr ref={ref} children={<td colSpan={2} style={{ height }} />} />;
+  }),
 };
 
 const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {

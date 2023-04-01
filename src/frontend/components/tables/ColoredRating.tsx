@@ -1,6 +1,6 @@
 import { Rating } from "@mui/material";
 import { green, orange, red } from "@mui/material/colors";
-import React from "react";
+import React, { memo, useState } from "react";
 
 type Props = {
   value: number | null;
@@ -26,8 +26,9 @@ const colorByValue = (value: Props["value"], size: Props["size"]) => {
 /**
  * Overridden Rating component to display value-dependent color on hover and select
  */
-export const ColoredRating = ({ size = 10, name, value, readOnly, precision, onChange }: Props) => {
-  const [hover, setHover] = React.useState(-1);
+export const ColoredRating = memo(({ size = 10, name, value, readOnly, precision, onChange }: Props) => {
+  const [hover, setHover] = useState(-1);
+
   return (
     <Rating
       sx={{ color: colorByValue(value, size), "&:hover": { color: colorByValue(hover, size) } }}
@@ -44,4 +45,4 @@ export const ColoredRating = ({ size = 10, name, value, readOnly, precision, onC
       }}
     />
   );
-};
+});

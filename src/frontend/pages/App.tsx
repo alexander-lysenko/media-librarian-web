@@ -1,15 +1,13 @@
 import { Container, Paper, Typography } from "@mui/material";
-import React, { forwardRef, memo, useState } from "react";
+import React, { useState } from "react";
 
 import { AppNavbar } from "../components";
 import { ColoredRating } from "../components/tables/ColoredRating";
-import { DataTable } from "../components/tables/DataTable";
+import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { DataColumn, DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
-import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
-import { DataTableWindowed } from "../components/tables/DataTableWindowed";
 
 const columns: DataColumn[] = [
   {
@@ -131,7 +129,7 @@ const columns: DataColumn[] = [
 
 const dataRows: DataRow[] = Array.from(movies);
 
-for (let i = 0; i <= 1000; i++) {
+for (let i = 1; i < 1000; i++) {
   dataRows.push(...Array.from(movies));
 }
 

@@ -52,9 +52,9 @@ const TableContents = (props: TableContentsProps) => {
     <Table stickyHeader size="small" sx={tableSx}>
       <TableHead>
         <TableRow>
-          {columns.map((column) => {
+          {columns.map((column, index) => {
             return (
-              <TableCell key={column.id} sx={column.headerCellSx} sortDirection="asc">
+              <TableCell key={column.id + index} sx={{ px: 1, ...column.headerCellSx }} sortDirection="asc">
                 <TableSortLabel
                   active={sort?.column === column.id}
                   direction={sort?.column === column.id ? sort?.direction : "asc"}
@@ -77,15 +77,9 @@ const TableContents = (props: TableContentsProps) => {
             hover
             selected={index === selectedItem}
             onClick={onRowClick(index)}
-            children={columns.map((column) => (
-              <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
-                {column.component
-                  ? column.component(row[column.id] as never)
-                  : ((value) => (
-                      <Typography variant="body2" noWrap>
-                        {value}
-                      </Typography>
-                    ))(row[column.id] as never)}
+            children={columns.map((column, index) => (
+              <TableCell key={column.id + index} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
+                <column.component value={row[column.id] as never} />
               </TableCell>
             ))}
           />
