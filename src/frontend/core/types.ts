@@ -1,8 +1,9 @@
 import { SxProps } from "@mui/material";
-import React, { ComponentType, FunctionComponent, MemoExoticComponent, ReactNode } from "react";
+import React from "react";
+
+import { LibraryElementEnum } from "./enums";
 
 export type Anchor = "top" | "left" | "bottom" | "right";
-
 export type SortDirection = "asc" | "desc";
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
@@ -15,7 +16,7 @@ export type DataRowNew = { id: string } & Record<string, unknown>;
 export type DataColumn = {
   id: string;
   label?: string;
-  component: MemoExoticComponent<ComponentType<{ value: never }>> | ComponentType<{ value: never }>;
+  component: keyof typeof LibraryElementEnum;
   headerCellSx?: SxProps;
   contentCellSx?: SxProps;
 };

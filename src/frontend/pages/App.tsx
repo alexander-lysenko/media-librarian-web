@@ -1,8 +1,7 @@
-import { Container, Paper, Typography } from "@mui/material";
+import { Container, Paper } from "@mui/material";
 import React, { useState } from "react";
 
 import { AppNavbar } from "../components";
-import { ColoredRating } from "../components/tables/ColoredRating";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { DataColumn, DataRow } from "../core/types";
 import movies from "../mock/movies.json";
@@ -14,116 +13,78 @@ const columns: DataColumn[] = [
     id: "Название",
     label: "Название",
     contentCellSx: { maxWidth: 150 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "line",
   },
   {
     id: "Описание",
     label: "Описание",
     contentCellSx: { maxWidth: 250 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "text",
   },
   {
     id: "Дата выхода",
     label: "Дата выхода Дата выхода",
     headerCellSx: { textAlign: "right", maxWidth: 150 },
     contentCellSx: { textAlign: "right", maxWidth: 150 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "date",
   },
   {
     id: "Дата просмотра",
     label: "Дата просмотра",
     contentCellSx: { maxWidth: 150 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "datetime",
   },
   {
     id: "Оценка",
     label: "Оценка",
-    component: ({ value }: { value: number }) => <ColoredRating readOnly size={5} value={value} />,
     contentCellSx: { maxWidth: 150 },
+    component: "rating5",
+    // component: "text",
   },
   {
     id: "Отзыв",
     label: "Отзыв",
     contentCellSx: { maxWidth: 250 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "text",
   },
   //
   {
     id: "Название",
     label: "Название",
     contentCellSx: { maxWidth: 150 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "line",
   },
   {
     id: "Описание",
     label: "Описание",
     contentCellSx: { maxWidth: 250 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "text",
   },
   {
     id: "Дата выхода",
     label: "Дата выхода Дата выхода",
     headerCellSx: { textAlign: "right", maxWidth: 150 },
     contentCellSx: { textAlign: "right", maxWidth: 150 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "date",
   },
   {
     id: "Дата просмотра",
     label: "Дата просмотра",
     contentCellSx: { maxWidth: 150 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "datetime",
   },
   {
     id: "Оценка",
     label: "Оценка",
-    component: ({ value }: { value: number }) => <ColoredRating readOnly size={5} value={value} />,
     contentCellSx: { maxWidth: 150 },
+    component: "rating5",
+    // component: "text",
   },
   {
     id: "Отзыв",
     label: "Отзыв",
     contentCellSx: { maxWidth: 250 },
-    component: ({ value }: { value: string }) => (
-      <Typography variant="body2" noWrap>
-        {value}
-      </Typography>
-    ),
+    component: "text",
   },
 ];
 

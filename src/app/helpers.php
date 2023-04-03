@@ -4,7 +4,7 @@ use Illuminate\Support\HtmlString;
 
 function vite_assets(): HtmlString
 {
-    $devServerHost = env('UI_SERVER_HOST', 'http://localhost') . ':3000';
+    $devServerHost = env('UI_SERVER_HOST', 'http://localhost');
 
     if (app()->environment('local')) {
         return new HtmlString(<<<HTML

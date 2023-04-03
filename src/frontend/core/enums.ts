@@ -12,7 +12,7 @@ export enum DataType {
   datetime = "datetime",
 }
 
-export enum AppInputType {
+export enum LibraryElementEnum {
   line = "line",
   text = "text",
   date = "date",

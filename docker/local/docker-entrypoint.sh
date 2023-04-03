@@ -3,7 +3,7 @@
 function run_services() {
   echo "== Starting supervisord and web services =="
   # Let supervisord start nginx & php-fpm81
-  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf &
 }
 
 function clean_webapp_logs() {

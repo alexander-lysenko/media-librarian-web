@@ -1,34 +1,34 @@
 import { PaletteMode, PaletteOptions, ThemeOptions } from "@mui/material";
-import { red, yellow } from "@mui/material/colors";
+import { blue, red, yellow } from "@mui/material/colors";
 import { TypographyOptions } from "@mui/material/styles/createTypography";
 
 const lightPalette: PaletteOptions = {
   primary: {
-    main: "#556cd6",
+    main: blue["A400"],
   },
   secondary: {
-    main: "#19857b",
+    main: blue["400"],
   },
   warning: {
-    main: yellow.A400,
+    main: yellow["A400"],
   },
   error: {
-    main: red.A400,
+    main: red["A400"],
   },
 };
 
 const darkPalette: PaletteOptions = {
   primary: {
-    main: "#adb7f8",
+    main: blue["700"],
   },
   secondary: {
-    main: "#19857b",
+    main: blue["400"],
   },
   warning: {
-    main: yellow.A400,
+    main: yellow["A400"],
   },
   error: {
-    main: red.A400,
+    main: red["A400"],
   },
 };
 

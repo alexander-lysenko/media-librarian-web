@@ -32,6 +32,7 @@ import {
   DataTableStyleProps,
 } from "../../core/types";
 import { DataTablePagination } from "./DataTablePagination";
+import { LibraryInlineComponents } from "../library/InlineComponents";
 
 type ContextProps = {
   tableContainer?: TableContainerProps;
@@ -91,8 +92,7 @@ export const DataTableVirtualized = (props: DataTableProps) => {
         <TableVirtuoso
           style={{ height: "100%" }}
           data={rows}
-          overscan={10}
-          increaseViewportBy={10}
+          increaseViewportBy={100}
           context={componentProps}
           components={virtuosoTableComponents}
           fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
@@ -131,9 +131,9 @@ const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
   Table: memo(({ context, children, style }) => {
     return <Table {...context?.table} children={children} style={style} />;
   }),
-  TableRow: ({ item: _item, context, ...props }) => {
-    return <TableRow {...context?.tableRow} {...props} style={{ height: 29 }} />;
-  },
+  TableRow: forwardRef(({ item: _item, context, ...props }, ref: ForwardedRef<HTMLTableRowElement>) => {
+    return <TableRow {...context?.tableRow} {...props} style={{ height: 29 }} ref={ref} />;
+  }),
   FillerRow: forwardRef(({ height }, ref: ForwardedRef<HTMLTableRowElement>) => {
     return <tr ref={ref} children={<td colSpan={2} style={{ height }} />} />;
   }),
@@ -166,9 +166,10 @@ const RowContent = ({ row, columns }: { row: DataRow; columns: DataColumn[] }) =
   return (
     <>
       {columns.map((column, index) => {
+        const LibraryComponent = LibraryInlineComponents[column.component];
         return (
           <TableCell key={column.id + index} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
-            <column.component value={row[column.id] as never} />
+            <LibraryComponent value={row[column.id] as never} truncate />
           </TableCell>
         );
       })}
