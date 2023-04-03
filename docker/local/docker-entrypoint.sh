@@ -1,10 +1,7 @@
 #!/bin/bash
 
-function run_services() {
-  echo "== Starting supervisord and web services =="
-  # Let supervisord start nginx & php-fpm81
-  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf &
-}
+DONE_STDOUT="\033[1;32m DONE \033[0m"
+WEB_UP_STDOUT="\033[1;32mWEB APP IS UP!\n\n \033[0m"
 
 function clean_webapp_logs() {
   echo -n "Creating / Cleaning logs... "
@@ -21,11 +18,11 @@ function clean_webapp_logs() {
   if [ -f "/app/storage/logs/laravel.log" ]; then
     chmod -R 777 /app/storage/logs/*
   fi
-  echo "Done"
+  echo -e "$DONE_STDOUT"
 }
 
 function install_composer_dependencies() {
-  echo "Installing Composer dependencies..."
+  echo "== Installing Composer dependencies =="
   cd /app && composer install
 }
 
@@ -34,36 +31,23 @@ function apply_migrations() {
   cd /app && php artisan migrate
 }
 
-function run_job_worker_default() {
-  echo "== Starting Job Worker (default) =="
-  cd /app && php artisan queue:work -v &
-}
-
-# Entrypoint for background container
-function background() {
-  install_composer_dependencies && apply_migrations
-  run_job_worker_default
-
-  trap "echo 'A critical error occurred. Background cannot continue working'; exit 1" HUP INT QUIT TERM
-
-  echo "=========="
-  echo "Background is Up!"
-
-  while true; do
-    sleep 1
-  done
-  exit 0
+function run_services() {
+  echo "== Starting supervisord and web services =="
+  # Let supervisord start nginx & php-fpm81 and Laravel workers
+  /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf &
 }
 
 # Entrypoint for webapp container
 function webapp() {
+  install_composer_dependencies && apply_migrations
   clean_webapp_logs
   run_services
 
   trap "echo 'A critical error occurred. Webapp cannot continue working'; exit 1" HUP INT QUIT TERM
 
-  echo "=========="
-  echo "Web App is Up! Please make sure the front end is built from the latest version"
+  echo "========================================"
+  echo -e "$WEB_UP_STDOUT"
+  echo -e "Please make sure the front end is built from the latest version"
 
   while true; do
     sleep 1
@@ -72,9 +56,6 @@ function webapp() {
 }
 
 case "$1" in
-"background")
-  background
-  ;;
 "webapp")
   webapp
   ;;
