@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material";
-import React from "react";
+import React, { CSSProperties } from "react";
 
 import { LibraryElementEnum } from "./enums";
 
@@ -17,8 +17,8 @@ export type DataColumn = {
   id: string;
   label?: string;
   component: keyof typeof LibraryElementEnum;
-  headerCellSx?: SxProps;
-  contentCellSx?: SxProps;
+  headerCellStyle?: CSSProperties;
+  contentCellStyle?: CSSProperties;
 };
 
 export type SortOptions = {

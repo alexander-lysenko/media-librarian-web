@@ -1,12 +1,12 @@
+// noinspection DuplicatedCode
+
 import {
   Box,
-  Paper,
-  SxProps,
+  styled,
   Table,
   TableBody,
   TableBodyProps,
   TableCell,
-  TableContainer,
   TableContainerProps,
   TableHead,
   TableHeadProps,
@@ -15,10 +15,9 @@ import {
   TableRowProps,
   TableSortLabel,
   Typography,
-  useTheme,
 } from "@mui/material";
-import React, { ForwardedRef, forwardRef, memo } from "react";
-import { TableComponents, TableVirtuoso } from "react-virtuoso";
+import React, { forwardRef, useRef } from "react";
+import { TableComponents, TableVirtuoso, VirtuosoHandle } from "react-virtuoso";
 
 import {
   DataColumn,
@@ -59,10 +58,10 @@ type TableHeaderProps = DataTableHeaderProps & Pick<DataTableEventsProps, "onSor
  * @see https://github.com/petyosi/react-virtuoso/issues/204
  */
 export const DataTableVirtualized = (props: DataTableProps) => {
-  // noinspection DuplicatedCode
   const { columns, rows, sorting, pagination, selectedItem, setSelectedItem, componentProps, containerSx } = props;
   const { sort, setSort } = sorting;
   const { page, rowsPerPage, setPage, setRowsPerPage } = pagination;
+  const ref = useRef<VirtuosoHandle>(null);
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
     event?.preventDefault();
@@ -87,18 +86,18 @@ export const DataTableVirtualized = (props: DataTableProps) => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <TableContainer sx={{ ...containerSx, position: "relative" }}>
-        <TableVirtuoso
-          style={{ height: "100%" }}
-          data={rows}
-          increaseViewportBy={100}
-          context={componentProps}
-          components={virtuosoTableComponents}
-          fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
-          itemContent={(index, row) => <RowContent row={row} key={index} columns={columns} />}
-        />
-      </TableContainer>
+    <Box sx={{ ...containerSx, width: "100%" }}>
+      <TableVirtuoso
+        style={{ height: "100%" }}
+        data={rows}
+        initialItemCount={25}
+        ref={ref}
+        // increaseViewportBy={100}
+        context={componentProps}
+        components={virtuosoTableComponents}
+        fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
+        itemContent={(index, row) => <RowContent row={row} key={index} columns={columns} />}
+      />
       <DataTablePagination
         count={rows.length}
         page={page}
@@ -111,39 +110,31 @@ export const DataTableVirtualized = (props: DataTableProps) => {
 };
 
 const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
-  Scroller: forwardRef(({ context, ...props }, ref) => {
-    return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
-  }),
+  // Scroller: forwardRef(({ context, ...props }, ref) => {
+  //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
+  // }),
   TableHead: forwardRef(({ context, ...props }, ref) => {
-    const theme = useTheme();
-    return (
-      <TableHead
-        {...context?.tableHead}
-        {...props}
-        sx={{ backgroundColor: theme.palette.background.paper, ...context?.tableHead?.sx }}
-        ref={ref}
-      />
-    );
+    return <StyledTableHead {...context?.tableHead} {...props} ref={ref} />;
   }),
   TableBody: forwardRef(({ context, children }, ref) => {
     return <TableBody {...context?.tableBody} children={children} ref={ref} />;
   }),
-  Table: memo(({ context, children, style }) => {
+  Table: ({ context, children, style }) => {
     return <Table {...context?.table} children={children} style={style} />;
-  }),
-  TableRow: forwardRef(({ item: _item, context, ...props }, ref: ForwardedRef<HTMLTableRowElement>) => {
-    return <TableRow {...context?.tableRow} {...props} style={{ height: 29 }} ref={ref} />;
-  }),
-  FillerRow: forwardRef(({ height }, ref: ForwardedRef<HTMLTableRowElement>) => {
-    return <tr ref={ref} children={<td colSpan={2} style={{ height }} />} />;
-  }),
+  },
+  TableRow: ({ item: _item, context, ...props }) => {
+    return <TableRow {...context?.tableRow} {...props} />;
+  },
+  FillerRow: ({ height }) => {
+    return <tr children={<td colSpan={2} style={{ height }} />} />;
+  },
 };
 
 const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
   return (
     <TableRow>
       {columns.map((column, index) => (
-        <TableCell key={column.id + index} sx={{ px: 1, ...column.headerCellSx }} sortDirection={sort?.direction}>
+        <StyledHeaderCell key={column.id + index} style={column.headerCellStyle} sortDirection={sort?.direction}>
           <TableSortLabel
             active={sort?.column === column.id}
             direction={sort?.column === column.id ? sort?.direction : "asc"}
@@ -156,7 +147,7 @@ const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
               </Typography>
             }
           />
-        </TableCell>
+        </StyledHeaderCell>
       ))}
     </TableRow>
   );
@@ -168,11 +159,23 @@ const RowContent = ({ row, columns }: { row: DataRow; columns: DataColumn[] }) =
       {columns.map((column, index) => {
         const LibraryComponent = LibraryInlineComponents[column.component];
         return (
-          <TableCell key={column.id + index} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
+          <StyledBodyCell key={column.id + index} style={column.contentCellStyle}>
             <LibraryComponent value={row[column.id] as never} truncate />
-          </TableCell>
+          </StyledBodyCell>
         );
       })}
     </>
   );
 };
+
+const StyledHeaderCell = styled(TableCell)`
+  padding: 8px;
+`;
+
+const StyledBodyCell = styled(TableCell)`
+  padding: 4px 8px;
+`;
+
+const StyledTableHead = styled(TableHead)<TableHeadProps>(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+}));

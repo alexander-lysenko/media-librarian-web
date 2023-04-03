@@ -22,6 +22,7 @@ import {
   DataTableStyleProps,
 } from "../../core/types";
 import { DataTablePagination } from "./DataTablePagination";
+import { LibraryInlineComponents } from "../library/InlineComponents";
 
 type DataTableProps = DataTableBaseProps &
   DataTableStyleProps &
@@ -54,7 +55,7 @@ const TableContents = (props: TableContentsProps) => {
         <TableRow>
           {columns.map((column, index) => {
             return (
-              <TableCell key={column.id + index} sx={{ px: 1, ...column.headerCellSx }} sortDirection="asc">
+              <TableCell key={column.id + index} sx={{ px: 1, ...column.headerCellStyle }} sortDirection="asc">
                 <TableSortLabel
                   active={sort?.column === column.id}
                   direction={sort?.column === column.id ? sort?.direction : "asc"}
@@ -77,11 +78,14 @@ const TableContents = (props: TableContentsProps) => {
             hover
             selected={index === selectedItem}
             onClick={onRowClick(index)}
-            children={columns.map((column, index) => (
-              <TableCell key={column.id + index} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
-                <column.component value={row[column.id] as never} />
-              </TableCell>
-            ))}
+            children={columns.map((column, index) => {
+              const LibraryComponent = LibraryInlineComponents[column.component];
+              return (
+                <TableCell key={column.id + index} sx={{ py: 0.25, px: 1, ...column.contentCellStyle }}>
+                  <LibraryComponent value={row[column.id] as never} truncate />
+                </TableCell>
+              );
+            })}
           />
         ))}
       </TableBody>

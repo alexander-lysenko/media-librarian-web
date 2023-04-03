@@ -188,7 +188,7 @@ const TableHeadRow = ({ columns, sort, onSort }: TableHeadRowProps) => {
           const sortDirection = sort?.column === column.id ? sort?.direction : "asc";
 
           return (
-            <TableCell key={column.id} sx={column.headerCellSx} sortDirection={sortDirection}>
+            <TableCell key={column.id} sx={column.headerCellStyle} sortDirection={sortDirection}>
               <TableSortLabel active={isSortActive} direction={sortDirection} onClick={onSort?.(column.id)}>
                 <Typography variant="subtitle2" noWrap children={column.label} />
               </TableSortLabel>
@@ -240,7 +240,7 @@ const TableBodyRow = ({ row, columns, selected, onRowClick, sx, style }: TableBo
   return (
     <TableRow hover selected={selected} onClick={onRowClick} sx={sx} style={style} component="tr">
       {columns.map((column) => (
-        <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellSx }}>
+        <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellStyle }}>
           {column.component
             ? column.component(row[column.id] as never)
             : ((value) => <Typography variant="body2" noWrap children={value} />)(row[column.id] as never)}
