@@ -15,26 +15,17 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, forwardRef, SyntheticEvent, useState } from "react";
+import React, { forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { CustomInputProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
   handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
-};
-
-type InputProps = {
-  label: string;
-  helperText?: string;
-  name: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: FocusEvent<HTMLInputElement>) => void;
-  value?: string;
-  errorMessage: string | undefined;
 };
 
 /**
@@ -113,7 +104,7 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
   );
 };
 
-const EmailTextField = forwardRef((props: InputProps & TextFieldProps, ref) => {
+const EmailTextField = forwardRef((props: CustomInputProps & TextFieldProps, ref) => {
   return (
     <TextField
       inputRef={ref}

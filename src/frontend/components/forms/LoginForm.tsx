@@ -10,21 +10,12 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
+import React, { forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { CustomInputProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
-
-type InputProps = {
-  label: string;
-  helperText?: string;
-  name: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: FocusEvent<HTMLInputElement>) => void;
-  value?: string;
-  errorMessage: string | undefined;
-};
 
 /**
  * Sign In (aka Login) Form functional component
@@ -101,7 +92,7 @@ export const LoginForm = () => {
   );
 };
 
-const EmailTextField = forwardRef((props: InputProps, ref) => {
+const EmailTextField = forwardRef((props: CustomInputProps, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -127,7 +118,7 @@ const EmailTextField = forwardRef((props: InputProps, ref) => {
   );
 });
 
-const PasswordTextField = forwardRef((props: InputProps, ref) => {
+const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
   const { t } = useTranslation();
   const [passVisible, setPassVisible] = useState<boolean>(false);
 

@@ -13,6 +13,7 @@
   "common": {
     "all": "Все",
     "cancel": "Отмена",
+    "create": "Создать",
     "holdToSeePass": "Зажмите чтобы увидеть пароль",
     "save": "Сохранить",
     "submit": "Отправить"
@@ -98,5 +99,25 @@
   "theme": {
     "presetDark": "Темная",
     "presetLight": "Светлая"
+  },
+  "createLibrary": {
+    "addNewField": "Добавить еще поле",
+    "fieldName": "Имя поля",
+    "fieldType": "Тип",
+    "optionNone": "Не выбрано",
+    "removeField": "Убрать это поле",
+    "title": "Создать новую библиотеку"
+  },
+  "libraryTypes": {
+    "date": "Дата",
+    "datetime": "Дата + Время",
+    "line": "Строка",
+    "priority": "Приоритет",
+    "rating10": "Оценка (10 звезд)",
+    "rating10precision": "Оценка (10 звезд, половинный шаг)",
+    "rating5": "Оценка (5 звезд)",
+    "rating5precision": "Оценка (5 звезд, половинный шаг)",
+    "switch": "Переключатель",
+    "text": "Текстовое поле"
   }
 }

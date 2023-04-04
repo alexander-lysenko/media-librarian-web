@@ -19,21 +19,12 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
+import { CustomInputProps } from "../../core/types";
 
 type Props = {
   handleSubmitted: (event: React.SyntheticEvent | Event) => void;
   handleClose: (event: React.SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
-};
-
-type InputProps = {
-  label: string;
-  helperText?: string;
-  name: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
-  value?: string;
-  errorMessage: string | undefined;
 };
 
 /**
@@ -120,7 +111,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
   );
 };
 
-const EmailTextField = forwardRef((props: Partial<InputProps>, ref) => {
+const EmailTextField = forwardRef((props: Partial<CustomInputProps>, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -142,7 +133,7 @@ const EmailTextField = forwardRef((props: Partial<InputProps>, ref) => {
   );
 });
 
-const PasswordTextField = forwardRef((props: Partial<InputProps>, ref) => {
+const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
   return (
     <TextField
       inputRef={ref}

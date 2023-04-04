@@ -4,8 +4,8 @@
     "noNewNotifications": "You've all caught up!",
     "openProfileMenu": "Open Profile Menu",
     "profile": "Profile",
-    "unreadNotifications_few": "{{count}} New Notifications",
-    "unreadNotifications_many": "{{count}} New Notifications",
+    "unreadNotifications_few": "",
+    "unreadNotifications_many": "",
     "unreadNotifications_one": "{{count}} New Notification",
     "unreadNotifications_other": "{{count}} New Notifications",
     "unreadNotifications_zero": "No new notifications"
@@ -13,6 +13,7 @@
   "common": {
     "all": "All",
     "cancel": "Cancel",
+    "create": "Create",
     "holdToSeePass": "Long tap to make password visible",
     "save": "Save",
     "submit": "Submit"
@@ -98,5 +99,25 @@
   "theme": {
     "presetDark": "Dark",
     "presetLight": "Light"
+  },
+  "createLibrary": {
+    "addNewField": "Add a Field",
+    "fieldName": "Field Name",
+    "fieldType": "Type",
+    "optionNone": "None selected",
+    "removeField": "Remove this field",
+    "title": "Create New Library"
+  },
+  "libraryTypes": {
+    "date": "Date",
+    "datetime": "Date+Time",
+    "line": "Text Line",
+    "priority": "Priority",
+    "rating10": "Rating (10 stars)",
+    "rating10precision": "Rating (10 stars, half precision)",
+    "rating5": "Rating (5 stars)",
+    "rating5precision": "Rating (5 stars, half precision)",
+    "switch": "Switch",
+    "text": "Text Area"
   }
 }

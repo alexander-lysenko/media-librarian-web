@@ -1,7 +1,11 @@
 import {
+  AddCircleOutlined,
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
   CalendarMonthOutlined,
+  CleaningServicesOutlined,
+  CollectionsOutlined,
+  DeleteForeverOutlined,
   DriveFileRenameOutlineOutlined,
   EmailOutlined,
   HowToRegOutlined,
@@ -19,10 +23,12 @@ import {
   Container,
   Divider,
   Grid,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
+  ListItemSecondaryAction,
   ListItemText,
   ListSubheader,
   Paper,
@@ -34,11 +40,16 @@ import { useTranslation } from "react-i18next";
 import { AppNavbar, PaperCardHeader } from "../components";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
+import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
 
 const username = "User Name";
 const email = "username@example.com";
 const avatarSrc = "https://source.unsplash.com/TkJbk1I2 2hE/240x240";
 const createdAt = "2020-01-01";
+
+type LibraryActions = {
+  actions: Record<string, () => void>;
+};
 
 /**
  * Component representing the Profile page
@@ -48,6 +59,7 @@ export const Profile = () => {
 
   const [profileOpen, setProfileOpen] = useState(true);
   const [libOpen, setLibOpen] = useState(false);
+  const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
 
   return (
     <>
@@ -82,17 +94,20 @@ export const Profile = () => {
             actionEvents={{ onClick: () => setLibOpen(!libOpen) }}
           />
           <Box display={libOpen ? "block" : "none"}>
-            <Container maxWidth={"xl"} sx={{ mt: 3 }}>
-              <img
-                src="https://mir-s3-cdn-cf.behance.net/project_modules/1400_opt_1/c23f5f64934175.5ae25fb971b46.jpg"
-                width="100%"
-                alt=""
-              />
-            </Container>
+            <LibrariesList
+              actions={{
+                handleOpenLibraryDialog: () => setLibCreateDialogOpen(true),
+              }}
+            />
           </Box>
         </Paper>
       </Container>
       <SimpleDialog />
+      <LibraryCreateDialog
+        open={libCreateDialogOpen}
+        handleClose={() => setLibCreateDialogOpen(false)}
+        handleSubmitted={() => false}
+      />
     </>
   );
 };
@@ -183,6 +198,37 @@ const AccountInfo = () => {
       <ListItem>
         <ListItemIcon children={<DriveFileRenameOutlineOutlined />} />
         <ListItemText primary={"About me"} secondary={"Lorem Ipsum is simply dummy text of the..."} />
+      </ListItem>
+    </List>
+  );
+};
+
+const LibrariesList = ({ actions }: LibraryActions) => {
+  const { t } = useTranslation();
+
+  return (
+    <List dense disablePadding component="div">
+      <ListItemButton divider onClick={actions?.handleOpenLibraryDialog}>
+        <ListItemIcon children={<AddCircleOutlined />} />
+        <ListItemText
+          primary={"Создать библиотеку"}
+          secondary={"&nbsp;"}
+          primaryTypographyProps={{ noWrap: true, textTransform: "uppercase" }}
+          secondaryTypographyProps={{ noWrap: true }}
+          title={email}
+        />
+      </ListItemButton>
+      <ListItem divider>
+        <ListItemIcon children={<CollectionsOutlined />} />
+        <ListItemText primary={"Test"} secondary={"lorem ipsum"} />
+        <ListItemSecondaryAction>
+          <IconButton size="small" aria-label="clear">
+            <CleaningServicesOutlined />
+          </IconButton>
+          <IconButton size="small" aria-label="delete">
+            <DeleteForeverOutlined />
+          </IconButton>
+        </ListItemSecondaryAction>
       </ListItem>
     </List>
   );

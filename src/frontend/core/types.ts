@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material";
-import React, { CSSProperties } from "react";
+import React, { ChangeEvent, CSSProperties, FocusEvent } from "react";
 
 import { LibraryElementEnum } from "./enums";
 
@@ -71,3 +71,13 @@ export type DataTableEventsProps = {
   onSort: (columnId: string) => (event: React.MouseEvent<unknown>) => void;
   onRowClick: (rowId: string | number) => (event: React.MouseEvent<unknown>) => void;
 };
+
+export interface CustomInputProps {
+  name: string;
+  label: string;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (event: FocusEvent<HTMLInputElement>) => void;
+  value?: string;
+  helperText?: string;
+  errorMessage?: string;
+}

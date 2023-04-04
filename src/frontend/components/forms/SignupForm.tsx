@@ -22,24 +22,15 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, forwardRef, useState } from "react";
+import React, { ChangeEvent, forwardRef, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { CustomInputProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language, useLanguageStore, useTranslationStore } from "../../store/useTranslationStore";
-
-type InputProps = {
-  label: string;
-  helperText?: string;
-  name: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
-  value?: string;
-  errorMessage?: string | undefined;
-};
 
 /**
  * Sign Up Form functional component
@@ -144,7 +135,7 @@ export const SignupForm = () => {
   );
 };
 
-const UsernameTextField = forwardRef((props: InputProps, ref) => {
+const UsernameTextField = forwardRef((props: CustomInputProps, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -170,7 +161,7 @@ const UsernameTextField = forwardRef((props: InputProps, ref) => {
   );
 });
 
-const EmailTextField = forwardRef((props: InputProps & { loadingState: boolean }, ref) => {
+const EmailTextField = forwardRef((props: CustomInputProps & { loadingState: boolean }, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -196,7 +187,7 @@ const EmailTextField = forwardRef((props: InputProps & { loadingState: boolean }
   );
 });
 
-const PasswordTextField = forwardRef((props: InputProps, ref) => {
+const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
   const { t } = useTranslation();
   const [passVisible, setPassVisible] = useState<boolean>(false);
 
@@ -237,7 +228,7 @@ const PasswordTextField = forwardRef((props: InputProps, ref) => {
   );
 });
 
-const LanguageSelect = forwardRef((props: InputProps, ref) => {
+const LanguageSelect = forwardRef((props: CustomInputProps, ref) => {
   const languages = useTranslationStore((state) => state.languages);
 
   return (
@@ -263,7 +254,7 @@ const LanguageSelect = forwardRef((props: InputProps, ref) => {
   );
 });
 
-const ThemeSelect = forwardRef((props: InputProps, ref) => {
+const ThemeSelect = forwardRef((props: CustomInputProps, ref) => {
   const { t } = useTranslation();
 
   return (
