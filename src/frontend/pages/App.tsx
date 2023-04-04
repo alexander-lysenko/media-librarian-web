@@ -22,32 +22,32 @@ const columns: DataColumn[] = [
     contentCellStyle: { maxWidth: 250 },
     component: "text",
   },
-  // {
-  //   id: "Дата выхода",
-  //   label: "Дата выхода Дата выхода",
-  //   headerCellStyle: { textAlign: "right", maxWidth: 150 },
-  //   contentCellStyle: { textAlign: "right", maxWidth: 150 },
-  //   component: "date",
-  // },
-  // {
-  //   id: "Дата просмотра",
-  //   label: "Дата просмотра",
-  //   contentCellStyle: { maxWidth: 150 },
-  //   component: "datetime",
-  // },
-  // {
-  //   id: "Оценка",
-  //   label: "Оценка",
-  //   contentCellStyle: { maxWidth: 150 },
-  //   // component: "rating5",
-  //   component: "text",
-  // },
-  // {
-  //   id: "Отзыв",
-  //   label: "Отзыв",
-  //   contentCellStyle: { maxWidth: 250 },
-  //   component: "text",
-  // },
+  {
+    id: "Дата выхода",
+    label: "Дата выхода Дата выхода",
+    headerCellStyle: { textAlign: "right", maxWidth: 150 },
+    contentCellStyle: { textAlign: "right", maxWidth: 150 },
+    component: "date",
+  },
+  {
+    id: "Дата просмотра",
+    label: "Дата просмотра",
+    contentCellStyle: { maxWidth: 150 },
+    component: "datetime",
+  },
+  {
+    id: "Оценка",
+    label: "Оценка",
+    contentCellStyle: { maxWidth: 150 },
+    component: "rating5",
+    // component: "text",
+  },
+  {
+    id: "Отзыв",
+    label: "Отзыв",
+    contentCellStyle: { maxWidth: 250 },
+    component: "text",
+  },
   //
   // {
   //   id: "Название",

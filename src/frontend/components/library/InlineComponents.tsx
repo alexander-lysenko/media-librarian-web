@@ -15,7 +15,7 @@ type InlineComponentMemoized = MemoExoticComponent<InlineComponent>;
 export type LibraryInlineComponent = InlineComponent | InlineComponentMemoized;
 
 const Rating5Stars = React.memo(({ value }: LibraryItemComponentProps) => (
-  <ColoredRating value={value} size={5} readOnly />
+  <ColoredRating value={value} size={5} readOnly precision={0.5} />
 ));
 const Rating5StarsPrecision = React.memo(({ value }: LibraryItemComponentProps) => (
   <ColoredRating value={value} size={5} readOnly precision={0.5} />

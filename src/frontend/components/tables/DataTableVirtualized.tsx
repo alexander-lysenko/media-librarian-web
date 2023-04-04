@@ -7,6 +7,7 @@ import {
   TableBody,
   TableBodyProps,
   TableCell,
+  TableContainer,
   TableContainerProps,
   TableHead,
   TableHeadProps,
@@ -30,8 +31,8 @@ import {
   DataTableSortingState,
   DataTableStyleProps,
 } from "../../core/types";
-import { DataTablePagination } from "./DataTablePagination";
 import { LibraryInlineComponents } from "../library/InlineComponents";
+import { DataTablePagination } from "./DataTablePagination";
 
 type ContextProps = {
   tableContainer?: TableContainerProps;
@@ -86,18 +87,20 @@ export const DataTableVirtualized = (props: DataTableProps) => {
   };
 
   return (
-    <Box sx={{ ...containerSx, width: "100%" }}>
-      <TableVirtuoso
-        style={{ height: "100%" }}
-        data={rows}
-        initialItemCount={25}
-        ref={ref}
-        // increaseViewportBy={100}
-        context={componentProps}
-        components={virtuosoTableComponents}
-        fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
-        itemContent={(index, row) => <RowContent row={row} key={index} columns={columns} />}
-      />
+    <Box sx={{ width: "100%" }}>
+      <TableContainer sx={{ ...containerSx, position: "relative" }}>
+        <TableVirtuoso
+          style={{ height: "100%" }}
+          data={rows}
+          initialItemCount={25}
+          ref={ref}
+          // increaseViewportBy={100}
+          context={componentProps}
+          components={virtuosoTableComponents}
+          fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
+          itemContent={(index, row) => <RowContent row={row} key={index} columns={columns} />}
+        />
+      </TableContainer>
       <DataTablePagination
         count={rows.length}
         page={page}
@@ -169,11 +172,11 @@ const RowContent = ({ row, columns }: { row: DataRow; columns: DataColumn[] }) =
 };
 
 const StyledHeaderCell = styled(TableCell)`
-  padding: 8px;
+  //padding: 4px 8px;
 `;
 
 const StyledBodyCell = styled(TableCell)`
-  padding: 4px 8px;
+  //padding: 4px 8px;
 `;
 
 const StyledTableHead = styled(TableHead)<TableHeadProps>(({ theme }) => ({
