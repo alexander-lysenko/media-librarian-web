@@ -31,7 +31,7 @@
       "warn",
       {
         "vars": "all",
-        "args": "all",
+        "args": "after-used",
         "ignoreRestSiblings": false,
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_"

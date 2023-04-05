@@ -26,7 +26,7 @@ function vite_assets(): HtmlString
 
     return new HtmlString(<<<HTML
         <script type="module" src="/build/{$manifest['frontend/index.ts']['file']}"></script>
-        <link rel="stylesheet" href="/build/{$manifest['frontend/index.ts']['css'][0]}">
+        <link rel="stylesheet" href="/build/{$manifest['frontend/index.css']['file']}">
     HTML
     );
 }

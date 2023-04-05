@@ -58,7 +58,7 @@ export const Profile = () => {
   const { t } = useTranslation();
 
   const [profileOpen, setProfileOpen] = useState(true);
-  const [libOpen, setLibOpen] = useState(false);
+  const [libOpen, setLibOpen] = useState(true);
   const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
 
   return (

@@ -89,7 +89,7 @@ export const SignupForm = () => {
         errorMessage={errors.username?.message as string}
       />
       <EmailTextField
-        {...registerFieldDebounced("email", 1000)}
+        {...registerFieldDebounced(1000, "email")}
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint") as string}
         errorMessage={errors.email?.message as string}

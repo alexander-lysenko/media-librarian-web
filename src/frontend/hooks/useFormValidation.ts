@@ -14,7 +14,8 @@ import { useSignupFormStore } from "../store/useSignupFormStore";
 
 type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
 
-export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: UseFormReturn) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: UseFormReturn<any>) => {
   const { t } = useTranslation();
 
   const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -137,6 +138,33 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
       },
     },
+    createLibrary: {
+      title: {
+        setValueAs: (value: string) => value.trim(),
+        required: t("formValidation.libraryTitleRequired") as Message,
+        validate: {
+          uniqueValidation: async (value: string) => {
+            const message = t("formValidation.libraryTitleNotUnique");
+
+            // todo: replace with a real API request
+            const hasTitleTaken = await new Promise<boolean>((resolve) => {
+              setTimeout(() => {
+                resolve(value === "Example");
+              }, 1000);
+            });
+
+            return !hasTitleTaken || message;
+          },
+        },
+      },
+      name: {
+        setValueAs: (value: string) => value.trim(),
+        required: t("formValidation.libraryFiledNameRequired") as Message,
+      },
+      type: {
+        required: true,
+      },
+    },
   };
 
   const { register } = useFormReturn;
@@ -144,12 +172,12 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
     return rules[formName][fieldName] || undefined;
   };
 
-  const registerField = (fieldName: string): UseFormRegisterReturn => ({
-    ...register(fieldName, getRule(fieldName)),
+  const registerField = (fieldName: string, ruleName?: string): UseFormRegisterReturn => ({
+    ...register(fieldName, getRule(ruleName || fieldName)),
   });
 
-  const registerFieldDebounced = (fieldName: string, wait: number): UseFormRegisterReturn => {
-    const registerReturn = register(fieldName, getRule(fieldName));
+  const registerFieldDebounced = (wait: number, fieldName: string, ruleName?: string): UseFormRegisterReturn => {
+    const registerReturn = register(fieldName, getRule(ruleName || fieldName));
     const { onChange: onChangeRegular } = registerReturn;
     const onChange: ChangeHandler = debounce(async (event) => {
       await onChangeRegular(event);
