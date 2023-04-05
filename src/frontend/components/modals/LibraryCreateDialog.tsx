@@ -123,7 +123,7 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
         <DialogActions sx={{ justifyContent: "space-between" }}>
           <Button
             variant="outlined"
-            onClick={() => append({ name: "", type: LibraryElementEnum.line })}
+            onClick={() => append({ name: "", type: LibraryElementEnum.line }, { shouldFocus: false })}
             startIcon={<AddCircleOutlined />}
             children={fullScreen ? t("createLibrary.field") : t("createLibrary.addNewField")}
           />
