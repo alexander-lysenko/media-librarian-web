@@ -59,5 +59,12 @@ export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
         },
       },
     },
+    MuiDialogActions: {
+      styleOverrides: {
+        spacing: {
+          padding: "16px 24px",
+        },
+      },
+    },
   },
 });

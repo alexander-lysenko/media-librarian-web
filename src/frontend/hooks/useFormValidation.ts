@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { RegisteredFormNamesEnum } from "../core/enums";
+import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
 import { useSignupFormStore } from "../store/useSignupFormStore";
 
 type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
@@ -145,6 +146,8 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         validate: {
           uniqueValidation: async (value: string) => {
             const message = t("formValidation.libraryTitleNotUnique");
+            const setTitleCheckingState = useLibraryCreateFormStore.getState().setTitleUniqueProcessing;
+            setTitleCheckingState(true);
 
             // todo: replace with a real API request
             const hasTitleTaken = await new Promise<boolean>((resolve) => {
@@ -153,6 +156,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
               }, 1000);
             });
 
+            setTitleCheckingState(false);
             return !hasTitleTaken || message;
           },
         },
@@ -160,6 +164,16 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
       name: {
         setValueAs: (value: string) => value.trim(),
         required: t("formValidation.libraryFiledNameRequired") as Message,
+        validate: {
+          distinct: (value: string, formValues: FieldValues) => {
+            const message = t("formValidation.libraryFiledNameDistinct");
+            const coincidences = formValues.fields.filter(
+              (item: { name: string; type: string }) => item.name === value,
+            );
+
+            return coincidences.length <= 1 || message;
+          },
+        },
       },
       type: {
         required: true,

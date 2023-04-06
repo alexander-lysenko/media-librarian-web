@@ -24,12 +24,12 @@ export const LoginForm = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const useLoginForm = useForm({
+  const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
-  const { registerField } = useFormValidation("login", useLoginForm);
-  const { formState, handleSubmit, reset, setError } = useLoginForm;
+  const { registerField } = useFormValidation("login", useHookForm);
+  const { formState, handleSubmit, reset, setError } = useHookForm;
   const { errors } = formState;
 
   const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {

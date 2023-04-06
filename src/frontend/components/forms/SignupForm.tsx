@@ -43,12 +43,12 @@ export const SignupForm = () => {
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
   const [language, setLanguage] = useLanguageStore((state) => [state.language, state.setLanguage]);
 
-  const useSignupForm = useForm({
+  const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
-  const { registerField, registerFieldDebounced } = useFormValidation("signup", useSignupForm);
-  const { formState, handleSubmit, reset } = useSignupForm;
+  const { registerField, registerFieldDebounced } = useFormValidation("signup", useHookForm);
+  const { formState, handleSubmit, reset } = useHookForm;
   const { errors } = formState;
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);

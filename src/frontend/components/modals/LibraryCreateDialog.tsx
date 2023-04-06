@@ -1,4 +1,10 @@
-import { AddCircleOutlined, RemoveCircleOutlineOutlined, SaveAsOutlined } from "@mui/icons-material";
+import {
+  AddCircleOutlined,
+  DriveFileRenameOutlineOutlined,
+  HourglassBottomOutlined,
+  RemoveCircleOutlineOutlined,
+  SaveAsOutlined,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -12,6 +18,7 @@ import {
   Grid,
   Grow,
   IconButton,
+  InputAdornment,
   MenuItem,
   TextField,
   TextFieldProps,
@@ -35,6 +42,7 @@ import { useTranslation } from "react-i18next";
 import { LibraryElementEnum } from "../../core/enums";
 import { CustomInputProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
+import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 
 type Props = {
   handleSubmitted: (event: React.SyntheticEvent | Event) => void;
@@ -54,25 +62,32 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
   const theme = useTheme();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const titleCheckingState = useLibraryCreateFormStore((state) => state.titleUniqueProcessing);
 
-  const useCreateLibraryForm = useForm({
+  const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
     defaultValues: { title: "", fields: [{ name: "", type: "line" }] },
   });
-  const { registerField, registerFieldDebounced } = useFormValidation("createLibrary", useCreateLibraryForm);
-  const { formState, reset, handleSubmit, control, watch } = useCreateLibraryForm;
+  const { registerField, registerFieldDebounced } = useFormValidation("createLibrary", useHookForm);
+  const { formState, reset, handleSubmit, control, watch } = useHookForm;
   const { errors } = formState;
-  const { fields, append, remove } = useFieldArray({ control, name: "fields" });
+  const { append, remove } = useFieldArray({ control, name: "fields" });
 
   const watchingFields = watch("fields");
-  const controlledFields = watchingFields
-    ? fields.map((field, index) => {
-        return { ...field, ...watchingFields[index] };
-      })
-    : [];
-
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handleAddNewField = () => append({ name: "", type: LibraryElementEnum.line }, { shouldFocus: false });
+  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
+    if (reason === "backdropClick" || reason === "escapeKeyDown") {
+      event.preventDefault();
+      return false;
+    }
+
+    reset();
+    setLoading(false);
+    handleClose(event, reason);
+  };
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
@@ -85,30 +100,33 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
       handleSubmitted(event as SyntheticEvent);
     }, 2000);
   };
-  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
-    if (reason === "backdropClick" || reason === "escapeKeyDown") {
-      event.preventDefault();
-      return false;
-    }
-
-    reset();
-    setLoading(false);
-    handleClose(event, reason);
-  };
 
   return (
     <Dialog open={open} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
-      <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
+      <Box
+        component="form"
+        noValidate
+        onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}
+        sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+      >
         <DialogTitle variant={"h5"}>{t("createLibrary.title")}</DialogTitle>
-        <DialogContent dividers sx={{ minHeight: 480 }}>
+        <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           <CustomTextField
             {...registerFieldDebounced(1000, "title")}
             label={t("createLibrary.libraryTitle")}
             errorMessage={errors.title?.message as string}
+            margin="none"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {titleCheckingState ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
+                </InputAdornment>
+              ),
+            }}
           />
           <Typography variant="subtitle1" children={t("createLibrary.fieldsSet")} mt={1} />
           <Divider sx={{ mb: 0.5 }} />
-          {controlledFields.map((field, index) => {
+          {watchingFields.map((field, index) => {
             return (
               <InputLineTemplate
                 key={index}
@@ -120,14 +138,14 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
             );
           })}
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "space-between" }}>
+        <DialogActions>
           <Button
             variant="outlined"
-            onClick={() => append({ name: "", type: LibraryElementEnum.line }, { shouldFocus: false })}
+            onClick={handleAddNewField}
             startIcon={<AddCircleOutlined />}
             children={fullScreen ? t("createLibrary.field") : t("createLibrary.addNewField")}
           />
-          <Box sx={{ flex: "1 0 auto" }} />
+          <Box flex="1 0 auto" />
           <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
           <Button
             type="submit"
@@ -152,6 +170,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
           {...registerField(`fields.${index}.name`, "name")}
           label={t("createLibrary.fieldName")}
           errorMessage={(errors as FieldErrors<{ fields: FieldValues[] }>)?.fields?.[index]?.name?.message as string}
+          InputLabelProps={{ shrink: true }}
         />
       </Grid>
       <Grid item xs={10} sm={4}>
