@@ -6,7 +6,7 @@ function vite_assets(): HtmlString
 {
     $devServerHost = env('UI_SERVER_HOST', 'http://localhost');
 
-    if (app()->environment('local')) {
+    if (!app()->environment('local')) {
         return new HtmlString(<<<HTML
             <script type="module">
                 import RefreshRuntime from "$devServerHost/@react-refresh";

@@ -25,7 +25,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }
@@ -34,8 +34,9 @@ class EventServiceProvider extends ServiceProvider
      * Determine if events and listeners should be automatically discovered.
      *
      * @return bool
+     * @noinspection SenselessMethodDuplicationInspection
      */
-    public function shouldDiscoverEvents()
+    public function shouldDiscoverEvents(): bool
     {
         return false;
     }
