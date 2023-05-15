@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Requests\V1\CollectionIdRequest;
-use App\Http\Requests\V1\CreateCollectionRequest;
-use App\Models\SqliteCollectionMeta;
+use App\Http\Requests\V1\LibraryIdRequest;
+use App\Http\Requests\V1\CreateLibraryRequest;
+use App\Models\SqliteLibraryMeta;
 use Carbon\Carbon;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\JsonResponse;
@@ -14,15 +14,15 @@ use Illuminate\Support\Arr;
 use OpenApi\Attributes as OA;
 use Throwable;
 
-#[OA\Tag(name: 'collections', description: 'Manage collections')]
+#[OA\Tag(name: 'libraries', description: 'Manage Libraries')]
 #[OA\Schema(
     schema: 'DataTypes',
     description: 'List of available types to be used for building inputs',
     type: 'string',
     enum: ['line', 'text', 'date', 'datetime', 'url', 'checkmark', 'rating_5stars', 'rating_10stars', 'priority'],
 ), OA\Schema(
-    schema: 'CollectionExample',
-    description: "Key-value pair representing data types and describing the structure of a collection's table",
+    schema: 'LibraryExample',
+    description: "Key-value pair representing data types and describing the structure of a Library's table",
     type: 'object',
     example: [
         'Movie Title' => 'line',
@@ -38,17 +38,17 @@ use Throwable;
     ],
 )]
 /**
- * Collections controller - manage list of collections, CRUD operations for the collections
+ * Libraries Controller - manage list of Libraries, CRUD operations for the Libraries
  */
-class CollectionController extends ApiV1Controller
+class LibraryController extends ApiV1Controller
 {
     #[OA\Get(
-        path: '/api/v1/collections',
-        description: 'The response contains the list of ID and name of all collections already created ' .
-        'and the columns that included in each collection.',
-        summary: 'Get All Collections',
+        path: '/api/v1/libraries',
+        description: 'The response contains the list of ID and name of all Libraries already created ' .
+        'and the columns that included in each Library.',
+        summary: 'Get All Libraries',
         security: self::SECURITY_SCHEME_BEARER,
-        tags: ['collections'],
+        tags: ['libraries'],
         responses: [
             new OA\Response(
                 response: 200,
@@ -57,7 +57,7 @@ class CollectionController extends ApiV1Controller
                     new OA\Property(property: 'data', type: 'array', items: new OA\Items(properties: [
                         new OA\Property(property: 'id', type: 'integer', example: 1),
                         new OA\Property(property: 'name', type: 'string', example: 'Movies'),
-                        new OA\Property(property: 'fields', ref: self::SCHEMA_COLLECTION_REF),
+                        new OA\Property(property: 'fields', ref: self::SCHEMA_LIBRARY_REF),
                     ])),
                 ])
             ),
@@ -74,8 +74,8 @@ class CollectionController extends ApiV1Controller
     {
         $request->hasValidSignature(); // stub
 
-        $metadataRows = SqliteCollectionMeta::query()->get()->all();
-        $collections = array_map(static function ($row) {
+        $metadataRows = SqliteLibraryMeta::query()->get()->all();
+        $libraries = array_map(static function ($row) {
             $item = [];
 
             $item['id'] = $row->id;
@@ -86,15 +86,15 @@ class CollectionController extends ApiV1Controller
         }, $metadataRows);
 
         /** @noinspection OneTimeUseVariablesInspection */
-        $resource = new JsonResource($collections);
+        $resource = new JsonResource($libraries);
 
         return $resource->response();
     }
 
     #[OA\Post(
-        path: '/api/v1/collections',
-        description: 'The structure of the new collection is created from the parameters passed in request body.',
-        summary: 'Create a New Collection',
+        path: '/api/v1/libraries',
+        description: 'The structure of the new Library is created from the parameters passed in request body.',
+        summary: 'Create a New Library',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
@@ -125,7 +125,7 @@ class CollectionController extends ApiV1Controller
                 ]
             )
         ),
-        tags: ['collections'],
+        tags: ['libraries'],
         responses: [
             new OA\Response(
                 response: '201',
@@ -134,7 +134,7 @@ class CollectionController extends ApiV1Controller
                     new OA\Property(property: 'data', properties: [
                         new OA\Property(property: 'id', type: 'integer', example: 1),
                         new OA\Property(property: 'title', type: 'string', example: 'Movies'),
-                        new OA\Property(property: 'fields', ref: self::SCHEMA_COLLECTION_REF),
+                        new OA\Property(property: 'fields', ref: self::SCHEMA_LIBRARY_REF),
                     ]),
                 ])
             ),
@@ -144,27 +144,27 @@ class CollectionController extends ApiV1Controller
         ]
     )]
     /**
-     * @param CreateCollectionRequest $request
+     * @param CreateLibraryRequest $request
      * @return JsonResponse
      * @throws Throwable
      */
-    public function create(CreateCollectionRequest $request): JsonResponse
+    public function create(CreateLibraryRequest $request): JsonResponse
     {
-        $sqliteCollectionMeta = new SqliteCollectionMeta();
-        $connection = $sqliteCollectionMeta->getConnection();
+        $sqliteLibraryMeta = new SqliteLibraryMeta();
+        $connection = $sqliteLibraryMeta->getConnection();
 
-        $connection->transaction(function () use ($connection, $request, $sqliteCollectionMeta, &$resource) {
+        $connection->transaction(function () use ($connection, $request, $sqliteLibraryMeta, &$resource) {
             $title = $request->input('title');
             $metadata = Arr::pluck($request->input('fields'), 'type', 'name');
 
-            $createTableSchema = function (Blueprint $table) use ($metadata, $sqliteCollectionMeta) {
+            $createTableSchema = function (Blueprint $table) use ($metadata, $sqliteLibraryMeta) {
                 $table->id();
                 foreach ($metadata as $name => $type) {
                     if ($name === array_key_first($metadata)) {
                         $table->lineString($name)->unique();
                         continue;
                     }
-                    $sqliteCollectionMeta->createTableColumnByType($table, $name, $type);
+                    $sqliteLibraryMeta->createTableColumnByType($table, $name, $type);
                 }
             };
             $connection->getSchemaBuilder()->create($title, $createTableSchema);
@@ -177,14 +177,14 @@ class CollectionController extends ApiV1Controller
                 ->pluck('sql')
                 ->first();
 
-            $sqliteCollectionMeta->fill([
+            $sqliteLibraryMeta->fill([
                 'tbl_name' => $title,
                 'schema' => $schema,
                 'meta' => json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             ])->save();
 
             $resource = new JsonResource([
-                'id' => $sqliteCollectionMeta->id,
+                'id' => $sqliteLibraryMeta->id,
                 'title' => $title,
                 'fields' => $metadata,
             ]);
@@ -194,12 +194,12 @@ class CollectionController extends ApiV1Controller
     }
 
     #[OA\Get(
-        path: '/api/v1/collections/{id}',
-        description: 'View the structure of the already existing collection.',
-        summary: 'View the Metadata of a Collection',
+        path: '/api/v1/libraries/{id}',
+        description: 'View the structure of the already existing Library.',
+        summary: 'Get the Metadata of a Library',
         security: self::SECURITY_SCHEME_BEARER,
-        tags: ['collections'],
-        parameters: [new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF)],
+        tags: ['libraries'],
+        parameters: [new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF)],
         responses: [
             new OA\Response(
                 response: '200',
@@ -208,7 +208,7 @@ class CollectionController extends ApiV1Controller
                     new OA\Property(property: 'data', properties: [
                         new OA\Property(property: 'id', type: 'integer', example: 1),
                         new OA\Property(property: 'title', type: 'string', example: 'Movies'),
-                        new OA\Property(property: 'fields', ref: self::SCHEMA_COLLECTION_REF),
+                        new OA\Property(property: 'fields', ref: self::SCHEMA_LIBRARY_REF),
                     ]),
                     new OA\Property(property: 'meta', properties: [
                         new OA\Property(property: 'created_at', type: 'string', example: '1970-01-01 00:00:00'),
@@ -222,25 +222,25 @@ class CollectionController extends ApiV1Controller
         ]
     )]
     /**
-     * @param CollectionIdRequest $request
+     * @param LibraryIdRequest $request
      * @return JsonResponse
      */
-    public function view(CollectionIdRequest $request): JsonResponse
+    public function view(LibraryIdRequest $request): JsonResponse
     {
-        /** @var SqliteCollectionMeta $sqliteCollectionMeta */
-        $sqliteCollectionMeta = SqliteCollectionMeta::query()->where('id', $request->id)->first();
-        $connection = $sqliteCollectionMeta->getConnection();
+        /** @var SqliteLibraryMeta $sqliteLibraryMeta */
+        $sqliteLibraryMeta = SqliteLibraryMeta::query()->where('id', $request->id)->first();
+        $connection = $sqliteLibraryMeta->getConnection();
 
         $itemsCount = $connection->query()
             ->select($connection->raw('count(*) as count'))
-            ->from($sqliteCollectionMeta->tbl_name)
+            ->from($sqliteLibraryMeta->tbl_name)
             ->value('count');
-        $createdAtCarbon = new Carbon($sqliteCollectionMeta->created_at);
+        $createdAtCarbon = new Carbon($sqliteLibraryMeta->created_at);
 
         $resource = new JsonResource([
-            'id' => $sqliteCollectionMeta->id,
-            'title' => $sqliteCollectionMeta->tbl_name,
-            'fields' => json_decode($sqliteCollectionMeta->meta, JSON_OBJECT_AS_ARRAY),
+            'id' => $sqliteLibraryMeta->id,
+            'title' => $sqliteLibraryMeta->tbl_name,
+            'fields' => json_decode($sqliteLibraryMeta->meta, JSON_OBJECT_AS_ARRAY),
         ]);
         $resource->with['meta'] = [
             'created_at' => $createdAtCarbon->format('Y-m-d H:i:s'),
@@ -251,12 +251,12 @@ class CollectionController extends ApiV1Controller
     }
 
     #[OA\Delete(
-        path: '/api/v1/collections/{id}',
-        description: 'Remove the specified collection along with all items included. The operation cannot be undone.',
-        summary: 'Delete a Collection',
+        path: '/api/v1/libraries/{id}',
+        description: 'Remove the specified Library along with all Items included. The operation cannot be undone.',
+        summary: 'Delete a Library',
         security: self::SECURITY_SCHEME_BEARER,
-        tags: ['collections'],
-        parameters: [new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF)],
+        tags: ['libraries'],
+        parameters: [new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF)],
         responses: [
             new OA\Response(ref: self::RESPONSE_204_REF, response: 204),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -265,34 +265,35 @@ class CollectionController extends ApiV1Controller
         ]
     )]
     /**
-     * @param CollectionIdRequest $request
+     * TODO: Implement idempotence
+     * @param LibraryIdRequest $request
      * @return JsonResponse
      * @throws Throwable
      */
-    public function delete(CollectionIdRequest $request): JsonResponse
+    public function delete(LibraryIdRequest $request): JsonResponse
     {
-        /** @var SqliteCollectionMeta $sqliteCollectionMeta */
-        $sqliteCollectionMeta = SqliteCollectionMeta::query()->where('id', $request->id)->first();
-        $connection = $sqliteCollectionMeta->getConnection();
+        /** @var SqliteLibraryMeta $sqliteLibraryMeta */
+        $sqliteLibraryMeta = SqliteLibraryMeta::query()->where('id', $request->id)->first();
+        $connection = $sqliteLibraryMeta->getConnection();
 
-        $connection->transaction(function () use ($connection, $sqliteCollectionMeta) {
+        $connection->transaction(function () use ($connection, $sqliteLibraryMeta) {
             // Remove posters (use background job)
 
-            $connection->getSchemaBuilder()->drop($sqliteCollectionMeta->tbl_name);
-            $sqliteCollectionMeta->delete();
+            $connection->getSchemaBuilder()->drop($sqliteLibraryMeta->tbl_name);
+            $sqliteLibraryMeta->delete();
         });
 
         return new JsonResponse(null, 204);
     }
 
     #[OA\Patch(
-        path: '/api/v1/collections/{id}',
-        description: 'Remove all items from the specified collection but not the collection itself. ' .
+        path: '/api/v1/libraries/{id}',
+        description: 'Remove all Items from the specified Library but not the Library itself. ' .
         'The operation cannot be undone.',
-        summary: 'Clear (Truncate) a Collection',
+        summary: 'Clear (Truncate) a Library',
         security: self::SECURITY_SCHEME_BEARER,
-        tags: ['collections'],
-        parameters: [new OA\Parameter(ref: self::PARAM_COLLECTION_ID_REF)],
+        tags: ['libraries'],
+        parameters: [new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF)],
         responses: [
             new OA\Response(
                 response: '200',
@@ -314,29 +315,30 @@ class CollectionController extends ApiV1Controller
         ]
     )]
     /**
-     * @param CollectionIdRequest $request
+     * TODO: Implement idempotence
+     * @param LibraryIdRequest $request
      * @return JsonResponse
      * @throws Throwable
      */
-    public function clear(CollectionIdRequest $request): JsonResponse
+    public function clear(LibraryIdRequest $request): JsonResponse
     {
-        /** @var SqliteCollectionMeta $sqliteCollectionMeta */
-        $sqliteCollectionMeta = SqliteCollectionMeta::query()->where('id', $request->id)->first();
-        $connection = $sqliteCollectionMeta->getConnection();
+        /** @var SqliteLibraryMeta $sqliteLibraryMeta */
+        $sqliteLibraryMeta = SqliteLibraryMeta::query()->where('id', $request->id)->first();
+        $connection = $sqliteLibraryMeta->getConnection();
 
-        $connection->transaction(function () use ($connection, $sqliteCollectionMeta, &$itemsAffected) {
+        $connection->transaction(function () use ($connection, $sqliteLibraryMeta, &$itemsAffected) {
             // Remove posters (use background job)
 
             $itemsAffected = $connection->query()
                 ->select($connection->raw('count(*) as count'))
-                ->from($sqliteCollectionMeta->tbl_name)
+                ->from($sqliteLibraryMeta->tbl_name)
                 ->value('count');
-            $connection->table($sqliteCollectionMeta->tbl_name)->truncate();
+            $connection->table($sqliteLibraryMeta->tbl_name)->truncate();
         });
 
         $resource = new JsonResource([
-            'id' => $sqliteCollectionMeta->id,
-            'title' => $sqliteCollectionMeta->tbl_name,
+            'id' => $sqliteLibraryMeta->id,
+            'title' => $sqliteLibraryMeta->tbl_name,
         ]);
         $resource->with['meta'] = [
             'status' => 'truncated',

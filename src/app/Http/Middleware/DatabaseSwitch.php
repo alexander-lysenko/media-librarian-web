@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\SqliteCollectionMeta;
+use App\Models\SqliteLibraryMeta;
 use Closure;
 use Illuminate\Database\Connection;
 use Illuminate\Database\QueryException;
@@ -17,7 +17,7 @@ use PDO;
  */
 class DatabaseSwitch
 {
-    public const CONNECTION_PATH = "sqlite_user_dependent";
+    public const CONNECTION_PATH = 'sqlite_user_dependent';
 
     /**
      * Create a new filter instance.
@@ -44,7 +44,7 @@ class DatabaseSwitch
             $userId = $request->user()->id;
 
             $dbConfig = Config::get('database.connections.sqlite');
-            $dbConfig['database'] = storage_path("databases/collections-$userId.sqlite");
+            $dbConfig['database'] = storage_path("databases/libraries-$userId.sqlite");
 
             // This will create database if it does not exist
             if (!file_exists($dbConfig['database'])) {
@@ -63,15 +63,15 @@ class DatabaseSwitch
 
     /**
      * Creates and executes a test query under the established connection.
-     * Actually checks the presence of the table required to store the metadata of a created collection,
+     * Actually checks the presence of the table required to store the metadata of a created Library,
      *  and then creates the table if it doesn't exist.
      * @return void
      */
     private function testConnection(): void
     {
         $connection = DB::connection('sqlite_user_dependent');
-        $sqliteCollectionMeta = new SqliteCollectionMeta();
-        $tableName = $sqliteCollectionMeta->getTable();
+        $sqliteLibraryMeta = new SqliteLibraryMeta();
+        $tableName = $sqliteLibraryMeta->getTable();
 
         try {
             $connection->query()->select('id')->from($tableName)->first();

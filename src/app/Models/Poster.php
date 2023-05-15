@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $user_id
- * @property int $collection_id
- * @property int $entry_id
+ * @property int $library_id
+ * @property int $item_id
  * @property string $uri
  * @property string $created_at
  * @property string $updated_at
@@ -23,8 +23,8 @@ class Poster extends Model
     /** @inheritdoc */
     public $fillable = [
         'user_id',
-        'collection_id',
-        'entry_id',
+        'library_id',
+        'item_id',
         'uri',
     ];
 }

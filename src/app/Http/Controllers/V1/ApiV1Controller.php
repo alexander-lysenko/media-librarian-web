@@ -54,8 +54,8 @@ abstract class ApiV1Controller extends BaseController
 
     public const SECURITY_SCHEME_BEARER = [['BearerAuth' => []]];
 
-    public const PARAM_COLLECTION_ID_REF = '#/components/parameters/collectionId';
-    public const PARAM_ENTRY_ID_REF = '#/components/parameters/entryId';
+    public const PARAM_LIBRARY_ID_REF = '#/components/parameters/libraryId';
+    public const PARAM_ITEM_ID_REF = '#/components/parameters/itemId';
     public const PARAM_PAGE_REF = '#/components/parameters/page';
     public const PARAM_PER_PAGE_REF = '#/components/parameters/perPage';
 
@@ -69,31 +69,31 @@ abstract class ApiV1Controller extends BaseController
     public const SCHEMA_PROFILE_REF = '#/components/schemas/Profile';
 
     public const SCHEMA_TYPES_REF = '#/components/schemas/DataTypes';
-    public const SCHEMA_COLLECTION_REF = '#/components/schemas/CollectionExample';
-    public const SCHEMA_COLLECTION_ENTRY_REF = '#/components/schemas/CollectionEntryExample';
-    public const SCHEMA_COLLECTION_ENTRY_REQUEST_REF = '#/components/schemas/CollectionEntryRequestExample';
+    public const SCHEMA_LIBRARY_REF = '#/components/schemas/LibraryExample';
+    public const SCHEMA_LIBRARY_ENTRY_REF = '#/components/schemas/LibraryItemExample';
+    public const SCHEMA_LIBRARY_ENTRY_REQUEST_REF = '#/components/schemas/LibraryItemRequestExample';
 
     public const SCHEMA_POSTER_BASE64_REF = '#/components/schemas/PosterBase64Example';
 
     #[OA\Parameter(
-        parameter: 'collectionId',
+        parameter: 'libraryId',
         name: 'id',
-        description: 'The ID of an existing collection',
+        description: 'The ID of an existing Library',
         in: 'path',
         required: true,
         schema: new OA\Schema(type: 'integer', example: 1),
     )]
-    private string $collectionId = self::PARAM_COLLECTION_ID_REF;
+    private string $libraryId = self::PARAM_LIBRARY_ID_REF;
 
     #[OA\Parameter(
-        parameter: 'entryId',
-        name: 'entry',
-        description: 'The ID of an existing entry',
+        parameter: 'itemId',
+        name: 'item',
+        description: 'The ID of an existing Item in the Library',
         in: 'path',
         required: true,
         schema: new OA\Schema(type: 'integer', example: 1),
     )]
-    private string $entryId = self::PARAM_ENTRY_ID_REF;
+    private string $entryId = self::PARAM_ITEM_ID_REF;
 
     #[OA\Parameter(
         parameter: 'page',

@@ -19,7 +19,7 @@ use Illuminate\Database\Schema\ColumnDefinition;
  * @property string $meta
  * @property string $created_at
  */
-class SqliteCollectionMeta extends Model
+class SqliteLibraryMeta extends Model
 {
     use HasFactory;
 
@@ -32,7 +32,7 @@ class SqliteCollectionMeta extends Model
     ];
 
     /** @inheritdoc */
-    protected $table = 'sqlite_collection_meta';
+    protected $table = 'sqlite_library_meta';
 
     /** @inheritdoc */
     public $timestamps = true;
@@ -52,7 +52,7 @@ class SqliteCollectionMeta extends Model
     }
 
     /**
-     * Allows the collection creating tool to map the field's input type with a specific data type.
+     * Allows the creating tool to map the field's input type with a specific data type.
      * Creates a table column with the specified data type depending on the field's input type.
      * @param Blueprint $table
      * @param string $name
@@ -75,15 +75,15 @@ class SqliteCollectionMeta extends Model
     }
 
     /**
-     * Composes a query builder starting from a collection table found by its ID.
-     * @param int $collectionId - the collection ID from SqliteCollectionMeta
+     * Composes a query builder starting from a Library's table found by its ID.
+     * @param int $libraryId - the Library ID from SqliteLibraryMeta
      * @return Builder - an Illuminate\Database\Query\Builder instance
      */
-    public static function getCollectionTableQuery(int $collectionId): Builder
+    public static function getLibraryTableQuery(int $libraryId): Builder
     {
-        /** @var SqliteCollectionMeta $collectionMetaEntry */
-        $collectionMetaEntry = static::query()->where('id', $collectionId)->first();
+        /** @var SqliteLibraryMeta $libraryMetaEntry */
+        $libraryMetaEntry = static::query()->where('id', $libraryId)->first();
 
-        return $collectionMetaEntry->getConnection()->table($collectionMetaEntry->tbl_name);
+        return $libraryMetaEntry->getConnection()->table($libraryMetaEntry->tbl_name);
     }
 }

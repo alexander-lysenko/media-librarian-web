@@ -31,11 +31,11 @@ class CreateUser extends Command
      */
     public function handle(): void
     {
-        $this->comment("NOTE: The user account created from here bypasses the email confirmation.");
-        $this->comment("The activation of the new account is processed immediately.");
-        $this->comment("Recovering such accounts using the standard tools may cause issues.");
+        $this->comment('NOTE: The user account created from here bypasses the email confirmation.');
+        $this->comment('The activation of the new account is processed immediately.');
+        $this->comment('Recovering such accounts using the standard tools may cause issues.');
         $this->comment("YOU'VE BEEN WARNED!");
-        $this->comment("=========================");
+        $this->comment('=========================');
 
         // Enter username, if not present via command line option
         $name = $this->option('name') ?: $this->ask('Please enter a username');
@@ -44,7 +44,7 @@ class CreateUser extends Command
         // Enter password securely, if not present via command line option
         $password = $this->option('password') ?: $this->secret('Please enter a new password');
 
-        $this->line("Collected all the necessary data. Processing...", verbosity: "v");
+        $this->line('Collected all the necessary data. Processing...', verbosity: 'v');
 
         $validator = Validator::make([
             'name' => $name,

@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\V1\CollectionController;
-use App\Http\Controllers\V1\CollectionEntryController;
+use App\Http\Controllers\V1\LibraryController;
+use App\Http\Controllers\V1\LibraryItemController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\UserController;
 use Illuminate\Support\Facades\Route;
@@ -44,26 +44,26 @@ Route::middleware(['auth.bearer:sanctum'])
 
 // Routes for Collections (CRUD)
 Route::middleware(['auth.bearer:sanctum'])
-    ->prefix('v1/collections/')->name('v1.collections.')
+    ->prefix('v1/libraries/')->name('v1.libraries.')
     ->group(function () {
-        Route::get('/', [CollectionController::class, 'index'])->name('index');
-        Route::post('/', [CollectionController::class, 'create'])->name('create');
+        Route::get('/', [LibraryController::class, 'index'])->name('index');
+        Route::post('/', [LibraryController::class, 'create'])->name('create');
 
-        Route::get('/{id}', [CollectionController::class, 'view'])->name('view');
-        Route::delete('/{id}', [CollectionController::class, 'delete'])->name('delete');
-        Route::patch('/{id}', [CollectionController::class, 'clear'])->name('clear');
+        Route::get('/{id}', [LibraryController::class, 'view'])->name('view');
+        Route::delete('/{id}', [LibraryController::class, 'delete'])->name('delete');
+        Route::patch('/{id}', [LibraryController::class, 'clear'])->name('clear');
     });
 
 // Routes for Collection entries (CRUD)
 Route::middleware(['auth.bearer:sanctum'])
-    ->prefix('v1/collections/{id}/entries/')->name('v1.collections.entries.')
+    ->prefix('v1/libraries/{id}/items/')->name('v1.libraries.items.')
     ->group(function () {
-        Route::get('/', [CollectionEntryController::class, 'index'])->name('index');
-        Route::post('/', [CollectionEntryController::class, 'create'])->name('create');
+        Route::get('/', [LibraryItemController::class, 'index'])->name('index');
+        Route::post('/', [LibraryItemController::class, 'create'])->name('create');
 
-        Route::get('/{entry}', [CollectionEntryController::class, 'view'])->name('view');
-        Route::put('/{entry}', [CollectionEntryController::class, 'update'])->name('update');
-        Route::delete('/{entry}', [CollectionEntryController::class, 'delete'])->name('delete');
+        Route::get('/{item}', [LibraryItemController::class, 'view'])->name('view');
+        Route::put('/{item}', [LibraryItemController::class, 'update'])->name('update');
+        Route::delete('/{item}', [LibraryItemController::class, 'delete'])->name('delete');
 
-        Route::get('/random', [CollectionEntryController::class, 'random'])->name('random');
+        Route::get('/random', [LibraryItemController::class, 'random'])->name('random');
     });

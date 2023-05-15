@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests\V1;
 
-use App\Rules\UniqueUserCollectionRule;
+use App\Rules\UniqueLibraryNameRule;
 use App\Utils\Enum\InputDataTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * A request entity to validate the data passed to CREATE a new collection
+ * A request entity to validate the data passed to CREATE a new Library
  *
  * @property string $title
  * @property array $fields
  */
-class CreateCollectionRequest extends FormRequest
+class CreateLibraryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,7 +31,7 @@ class CreateCollectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', new UniqueUserCollectionRule()],
+            'title' => ['required', 'string', new UniqueLibraryNameRule()],
             'fields.*' => ['required', 'array:name,type', 'max:30'],
 
             'fields.*.name' => ['required', 'string', 'distinct:ignore_case'],

@@ -23,8 +23,8 @@ class UserController extends ApiV1Controller
 {
     #[OA\Post(
         path: '/api/v1/user/signup',
-        description: 'Sign up a new user',
-        summary: 'Register a new user',
+        description: 'Sign up a new User',
+        summary: 'Register a new User',
         // requestBody: new OA\RequestBody(
         //     required: true,
         //     content: new OA\JsonContent(
@@ -98,7 +98,7 @@ class UserController extends ApiV1Controller
 
     #[OA\Post(
         path: '/api/v1/user/login',
-        description: 'Obtain an API (Bearer) token to execute the rest of requests as an authenticated user',
+        description: 'Obtain an API (Bearer) token to execute the rest of requests as an authenticated User',
         summary: 'Login (obtain an API token)',
         requestBody: new OA\RequestBody(
             required: true,

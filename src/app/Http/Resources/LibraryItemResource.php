@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CollectionEntryResource extends JsonResource
+class LibraryItemResource extends JsonResource
 {
     /**
      * The "data" wrapper that should be applied.
@@ -18,7 +18,7 @@ class CollectionEntryResource extends JsonResource
      * @param Request $request
      * @return array
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         $resource = $this->resource;
 

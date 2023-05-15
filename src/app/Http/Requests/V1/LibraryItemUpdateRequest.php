@@ -3,17 +3,19 @@
 namespace App\Http\Requests\V1;
 
 use App\Http\Middleware\DatabaseSwitch;
-use App\Models\SqliteCollectionMeta;
+use App\Models\SqliteLibraryMeta;
+use App\Rules\LibraryItemStructureRule;
+use App\Utils\FileHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * A request entity to validate the ID of an existing entry from an existing collection
- * during view/update/delete the entry
+ * A request entity to validate the data passed to UPDATE an existing Item into an existing Library
  * @property int $id
- * @property int $entry
+ * @property int $item
+ * @property array $contents
  */
-class CollectionEntryRequest extends FormRequest
+class LibraryItemUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,9 +32,15 @@ class CollectionEntryRequest extends FormRequest
      */
     public function prepareForValidation(): void
     {
+        $poster = null;
+        if (!empty($this->input('poster'))) {
+            $poster = FileHelper::fromBase64($this->input('poster'));
+        }
+
         $this->merge([
             'id' => $this->route('id'),
-            'entry' => $this->route('entry'),
+            'item' => $this->route('item'),
+            'poster' => $poster,
         ]);
     }
 
@@ -49,17 +57,22 @@ class CollectionEntryRequest extends FormRequest
          */
 
         $idValidated = $this->validate([
-            'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteCollectionMeta::class, 'id')],
+            'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
         ]);
 
-        $collectionTableName = SqliteCollectionMeta::query()
+        $libraryTableName = SqliteLibraryMeta::query()
             ->where('id', $idValidated['id'])
             ->pluck('tbl_name')
             ->first();
-        $collectionTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $collectionTableName]);
+        $libraryTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $libraryTableName]);
+
+        $itemValidated = $this->validate([
+            'item' => ['required', 'integer', 'min:1', Rule::exists($libraryTablePath, 'id')],
+        ]);
 
         return [
-            'entry' => ['required', 'integer', 'min:1', Rule::exists($collectionTablePath, 'id')],
+            'contents' => ['required', new LibraryItemStructureRule($idValidated['id'], $itemValidated['item'])],
+            'poster' => ['nullable', 'file', 'max:4096', 'mimes:jpg,png'],
         ];
     }
 }

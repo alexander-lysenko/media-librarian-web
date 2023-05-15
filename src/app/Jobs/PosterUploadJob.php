@@ -36,8 +36,8 @@ class PosterUploadJob implements ShouldQueue
      */
     public function __construct(
         private readonly int $userId,
-        private readonly int $collectionId,
-        private readonly int $entryId,
+        private readonly int $libraryId,
+        private readonly int $itemId,
         private readonly string $poster,
     ) {
     }
@@ -85,8 +85,8 @@ class PosterUploadJob implements ShouldQueue
         $fileName = hash_file('crc32b', $tmpFilePath);
         $filePath = implode('/', [
             "user_$this->userId",
-            "collection_$this->collectionId",
-            "$this->entryId-$fileName.webp",
+            "library_$this->libraryId",
+            "$this->itemId-$fileName.webp",
         ]);
 
         // Upload file to S3 // todo: replace 'local' with 's3'
@@ -95,8 +95,8 @@ class PosterUploadJob implements ShouldQueue
             // Save a record into database
             $posterEntry = Poster::query()->firstOrNew([
                 'user_id' => $this->userId,
-                'collection_id' => $this->collectionId,
-                'entry_id' => $this->entryId,
+                'library_id' => $this->libraryId,
+                'item_id' => $this->itemId,
             ], [
                 'uri' => $filePath,
             ]);

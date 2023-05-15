@@ -1,7 +1,7 @@
 import { userSignupUrl } from "../core/links";
 import { baseApiRequest, BaseApiRequestConfig, BaseApiRequestEvents } from "../core/request/baseApiRequest";
 
-export const signupRequest = () => {
+export const postUserSignup = () => {
   const config: BaseApiRequestConfig = {
     url: userSignupUrl,
     method: "POST",

@@ -3,45 +3,40 @@
 namespace App\Rules;
 
 use App\Http\Middleware\DatabaseSwitch;
-use App\Models\SqliteCollectionMeta;
-use Illuminate\Contracts\Validation\Rule as RuleInterface;
+use App\Models\SqliteLibraryMeta;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
- * A request validation rule to check that the payload of a new collection entry
- * matches the structure of the collection the new entry will be created into.
+ * A request validation rule to check that the payload of a new Library's Item
+ * matches the structure of the Library the new Item will be created into.
  */
-class CollectionEntryStructureRule implements RuleInterface
+class LibraryItemStructureRule implements ValidationRule
 {
     /**
-     * The validation error messages.
-     * @var array
-     */
-    protected array $messages = [];
-
-    /**
-     * The ID of a table to get the structure from, based on an entry from SqliteCollectionMeta
+     * The ID of a table to get the structure from, based on an entry from SqliteLibraryMeta
      * @var int
      */
-    private int $collectionId;
+    private int $libraryId;
 
     /**
-     * The ID of an existing collection entry.
+     * The ID of an existing Item.
      * It is necessary for skipping "unique" validation on update the entry, may be skipped on create a new entry
      * @var int|null
      */
-    private ?int $collectionEntryId;
+    private ?int $libraryItemId;
 
     /**
      * Create a new rule instance.
      * @return void
      */
-    public function __construct(int $collectionId, ?int $collectionEntryId = null)
+    public function __construct(int $libraryId, ?int $libraryItemId = null)
     {
-        $this->collectionId = $collectionId;
-        $this->collectionEntryId = $collectionEntryId;
+        $this->libraryId = $libraryId;
+        $this->libraryItemId = $libraryItemId;
     }
 
     /**
@@ -50,14 +45,15 @@ class CollectionEntryStructureRule implements RuleInterface
      *
      * @param string $attribute
      * @param mixed $value
-     * @return bool
+     * @param Closure $fail
+     * @return void
      * @throws ValidationException
      */
-    public function passes($attribute, $value): bool
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // Get the metadata of a collection
-        /** @var SqliteCollectionMeta $collectionModel */
-        $collectionModel = SqliteCollectionMeta::query()->where('id', $this->collectionId)->get()->first();
+        /** @var SqliteLibraryMeta $collectionModel */
+        $collectionModel = SqliteLibraryMeta::query()->where('id', $this->libraryId)->get()->first();
 
         // Create a set of validation rules for every field type
         $rulesDefaultSet = static::extractRules();
@@ -77,21 +73,10 @@ class CollectionEntryStructureRule implements RuleInterface
         // Add the "unique" validation rule for the title of a collection's entry (first field of an entry)
         $tableWithConnection = implode('.', [DatabaseSwitch::CONNECTION_PATH, $collectionModel->tbl_name]);
         $rules[$firstField][] = Rule::unique($tableWithConnection, $firstField)
-            ->ignore($this->collectionEntryId);
+            ->ignore($this->libraryItemId);
 
         // Perform all the validations
         Validator::make($value, $rules, [], $customAttributes)->validate();
-
-        return true;
-    }
-
-    /**
-     * Get the validation error messages.
-     * @return string|array
-     */
-    public function message(): string|array
-    {
-        return $this->messages;
     }
 
     /**
