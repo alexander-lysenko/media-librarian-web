@@ -64,6 +64,7 @@ class LibraryItemController extends ApiV1Controller
 {
     #[OA\Get(
         path: '/api/v1/libraries/{id}/items',
+        operationId: 'items-index',
         description: "View all Items from the specified Library.\n\n" .
         'By default the selection is paginated. ' .
         'The selection can be filtered by any field(s) of the Library using customizable search rules.',
@@ -125,6 +126,7 @@ class LibraryItemController extends ApiV1Controller
 
     #[OA\Post(
         path: '/api/v1/libraries/{id}/items',
+        operationId: 'items-create',
         description: "Add a new Item into the specified Library.\n\n" .
         ' The structure of the new Item must match the structure of the Library that a new Item is created into.',
         summary: 'Add a New Item Into a Library',
@@ -183,6 +185,7 @@ class LibraryItemController extends ApiV1Controller
 
     #[OA\Get(
         path: '/api/v1/libraries/{id}/items/{item}',
+        operationId: 'items-view',
         description: 'Find an Item by its ID in the specified Library.',
         summary: 'Get an Item From a Library',
         security: self::SECURITY_SCHEME_BEARER,
@@ -224,6 +227,7 @@ class LibraryItemController extends ApiV1Controller
 
     #[OA\Put(
         path: '/api/v1/libraries/{id}/items/{item}',
+        operationId: 'items-update',
         description: 'Update an Item by its ID in the specified Library.',
         summary: 'Update an Item in a Library',
         security: self::SECURITY_SCHEME_BEARER,
@@ -280,6 +284,7 @@ class LibraryItemController extends ApiV1Controller
 
     #[OA\Delete(
         path: '/api/v1/libraries/{id}/items/{item}',
+        operationId: 'items-delete',
         description: 'Delete/Erase an Item by its ID from the specified Library.',
         summary: /** @lang text */ 'Delete an Item From a Library',
         security: self::SECURITY_SCHEME_BEARER,
@@ -308,6 +313,7 @@ class LibraryItemController extends ApiV1Controller
 
     #[OA\Get(
         path: '/api/v1/libraries/{id}/items/random',
+        operationId: 'items-random',
         description: 'Finds any random Item in the specified Library.' .
         "The more Items the Library contains, the more randomized the selection will be.\n\n" .
         'To achieve the best performance, the query is limited to 1 item picked from random offset. ' .

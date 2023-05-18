@@ -38,9 +38,9 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppNavbar, PaperCardHeader } from "../components";
+import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
-import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
 
 const username = "User Name";
 const email = "username@example.com";

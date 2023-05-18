@@ -23,6 +23,7 @@ class UserController extends ApiV1Controller
 {
     #[OA\Post(
         path: '/api/v1/user/signup',
+        operationid: 'user-signup',
         description: 'Sign up a new User',
         summary: 'Register a new User',
         // requestBody: new OA\RequestBody(
@@ -98,6 +99,7 @@ class UserController extends ApiV1Controller
 
     #[OA\Post(
         path: '/api/v1/user/login',
+        operationid: 'profile-login',
         description: 'Obtain an API (Bearer) token to execute the rest of requests as an authenticated User',
         summary: 'Login (obtain an API token)',
         requestBody: new OA\RequestBody(

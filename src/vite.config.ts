@@ -8,10 +8,8 @@ export default defineConfig(({ command }) => ({
   base: command === "serve" ? "" : "/build/",
   root: command === "serve" ? "./frontend" : "",
   publicDir: "fake_dir_so_nothing_gets_copied",
+  envDir: "../",
   plugins: [react(), splitVendorChunkPlugin()],
-  define: {
-    "process.env": process.env,
-  },
   build: {
     manifest: true,
     outDir: "public/build",

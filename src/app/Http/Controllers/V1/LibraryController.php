@@ -44,6 +44,7 @@ class LibraryController extends ApiV1Controller
 {
     #[OA\Get(
         path: '/api/v1/libraries',
+        operationId: 'libraries-index',
         description: 'The response contains the list of ID and name of all Libraries already created ' .
         'and the columns that included in each Library.',
         summary: 'Get All Libraries',
@@ -93,6 +94,7 @@ class LibraryController extends ApiV1Controller
 
     #[OA\Post(
         path: '/api/v1/libraries',
+        operationId: 'libraries-create',
         description: 'The structure of the new Library is created from the parameters passed in request body.',
         summary: 'Create a New Library',
         security: self::SECURITY_SCHEME_BEARER,
@@ -195,6 +197,7 @@ class LibraryController extends ApiV1Controller
 
     #[OA\Get(
         path: '/api/v1/libraries/{id}',
+        operationId: 'libraries-view',
         description: 'View the structure of the already existing Library.',
         summary: 'Get the Metadata of a Library',
         security: self::SECURITY_SCHEME_BEARER,
@@ -252,6 +255,7 @@ class LibraryController extends ApiV1Controller
 
     #[OA\Delete(
         path: '/api/v1/libraries/{id}',
+        operationId: 'libraries-delete',
         description: 'Remove the specified Library along with all Items included. The operation cannot be undone.',
         summary: 'Delete a Library',
         security: self::SECURITY_SCHEME_BEARER,
@@ -288,6 +292,7 @@ class LibraryController extends ApiV1Controller
 
     #[OA\Patch(
         path: '/api/v1/libraries/{id}',
+        operationId: 'libraries-clear',
         description: 'Remove all Items from the specified Library but not the Library itself. ' .
         'The operation cannot be undone.',
         summary: 'Clear (Truncate) a Library',
