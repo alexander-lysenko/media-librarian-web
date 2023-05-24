@@ -41,6 +41,7 @@ import { AppNavbar, PaperCardHeader } from "../components";
 import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
+import { ColoredRating } from "../components/library/ColoredRating";
 
 const username = "User Name";
 const email = "username@example.com";
@@ -57,8 +58,8 @@ type LibraryActions = {
 export const Profile = () => {
   const { t } = useTranslation();
 
-  const [profileOpen, setProfileOpen] = useState(true);
-  const [libOpen, setLibOpen] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [libOpen, setLibOpen] = useState(false);
   const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
 
   return (
@@ -108,6 +109,7 @@ export const Profile = () => {
         handleClose={() => setLibCreateDialogOpen(false)}
         handleSubmitted={() => false}
       />
+      <ColoredRating value={4.5} size={10} precision={0.5} />
     </>
   );
 };

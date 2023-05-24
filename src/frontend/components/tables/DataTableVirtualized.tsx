@@ -94,9 +94,11 @@ export const DataTableVirtualized = (props: DataTableProps) => {
           data={rows}
           initialItemCount={25}
           ref={ref}
-          // increaseViewportBy={100}
+          // increaseViewportBy={320}
+          fixedItemHeight={34}
           context={componentProps}
           components={virtuosoTableComponents}
+          overscan={15}
           fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
           itemContent={(index, row) => <RowContent row={row} key={index} columns={columns} />}
         />
