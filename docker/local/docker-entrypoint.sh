@@ -1,7 +1,9 @@
 #!/bin/bash
+# https://techstop.github.io/bash-script-colors/
 
-DONE_STDOUT="\033[1;32m DONE \033[0m"
-WEB_UP_STDOUT="\033[1;32mWEB APP IS UP!\033[0m\n"
+DONE_STDOUT="\e[1;32m DONE \e[0m"
+WEB_UP_STDOUT="\e[1;32mWEB APP IS UP!\e[0m"
+NPM_BUILD_STDOUT="\e[1;33mcd src && npm run build\e[0m\n"
 
 function clean_webapp_logs() {
   echo "== Creating / Cleaning log files =="
@@ -56,7 +58,9 @@ function webapp() {
 
   echo "========================================"
   echo -e "$WEB_UP_STDOUT"
-  echo -e "Please make sure the front end is built from the latest version"
+  echo -e "This environment uses the production built of front-end"
+  echo -e "You have to build it outside the container using the following command:"
+  echo -e "$NPM_BUILD_STDOUT"
 
   while true; do
     sleep 1

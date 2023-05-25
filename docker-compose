@@ -5,7 +5,7 @@ NGINX_IP="192.168.240.9"
 HOST_NAME="media-librarian-dev.com"
 
 CONFIG="$DIRNAME"/docker-compose.yml
-DONE_STDOUT="\033[1;32m DONE \033[0m"
+DONE_STDOUT="\e[1;32m DONE \e[0m"
 
 function setup_env_file() {
   # Check if .env file exists. If not, create a new one from .env.example
