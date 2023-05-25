@@ -1,14 +1,9 @@
 import { SxProps } from "@mui/material";
-import React, { ChangeEvent, CSSProperties, FocusEvent } from "react";
+import React from "react";
 
-import { LibraryElementEnum } from "./enums";
+import { LibraryElementEnum } from "../enums";
 
-export type Anchor = "top" | "left" | "bottom" | "right";
 export type SortDirection = "asc" | "desc";
-
-export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
-  ? ElementType
-  : never;
 
 export type DataRow = Record<string, unknown>;
 export type DataRowNew = { id: string } & Record<string, unknown>;
@@ -17,8 +12,8 @@ export type DataColumn = {
   id: string;
   label?: string;
   component: keyof typeof LibraryElementEnum;
-  headerCellStyle?: CSSProperties;
-  contentCellStyle?: CSSProperties;
+  headerCellStyle?: React.CSSProperties;
+  contentCellStyle?: React.CSSProperties;
 };
 
 export type SortOptions = {
@@ -71,13 +66,3 @@ export type DataTableEventsProps = {
   onSort: (columnId: string) => (event: React.MouseEvent<unknown>) => void;
   onRowClick: (rowId: string | number) => (event: React.MouseEvent<unknown>) => void;
 };
-
-export interface CustomInputProps {
-  name: string;
-  label: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: FocusEvent<HTMLInputElement>) => void;
-  value?: string;
-  helperText?: string;
-  errorMessage?: string;
-}

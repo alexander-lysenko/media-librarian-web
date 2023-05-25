@@ -39,6 +39,36 @@
     "usernameMinLength": "Попробуйте ввести полное имя (не менее {{n}} символов)",
     "usernameRequired": "Поле с именем не должно оставаться пустым"
   },
+  "libraryAddItem": {
+    "title": {
+      "create": "Новая запись",
+      "edit": "Редактировать запись"
+    }
+  },
+  "libraryCreateDialog": {
+    "addNewField": "Добавить еще поле",
+    "field": "Поле",
+    "fieldCantBeRemoved": "Это поле нельзя убрать",
+    "fieldName": "Имя поля",
+    "fieldType": "Тип",
+    "fieldsSet": "Поля, из которых состоит библиотека",
+    "libraryTitle": "Название библиотеки",
+    "optionNone": "Не выбрано",
+    "removeField": "Убрать это поле",
+    "title": "Создать новую библиотеку"
+  },
+  "libraryTypes": {
+    "date": "Дата",
+    "datetime": "Дата + Время",
+    "line": "Строка",
+    "priority": "Приоритет",
+    "rating10": "Оценка (10 звезд)",
+    "rating10precision": "Оценка (10 звезд, половинный шаг)",
+    "rating5": "Оценка (5 звезд)",
+    "rating5precision": "Оценка (5 звезд, половинный шаг)",
+    "switch": "Переключатель",
+    "text": "Текстовое поле"
+  },
   "loginPage": {
     "email": "Адрес эл. почты",
     "forgotPassword": "Забыли пароль?",
@@ -105,29 +135,5 @@
   "theme": {
     "presetDark": "Темная",
     "presetLight": "Светлая"
-  },
-  "createLibrary": {
-    "addNewField": "Добавить еще поле",
-    "field": "Поле",
-    "fieldCantBeRemoved": "Это поле нельзя убрать",
-    "fieldName": "Имя поля",
-    "fieldType": "Тип",
-    "fieldsSet": "Поля, из которых состоит библиотека",
-    "libraryTitle": "Название библиотеки",
-    "optionNone": "Не выбрано",
-    "removeField": "Убрать это поле",
-    "title": "Создать новую библиотеку"
-  },
-  "libraryTypes": {
-    "date": "Дата",
-    "datetime": "Дата + Время",
-    "line": "Строка",
-    "priority": "Приоритет",
-    "rating10": "Оценка (10 звезд)",
-    "rating10precision": "Оценка (10 звезд, половинный шаг)",
-    "rating5": "Оценка (5 звезд)",
-    "rating5precision": "Оценка (5 звезд, половинный шаг)",
-    "switch": "Переключатель",
-    "text": "Текстовое поле"
   }
 }

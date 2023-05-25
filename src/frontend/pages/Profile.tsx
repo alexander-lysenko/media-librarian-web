@@ -5,6 +5,7 @@ import {
   CalendarMonthOutlined,
   CleaningServicesOutlined,
   CollectionsOutlined,
+  CreateNewFolderOutlined,
   DeleteForeverOutlined,
   DriveFileRenameOutlineOutlined,
   EmailOutlined,
@@ -38,10 +39,11 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppNavbar, PaperCardHeader } from "../components";
+import { ColoredRating } from "../components/library/ColoredRating";
 import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
-import { ColoredRating } from "../components/library/ColoredRating";
+import { LibraryItemDialog } from "../components/modals/LibraryItemDialog";
 
 const username = "User Name";
 const email = "username@example.com";
@@ -59,8 +61,9 @@ export const Profile = () => {
   const { t } = useTranslation();
 
   const [profileOpen, setProfileOpen] = useState(false);
-  const [libOpen, setLibOpen] = useState(false);
+  const [libOpen, setLibOpen] = useState(true);
   const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
+  const [libAddItemDialogOpen, setLibAddItemDialogOpen] = useState(false);
 
   return (
     <>
@@ -98,6 +101,7 @@ export const Profile = () => {
             <LibrariesList
               actions={{
                 handleOpenLibraryDialog: () => setLibCreateDialogOpen(true),
+                handleOpenItemDialog: () => setLibAddItemDialogOpen(true),
               }}
             />
           </Box>
@@ -107,6 +111,11 @@ export const Profile = () => {
       <LibraryCreateDialog
         open={libCreateDialogOpen}
         handleClose={() => setLibCreateDialogOpen(false)}
+        handleSubmitted={() => false}
+      />
+      <LibraryItemDialog
+        open={libAddItemDialogOpen}
+        handleClose={() => setLibAddItemDialogOpen(false)}
         handleSubmitted={() => false}
       />
       <ColoredRating value={4.5} size={10} precision={0.5} />
@@ -211,9 +220,19 @@ const LibrariesList = ({ actions }: LibraryActions) => {
   return (
     <List dense disablePadding component="div">
       <ListItemButton divider onClick={actions?.handleOpenLibraryDialog}>
-        <ListItemIcon children={<AddCircleOutlined />} />
+        <ListItemIcon children={<CreateNewFolderOutlined />} />
         <ListItemText
           primary={"Создать библиотеку"}
+          secondary={"&nbsp;"}
+          primaryTypographyProps={{ noWrap: true, textTransform: "uppercase" }}
+          secondaryTypographyProps={{ noWrap: true }}
+          title={email}
+        />
+      </ListItemButton>
+      <ListItemButton divider onClick={actions?.handleOpenItemDialog}>
+        <ListItemIcon children={<AddCircleOutlined />} />
+        <ListItemText
+          primary={"Добавить запись"}
           secondary={"&nbsp;"}
           primaryTypographyProps={{ noWrap: true, textTransform: "uppercase" }}
           secondaryTypographyProps={{ noWrap: true }}

@@ -33,7 +33,7 @@ class ProfileController extends ApiV1Controller
 {
     #[OA\Get(
         path: '/api/v1/profile',
-        operationid: 'profile-index',
+        operationId: 'profile-index',
         description: 'Request the full profile of the authenticated User',
         summary: 'Get User Info',
         security: self::SECURITY_SCHEME_BEARER,
@@ -74,7 +74,7 @@ class ProfileController extends ApiV1Controller
 
     #[OA\Post(
         path: '/api/v1/profile/logout',
-        operationid: 'profile-logout',
+        operationId: 'profile-logout',
         description: 'Sign out / De-authenticate a User',
         summary: 'Logout',
         security: self::SECURITY_SCHEME_BEARER,

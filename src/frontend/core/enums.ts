@@ -37,5 +37,5 @@ export enum RegisteredFormNamesEnum {
   login = "login",
   passwordRecoveryRequest = "passwordRecoveryRequest",
   passwordRecovery = "passwordRecovery",
-  createLibrary = "createLibrary",
+  libraryCreate = "libraryCreate",
 }

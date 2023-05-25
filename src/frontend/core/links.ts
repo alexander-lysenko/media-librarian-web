@@ -1,7 +1,9 @@
 export const apiDomain = import.meta.env.VITE_APP_URL;
 
-export const userSignupUrl = apiDomain + "/api/v1/user/signup";
-export const userLoginUrl = apiDomain + "/api/v1/user/login";
+export const userSignupEndpoint = apiDomain + "/api/v1/user/signup";
+export const userLoginEndpoint = apiDomain + "/api/v1/user/login";
 
-export const librariesUrl = apiDomain + "/api/v1/libraries";
-export const libraryItemsUrl = apiDomain + "/api/v1/libraries/{id}/items";
+export const profileEndpoint = apiDomain + "/api/v1/profile";
+
+export const librariesEndpoint = apiDomain + "/api/v1/libraries";
+export const libraryItemsEndpoint = apiDomain + "/api/v1/libraries/{id}/items";

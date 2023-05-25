@@ -39,6 +39,36 @@
     "usernameMinLength": "Expected a full Personal Name (min {{n}} symbols)",
     "usernameRequired": "Personal Name is required"
   },
+  "libraryItemDialog": {
+    "title": {
+      "create": "New Entry",
+      "edit": "Update Entry"
+    }
+  },
+  "libraryCreateDialog": {
+    "addNewField": "Add a Field",
+    "field": "Field",
+    "fieldCantBeRemoved": "This field cannot be removed",
+    "fieldName": "Field Name",
+    "fieldType": "Type",
+    "fieldsSet": "Fields the library is made up of",
+    "libraryTitle": "Library Title",
+    "optionNone": "None selected",
+    "removeField": "Remove this field",
+    "title": "Create New Library"
+  },
+  "libraryTypes": {
+    "date": "Date",
+    "datetime": "Date+Time",
+    "line": "Text Line",
+    "priority": "Priority",
+    "rating10": "Rating (10 stars)",
+    "rating10precision": "Rating (10 stars, half precision)",
+    "rating5": "Rating (5 stars)",
+    "rating5precision": "Rating (5 stars, half precision)",
+    "switch": "Switch",
+    "text": "Text Area"
+  },
   "loginPage": {
     "email": "Email Address",
     "forgotPassword": "Forgot password?",
@@ -105,29 +135,5 @@
   "theme": {
     "presetDark": "Dark",
     "presetLight": "Light"
-  },
-  "createLibrary": {
-    "addNewField": "Add a Field",
-    "field": "Field",
-    "fieldCantBeRemoved": "This field cannot be removed",
-    "fieldName": "Field Name",
-    "fieldType": "Type",
-    "fieldsSet": "Fields the library is made up of",
-    "libraryTitle": "Library Title",
-    "optionNone": "None selected",
-    "removeField": "Remove this field",
-    "title": "Create New Library"
-  },
-  "libraryTypes": {
-    "date": "Date",
-    "datetime": "Date+Time",
-    "line": "Text Line",
-    "priority": "Priority",
-    "rating10": "Rating (10 stars)",
-    "rating10precision": "Rating (10 stars, half precision)",
-    "rating5": "Rating (5 stars)",
-    "rating5precision": "Rating (5 stars, half precision)",
-    "switch": "Switch",
-    "text": "Text Area"
   }
 }

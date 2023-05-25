@@ -1,10 +1,10 @@
-import { librariesEndpoint, userSignupEndpoint } from "../core/links";
+import { profileEndpoint } from "../core/links";
 import { baseApiRequest, BaseApiRequestConfig, BaseApiRequestEvents } from "../core/request/baseApiRequest";
 
-export const getLibraries = () => {
+export const getProfile = () => {
   const config: BaseApiRequestConfig = {
-    url: librariesEndpoint,
-    method: "POST",
+    url: profileEndpoint,
+    method: "GET",
   };
 
   const events: BaseApiRequestEvents = {

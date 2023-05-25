@@ -139,7 +139,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
       },
     },
-    createLibrary: {
+    libraryCreate: {
       title: {
         setValueAs: (value: string) => value.trim(),
         required: t("formValidation.libraryTitleRequired") as Message,
