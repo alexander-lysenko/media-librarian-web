@@ -93,25 +93,30 @@
     "title": "Сброс пароля"
   },
   "profile": {
-    "basicDetails": "Основная информация",
-    "myLibraries": "Мои библиотеки",
     "aboutThisProfile": "Детали профиля",
+    "accountStatusEnum": {
+      "CREATED": "Неактивен или только что создан",
+      "ACTIVE": "Активен",
+      "BANNED": "Забанен",
+      "DELETED": "Удален"
+    },
+    "basicDetails": "Основная информация",
+    "detailsEnum": {
+      "registrationDate": "Дата регистрации",
+      "accountStatus": "Статус",
+      "emailStatus": "Статус почтового ящика"
+    },
+    "emailVerifiedEnum": {
+      "unverified": "Не подтвержден",
+      "verified": "Подтвержден"
+    },
+    "myLibraries": "Мои библиотеки",
     "preferences": "Настройки аккаунта",
     "preferencesEnum": {
       "email": "Изменить e-mail адрес",
       "password": "Обновить пароль",
       "theme": "Тема оформления",
       "locale": "Язык"
-    },
-    "detailsEnum": {
-      "registrationDate": "Дата регистрации",
-      "accountStatus": "Статус",
-      "emailStatus": "Статус почтового ящика"
-    },
-    "accountStatusEnum": {
-      "created": "Неактивен или только что создан",
-      "active": "Активен",
-      "banned": "Забанен"
     }
   },
   "signupPage": {

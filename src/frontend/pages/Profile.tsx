@@ -3,19 +3,24 @@ import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
   CalendarMonthOutlined,
+  CheckCircleOutlined,
   CleaningServicesOutlined,
   CollectionsOutlined,
   CreateNewFolderOutlined,
   DeleteForeverOutlined,
   DriveFileRenameOutlineOutlined,
   EmailOutlined,
-  HowToRegOutlined,
+  ErrorOutlined,
+  HighlightOffOutlined,
   LightModeOutlined,
-  MarkAsUnreadOutlined,
+  MarkEmailReadOutlined,
+  MarkEmailUnreadOutlined,
   PasswordOutlined,
   PermContactCalendarOutlined,
   PhotoAlbumOutlined,
   PowerSettingsNewOutlined,
+  RemoveCircleOutlined,
+  SvgIconComponent,
   TranslateOutlined,
 } from "@mui/icons-material";
 import {
@@ -35,7 +40,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppNavbar, PaperCardHeader } from "../components";
@@ -44,11 +49,9 @@ import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
 import { LibraryItemDialog } from "../components/modals/LibraryItemDialog";
-
-const username = "User Name";
-const email = "username@example.com";
-const avatarSrc = "https://source.unsplash.com/TkJbk1I2 2hE/240x240";
-const createdAt = "2020-01-01";
+import { useProfileStore } from "../store/useProfileStore";
+import { shallow } from "zustand/shallow";
+import { AccountStatusEnum } from "../core/types";
 
 type LibraryActions = {
   actions: Record<string, () => void>;
@@ -65,6 +68,8 @@ export const Profile = () => {
   const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
   const [libAddItemDialogOpen, setLibAddItemDialogOpen] = useState(false);
 
+  const [profile, request] = useProfileStore((state) => [state.profile, state.getRequest], shallow);
+  const { name, email, avatar } = profile;
   return (
     <>
       <AppNavbar />
@@ -79,7 +84,7 @@ export const Profile = () => {
           />
           <Grid container display={profileOpen ? "flex" : "none"}>
             <Grid item id="profiler" xs={12} md={4} sx={{ maxWidth: { md: 320 } }}>
-              <Profiler username={username} email={email} avatar={avatarSrc} />
+              <Profiler username={name} email={email} avatar={avatar} />
             </Grid>
             <Grid item id="preferences" xs={12} sm={6} md={4} lg={4}>
               <ProfileActions />
@@ -146,6 +151,7 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
 
 const ProfileActions = () => {
   const { t } = useTranslation();
+  const { email } = useProfileStore((state) => state.profile);
 
   return (
     <List dense disablePadding component="div">
@@ -184,6 +190,14 @@ const ProfileActions = () => {
 
 const AccountInfo = () => {
   const { t } = useTranslation();
+  const { created_at, email_verified_at, status } = useProfileStore((state) => state.profile);
+
+  const accountStatusIcon: Record<AccountStatusEnum, ReactNode> = {
+    [AccountStatusEnum.CREATED]: <ErrorOutlined />,
+    [AccountStatusEnum.ACTIVE]: <CheckCircleOutlined />,
+    [AccountStatusEnum.BANNED]: <RemoveCircleOutlined />,
+    [AccountStatusEnum.DELETED]: <HighlightOffOutlined />,
+  };
 
   return (
     <List dense disablePadding component="div">
@@ -193,17 +207,25 @@ const AccountInfo = () => {
       <Divider />
       <ListItem>
         <ListItemIcon children={<CalendarMonthOutlined />} />
-        <ListItemText primary={t("profile.detailsEnum.registrationDate")} secondary={createdAt} />
+        <ListItemText primary={t("profile.detailsEnum.registrationDate")} secondary={created_at} />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
-        <ListItemIcon children={<HowToRegOutlined />} />
-        <ListItemText primary={t("profile.detailsEnum.accountStatus")} secondary={"Active"} />
+        <ListItemIcon>{accountStatusIcon[status]}</ListItemIcon>
+        <ListItemText
+          primary={t("profile.detailsEnum.accountStatus")}
+          secondary={t(`profile.accountStatusEnum.${status}`)}
+        />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
-        <ListItemIcon children={<MarkAsUnreadOutlined />} />
-        <ListItemText primary={t("profile.detailsEnum.emailStatus")} secondary={"Verified"} />
+        <ListItemIcon>{email_verified_at ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
+        <ListItemText
+          primary={t("profile.detailsEnum.emailStatus")}
+          secondary={
+            email_verified_at ? t("profile.emailVerifiedEnum.verified") : t("profile.emailVerifiedEnum.unverified")
+          }
+        />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
@@ -216,6 +238,7 @@ const AccountInfo = () => {
 
 const LibrariesList = ({ actions }: LibraryActions) => {
   const { t } = useTranslation();
+  const { email } = useProfileStore((state) => state.profile);
 
   return (
     <List dense disablePadding component="div">

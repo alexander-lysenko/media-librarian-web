@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { BaseApiRequestEvents } from "../core/request/baseApiRequest";
-import { createRequestSlice } from "../core/request/createRequestSlice";
+import { AccountStatusEnum } from "../core/types";
 
 type Profile = {
   id: number;
@@ -9,23 +9,35 @@ type Profile = {
   email: string;
   created_at: string;
   updated_at: string;
-  email_verified_at: string;
-  deleted_at: string;
-  status: "CREATED" | "ACTIVE" | "BANNED" | "DELETED";
+  email_verified_at: string | null;
+  deleted_at: string | null;
+  status: AccountStatusEnum;
   avatar: string;
 };
 
 interface ProfileState {
-  user?: Profile;
-  request: {
-    execute: () => void;
-    abort: () => void;
-    events: BaseApiRequestEvents;
-    setEvents: (events: BaseApiRequestEvents) => void;
+  profile: Profile;
+  getRequest: {
+    fetch: () => void;
+    abort?: () => void;
+    events?: BaseApiRequestEvents;
+    setEvents?: (events: BaseApiRequestEvents) => void;
   };
 }
 
-export const useProfileStore = create((set, get) => ({
-  profile: undefined,
-  ...createRequestSlice(set, get),
+export const useProfileStore = create<ProfileState>((set, get) => ({
+  profile: {
+    id: 1,
+    name: "Vasiliy Pupkin",
+    email: "vasyapupkinverylongemailaddress@example.com",
+    avatar: "https://source.unsplash.com/TkJbk1I22hE/240x240",
+    created_at: "2020-01-01",
+    updated_at: "2022-12-31",
+    email_verified_at: "2020-01-01",
+    deleted_at: null,
+    status: "BANNED",
+  },
+  getRequest: {
+    fetch: () => null,
+  },
 }));

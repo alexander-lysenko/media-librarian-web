@@ -93,25 +93,30 @@
     "title": "Password Reset"
   },
   "profile": {
-    "basicDetails": "Basic Details",
-    "myLibraries": "My Libraries",
     "aboutThisProfile": "About This Profile",
+    "accountStatusEnum": {
+      "CREATED": "Inactive or just created",
+      "ACTIVE": "Active",
+      "BANNED": "Banned",
+      "DELETED": "Deleted"
+    },
+    "basicDetails": "Basic Details",
+    "detailsEnum": {
+      "registrationDate": "Registration Date",
+      "accountStatus": "Status",
+      "emailStatus": "E-mail status"
+    },
+    "emailVerifiedEnum": {
+      "unverified": "Unverified",
+      "verified": "Verified"
+    },
+    "myLibraries": "My Libraries",
     "preferences": "Preferences",
     "preferencesEnum": {
       "email": "Change e-mail address",
       "password": "Update password",
       "theme": "Interface theme",
       "locale": "Language"
-    },
-    "detailsEnum": {
-      "registrationDate": "Registration Date",
-      "accountStatus": "Status",
-      "emailStatus": "E-mail status"
-    },
-    "accountStatusEnum": {
-      "created": "Inactive or just created",
-      "active": "Active",
-      "banned": "Banned"
     }
   },
   "signupPage": {
