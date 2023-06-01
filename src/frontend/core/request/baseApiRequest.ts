@@ -19,12 +19,12 @@ export type BaseApiRequestConfig<Request = never> = AxiosRequestConfig<Request> 
 /**
  * A type for events of base API request
  */
-export type BaseApiRequestEvents<T = unknown> = {
+export type BaseApiRequestEvents<Response = unknown> = {
   /** The payload to be executed before the request is run */
   beforeSend?: () => void;
 
   /** The payload to be executed when the request is successfully fulfilled */
-  onSuccess?: (response: T) => T | PromiseLike<T>;
+  onSuccess?: (response: Response) => Response | PromiseLike<Response>;
 
   /** The payload to be executed when the request is rejected or unsuccessfully fulfilled */
   onReject?: (reason: unknown) => never | PromiseLike<never>;
