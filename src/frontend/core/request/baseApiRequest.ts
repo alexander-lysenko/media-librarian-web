@@ -1,37 +1,52 @@
-import { AxiosRequestConfig, Method } from "axios";
+import axios, { AxiosRequestConfig, Method } from "axios";
 
 import { useCredentialsStore } from "../../store/useCredentialsStore";
-import { axiosInstance } from "./axiosInstance";
 
 /**
  * Base API request configuration options (slightly overridden AxiosRequestConfig)
  */
-export type BaseApiRequestConfig<Request = unknown> = AxiosRequestConfig<Request> & {
+export type BaseApiRequestConfig<Request = never> = AxiosRequestConfig<Request> & {
   /** The API endpoint's route (absolute URL) */
   url: string;
 
   /** The API request method: GET, POST, PUT, DELETE, etc */
   method: Method;
+
+  /** The endpoint's request payload */
+  data?: Request;
 };
 
 /**
  * A type for events of base API request
  */
-export type BaseApiRequestEvents = {
+export type BaseApiRequestEvents<T = unknown> = {
   /** The payload to be executed before the request is run */
   beforeSend?: () => void;
 
   /** The payload to be executed when the request is successfully fulfilled */
-  onSuccess?: (response: unknown) => void;
+  onSuccess?: (response: T) => T | PromiseLike<T>;
 
   /** The payload to be executed when the request is rejected or unsuccessfully fulfilled */
-  onReject?: (response: unknown) => void;
+  onReject?: (reason: unknown) => never | PromiseLike<never>;
 
   /** The payload to be executed when the request is failed */
-  onError?: (error: unknown) => void;
+  onError?: (reason: unknown) => void;
 
   /** The payload to be executed when the request is completed regardless of its status */
   onComplete?: () => void;
+};
+
+/**
+ * Create an Axios instance with custom configuration preset
+ */
+const axiosInstance = () => {
+  const instance = axios.create();
+
+  instance.defaults.timeout = 5000;
+  instance.defaults.headers.post["Content-Type"] = "application/json";
+  instance.defaults.headers.common["Authorization"] = "Bearer 0000";
+
+  return instance;
 };
 
 /**
@@ -40,10 +55,19 @@ export type BaseApiRequestEvents = {
  * @param {BaseApiRequestConfig} config
  * @param {BaseApiRequestEvents} events
  */
-export const baseApiRequest = async (config: BaseApiRequestConfig, events: BaseApiRequestEvents) => {
+type BaseApiRequest = <Request, Response = void>(
+  config: BaseApiRequestConfig<Request>,
+  events: BaseApiRequestEvents<Response>,
+) => Promise<Response | void>;
+
+export const baseApiRequest = async <Request, Response = void>(
+  config: BaseApiRequestConfig<Request>,
+  events: BaseApiRequestEvents<Response>,
+): Promise<Response | void> => {
   const instance = axiosInstance();
+
   const { beforeSend, onSuccess, onReject, onError, onComplete } = events;
-  const onErrorFallback = (error: unknown) => console.error(error);
+  const onErrorFallback = (reason: unknown) => console.error(reason);
 
   const bearerToken = useCredentialsStore.getState().token;
   if (!config?.headers?.["Authorization"]) {
@@ -53,8 +77,8 @@ export const baseApiRequest = async (config: BaseApiRequestConfig, events: BaseA
   beforeSend && beforeSend();
 
   return await instance
-    .request(config)
-    .then(onSuccess, onReject)
+    .request<Request, Response>(config)
+    .then<Response>(onSuccess, onReject)
     .catch(onError || onErrorFallback)
     .finally(onComplete);
 };

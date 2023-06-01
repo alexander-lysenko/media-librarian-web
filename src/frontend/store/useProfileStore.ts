@@ -11,7 +11,7 @@ type Profile = {
   updated_at: string;
   email_verified_at: string | null;
   deleted_at: string | null;
-  status: AccountStatusEnum;
+  status: keyof typeof AccountStatusEnum;
   avatar: string;
 };
 
