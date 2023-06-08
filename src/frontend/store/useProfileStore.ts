@@ -1,29 +1,39 @@
 import { create } from "zustand";
 
-import { BaseApiRequestEvents } from "../core/request/baseApiRequest";
-import { AccountStatusEnum } from "../core/types";
+import { profileEndpoint } from "../core/links";
+import { baseApiRequest, BaseApiRequestConfig, BaseApiResponseEvents } from "../core/request/baseApiRequest";
+import { AccountStatusEnum, FetchRequest, RequestSlice, RequestStatus } from "../core/types";
 
 type Profile = {
   id: number;
   name: string;
   email: string;
+  email_verified_at: string | null;
+  status: keyof typeof AccountStatusEnum;
   created_at: string;
   updated_at: string;
-  email_verified_at: string | null;
   deleted_at: string | null;
-  status: keyof typeof AccountStatusEnum;
   avatar: string;
+};
+
+type ProfileResponse = {
+  user: Profile;
 };
 
 interface ProfileState {
   profile: Profile;
-  getRequest: {
-    fetch: () => void;
-    abort?: () => void;
-    events?: BaseApiRequestEvents;
-    setEvents?: (events: BaseApiRequestEvents) => void;
-  };
+  getRequestStatus: RequestStatus;
+  getRequest: FetchRequest;
+  putRequestStatus: RequestStatus;
+  putRequest: FetchRequest;
 }
+
+// const createGetRequestSlice = (set, get, title): RequestSlice => ({
+//   [title]: {
+//     status: "IDLE",
+//     fetch: () => true,
+//   },
+// });
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
   profile: {
@@ -37,7 +47,31 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     deleted_at: null,
     status: "BANNED",
   },
-  getRequest: {
-    fetch: () => null,
+  getRequestStatus: "IDLE",
+  getRequest: async () => {
+    const config: BaseApiRequestConfig<void> = {
+      url: profileEndpoint,
+      method: "GET",
+    };
+
+    const events: BaseApiResponseEvents<ProfileResponse> = {
+      beforeSend: () => set({ getRequestStatus: "LOADING" }),
+      onSuccess: (response) => {
+        set({ profile: response.data.user });
+        set({ getRequestStatus: "SUCCESS" });
+        console.log(response);
+      },
+      onReject: (reason) => {
+        console.log("Rejected:", reason);
+      },
+      onError: (error) => {
+        console.log("errorrrrr:", error);
+        set({ getRequestStatus: "FAILED" });
+      },
+    };
+
+    return baseApiRequest<void, ProfileResponse>(config, events);
   },
+  putRequestStatus: "IDLE",
+  putRequest: () => null,
 }));

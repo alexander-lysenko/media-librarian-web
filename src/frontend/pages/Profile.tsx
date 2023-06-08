@@ -40,18 +40,18 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { shallow } from "zustand/shallow";
 
 import { AppNavbar, PaperCardHeader } from "../components";
 import { ColoredRating } from "../components/library/ColoredRating";
 import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
+import { LibraryItemDialog } from "../components/modals/LibraryItemDialog";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
-import { LibraryItemDialog } from "../components/modals/LibraryItemDialog";
-import { useProfileStore } from "../store/useProfileStore";
-import { shallow } from "zustand/shallow";
 import { AccountStatusEnum } from "../core/types";
+import { useProfileStore } from "../store/useProfileStore";
 
 type LibraryActions = {
   actions: Record<string, () => void>;
@@ -63,13 +63,20 @@ type LibraryActions = {
 export const Profile = () => {
   const { t } = useTranslation();
 
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(true);
   const [libOpen, setLibOpen] = useState(true);
   const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
   const [libAddItemDialogOpen, setLibAddItemDialogOpen] = useState(false);
 
   const [profile, request] = useProfileStore((state) => [state.profile, state.getRequest], shallow);
   const { name, email, avatar } = profile;
+
+  useEffect(() => {
+    return () => {
+      request();
+    };
+  }, [request]);
+
   return (
     <>
       <AppNavbar />

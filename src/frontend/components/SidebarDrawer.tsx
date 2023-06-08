@@ -13,11 +13,10 @@ import {
 } from "@mui/material";
 import React, { KeyboardEvent, MouseEvent } from "react";
 
-import { Anchor } from "../core/types";
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 import { SidebarProfiler } from "./SidebarProfiler";
 
-const anchor: Anchor = "left";
+type Anchor = "top" | "left" | "bottom" | "right";
 
 export const SidebarDrawer = () => {
   const { open, setOpen } = useSidebarDrawerOpenStore((state) => state);
@@ -33,6 +32,8 @@ export const SidebarDrawer = () => {
 
     setOpen(isOpen);
   };
+
+  const anchor: Anchor = "left";
 
   const drawerContent = (
     <Box sx={{ width: 256 }} role="presentation" onKeyDown={toggleDrawer(false)}>
