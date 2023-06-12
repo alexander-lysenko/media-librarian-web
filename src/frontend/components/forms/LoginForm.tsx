@@ -10,19 +10,21 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { BaseApiResponseEvents } from "../../core";
 import { CustomInputProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
+import { useLoginRequest } from "../../requests/auth/useLoginRequest";
 
 /**
  * Sign In (aka Login) Form functional component
  */
 export const LoginForm = () => {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
 
   const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
@@ -32,31 +34,26 @@ export const LoginForm = () => {
   const { formState, handleSubmit, reset, setError } = useHookForm;
   const { errors } = formState;
 
-  const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data);
-    setLoading(true);
+  const { status, fetch: submit, abort, setEvents } = useLoginRequest();
+  const loading = status === "LOADING";
+  const responseEvents: BaseApiResponseEvents = {
+    onSuccess: () => reset(),
+    onReject: (reason) => {
+      console.log("Rejected", reason);
+      reset({ password: "" });
+      setError("root.serverError", { message: reason.response?.data.message || reason.message });
+    },
+  };
 
-    return await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Submit request
-        // resolve(true);
-        // reject({ message: "Invalid username or password" });
-        reject({ message: "503 Service temporary unavailable. Please try again later." });
-      }, 2000);
-    })
-      .then(() => {
-        reset();
-      })
-      .catch((reason) => {
-        reset({ password: "" });
-        // setError("password", reason);
-        setError("root.serverError", reason);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
+    await submit({ email: data.email, password: data.password });
+    abort();
   };
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
+
+  useEffect(() => {
+    setEvents(responseEvents);
+  }, [setEvents]);
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>

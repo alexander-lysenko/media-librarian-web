@@ -14,6 +14,7 @@ import { SignUp } from "./pages/SignUp";
 import { useThemeStore } from "./store/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
+import { useCredentialsStore } from "./store/useCredentialsStore";
 
 const i18n = useTranslationStore.getState().i18nInstance;
 const getLanguage = useLanguageStore.getState().getLanguage;
@@ -26,6 +27,8 @@ const root = createRoot(rootElement);
 
 const Main = () => {
   const colorMode = useThemeStore((state) => state.mode);
+  // @ts-ignore
+  window.useCredentialsStore = useCredentialsStore((state) => state);
 
   return (
     <ThemeProvider theme={createTheme(getDesignTokens(colorMode))}>

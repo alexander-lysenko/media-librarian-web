@@ -6,15 +6,9 @@ export type RequestStatus = "IDLE" | "LOADING" | "SUCCESS" | "FAILED";
 
 export type FetchRequest = () => void;
 
-export type RequestSlice = {
+export type RequestSlice<Request, Response> = {
   status: RequestStatus;
-  fetch: () => void;
+  fetch: (data: Request) => Promise<Response | void>;
   abort: () => void;
-  errorHandler: (error: AxiosError) => void;
-  setErrorHandler: () => void;
+  setEvents: (events: BaseApiResponseEvents) => void;
 };
-
-export type BaseApiRequest<Request, Response = void> = (
-  config: BaseApiRequestConfig<Request>,
-  events: BaseApiResponseEvents<Response>,
-) => Promise<Response | void>;

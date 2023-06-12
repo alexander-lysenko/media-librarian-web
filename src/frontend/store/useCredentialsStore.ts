@@ -2,17 +2,19 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface CredentialsState {
-  account: number;
+  email: string;
   token: string;
-  setCredentials: (account: number, token: string) => void;
+  setCredentials: (email: string, token: string) => void;
+  clear: () => void;
 }
 
 export const useCredentialsStore = create<CredentialsState>()(
   persist(
     (set) => ({
-      account: 0,
+      email: "",
       token: "",
-      setCredentials: (account, token) => set({ account, token }),
+      setCredentials: (email, token) => set({ email, token }),
+      clear: () => set({ email: "", token: "" }),
     }),
     {
       name: "credentials", // unique name
