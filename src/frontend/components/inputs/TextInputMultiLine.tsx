@@ -22,7 +22,7 @@ export const TextInputMultiLine = forwardRef((props: CustomInputProps, ref) => {
       name={name}
       value={value}
       size="small"
-      margin="normal"
+      margin="dense"
       autoComplete="off"
       error={!!errorMessage}
       helperText={errorMessage || helperText}

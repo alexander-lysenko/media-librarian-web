@@ -15,9 +15,12 @@ import { SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { CheckBoxedInput } from "../inputs/CheckBoxedInput";
+import { DateTimeInput } from "../inputs/DateTimeInput";
+import { PriorityInput } from "../inputs/PriorityInput";
+import { RatingInput } from "../inputs/RatingInput";
 import { TextInputMultiLine } from "../inputs/TextInputMultiLine";
 import { TextInputSingleLine } from "../inputs/TextInputSingleLine";
-import { CheckBoxedInput } from "../inputs/CheckBoxedInput";
 
 type Props = {
   handleSubmitted: (event: React.SyntheticEvent | Event) => void;
@@ -76,9 +79,16 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           {/* Inputs start from here*/}
-          <TextInputSingleLine name={"name"} label={"Имя"} />
+          <TextInputSingleLine name={"name"} label={"Имя"} helperText={"ИИИИ имя"} />
           <TextInputMultiLine name={"noname"} label={"Фамилия"} />
           <CheckBoxedInput name={"check"} label={"Да или нет"} helperText={"наверное да"} />
+          <DateTimeInput name={"date"} label={"Дата"} helperText={"наверное да"} />
+          <DateTimeInput name={"datetime"} label={"Дата и время"} helperText={"наверное да"} />
+          <PriorityInput name={"priority"} label={"Приоритет"} helperText={"наверное да"} />
+          <RatingInput name={"priority"} label={"Оценка 5"} helperText={"наверное да"} />
+          <RatingInput name={"priority"} label={"Оценка 5.5"} helperText={"наверное да"} />
+          <RatingInput name={"priority"} label={"Оценка 10"} helperText={"наверное да"} />
+          <RatingInput name={"priority"} label={"Оценка 10.5"} helperText={"наверное да"} />
           {/* Inputs end from here*/}
         </DialogContent>
         <DialogActions>
