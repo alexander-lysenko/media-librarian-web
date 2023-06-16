@@ -11,20 +11,22 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { TextInputMultiLine } from "../inputs/TextInputMultiLine";
 import { TextInputSingleLine } from "../inputs/TextInputSingleLine";
+import { CheckBoxedInput } from "../inputs/CheckBoxedInput";
 
 type Props = {
   handleSubmitted: (event: React.SyntheticEvent | Event) => void;
   handleClose: (event: React.SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
+  isNewEntry?: boolean;
 };
 
-export const LibraryItemDialog = ({ open, handleClose, handleSubmitted }: Props) => {
+export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handleSubmitted }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -69,10 +71,15 @@ export const LibraryItemDialog = ({ open, handleClose, handleSubmitted }: Props)
         onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
-        <DialogTitle variant={"h5"}>{t("libraryItemDialog.title.create")}</DialogTitle>
+        <DialogTitle variant={"h5"}>
+          {isNewEntry ? t("libraryItemDialog.title.create") : t("libraryItemDialog.title.edit")}
+        </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
-          <TextInputSingleLine />
-          <TextInputMultiLine />
+          {/* Inputs start from here*/}
+          <TextInputSingleLine name={"name"} label={"Имя"} />
+          <TextInputMultiLine name={"noname"} label={"Фамилия"} />
+          <CheckBoxedInput name={"check"} label={"Да или нет"} helperText={"наверное да"} />
+          {/* Inputs end from here*/}
         </DialogContent>
         <DialogActions>
           <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
@@ -81,7 +88,7 @@ export const LibraryItemDialog = ({ open, handleClose, handleSubmitted }: Props)
             variant="contained"
             disabled={loading}
             endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
-            children={t("common.create")}
+            children={isNewEntry ? t("common.create") : t("common.update")}
           />
         </DialogActions>
       </Box>

@@ -17,7 +17,7 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import React, { forwardRef, useRef } from "react";
+import { forwardRef, useRef } from "react";
 import { TableComponents, TableVirtuoso, VirtuosoHandle } from "react-virtuoso";
 
 import {

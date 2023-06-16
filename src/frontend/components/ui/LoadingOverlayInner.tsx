@@ -1,6 +1,5 @@
 import { Box, CircularProgress } from "@mui/material";
 import { SxProps } from "@mui/system";
-import React from "react";
 
 export const LoadingOverlayInner = () => {
   const sx: SxProps = {

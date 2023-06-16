@@ -1,5 +1,4 @@
 import { Link, Typography } from "@mui/material";
-import React from "react";
 
 export const Copyright = (props: object) => {
   const date = new Date().getFullYear();

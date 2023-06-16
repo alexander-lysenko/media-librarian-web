@@ -1,6 +1,6 @@
 import { NotificationImportantOutlined, NotificationsOutlined } from "@mui/icons-material";
 import { Badge, Box, IconButton, Popover, Tooltip, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export const NotificationsPopover = () => {

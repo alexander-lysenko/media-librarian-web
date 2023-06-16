@@ -11,7 +11,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { KeyboardEvent, MouseEvent } from "react";
+import { KeyboardEvent, MouseEvent } from "react";
 
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 import { SidebarProfiler } from "./SidebarProfiler";

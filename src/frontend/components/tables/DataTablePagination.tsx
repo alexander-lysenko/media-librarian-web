@@ -1,5 +1,4 @@
 import { LabelDisplayedRowsArgs, TablePagination, TablePaginationProps, useMediaQuery, useTheme } from "@mui/material";
-import React from "react";
 import { useTranslation } from "react-i18next";
 
 import { detectRowsPerPageOptions } from "../../core";

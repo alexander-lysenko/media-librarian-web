@@ -16,7 +16,8 @@
     "create": "Создать",
     "holdToSeePass": "Зажмите чтобы увидеть пароль",
     "save": "Сохранить",
-    "submit": "Отправить"
+    "submit": "Отправить",
+    "update": "Обновить"
   },
   "dataTable": {
     "rowsPerPage": "Показывать записей:",
@@ -39,7 +40,7 @@
     "usernameMinLength": "Попробуйте ввести полное имя (не менее {{n}} символов)",
     "usernameRequired": "Поле с именем не должно оставаться пустым"
   },
-  "libraryAddItem": {
+  "libraryItemDialog": {
     "title": {
       "create": "Новая запись",
       "edit": "Редактировать запись"

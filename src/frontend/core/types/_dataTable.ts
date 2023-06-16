@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material";
-import React from "react";
+import { CSSProperties, MouseEvent } from "react";
 
 import { LibraryElementEnum } from "../enums";
 
@@ -12,8 +12,8 @@ export type DataColumn = {
   id: string;
   label?: string;
   component: keyof typeof LibraryElementEnum;
-  headerCellStyle?: React.CSSProperties;
-  contentCellStyle?: React.CSSProperties;
+  headerCellStyle?: CSSProperties;
+  contentCellStyle?: CSSProperties;
 };
 
 export type SortOptions = {
@@ -63,6 +63,6 @@ export type DataTableStyleProps = {
 };
 
 export type DataTableEventsProps = {
-  onSort: (columnId: string) => (event: React.MouseEvent<unknown>) => void;
-  onRowClick: (rowId: string | number) => (event: React.MouseEvent<unknown>) => void;
+  onSort: (columnId: string) => (event: MouseEvent) => void;
+  onRowClick: (rowId: string | number) => (event: MouseEvent) => void;
 };

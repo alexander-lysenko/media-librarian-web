@@ -1,5 +1,5 @@
 import { Alert, AlertColor, Snackbar } from "@mui/material";
-import React from "react";
+import { ReactNode, SyntheticEvent, useState } from "react";
 
 type SnackbarOptions = {
   enableCloseButton?: boolean;
@@ -13,11 +13,11 @@ type SnackbarOptions = {
  * @param {SnackbarOptions} props
  */
 export const useSnackbar = (props: SnackbarOptions) => {
-  const [open, setOpen] = React.useState<boolean>(false);
-  const [style, setStyle] = React.useState<AlertColor>("success");
-  const [message, setMessage] = React.useState<React.ReactNode>("");
+  const [open, setOpen] = useState<boolean>(false);
+  const [style, setStyle] = useState<AlertColor>("success");
+  const [message, setMessage] = useState<ReactNode>("");
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
       event.preventDefault();
       return false;
@@ -26,7 +26,7 @@ export const useSnackbar = (props: SnackbarOptions) => {
     setOpen(false);
   };
 
-  const handleShow = (type: AlertColor, message: React.ReactNode) => {
+  const handleShow = (type: AlertColor, message: ReactNode) => {
     setStyle(type);
     setMessage(message);
     setOpen(true);

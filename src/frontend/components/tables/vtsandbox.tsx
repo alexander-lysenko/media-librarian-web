@@ -1,14 +1,13 @@
-import React from "react";
-import { useState, useRef, useContext } from "react";
-import { FixedSizeList, FixedSizeListProps } from "react-window";
+import { createContext, forwardRef, HTMLProps,ReactNode, useContext, useRef, useState } from "react";
 import { render } from "react-dom";
+import { FixedSizeList, FixedSizeListProps } from "react-window";
 
 /** Context for cross component communication */
-const VirtualTableContext = React.createContext<{
+const VirtualTableContext = createContext<{
   top: number;
   setTop: (top: number) => void;
-  header: React.ReactNode;
-  footer: React.ReactNode;
+  header: ReactNode;
+  footer: ReactNode;
 }>({
   top: 0,
   setTop: (value: number) => {},
@@ -16,15 +15,15 @@ const VirtualTableContext = React.createContext<{
   footer: <></>,
 });
 
-/** The virtual table. It basically accepts all of the same params as the original FixedSizeList.*/
+/** The virtual table. It basically accepts all the same params as the original FixedSizeList.*/
 function VirtualTable({
   row,
   header,
   footer,
   ...rest
 }: {
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
+  header?: ReactNode;
+  footer?: ReactNode;
   row: FixedSizeListProps["children"];
 } & Omit<FixedSizeListProps, "children" | "innerElementType">) {
   const listRef = useRef<FixedSizeList | null>();
@@ -71,7 +70,8 @@ function Row({ index }: { index: number }) {
  * Capture what would have been the top elements position and apply it to the table.
  * Other than that, render an optional header and footer.
  **/
-const Inner = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(function Inner(
+const Inner = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function Inner(
+  // prettier choke-bore
   { children, ...rest },
   ref,
 ) {

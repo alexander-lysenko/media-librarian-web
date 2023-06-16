@@ -27,7 +27,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { forwardRef, SyntheticEvent, useState } from "react";
+import { forwardRef, SyntheticEvent, useState } from "react";
 import {
   FieldValues,
   SubmitErrorHandler,

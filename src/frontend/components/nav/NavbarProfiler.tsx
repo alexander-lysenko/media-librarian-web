@@ -11,12 +11,12 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React from "react";
+import { MouseEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { stringAvatar } from "../../core";
 import { AppRoutes } from "../../core/enums";
-import { useTranslation } from "react-i18next";
 
 /**
  * Profile Avatar and menu designed to use inside AppBar
@@ -24,9 +24,9 @@ import { useTranslation } from "react-i18next";
  */
 export const NavbarProfiler = () => {
   const { t } = useTranslation();
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 

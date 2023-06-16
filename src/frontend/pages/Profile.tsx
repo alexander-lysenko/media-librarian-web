@@ -40,7 +40,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 

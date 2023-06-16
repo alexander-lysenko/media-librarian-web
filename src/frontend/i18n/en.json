@@ -16,7 +16,8 @@
     "create": "Create",
     "holdToSeePass": "Long tap to make password visible",
     "save": "Save",
-    "submit": "Submit"
+    "submit": "Submit",
+    "update": "Update"
   },
   "dataTable": {
     "rowsPerPage": "Rows per page:",

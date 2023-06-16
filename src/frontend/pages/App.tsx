@@ -1,5 +1,5 @@
 import { Container, Paper } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { AppNavbar } from "../components";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";

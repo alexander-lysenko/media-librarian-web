@@ -2,7 +2,7 @@ import { StarBorderOutlined, StarOutlined } from "@mui/icons-material";
 import { Box, Rating } from "@mui/material";
 import { green, grey, orange, red } from "@mui/material/colors";
 import { SxProps } from "@mui/system";
-import React, { memo, useState } from "react";
+import { memo, useState } from "react";
 
 type Props = {
   value: number | null;

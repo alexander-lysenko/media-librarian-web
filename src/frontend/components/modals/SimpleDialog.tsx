@@ -1,6 +1,5 @@
 import { DoneOutlined } from "@mui/icons-material";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
-import React from "react";
 
 export const SimpleDialog = () => {
   return (

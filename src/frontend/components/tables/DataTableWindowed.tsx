@@ -1,7 +1,5 @@
+// eslint-disable
 import {
-  Box,
-  CircularProgress,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -11,7 +9,10 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import React, { CSSProperties, forwardRef, Fragment, ReactNode, useRef } from "react";
+import { SxProps } from "@mui/system";
+import { ChangeEvent, CSSProperties, MouseEvent } from "react";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList, ListItemKeySelector } from "react-window";
 
 import {
   DataColumn,
@@ -23,13 +24,9 @@ import {
   DataTableSortingState,
   DataTableStyleProps,
 } from "../../core/types";
-import { DataTablePagination } from "./DataTablePagination";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeGrid, FixedSizeList, ListItemKeySelector } from "react-window";
-import { SxProps } from "@mui/system";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
-import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { TableTypeMap } from "@mui/material/Table/Table";
+import { DataTablePagination } from "./DataTablePagination";
+import { LibraryInlineComponents } from "../library/InlineComponents";
 
 type DataTableProps = DataTableBaseProps &
   DataTableStyleProps &
@@ -57,7 +54,7 @@ type TableBodyRowProps = {
   row: DataRow;
   columns: DataColumn[];
   selected?: boolean | false;
-  onRowClick?: (event: React.MouseEvent<unknown>) => void;
+  onRowClick?: (event: MouseEvent) => void;
   sx?: SxProps;
   style?: CSSProperties;
 };
@@ -72,16 +69,16 @@ export const DataTableWindowed = (props: DataTableProps) => {
   const { sort, setSort } = sorting;
   const { page, rowsPerPage, setPage, setRowsPerPage } = pagination;
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
+  const handleChangePage = (event: MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     event?.preventDefault();
 
     setPage(newPage);
   };
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
-  const handleSorting = (columnId: string) => (event: React.MouseEvent<unknown>) => {
+  const handleSorting = (columnId: string) => (event: MouseEvent<unknown>) => {
     event.preventDefault();
     if (columnId === sort?.column) {
       const direction = sort?.direction;
@@ -90,7 +87,7 @@ export const DataTableWindowed = (props: DataTableProps) => {
       setSort && setSort({ column: columnId, direction: "asc" });
     }
   };
-  const handleSelectItem = (rowId: string | number) => (event: React.MouseEvent<unknown>) => {
+  const handleSelectItem = (rowId: string | number) => (event: MouseEvent<unknown>) => {
     event.preventDefault();
     setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
   };

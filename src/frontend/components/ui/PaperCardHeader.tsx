@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { IconButtonProps } from "@mui/material/IconButton/IconButton";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 type Props = {
   title: string | ReactNode;

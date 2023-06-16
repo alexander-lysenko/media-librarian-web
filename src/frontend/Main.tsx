@@ -1,7 +1,7 @@
 import { createTheme, StyledEngineProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-import React from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
@@ -48,9 +48,9 @@ const Main = () => {
 };
 
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <StyledEngineProvider injectFirst>
       <Main />
     </StyledEngineProvider>
-  </React.StrictMode>,
+  </StrictMode>,
 );

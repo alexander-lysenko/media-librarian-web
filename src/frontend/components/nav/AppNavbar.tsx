@@ -16,7 +16,7 @@ import {
   Typography,
   useScrollTrigger,
 } from "@mui/material";
-import React, { cloneElement, ReactElement, useState } from "react";
+import { Fragment, cloneElement, ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -108,7 +108,7 @@ const NavDrawer = ({ open, onDrawerToggle, navRoutes }: DrawerProps) => {
       >
         <List disablePadding>
           {navRoutes.map((item: NavRoute) => (
-            <React.Fragment key={item.name}>
+            <Fragment key={item.name}>
               <ListItem disablePadding>
                 <ListItemButton sx={{ textAlign: "center" }} component={Link} to={item.route} onClick={onDrawerToggle}>
                   {item.isHeading ? (
@@ -119,7 +119,7 @@ const NavDrawer = ({ open, onDrawerToggle, navRoutes }: DrawerProps) => {
                 </ListItemButton>
               </ListItem>
               {item.isHeading && <Divider />}
-            </React.Fragment>
+            </Fragment>
           ))}
         </List>
       </DrawerStyled>

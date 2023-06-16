@@ -13,7 +13,6 @@ import {
   Typography,
 } from "@mui/material";
 import { SxProps } from "@mui/system";
-import React from "react";
 
 import { stringAvatar } from "../core";
 
