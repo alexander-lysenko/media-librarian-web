@@ -40,7 +40,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
     reValidateMode: "onChange",
     defaultValues: { title: "", fields: [{ name: "", type: "line" }] },
   });
-  const { formState, reset, handleSubmit, control, watch } = useHookForm;
+  const { formState, register, reset, handleSubmit, control, watch } = useHookForm;
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
@@ -79,16 +79,16 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           {/* Inputs start from here*/}
-          <TextInputSingleLine name={"name"} label={"Имя"} helperText={"ИИИИ имя"} />
+          <TextInputSingleLine name={"name"} label={"Имя"} />
           <TextInputMultiLine name={"noname"} label={"Фамилия"} />
-          <CheckBoxedInput name={"check"} label={"Да или нет"} helperText={"наверное да"} />
-          <DateTimeInput name={"date"} label={"Дата"} helperText={"наверное да"} />
-          <DateTimeInput name={"datetime"} label={"Дата и время"} helperText={"наверное да"} />
-          <PriorityInput name={"priority"} label={"Приоритет"} helperText={"наверное да"} />
-          <RatingInput name={"priority"} label={"Оценка 5"} helperText={"наверное да"} />
-          <RatingInput name={"priority"} label={"Оценка 5.5"} helperText={"наверное да"} />
-          <RatingInput name={"priority"} label={"Оценка 10"} helperText={"наверное да"} />
-          <RatingInput name={"priority"} label={"Оценка 10.5"} helperText={"наверное да"} />
+          <CheckBoxedInput name={"check"} label={"Да или нет"} />
+          <DateTimeInput name={"date"} label={"Дата"} />
+          <DateTimeInput name={"datetime"} label={"Дата и время"} />
+          <PriorityInput name={"priority"} label={"Приоритет"} />
+          <RatingInput precision={1} size={5} label={"Оценка 5"} {...register("priority5")} />
+          <RatingInput precision={0.5} size={5} name={"priority"} label={"Оценка 5.5"} />
+          <RatingInput precision={1} size={10} name={"priority"} label={"Оценка 10"} />
+          <RatingInput precision={0.5} size={10} name={"priority"} label={"Оценка 10.5"} />
           {/* Inputs end from here*/}
         </DialogContent>
         <DialogActions>

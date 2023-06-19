@@ -3,6 +3,7 @@ import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
 import { Box, Rating } from "@mui/material";
 import { green, grey, orange, red } from "@mui/material/colors";
 import { memo, SyntheticEvent, useState } from "react";
+import { ratingColorByValue } from "../../core";
 
 type Props = {
   value: number | null;
@@ -12,20 +13,6 @@ type Props = {
   readOnly?: boolean;
   precision?: number;
   onChange?: (event: SyntheticEvent, value: number | null) => void;
-};
-
-const colorByValue = (value: Props["value"], size: Props["size"]) => {
-  const ratio = (value as number) / size;
-  switch (true) {
-    case ratio <= 0:
-      return grey.A200;
-    case ratio > 0 && ratio < 0.5:
-      return red.A200;
-    case ratio >= 0.9:
-      return green.A400;
-    default:
-      return orange.A200;
-  }
 };
 
 /**
@@ -38,8 +25,8 @@ export const ColoredRating = memo(({ size = 10, name, value, readOnly, precision
     <Rating
       sx={{
         display: "flex",
-        color: colorByValue(value, size),
-        "&:hover": { color: colorByValue(hover, size) },
+        color: ratingColorByValue(value, size),
+        "&:hover": { color: ratingColorByValue(hover, size) },
       }}
       max={size}
       name={name}
@@ -57,7 +44,7 @@ export const ColoredRating = memo(({ size = 10, name, value, readOnly, precision
 });
 
 export const ColoredRatingCustom = memo(({ size = 10, name, value, precision, fontSize }: Props) => {
-  const color = colorByValue(value, size);
+  const color = ratingColorByValue(value, size);
 
   return (
     <Box component="span" flexWrap="nowrap" sx={{ display: "inline-flex", fontSize: fontSize, lineHeight: 0.675 }}>

@@ -13,22 +13,20 @@ export const CheckBoxedInput = (props: CustomInputProps) => {
   };
 
   return (
-    <FormControl variant={"standard"} error={!!errorMessage}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              name={name}
-              value={true}
-              checked={checked}
-              inputProps={{ "aria-label": "controlled" }}
-              onChange={handleChange}
-            />
-          }
-          label={label}
-        />
-      </FormGroup>
-      <FormHelperText>{errorMessage || helperText}</FormHelperText>
+    <FormControl variant={"standard"} margin={"dense"} error={!!errorMessage}>
+      <FormControlLabel
+        control={
+          <Checkbox
+            name={name}
+            value={true}
+            checked={checked}
+            inputProps={{ "aria-label": "controlled" }}
+            onChange={handleChange}
+          />
+        }
+        label={label}
+      />
+      <FormHelperText variant={"outlined"}>{errorMessage || helperText}</FormHelperText>
     </FormControl>
   );
 };

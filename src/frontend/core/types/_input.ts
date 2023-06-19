@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent } from "react";
+import { ChangeEvent, FocusEvent, SyntheticEvent } from "react";
 
 export interface CustomInputProps {
   name: string;

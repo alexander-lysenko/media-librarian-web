@@ -40,12 +40,6 @@
     "usernameMinLength": "Expected a full Personal Name (min {{n}} symbols)",
     "usernameRequired": "Personal Name is required"
   },
-  "libraryItemDialog": {
-    "title": {
-      "create": "New Entry",
-      "edit": "Update Entry"
-    }
-  },
   "libraryCreateDialog": {
     "addNewField": "Add a Field",
     "field": "Field",
@@ -57,6 +51,12 @@
     "optionNone": "None selected",
     "removeField": "Remove this field",
     "title": "Create New Library"
+  },
+  "libraryItemDialog": {
+    "title": {
+      "create": "New Entry",
+      "edit": "Update Entry"
+    }
   },
   "libraryTypes": {
     "date": "Date",
@@ -92,6 +92,19 @@
     "successfullyReset": "Password has been reset. You can sign in using your new password.",
     "subtitle": "Alright, now you can set a new password for your account.",
     "title": "Password Reset"
+  },
+  "priorityOptions": {
+    "-5": "Poor",
+    "-4": "Lowest",
+    "-3": "Lower",
+    "-2": "Low",
+    "-1": "Lower than Medium",
+    "0": "Medium",
+    "1": "Higher than Medium",
+    "2": "High",
+    "3": "Higher",
+    "4": "Highest",
+    "5": "Critical"
   },
   "profile": {
     "aboutThisProfile": "About This Profile",

@@ -11,10 +11,10 @@ import { Landing } from "./pages/Landing";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
+import { useCredentialsStore } from "./store/useCredentialsStore";
 import { useThemeStore } from "./store/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
-import { useCredentialsStore } from "./store/useCredentialsStore";
 
 const i18n = useTranslationStore.getState().i18nInstance;
 const getLanguage = useLanguageStore.getState().getLanguage;
