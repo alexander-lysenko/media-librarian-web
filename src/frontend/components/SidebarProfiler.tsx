@@ -1,4 +1,7 @@
-import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from "@mui/icons-material";
+import ArrowDropDownOutlinedIcon from "@mui/icons-material/ArrowDropDownOutlined";
+import ArrowDropUpOutlinedIcon from "@mui/icons-material/ArrowDropUpOutlined";
+import BadgeIcon from "@mui/icons-material/Badge";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import {
   Avatar,
   Collapse,
@@ -13,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { SxProps } from "@mui/system";
+import { MouseEventHandler, useState } from "react";
 
 import { stringAvatar } from "../core";
 
@@ -23,9 +27,9 @@ const profileSx: SxProps = { p: 2, backgroundImage: "url(https://source.unsplash
  * Part of Sidebar Navigation Drawer - Profile Section
  */
 export const SidebarProfiler = () => {
-  const [collapseOpen, setCollapseOpen] = React.useState<boolean>(false);
+  const [collapseOpen, setCollapseOpen] = useState<boolean>(false);
 
-  const toggleCollapse = (event: React.MouseEvent<HTMLElement>) => {
+  const toggleCollapse: MouseEventHandler = (event) => {
     event.preventDefault();
     setCollapseOpen(!collapseOpen);
   };
@@ -46,7 +50,7 @@ export const SidebarProfiler = () => {
             </Grid>
             <Grid item xs="auto">
               <IconButton sx={{ p: 0 }}>
-                {collapseOpen ? <ArrowDropUpOutlined /> : <ArrowDropDownOutlined />}
+                {collapseOpen ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />}
               </IconButton>
             </Grid>
           </Grid>
@@ -56,13 +60,13 @@ export const SidebarProfiler = () => {
       <Collapse in={collapseOpen}>
         <ListItemButton key="toProfile">
           <ListItemIcon>
-            <Badge />
+            <BadgeIcon />
           </ListItemIcon>
           <ListItemText disableTypography>Profile</ListItemText>
         </ListItemButton>
         <ListItemButton key="toLogOut">
           <ListItemIcon>
-            <LogoutOutlined />
+            <LogoutOutlinedIcon />
           </ListItemIcon>
           <ListItemText disableTypography>Log Out</ListItemText>
         </ListItemButton>

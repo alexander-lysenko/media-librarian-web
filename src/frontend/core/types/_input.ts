@@ -1,3 +1,4 @@
+import { ChangeEvent, FocusEvent } from "react";
 
 export interface CustomInputProps {
   name: string;
@@ -5,6 +6,6 @@ export interface CustomInputProps {
   value?: string;
   helperText?: string;
   errorMessage?: string;
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }

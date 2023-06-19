@@ -54,7 +54,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       method: "GET",
     };
 
-    const events: BaseApiResponseEvents<ProfileResponse> = {
+    const events: BaseApiResponseEvents = {
       beforeSend: () => set({ getRequestStatus: "LOADING" }),
       onSuccess: (response) => {
         set({ profile: response.data.user });

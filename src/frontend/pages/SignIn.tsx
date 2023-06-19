@@ -1,4 +1,4 @@
-import { LockOutlined } from "@mui/icons-material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
 import { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -49,7 +49,7 @@ export const SignIn = () => {
       <PageContainer>
         <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
           <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
-            <LockOutlined />
+            <LockOutlinedIcon />
           </Avatar>
           <Typography variant="h5">{t("loginPage.title")}</Typography>
           <Typography variant="body2">{t("loginPage.subtitle")}</Typography>

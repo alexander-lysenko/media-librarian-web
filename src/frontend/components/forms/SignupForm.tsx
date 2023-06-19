@@ -1,11 +1,9 @@
-import {
-  AlternateEmailOutlined,
-  BadgeOutlined,
-  HourglassBottomOutlined,
-  PersonAddAltOutlined,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
-} from "@mui/icons-material";
+import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {
   Alert,
   Box,
@@ -126,7 +124,7 @@ export const SignupForm = () => {
         fullWidth
         variant="contained"
         disabled={loading}
-        endIcon={loading ? <CircularProgress size={14} /> : <PersonAddAltOutlined />}
+        endIcon={loading ? <CircularProgress size={14} /> : <PersonAddAltOutlinedIcon />}
         sx={{ mt: 3, mb: 2 }}
         children={t("signupPage.signUpBtn")}
       />
@@ -153,7 +151,7 @@ const UsernameTextField = forwardRef((props: CustomInputProps, ref) => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <BadgeOutlined />
+            <BadgeOutlinedIcon />
           </InputAdornment>
         ),
       }}
@@ -179,7 +177,7 @@ const EmailTextField = forwardRef((props: CustomInputProps & { loadingState: boo
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            {props.loadingState ? <HourglassBottomOutlined /> : <AlternateEmailOutlined />}
+            {props.loadingState ? <HourglassBottomOutlinedIcon /> : <AlternateEmailOutlinedIcon />}
           </InputAdornment>
         ),
       }}
@@ -220,7 +218,7 @@ const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
             onMouseUp={handlePassHide}
             onMouseLeave={handlePassHide}
             onTouchStart={togglePassVisible}
-            children={passVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+            children={passVisible ? <VisibilityOutlinedIcon /> : <VisibilityOffOutlinedIcon />}
           />
         ),
       }}

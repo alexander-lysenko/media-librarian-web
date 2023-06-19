@@ -17,7 +17,7 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { forwardRef, useRef } from "react";
+import { ChangeEvent, forwardRef, MouseEventHandler, MouseEvent, useRef } from "react";
 import { TableComponents, TableVirtuoso, VirtuosoHandle } from "react-virtuoso";
 
 import {
@@ -64,27 +64,31 @@ export const DataTableVirtualized = (props: DataTableProps) => {
   const { page, rowsPerPage, setPage, setRowsPerPage } = pagination;
   const ref = useRef<VirtuosoHandle>(null);
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
+  const handleChangePage = (event: MouseEvent | null, newPage: number) => {
     event?.preventDefault();
     setPage(newPage);
   };
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
-  const handleSorting = (columnId: string) => (event: React.MouseEvent<unknown>) => {
-    event.preventDefault();
-    if (columnId === sort?.column) {
-      const direction = sort?.direction;
-      setSort && setSort({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
-    } else {
-      setSort && setSort({ column: columnId, direction: "asc" });
-    }
-  };
-  const handleSelectItem = (rowId: string | number) => (event: React.MouseEvent<unknown>) => {
-    event.preventDefault();
-    setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
-  };
+  const handleSorting =
+    (columnId: string): MouseEventHandler =>
+    (event) => {
+      event.preventDefault();
+      if (columnId === sort?.column) {
+        const direction = sort?.direction;
+        setSort && setSort({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
+      } else {
+        setSort && setSort({ column: columnId, direction: "asc" });
+      }
+    };
+  const handleSelectItem =
+    (rowId: string | number): MouseEventHandler =>
+    (event) => {
+      event.preventDefault();
+      setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
+    };
 
   return (
     <Box sx={{ width: "100%" }}>

@@ -1,4 +1,7 @@
-import { AlternateEmailOutlined, LoginOutlined, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
+import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import {
   Alert,
   Box,
@@ -81,7 +84,7 @@ export const LoginForm = () => {
         fullWidth
         variant="contained"
         disabled={loading}
-        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlined />}
+        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlinedIcon />}
         sx={{ mt: 3, mb: 2 }}
         children={t("loginPage.signInBtn")}
       />
@@ -107,7 +110,7 @@ const EmailTextField = forwardRef((props: CustomInputProps, ref) => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <AlternateEmailOutlined />
+            <AlternateEmailOutlinedIcon />
           </InputAdornment>
         ),
       }}
@@ -148,7 +151,7 @@ const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
             onMouseUp={handlePassHide}
             onMouseLeave={handlePassHide}
             onTouchStart={togglePassVisible}
-            children={passVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+            children={passVisible ? <VisibilityOutlinedIcon /> : <VisibilityOffOutlinedIcon />}
           />
         ),
       }}

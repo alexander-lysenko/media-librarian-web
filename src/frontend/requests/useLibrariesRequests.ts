@@ -1,14 +1,12 @@
-import { RequestSlice } from "../core/types";
-
 export const useLibrariesRequests = () => {
-  const getRequest: RequestSlice = {
+  const getRequest = {
     status: "IDLE",
     abort: () => false,
     fetch: () => false,
     errorHandler: () => false,
     setErrorHandler: () => false,
   };
-  const postRequest: RequestSlice = {
+  const postRequest = {
     status: "IDLE",
     abort: () => false,
     fetch: () => false,

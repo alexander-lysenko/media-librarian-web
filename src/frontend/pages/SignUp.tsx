@@ -1,5 +1,6 @@
-import { PersonAddAltRounded } from "@mui/icons-material";
+import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
+import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
@@ -19,7 +20,7 @@ export const SignUp = () => {
       <PageContainer>
         <Box mx={4} mt={8} display="flex" flexDirection="column" alignItems="center">
           <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
-            <PersonAddAltRounded />
+            <PersonAddAltRoundedIcon />
           </Avatar>
           <Typography variant="h5">{t("signupPage.title")}</Typography>
           <Typography variant="body2">{t("signupPage.subtitle")}</Typography>
@@ -61,7 +62,7 @@ const BackgroundContainer = () => (
 );
 
 type PageContainerProps = {
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 const PageContainer = ({ children }: PageContainerProps) => (

@@ -1,10 +1,8 @@
-import {
-  AddCircleOutlined,
-  DriveFileRenameOutlineOutlined,
-  HourglassBottomOutlined,
-  RemoveCircleOutlineOutlined,
-  SaveAsOutlined,
-} from "@mui/icons-material";
+import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
+import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
+import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
+import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
+import SaveAsOutlinedIcon from "@mui/icons-material/SaveAsOutlined";
 import {
   Box,
   Button,
@@ -45,8 +43,8 @@ import { useFormValidation } from "../../hooks";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 
 type Props = {
-  handleSubmitted: (event: React.SyntheticEvent | Event) => void;
-  handleClose: (event: React.SyntheticEvent | Event, reason?: string) => void;
+  handleSubmitted: (event: SyntheticEvent | Event) => void;
+  handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
 };
 
@@ -119,7 +117,7 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {titleCheckingState ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
+                  {titleCheckingState ? <HourglassBottomOutlinedIcon /> : <DriveFileRenameOutlineOutlinedIcon />}
                 </InputAdornment>
               ),
             }}
@@ -142,7 +140,7 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
           <Button
             variant="outlined"
             onClick={handleAddNewField}
-            startIcon={<AddCircleOutlined />}
+            startIcon={<AddCircleOutlinedIcon />}
             children={fullScreen ? t("libraryCreateDialog.field") : t("libraryCreateDialog.addNewField")}
           />
           <Box flex="1 0 auto" />
@@ -151,7 +149,7 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
             type="submit"
             variant="contained"
             disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
+            endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlinedIcon />}
             children={t("common.create")}
           />
         </DialogActions>
@@ -190,7 +188,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
           >
             <span>
               <IconButton aria-label="delete" disabled={leading} onClick={onRemove}>
-                <RemoveCircleOutlineOutlined />
+                <RemoveCircleOutlineOutlinedIcon />
               </IconButton>
             </span>
           </Tooltip>

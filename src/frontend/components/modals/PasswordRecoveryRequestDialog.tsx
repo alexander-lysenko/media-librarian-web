@@ -1,4 +1,5 @@
-import { AlternateEmailOutlined, Send } from "@mui/icons-material";
+import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
+import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
   Button,
@@ -95,7 +96,7 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
             type="submit"
             variant="contained"
             disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <Send />}
+            endIcon={loading ? <CircularProgress size={14} /> : <SendIcon />}
             children={t("common.submit")}
           />
         </DialogActions>
@@ -123,7 +124,7 @@ const EmailTextField = forwardRef((props: CustomInputProps & TextFieldProps, ref
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <AlternateEmailOutlined />
+            <AlternateEmailOutlinedIcon />
           </InputAdornment>
         ),
       }}

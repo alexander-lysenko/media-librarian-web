@@ -1,4 +1,4 @@
-import { SaveAsOutlined } from "@mui/icons-material";
+import SaveAsOutlinedIcon from "@mui/icons-material/SaveAsOutlined";
 import {
   Box,
   Button,
@@ -23,8 +23,8 @@ import { TextInputMultiLine } from "../inputs/TextInputMultiLine";
 import { TextInputSingleLine } from "../inputs/TextInputSingleLine";
 
 type Props = {
-  handleSubmitted: (event: React.SyntheticEvent | Event) => void;
-  handleClose: (event: React.SyntheticEvent | Event, reason?: string) => void;
+  handleSubmitted: (event: SyntheticEvent | Event) => void;
+  handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
   isNewEntry?: boolean;
 };
@@ -97,7 +97,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
             type="submit"
             variant="contained"
             disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
+            endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlinedIcon />}
             children={isNewEntry ? t("common.create") : t("common.update")}
           />
         </DialogActions>

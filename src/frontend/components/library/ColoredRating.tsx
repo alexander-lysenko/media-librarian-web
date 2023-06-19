@@ -1,8 +1,8 @@
-import { StarBorderOutlined, StarOutlined } from "@mui/icons-material";
+import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
+import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
 import { Box, Rating } from "@mui/material";
 import { green, grey, orange, red } from "@mui/material/colors";
-import { SxProps } from "@mui/system";
-import { memo, useState } from "react";
+import { memo, SyntheticEvent, useState } from "react";
 
 type Props = {
   value: number | null;
@@ -11,7 +11,7 @@ type Props = {
   fontSize?: string;
   readOnly?: boolean;
   precision?: number;
-  onChange?: (event: React.SyntheticEvent, value: number | null) => void;
+  onChange?: (event: SyntheticEvent, value: number | null) => void;
 };
 
 const colorByValue = (value: Props["value"], size: Props["size"]) => {
@@ -65,10 +65,10 @@ export const ColoredRatingCustom = memo(({ size = 10, name, value, precision, fo
         return (
           <Box component="span" key={index} sx={{ position: "relative" }}>
             <Box component="span" sx={{ position: "absolute", left: 0, top: 0, overflow: "hidden" }} width={"100%"}>
-              <StarOutlined fontSize={"inherit"} sx={{ color }} />
+              <StarOutlinedIcon fontSize={"inherit"} sx={{ color }} />
             </Box>
             <Box component="span" sx={{ display: "inline-flex" }}>
-              <StarBorderOutlined fontSize={"inherit"} sx={{ color: grey.A400 }} />
+              <StarBorderOutlinedIcon fontSize={"inherit"} sx={{ color: grey.A400 }} />
             </Box>
           </Box>
         );

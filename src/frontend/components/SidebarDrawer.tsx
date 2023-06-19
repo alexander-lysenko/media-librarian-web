@@ -1,4 +1,4 @@
-import { AddCircleOutlined } from "@mui/icons-material";
+import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import {
   Box,
   Drawer,
@@ -41,13 +41,13 @@ export const SidebarDrawer = () => {
       <List>
         <ListItem>
           <ListItemIcon>
-            <AddCircleOutlined />
+            <AddCircleOutlinedIcon />
           </ListItemIcon>
           <ListItemText>List Item Example</ListItemText>
         </ListItem>
         <ListItemButton>
           <ListItemIcon>
-            <AddCircleOutlined />
+            <AddCircleOutlinedIcon />
           </ListItemIcon>
           <ListItemText disableTypography sx={{}}>
             List Item Button Example

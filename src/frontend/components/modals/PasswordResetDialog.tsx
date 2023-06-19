@@ -1,4 +1,6 @@
-import { AlternateEmailOutlined, LockOutlined, LockReset } from "@mui/icons-material";
+import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LockResetIcon from "@mui/icons-material/LockReset";
 import {
   Box,
   Button,
@@ -18,12 +20,12 @@ import { forwardRef, SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { useFormValidation } from "../../hooks";
 import { CustomInputProps } from "../../core/types";
+import { useFormValidation } from "../../hooks";
 
 type Props = {
-  handleSubmitted: (event: React.SyntheticEvent | Event) => void;
-  handleClose: (event: React.SyntheticEvent | Event, reason?: string) => void;
+  handleSubmitted: (event: SyntheticEvent | Event) => void;
+  handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
 };
 
@@ -102,7 +104,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
             variant="contained"
             fullWidth={fullScreen}
             disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <LockReset />}
+            endIcon={loading ? <CircularProgress size={14} /> : <LockResetIcon />}
             children={t("common.save")}
           />
         </DialogActions>
@@ -125,7 +127,7 @@ const EmailTextField = forwardRef((props: Partial<CustomInputProps>, ref) => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <AlternateEmailOutlined />
+            <AlternateEmailOutlinedIcon />
           </InputAdornment>
         ),
       }}
@@ -152,7 +154,7 @@ const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <LockOutlined />
+            <LockOutlinedIcon />
           </InputAdornment>
         ),
       }}
