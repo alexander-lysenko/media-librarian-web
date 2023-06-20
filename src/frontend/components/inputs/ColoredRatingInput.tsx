@@ -7,10 +7,11 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { SxProps } from "@mui/system";
 import { ChangeEvent, forwardRef, useState } from "react";
 
-import { CustomInputProps } from "../../core/types";
 import { ratingColorByValue } from "../../core";
+import { CustomInputProps } from "../../core/types";
 
 type OverriddenProps = {
   precision: 0.5 | 1;
@@ -18,12 +19,21 @@ type OverriddenProps = {
   value?: number;
 };
 
-export const RatingInput = forwardRef((props: CustomInputProps & OverriddenProps, ref) => {
-  const { label, name, value, errorMessage, helperText, size, precision, onBlur, onChange } = props;
-  const [hover, setHover] = useState(-1);
+export const ColoredRatingInput = forwardRef((props: CustomInputProps & OverriddenProps, ref) => {
+  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
+  const { size, precision } = props;
 
   const theme = useTheme();
   const smallViewport = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [hover, setHover] = useState(-1);
+  const [value, setValue] = useState<number>(0);
+
+  const inputSx: SxProps = {
+    mr: 2,
+    color: ratingColorByValue(value || 0, size),
+    "&:hover": { color: ratingColorByValue(hover, size) },
+  };
 
   return (
     <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
@@ -40,13 +50,10 @@ export const RatingInput = forwardRef((props: CustomInputProps & OverriddenProps
               max={size}
               precision={precision}
               ref={ref}
-              sx={{
-                mr: 2,
-                color: ratingColorByValue(value || 0, size),
-                "&:hover": { color: ratingColorByValue(hover, size) },
-              }}
+              sx={inputSx}
               onBlur={onBlur}
-              onChange={(event) => {
+              onChange={(event, newValue) => {
+                setValue(newValue as number);
                 onChange?.(event as ChangeEvent<HTMLInputElement>);
               }}
               onChangeActive={(event, newHover) => {

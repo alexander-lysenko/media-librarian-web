@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { CustomInputProps } from "../../core/types";
 
 export const PriorityInput = forwardRef((props: CustomInputProps, ref) => {
+  const { label, name, value, errorMessage, helperText, onBlur, onChange } = props;
   const { t } = useTranslation();
 
   const options: Record<number, string> = {
@@ -21,28 +22,24 @@ export const PriorityInput = forwardRef((props: CustomInputProps, ref) => {
     "5": t("priorityOptions.5"),
   };
 
-  const { label, name, value, errorMessage, helperText, onBlur, onChange } = props;
   return (
-    <FormControl fullWidth variant="outlined" margin="dense" size="small" error={!!errorMessage}>
-      <InputLabel id="theme">{label}</InputLabel>
+    <FormControl fullWidth margin="dense" size="small" error={!!errorMessage}>
+      <InputLabel id={name}>{label}</InputLabel>
       <Select
-        fullWidth
         inputRef={ref}
-        labelId="theme"
-        id="theme"
-        name="theme"
-        defaultValue={"0"}
+        labelId={name}
+        id={name}
+        name={name}
         value={value}
         label={label}
-        aria-sort="none"
-        onChange={props.onChange as (event: SelectChangeEvent) => void | undefined}
+        defaultValue={"0"}
+        onChange={onChange as (event: SelectChangeEvent) => void | undefined}
+        onBlur={onBlur}
       >
         {Object.entries(options)
           .sort((a, b) => Number(a[0]) - Number(b[0]))
           .map(([key, option]) => (
-            <MenuItem key={key} value={key}>
-              {option}
-            </MenuItem>
+            <MenuItem key={key} value={key} children={option} />
           ))}
       </Select>
       <FormHelperText>{errorMessage || helperText}</FormHelperText>

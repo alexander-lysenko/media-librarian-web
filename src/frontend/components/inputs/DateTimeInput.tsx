@@ -5,30 +5,41 @@ import { forwardRef } from "react";
 
 import { CustomInputProps } from "../../core/types";
 
-export const DateTimeInput = forwardRef((props: CustomInputProps, ref) => {
+type AdditionalProps = {
+  type: "date" | "datetime-local";
+};
+
+export const DateTimeInput = forwardRef((props: CustomInputProps & AdditionalProps, ref) => {
   const { label, name, value, errorMessage, helperText, onBlur, onChange } = props;
+  const { type } = props;
 
   const onCalendarClick = () => false;
   const inputSx: SxProps = { textAlign: "right" };
+  const dateSlice = type === "date" ? 10 : 16;
 
   return (
     <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
       <InputLabel htmlFor={name}>{label}</InputLabel>
       <OutlinedInput
-        type="date"
+        inputRef={ref}
+        type={type}
         label={label}
         id={name}
         name={name}
-        // defaultValue={new Date().toDateString()}
+        value={value}
+        // todo: rework default date to get time from actual timezone
+        defaultValue={new Date().toISOString().slice(0, dateSlice)}
         size="small"
         inputProps={{ sx: inputSx }}
+        onBlur={onBlur}
+        onChange={onChange}
         endAdornment={
           <InputAdornment
             position="end"
             sx={{ cursor: "pointer" }}
             onClick={onCalendarClick}
             children={<CalendarMonthOutlinedIcon />}
-          ></InputAdornment>
+          />
         }
       />
       <FormHelperText>{errorMessage || helperText}</FormHelperText>

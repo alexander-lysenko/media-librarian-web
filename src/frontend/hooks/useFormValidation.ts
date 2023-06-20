@@ -179,6 +179,29 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         required: true,
       },
     },
+    libraryItem: {
+      title: {
+        setValueAs: (value: string) => value.trim(),
+        required: t("formValidation.entryTitleRequired") as Message,
+        validate: {
+          uniqueValidation: async (value: string) => {
+            const message = t("formValidation.entryTitleNotUnique");
+            const setTitleCheckingState = useLibraryCreateFormStore.getState().setTitleUniqueProcessing;
+            setTitleCheckingState(true);
+
+            // todo: replace with a real API request
+            const hasTitleTaken = await new Promise<boolean>((resolve) => {
+              setTimeout(() => {
+                resolve(value === "Example");
+              }, 1000);
+            });
+
+            setTitleCheckingState(false);
+            return !hasTitleTaken || message;
+          },
+        },
+      },
+    },
   };
 
   const { register } = useFormReturn;
