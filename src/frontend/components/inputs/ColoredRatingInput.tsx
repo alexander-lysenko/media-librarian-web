@@ -8,18 +8,17 @@ import {
   useTheme,
 } from "@mui/material";
 import { SxProps } from "@mui/system";
-import { ChangeEvent, forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 
 import { ratingColorByValue } from "../../core";
-import { CustomInputProps } from "../../core/types";
+import { LibraryInputProps } from "../../core/types";
 
-type OverriddenProps = {
-  precision: 0.5 | 1;
-  size: 5 | 10;
-  value?: number;
-};
+type Props = LibraryInputProps & { variant: "rating5" };
 
-export const ColoredRatingInput = forwardRef((props: CustomInputProps & OverriddenProps, ref) => {
+/**
+ *
+ */
+export const ColoredRatingInput = forwardRef((props: Props, ref) => {
   const { label, name, errorMessage, helperText, onBlur, onChange } = props;
   const { size, precision } = props;
 
@@ -27,11 +26,11 @@ export const ColoredRatingInput = forwardRef((props: CustomInputProps & Overridd
   const smallViewport = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [hover, setHover] = useState(-1);
-  const [value, setValue] = useState<number>(0);
+  const [stateValue, setStateValue] = useState<number>(0);
 
   const inputSx: SxProps = {
     mr: 2,
-    color: ratingColorByValue(value || 0, size),
+    color: ratingColorByValue(stateValue || 0, size),
     "&:hover": { color: ratingColorByValue(hover, size) },
   };
 
@@ -44,17 +43,17 @@ export const ColoredRatingInput = forwardRef((props: CustomInputProps & Overridd
           sx={{ justifyContent: "space-between", ml: 0 }}
           control={
             <Rating
+              ref={ref}
               size={smallViewport ? "small" : "medium"}
-              value={value}
               id={name}
               max={size}
               precision={precision}
-              ref={ref}
               sx={inputSx}
+              defaultValue={0}
               onBlur={onBlur}
               onChange={(event, newValue) => {
-                setValue(newValue as number);
-                onChange?.(event as ChangeEvent<HTMLInputElement>);
+                setStateValue(newValue as number);
+                onChange(event);
               }}
               onChangeActive={(event, newHover) => {
                 event.preventDefault();

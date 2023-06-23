@@ -3,30 +3,34 @@ import { FormControl, FormHelperText, InputAdornment, InputLabel, OutlinedInput 
 import { SxProps } from "@mui/system";
 import { forwardRef } from "react";
 
-import { CustomInputProps } from "../../core/types";
+import { LibraryInputProps } from "../../core/types";
 
-type AdditionalProps = {
-  type: "date" | "datetime-local";
+type Props = LibraryInputProps & {
+  variant: "date";
 };
 
-export const DateTimeInput = forwardRef((props: CustomInputProps & AdditionalProps, ref) => {
-  const { label, name, value, errorMessage, helperText, onBlur, onChange } = props;
-  const { type } = props;
+/**
+ * Library Item Form - Date/DateTime Input
+ * Native HTML5 date input, fits browser locale
+ * TODO: Fix timezone
+ */
+export const DateTimeInput = forwardRef((props: Props, ref) => {
+  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
+  const { variant } = props;
 
   const onCalendarClick = () => false;
   const inputSx: SxProps = { textAlign: "right" };
-  const dateSlice = type === "date" ? 10 : 16;
+  const dateSlice = variant === "date" ? 10 : 16;
 
   return (
     <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
       <InputLabel htmlFor={name}>{label}</InputLabel>
       <OutlinedInput
         inputRef={ref}
-        type={type}
+        type={variant}
         label={label}
         id={name}
         name={name}
-        value={value}
         // todo: rework default date to get time from actual timezone
         defaultValue={new Date().toISOString().slice(0, dateSlice)}
         size="small"

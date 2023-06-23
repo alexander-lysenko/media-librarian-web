@@ -23,6 +23,7 @@ export enum LibraryElementEnum {
   rating10precision = "rating10precision",
   priority = "priority",
   switch = "switch",
+  url = "url",
 }
 
 export enum dbToAppTypeEnum {

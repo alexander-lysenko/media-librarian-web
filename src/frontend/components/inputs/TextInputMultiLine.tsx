@@ -1,14 +1,16 @@
 import { TextField } from "@mui/material";
 import { forwardRef } from "react";
 
-import { CustomInputProps } from "../../core/types";
+import { LibraryInputProps } from "../../core/types";
+
+type Props = LibraryInputProps & { variant: "text" };
 
 /**
  * Library Item Form - Single Line Text Input
  * Auto-sized by height, dynamically resizes within 5-20 text rows
  */
-export const TextInputMultiLine = forwardRef((props: CustomInputProps, ref) => {
-  const { label, name, value, errorMessage, helperText, onBlur, onChange } = props;
+export const TextInputMultiLine = forwardRef((props: Props, ref) => {
+  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
 
   return (
     <TextField
@@ -20,7 +22,6 @@ export const TextInputMultiLine = forwardRef((props: CustomInputProps, ref) => {
       id={name}
       label={label}
       name={name}
-      value={value}
       size="small"
       margin="dense"
       autoComplete="off"

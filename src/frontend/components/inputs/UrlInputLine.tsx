@@ -1,19 +1,17 @@
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
-import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
+import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
 
 import { LibraryInputProps } from "../../core/types";
 
-type Props = LibraryInputProps & { variant: "line" };
+type Props = LibraryInputProps & { variant: "url" };
 
 /**
- * Library Item Form - Single Line Text Input
- * Supports active (loading) state, by which the endAdornment icon changes
+ * Library Item Form - Single Line Text Input for URL
+ * Click on endAdornment icon opens the link in a new tab
  */
-export const TextInputSingleLine = forwardRef((props: Props, ref) => {
+export const UrlInputLine = forwardRef((props: Props, ref) => {
   const { label, name, errorMessage, helperText, onBlur, onChange } = props;
-  const { loadingState = false } = props;
 
   return (
     <TextField
@@ -31,8 +29,8 @@ export const TextInputSingleLine = forwardRef((props: Props, ref) => {
       onBlur={onBlur}
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
-            {loadingState ? <HourglassBottomOutlinedIcon /> : <DriveFileRenameOutlineOutlinedIcon />}
+          <InputAdornment position="end" sx={{ cursor: "pointer" }} onClick={() => window.open("", "_blank")}>
+            <PublicOutlinedIcon />
           </InputAdornment>
         ),
       }}

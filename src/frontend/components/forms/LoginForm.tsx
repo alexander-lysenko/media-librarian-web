@@ -18,7 +18,7 @@ import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-h
 import { useTranslation } from "react-i18next";
 
 import { BaseApiResponseEvents } from "../../core";
-import { CustomInputProps } from "../../core/types";
+import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { useLoginRequest } from "../../requests/auth/useLoginRequest";
 
@@ -92,7 +92,7 @@ export const LoginForm = () => {
   );
 };
 
-const EmailTextField = forwardRef((props: CustomInputProps, ref) => {
+const EmailTextField = forwardRef((props: InputCustomProps, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -118,7 +118,7 @@ const EmailTextField = forwardRef((props: CustomInputProps, ref) => {
   );
 });
 
-const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
+const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
   const { t } = useTranslation();
   const [passVisible, setPassVisible] = useState<boolean>(false);
 

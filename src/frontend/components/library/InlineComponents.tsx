@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { memo, MemoExoticComponent } from "react";
+import { JSX, memo, MemoExoticComponent } from "react";
 
 import { LibraryElementEnum } from "../../core/enums";
 import { ColoredRating } from "./ColoredRating";

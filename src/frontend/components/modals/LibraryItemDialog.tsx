@@ -16,12 +16,8 @@ import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-h
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
-import { CheckBoxedInput } from "../inputs/CheckBoxedInput";
-import { ColoredRatingInput } from "../inputs/ColoredRatingInput";
-import { DateTimeInput } from "../inputs/DateTimeInput";
-import { PriorityInput } from "../inputs/PriorityInput";
-import { TextInputMultiLine } from "../inputs/TextInputMultiLine";
-import { TextInputSingleLine } from "../inputs/TextInputSingleLine";
+import { LibraryElementEnum } from "../../core/enums";
+import { LibraryItemInput } from "../inputs";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
@@ -33,6 +29,7 @@ type Props = {
 export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handleSubmitted }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -45,8 +42,6 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
   const { formState, reset, handleSubmit, control, watch } = useHookForm;
   const { errors } = formState;
-
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === "backdropClick" || reason === "escapeKeyDown") {
@@ -84,16 +79,17 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           {/* Inputs start from here*/}
-          <TextInputSingleLine label={"Имя"} {...registerField("name")} />
-          <TextInputMultiLine label={"Фамилия"} {...registerField("noname")} />
-          <CheckBoxedInput label={"Да или нет"} {...registerField("check")} />
-          <DateTimeInput type={"date"} label={"Дата"} {...registerField("date")} />
-          <DateTimeInput type={"datetime-local"} label={"Дата и время"} {...registerField("datetime")} />
-          <PriorityInput label={"Приоритет"} {...registerField("priority")} />
-          <ColoredRatingInput precision={1} size={5} label={"Оценка 5"} {...registerField("rating5")} />
-          <ColoredRatingInput precision={0.5} size={5} label={"Оценка 5.5"} {...registerField("rating55")} />
-          <ColoredRatingInput precision={1} size={10} label={"Оценка 10"} {...registerField("rating10")} />
-          <ColoredRatingInput precision={0.5} size={10} label={"Оценка 10.5"} {...registerField("rating105")} />
+          {Object.entries(schema).map(([label, type], index) => {
+            return (
+              <LibraryItemInput
+                key={label}
+                variant={type}
+                label={label}
+                {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label))}
+                errorMessage={errors?.[label]?.message as string}
+              />
+            );
+          })}
           {/* Inputs end from here*/}
         </DialogContent>
         <DialogActions>
@@ -109,4 +105,17 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
       </Box>
     </Dialog>
   );
+};
+
+const schema: Record<string, keyof typeof LibraryElementEnum> = {
+  ["Movie Title"]: "line",
+  ["Origin Title"]: "line",
+  ["Release Date"]: "date",
+  ["Description"]: "text",
+  ["IMDB URL"]: "url",
+  ["IMDB Rating"]: "rating10",
+  ["My Rating"]: "rating5",
+  ["Watched"]: "switch",
+  ["Watched At"]: "datetime",
+  ["Chance to Advice"]: "priority",
 };

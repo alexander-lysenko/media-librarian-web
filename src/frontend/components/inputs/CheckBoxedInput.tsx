@@ -1,13 +1,19 @@
 import { Checkbox, FormControl, FormControlLabel, FormHelperText } from "@mui/material";
-import { ChangeEvent, forwardRef, useState } from "react";
+import { ChangeEvent, forwardRef, Ref, useState } from "react";
 
-import { CustomInputProps } from "../../core/types";
+import { LibraryInputProps } from "../../core/types";
 
-export const CheckBoxedInput = forwardRef<HTMLInputElement, CustomInputProps>(
+type Props = LibraryInputProps & { variant: "switch" };
+
+/**
+ * Library Item Form - Switch (Checkbox) Input
+ *
+ */
+export const CheckBoxedInput = forwardRef(
   // prettier ignore
-  (props: CustomInputProps, ref) => {
-    const { label, name, value, errorMessage, helperText, onChange } = props;
-    const [checked, setChecked] = useState<boolean>(!!value);
+  (props: Props, ref) => {
+    const { label, name, errorMessage, helperText, onChange } = props;
+    const [checked, setChecked] = useState<boolean>(false);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
       onChange?.(event);
@@ -20,11 +26,10 @@ export const CheckBoxedInput = forwardRef<HTMLInputElement, CustomInputProps>(
           control={
             <Checkbox
               name={name}
-              value={value}
               checked={checked}
               inputProps={{ "aria-label": "controlled" }}
               onChange={handleChange}
-              inputRef={ref}
+              inputRef={ref as Ref<HTMLInputElement>}
             />
           }
           label={label}

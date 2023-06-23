@@ -17,14 +17,13 @@ import {
   MenuItem,
   PaletteMode,
   Select,
-  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { ChangeEvent, forwardRef, useState } from "react";
-import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { ChangeHandler, FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { CustomInputProps } from "../../core/types";
+import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
@@ -107,14 +106,14 @@ export const SignupForm = () => {
       />
       <LanguageSelect
         {...registerField("language")}
-        onChange={handleLanguageSelect}
+        onChange={handleLanguageSelect as ChangeHandler}
         value={language}
         label={t("signupPage.language")}
         helperText={t("signupPage.languageHint") as string}
       />
       <ThemeSelect
         {...registerField("theme")}
-        onChange={handleThemeSelect}
+        onChange={handleThemeSelect as ChangeHandler}
         value={themeMode}
         label={t("signupPage.theme")}
         helperText={t("signupPage.themeHint") as string}
@@ -133,7 +132,7 @@ export const SignupForm = () => {
   );
 };
 
-const UsernameTextField = forwardRef((props: CustomInputProps, ref) => {
+const UsernameTextField = forwardRef((props: InputCustomProps, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -159,7 +158,7 @@ const UsernameTextField = forwardRef((props: CustomInputProps, ref) => {
   );
 });
 
-const EmailTextField = forwardRef((props: CustomInputProps & { loadingState: boolean }, ref) => {
+const EmailTextField = forwardRef((props: InputCustomProps & { loadingState: boolean }, ref) => {
   return (
     <TextField
       inputRef={ref}
@@ -185,7 +184,7 @@ const EmailTextField = forwardRef((props: CustomInputProps & { loadingState: boo
   );
 });
 
-const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
+const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
   const { t } = useTranslation();
   const [passVisible, setPassVisible] = useState<boolean>(false);
 
@@ -226,7 +225,7 @@ const PasswordTextField = forwardRef((props: CustomInputProps, ref) => {
   );
 });
 
-const LanguageSelect = forwardRef((props: CustomInputProps, ref) => {
+const LanguageSelect = forwardRef((props: InputCustomProps, ref) => {
   const languages = useTranslationStore((state) => state.languages);
 
   return (
@@ -239,7 +238,7 @@ const LanguageSelect = forwardRef((props: CustomInputProps, ref) => {
         name="language"
         value={props.value}
         label={props.label}
-        onChange={props.onChange as (event: SelectChangeEvent) => void | undefined}
+        onChange={props.onChange}
       >
         {Object.entries(languages).map(([key, definition]) => (
           <MenuItem key={key} value={key}>
@@ -252,7 +251,7 @@ const LanguageSelect = forwardRef((props: CustomInputProps, ref) => {
   );
 });
 
-const ThemeSelect = forwardRef((props: CustomInputProps, ref) => {
+const ThemeSelect = forwardRef((props: InputCustomProps, ref) => {
   const { t } = useTranslation();
 
   return (
@@ -265,7 +264,7 @@ const ThemeSelect = forwardRef((props: CustomInputProps, ref) => {
         name="theme"
         value={props.value}
         label={props.label}
-        onChange={props.onChange as (event: SelectChangeEvent) => void | undefined}
+        onChange={props.onChange}
       >
         <MenuItem key={"light"} value={"light"}>
           {t("theme.presetLight")}

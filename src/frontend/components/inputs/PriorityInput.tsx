@@ -1,11 +1,17 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
 import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { CustomInputProps } from "../../core/types";
+import { LibraryInputProps } from "../../core/types";
 
-export const PriorityInput = forwardRef((props: CustomInputProps, ref) => {
-  const { label, name, value, errorMessage, helperText, onBlur, onChange } = props;
+type Props = LibraryInputProps & { variant: "priority" };
+
+/**
+ * Library Item Form - Priority Dropdown Input
+ * Has 11 levels valued as range [-5, 5]. Default value is 0
+ */
+export const PriorityInput = forwardRef((props: Props, ref) => {
+  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
   const { t } = useTranslation();
 
   const options: Record<number, string> = {
@@ -28,12 +34,10 @@ export const PriorityInput = forwardRef((props: CustomInputProps, ref) => {
       <Select
         inputRef={ref}
         labelId={name}
-        id={name}
-        name={name}
-        value={value}
         label={label}
+        name={name}
         defaultValue={"0"}
-        onChange={onChange as (event: SelectChangeEvent) => void | undefined}
+        onChange={onChange}
         onBlur={onBlur}
       >
         {Object.entries(options)
