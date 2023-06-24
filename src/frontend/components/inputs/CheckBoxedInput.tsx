@@ -1,41 +1,32 @@
 import { Checkbox, FormControl, FormControlLabel, FormHelperText } from "@mui/material";
-import { ChangeEvent, forwardRef, Ref, useState } from "react";
+import { forwardRef } from "react";
+import { Controller } from "react-hook-form";
 
-import { LibraryInputProps } from "../../core/types";
-
-type Props = LibraryInputProps & { variant: "switch" };
+import { CheckBoxedInputProps } from "../../core/types";
 
 /**
  * Library Item Form - Switch (Checkbox) Input
- *
  */
-export const CheckBoxedInput = forwardRef(
-  // prettier ignore
-  (props: Props, ref) => {
-    const { label, name, errorMessage, helperText, onChange } = props;
-    const [checked, setChecked] = useState<boolean>(false);
+export const CheckBoxedInput = forwardRef((props: CheckBoxedInputProps, ref) => {
+  const { label, name, errorMessage, helperText, control } = props;
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-      onChange?.(event);
-      setChecked(event.target.checked);
-    };
-
-    return (
-      <FormControl variant="standard" margin="dense" error={!!errorMessage}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              name={name}
-              checked={checked}
-              inputProps={{ "aria-label": "controlled" }}
-              onChange={handleChange}
-              inputRef={ref as Ref<HTMLInputElement>}
-            />
-          }
-          label={label}
-        />
-        <FormHelperText variant={"outlined"}>{errorMessage || helperText}</FormHelperText>
-      </FormControl>
-    );
-  },
-);
+  return (
+    <FormControl fullWidth margin="dense" error={!!errorMessage}>
+      <FormControlLabel
+        ref={ref}
+        label={label}
+        control={
+          <Controller
+            name={name}
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <Checkbox inputRef={field.ref} name={field.name} checked={!!field.value} onChange={field.onChange} />
+            )}
+          />
+        }
+      />
+      <FormHelperText variant={"outlined"}>{errorMessage || helperText}</FormHelperText>
+    </FormControl>
+  );
+});

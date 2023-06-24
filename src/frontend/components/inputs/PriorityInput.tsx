@@ -2,15 +2,13 @@ import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/
 import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { LibraryInputProps } from "../../core/types";
-
-type Props = LibraryInputProps & { variant: "priority" };
+import { PriorityInputProps } from "../../core/types";
 
 /**
  * Library Item Form - Priority Dropdown Input
  * Has 11 levels valued as range [-5, 5]. Default value is 0
  */
-export const PriorityInput = forwardRef((props: Props, ref) => {
+export const PriorityInput = forwardRef((props: PriorityInputProps, ref) => {
   const { label, name, errorMessage, helperText, onBlur, onChange } = props;
   const { t } = useTranslation();
 

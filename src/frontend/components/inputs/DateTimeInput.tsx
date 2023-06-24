@@ -3,31 +3,27 @@ import { FormControl, FormHelperText, InputAdornment, InputLabel, OutlinedInput 
 import { SxProps } from "@mui/system";
 import { forwardRef } from "react";
 
-import { LibraryInputProps } from "../../core/types";
-
-type Props = LibraryInputProps & {
-  variant: "date";
-};
+import { DateTimeInputProps } from "../../core/types";
 
 /**
  * Library Item Form - Date/DateTime Input
  * Native HTML5 date input, fits browser locale
  * TODO: Fix timezone
  */
-export const DateTimeInput = forwardRef((props: Props, ref) => {
+export const DateTimeInput = forwardRef((props: DateTimeInputProps, ref) => {
   const { label, name, errorMessage, helperText, onBlur, onChange } = props;
-  const { variant } = props;
+  const { type } = props;
 
   const onCalendarClick = () => false;
   const inputSx: SxProps = { textAlign: "right" };
-  const dateSlice = variant === "date" ? 10 : 16;
+  const dateSlice = type === "date" ? 10 : 16;
 
   return (
     <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
       <InputLabel htmlFor={name}>{label}</InputLabel>
       <OutlinedInput
         inputRef={ref}
-        type={variant}
+        type={type}
         label={label}
         id={name}
         name={name}

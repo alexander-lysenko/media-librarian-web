@@ -3,15 +3,13 @@ import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutl
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
 
-import { LibraryInputProps } from "../../core/types";
-
-type Props = LibraryInputProps & { variant: "line" };
+import { TextInputSingleLineProps } from "../../core/types";
 
 /**
  * Library Item Form - Single Line Text Input
  * Supports active (loading) state, by which the endAdornment icon changes
  */
-export const TextInputSingleLine = forwardRef((props: Props, ref) => {
+export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, ref) => {
   const { label, name, errorMessage, helperText, onBlur, onChange } = props;
   const { loadingState = false } = props;
 

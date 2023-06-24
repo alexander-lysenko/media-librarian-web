@@ -1,32 +1,23 @@
-import {
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormHelperText,
-  Rating,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { FormControl, FormControlLabel, FormHelperText, Rating, useMediaQuery, useTheme } from "@mui/material";
 import { SxProps } from "@mui/system";
 import { forwardRef, useState } from "react";
+import { Controller } from "react-hook-form";
 
 import { ratingColorByValue } from "../../core";
-import { LibraryInputProps } from "../../core/types";
-
-type Props = LibraryInputProps & { variant: "rating5" };
+import { ColoredRatingInputProps } from "../../core/types";
 
 /**
- *
+ * TODO: FIX - not resetting value
  */
-export const ColoredRatingInput = forwardRef((props: Props, ref) => {
-  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
+export const ColoredRatingInput = forwardRef((props: ColoredRatingInputProps, ref) => {
+  const { label, name, errorMessage, helperText, control } = props;
   const { size, precision } = props;
 
   const theme = useTheme();
   const smallViewport = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [hover, setHover] = useState(-1);
-  const [stateValue, setStateValue] = useState<number>(0);
+  const [stateValue, setStateValue] = useState<number | null>(0);
 
   const inputSx: SxProps = {
     mr: 2,
@@ -36,33 +27,40 @@ export const ColoredRatingInput = forwardRef((props: Props, ref) => {
 
   return (
     <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
-      <FormGroup>
-        <FormControlLabel
-          label={label}
-          labelPlacement="start"
-          sx={{ justifyContent: "space-between", ml: 0 }}
-          control={
-            <Rating
-              ref={ref}
-              size={smallViewport ? "small" : "medium"}
-              id={name}
-              max={size}
-              precision={precision}
-              sx={inputSx}
-              defaultValue={0}
-              onBlur={onBlur}
-              onChange={(event, newValue) => {
-                setStateValue(newValue as number);
-                onChange(event);
-              }}
-              onChangeActive={(event, newHover) => {
-                event.preventDefault();
-                setHover(newHover);
-              }}
-            />
-          }
-        />
-      </FormGroup>
+      <FormControlLabel
+        ref={ref}
+        label={label}
+        labelPlacement="start"
+        sx={{ justifyContent: "space-between", ml: 0 }}
+        control={
+          <Controller
+            name={name}
+            control={control}
+            render={({ field }) => (
+              <Rating
+                ref={field.ref}
+                id={field.name}
+                name={field.name}
+                value={stateValue}
+                max={size}
+                sx={inputSx}
+                precision={precision}
+                size={smallViewport ? "small" : "medium"}
+                onBlur={field.onBlur}
+                // onChange={renderProps.field.onChange}
+                onChange={(event, newValue) => {
+                  field.onChange(event);
+                  setStateValue(Number(newValue));
+                }}
+                onChangeActive={(event, newHover) => {
+                  event.preventDefault();
+                  setHover(newHover);
+                }}
+              />
+            )}
+          />
+        }
+      />
       <FormHelperText>{errorMessage || helperText}</FormHelperText>
     </FormControl>
   );

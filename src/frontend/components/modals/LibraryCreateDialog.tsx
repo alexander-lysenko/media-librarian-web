@@ -38,7 +38,7 @@ import { FieldErrors } from "react-hook-form/dist/types/errors";
 import { useTranslation } from "react-i18next";
 
 import { LibraryElementEnum } from "../../core/enums";
-import { CustomInputProps } from "../../core/types";
+import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 
@@ -198,7 +198,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
   );
 };
 
-const CustomTextField = forwardRef((props: CustomInputProps & TextFieldProps, ref) => {
+const CustomTextField = forwardRef((props: InputCustomProps & TextFieldProps, ref) => {
   const { name, helperText, errorMessage, ...textFieldProps } = props;
   return (
     <TextField
@@ -216,7 +216,7 @@ const CustomTextField = forwardRef((props: CustomInputProps & TextFieldProps, re
   );
 });
 
-const CustomInputDropdown = forwardRef((props: CustomInputProps & TextFieldProps, ref) => {
+const CustomInputDropdown = forwardRef((props: InputCustomProps & TextFieldProps, ref) => {
   const { name, helperText, errorMessage, ...textFieldProps } = props;
   const { t } = useTranslation();
 

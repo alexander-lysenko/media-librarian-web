@@ -15,8 +15,8 @@ import { SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { useFormValidation } from "../../hooks";
 import { LibraryElementEnum } from "../../core/enums";
+import { useFormValidation } from "../../hooks";
 import { LibraryItemInput } from "../inputs";
 
 type Props = {
@@ -78,19 +78,19 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
           {isNewEntry ? t("libraryItemDialog.title.create") : t("libraryItemDialog.title.edit")}
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
-          {/* Inputs start from here*/}
           {Object.entries(schema).map(([label, type], index) => {
             return (
               <LibraryItemInput
                 key={label}
-                variant={type}
+                type={type}
                 label={label}
-                {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label))}
+                control={control}
                 errorMessage={errors?.[label]?.message as string}
+                {...(index === 0 ? registerFieldDebounced(1000, label) : registerField(label))}
+                // {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label, "title"))}
               />
             );
           })}
-          {/* Inputs end from here*/}
         </DialogContent>
         <DialogActions>
           <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
@@ -108,14 +108,14 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
 };
 
 const schema: Record<string, keyof typeof LibraryElementEnum> = {
-  ["Movie Title"]: "line",
-  ["Origin Title"]: "line",
-  ["Release Date"]: "date",
-  ["Description"]: "text",
-  ["IMDB URL"]: "url",
-  ["IMDB Rating"]: "rating10",
-  ["My Rating"]: "rating5",
-  ["Watched"]: "switch",
-  ["Watched At"]: "datetime",
-  ["Chance to Advice"]: "priority",
+  // "Movie Title": "line",
+  // "Origin Title": "line",
+  // "Release Date": "date",
+  // Description: "text",
+  // "IMDB URL": "url",
+  "IMDB Rating": "rating10",
+  "My Rating": "rating5",
+  Watched: "switch",
+  // "Watched At": "datetime",
+  // "Chance to Advice": "priority",
 };

@@ -2,15 +2,13 @@ import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
 
-import { LibraryInputProps } from "../../core/types";
-
-type Props = LibraryInputProps & { variant: "url" };
+import { UrlInputProps } from "../../core/types";
 
 /**
  * Library Item Form - Single Line Text Input for URL
  * Click on endAdornment icon opens the link in a new tab
  */
-export const UrlInputLine = forwardRef((props: Props, ref) => {
+export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
   const { label, name, errorMessage, helperText, onBlur, onChange } = props;
 
   return (
