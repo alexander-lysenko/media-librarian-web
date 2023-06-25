@@ -25,8 +25,8 @@ export const TextInputMultiLine = forwardRef((props: TextInputMultiLineProps, re
       autoComplete="off"
       error={!!errorMessage}
       helperText={errorMessage || helperText}
-      onChange={onChange}
       onBlur={onBlur}
+      onChange={onChange}
     />
   );
 });

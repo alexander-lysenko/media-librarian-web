@@ -18,7 +18,8 @@ type LibraryInputProps = InputCustomProps & {
 };
 
 export const LibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
-  const { control, setValue, ...inputProps } = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { type, control, setValue, ...inputProps } = props;
 
   switch (props.type) {
     case "line":
@@ -26,23 +27,23 @@ export const LibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
       return <TextInputSingleLine {...inputProps} ref={ref} />;
     case "text":
       return <TextInputMultiLine {...inputProps} ref={ref} />;
-    case "date":
-      return <DateTimeInput {...inputProps} type="date" ref={ref} />;
-    case "datetime":
-      return <DateTimeInput {...inputProps} type="datetime-local" ref={ref} />;
-    case "rating5":
-      return <ColoredRatingInput {...props} setValue={setValue} size={5} precision={1} ref={ref} />;
-    case "rating5precision":
-      return <ColoredRatingInput {...props} setValue={setValue} size={5} precision={0.5} ref={ref} />;
-    case "rating10":
-      return <ColoredRatingInput {...props} setValue={setValue} size={10} precision={1} ref={ref} />;
-    case "rating10precision":
-      return <ColoredRatingInput {...props} setValue={setValue} size={10} precision={0.5} ref={ref} />;
     case "priority":
-      return <PriorityInput {...inputProps} ref={ref} />;
-    case "switch":
-      return <CheckBoxedInput {...inputProps} control={control} ref={ref} />;
+      return <PriorityInput {...inputProps} control={control} />;
     case "url":
       return <UrlInputLine {...inputProps} ref={ref} />;
+    case "switch":
+      return <CheckBoxedInput {...inputProps} control={control} ref={ref} />;
+    case "date":
+      return <DateTimeInput {...props} type="date" />;
+    case "datetime":
+      return <DateTimeInput {...props} type="datetime" />;
+    case "rating5":
+      return <ColoredRatingInput {...props} size={5} precision={1} />;
+    case "rating5precision":
+      return <ColoredRatingInput {...props} size={5} precision={0.5} />;
+    case "rating10":
+      return <ColoredRatingInput {...props} size={10} precision={1} />;
+    case "rating10precision":
+      return <ColoredRatingInput {...props} size={10} precision={0.5} />;
   }
 });

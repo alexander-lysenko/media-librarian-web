@@ -1,48 +1,63 @@
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import { FormControl, FormHelperText, InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
-import { SxProps } from "@mui/system";
-import { forwardRef } from "react";
+import { DateOrTimeView, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePickerSlotsComponentsProps } from "@mui/x-date-pickers/DateTimePicker/DateTimePicker.types";
+import dayjs, { Dayjs } from "dayjs";
+import { Controller, UseControllerReturn } from "react-hook-form";
 
 import { DateTimeInputProps } from "../../core/types";
 
 /**
  * Library Item Form - Date/DateTime Input
  * Native HTML5 date input, fits browser locale
- * TODO: Fix timezone
+ * TODO: FIX undefined pristine state
  */
-export const DateTimeInput = forwardRef((props: DateTimeInputProps, ref) => {
-  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
-  const { type } = props;
+export const DateTimeInput = (props: DateTimeInputProps) => {
+  const { label, name, errorMessage, helperText } = props;
+  const { control, setValue, type } = props;
 
-  const onCalendarClick = () => false;
-  const inputSx: SxProps = { textAlign: "right" };
-  const dateSlice = type === "date" ? 10 : 16;
+  const slotProps: DateTimePickerSlotsComponentsProps<Dayjs> = {
+    textField: {
+      helperText: errorMessage || helperText,
+      fullWidth: true,
+      size: "small",
+      margin: "dense",
+    },
+    openPickerButton: { sx: { mr: -1 } },
+  };
+
+  const viewByType: Record<DateTimeInputProps["type"], DateOrTimeView[]> = {
+    date: ["year", "month", "day"],
+    datetime: ["year", "month", "day", "hours", "minutes", "seconds"],
+  };
+  const inputFormatByType: Record<DateTimeInputProps["type"], string> = {
+    date: "YYYY-MM-DD",
+    datetime: "YYYY-MM-DD HH:mm:ss",
+  };
 
   return (
-    <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
-      <InputLabel htmlFor={name}>{label}</InputLabel>
-      <OutlinedInput
-        inputRef={ref}
-        type={type}
-        label={label}
-        id={name}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Controller
         name={name}
-        // todo: rework default date to get time from actual timezone
-        defaultValue={new Date().toISOString().slice(0, dateSlice)}
-        size="small"
-        inputProps={{ sx: inputSx }}
-        onBlur={onBlur}
-        onChange={onChange}
-        endAdornment={
-          <InputAdornment
-            position="end"
-            sx={{ cursor: "pointer" }}
-            onClick={onCalendarClick}
-            children={<CalendarMonthOutlinedIcon />}
+        control={control}
+        render={({ field }: UseControllerReturn) => (
+          <DateTimePicker
+            inputRef={field.ref}
+            label={label}
+            value={dayjs(field.value, field.value && inputFormatByType[type])}
+            onClose={field.onBlur}
+            onChange={(value: Dayjs | null) => {
+              setValue(name, value?.format(inputFormatByType[type]));
+              // field.value = value?.format(inputFormatByType[type]);
+            }}
+            defaultValue={dayjs()}
+            ampm={false}
+            views={viewByType[type]}
+            slotProps={slotProps}
+            slots={{ openPickerIcon: CalendarMonthOutlinedIcon }}
           />
-        }
+        )}
       />
-      <FormHelperText>{errorMessage || helperText}</FormHelperText>
-    </FormControl>
+    </LocalizationProvider>
   );
-});
+};

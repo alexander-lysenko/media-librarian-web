@@ -25,8 +25,8 @@ export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, 
       autoComplete="off"
       error={!!errorMessage}
       helperText={errorMessage || helperText}
-      onChange={onChange}
       onBlur={onBlur}
+      onChange={onChange}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

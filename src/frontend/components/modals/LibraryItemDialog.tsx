@@ -36,7 +36,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
-    // defaultValues: {},
+    // defaultValues,
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
@@ -87,7 +87,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
                 control={control}
                 setValue={setValue}
                 errorMessage={errors?.[label]?.message as string}
-                {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label, type))}
+                {...(index === 0 ? registerFieldDebounced(1000, label, "titleREMOVE") : registerField(label, type))}
               />
             );
           })}
@@ -109,13 +109,26 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
 
 const schema: Record<string, keyof typeof LibraryElementEnum> = {
   "Movie Title": "line",
-  "Origin Title": "line",
+  // "Origin Title": "line",
   "Release Date": "date",
-  Description: "text",
-  "IMDB URL": "url",
-  "IMDB Rating": "rating10",
-  "My Rating": "rating5",
-  Watched: "switch",
+  // Description: "text",
+  // "IMDB URL": "url",
+  // "IMDB Rating": "rating10",
+  // "My Rating": "rating5",
+  // Watched: "switch",
   "Watched At": "datetime",
   "Chance to Advice": "priority",
+};
+
+const defaultValues: Record<string, any> = {
+  "Movie Title": "Лицо со шрамом",
+  // "Origin Title": "Scarface",
+  // "Release Date": "1983-12-01",
+  // Description: "In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed.",
+  // "IMDB URL": "https://www.imdb.com/title/tt0086250/",
+  // "IMDB Rating": 8,
+  // "My Rating": 5,
+  // Watched: true,
+  // "Watched At": "2020-01-31 00:00:01",
+  // "Chance to Advice": 5,
 };

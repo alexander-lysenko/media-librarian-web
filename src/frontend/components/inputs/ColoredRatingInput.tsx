@@ -1,7 +1,7 @@
 import { FormControl, FormControlLabel, FormHelperText, Rating, useMediaQuery, useTheme } from "@mui/material";
 import { SxProps } from "@mui/system";
-import { forwardRef, useState } from "react";
-import { Controller } from "react-hook-form";
+import { SyntheticEvent, useState } from "react";
+import { Controller, UseControllerReturn } from "react-hook-form";
 
 import { ratingColorByValue } from "../../core";
 import { ColoredRatingInputProps } from "../../core/types";
@@ -13,8 +13,9 @@ import { ColoredRatingInputProps } from "../../core/types";
  * - "red" - ratio is under 0.5
  * - "yellow" - ratio is between 0.5 - 0.89
  * - "green" - ratio is 0.9 and up
+ * TODO: FIX undefined pristine state
  */
-export const ColoredRatingInput = forwardRef((props: ColoredRatingInputProps, ref) => {
+export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
   const { label, name, errorMessage, helperText } = props;
   const { size, precision } = props;
   const { control, setValue } = props;
@@ -31,10 +32,14 @@ export const ColoredRatingInput = forwardRef((props: ColoredRatingInputProps, re
     "&:hover": { color: ratingColorByValue(hover, size) },
   };
 
+  const handleHover = (event: SyntheticEvent, newHover: number) => {
+    event.preventDefault();
+    setHover(newHover);
+  };
+
   return (
     <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
       <FormControlLabel
-        ref={ref}
         label={label}
         labelPlacement="start"
         sx={{ justifyContent: "space-between", ml: 0 }}
@@ -42,26 +47,23 @@ export const ColoredRatingInput = forwardRef((props: ColoredRatingInputProps, re
           <Controller
             name={name}
             control={control}
-            render={({ field }) => (
+            defaultValue={stateValue}
+            render={({ field }: UseControllerReturn) => (
               <Rating
                 ref={field.ref}
-                id={field.name}
                 name={field.name}
-                value={stateValue}
+                value={field.value}
                 max={size}
                 sx={inputSx}
                 precision={precision}
                 size={smallViewport ? "small" : "medium"}
                 onBlur={field.onBlur}
-                // onChange={renderProps.field.onChange}
+                onChangeActive={handleHover}
                 onChange={(event, newValue) => {
                   // Hack to set value around the controlled input
-                  setValue && setValue(field.name, Number(newValue));
+                  // setValue && setValue(field.name, Number(newValue));
+                  field.value = Number(newValue);
                   setStateValue(Number(newValue));
-                }}
-                onChangeActive={(event, newHover) => {
-                  event.preventDefault();
-                  setHover(newHover);
                 }}
               />
             )}
@@ -71,4 +73,4 @@ export const ColoredRatingInput = forwardRef((props: ColoredRatingInputProps, re
       <FormHelperText>{errorMessage || helperText}</FormHelperText>
     </FormControl>
   );
-});
+};

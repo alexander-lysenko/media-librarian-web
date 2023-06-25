@@ -10,26 +10,29 @@ export type InputCustomProps = Omit<UseFormRegisterReturn, "onChange"> & {
   onChange?: ChangeHandler;
 };
 
+type FormControlProps = {
+  control: Control;
+  setValue: UseFormSetValue<FieldValues>;
+};
+
 type LoadingProps = {
   loadingState?: boolean;
 };
 
-type DateInputProps = {
-  type: "date" | "datetime-local";
+type DateInputProps = FormControlProps & {
+  type: "date" | "datetime";
 };
 
-type RatingProps = {
+type RatingProps = FormControlProps & {
   precision: 0.5 | 1;
   size: 5 | 10;
-  control: Control;
-  setValue: UseFormSetValue<FieldValues>;
 };
 
 export type TextInputSingleLineProps = InputCustomProps & LoadingProps;
 export type TextInputMultiLineProps = InputCustomProps;
 export type DateTimeInputProps = InputCustomProps & DateInputProps;
 export type ColoredRatingInputProps = InputCustomProps & RatingProps;
-export type PriorityInputProps = InputCustomProps;
+export type PriorityInputProps = InputCustomProps & { control: Control };
 export type CheckBoxedInputProps = InputCustomProps & { control: Control };
 export type UrlInputProps = InputCustomProps;
 
