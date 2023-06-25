@@ -16,11 +16,13 @@ import { useThemeStore } from "./store/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
 
+const debug = import.meta.env.VITE_APP_DEBUG;
+
 const i18n = useTranslationStore.getState().i18nInstance;
 const getLanguage = useLanguageStore.getState().getLanguage;
 
 // init i18n (needs to be bundled ;))
-i18n.init({ lng: getLanguage() }).then(() => null);
+i18n.init({ lng: getLanguage(), debug }).then(() => null);
 
 const rootElement = document.getElementById("root") as Element;
 const root = createRoot(rootElement);

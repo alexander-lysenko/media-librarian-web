@@ -15,6 +15,7 @@
     "cancel": "Cancel",
     "create": "Create",
     "holdToSeePass": "Long tap to make password visible",
+    "openInNewTab": "Open in a new tab",
     "save": "Save",
     "submit": "Submit",
     "update": "Update"
@@ -37,6 +38,7 @@
     "passwordRepeatNotMatch": "Passwords do not match",
     "passwordRepeatRequired": "You must confirm your password, that's a rule",
     "passwordRequired": "Password cannot be blank",
+    "urlInvalid": "Seems like the value is not a valid URL address",
     "usernameMinLength": "Expected a full Personal Name (min {{n}} symbols)",
     "usernameRequired": "Personal Name is required"
   },

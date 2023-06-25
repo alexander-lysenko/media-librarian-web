@@ -40,7 +40,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
-  const { formState, reset, handleSubmit, control, watch } = useHookForm;
+  const { formState, reset, handleSubmit, control, setValue } = useHookForm;
   const { errors } = formState;
 
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
@@ -85,9 +85,9 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
                 type={type}
                 label={label}
                 control={control}
+                setValue={setValue}
                 errorMessage={errors?.[label]?.message as string}
-                {...(index === 0 ? registerFieldDebounced(1000, label) : registerField(label))}
-                // {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label, "title"))}
+                {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label, type))}
               />
             );
           })}
@@ -108,14 +108,14 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
 };
 
 const schema: Record<string, keyof typeof LibraryElementEnum> = {
-  // "Movie Title": "line",
-  // "Origin Title": "line",
-  // "Release Date": "date",
-  // Description: "text",
-  // "IMDB URL": "url",
+  "Movie Title": "line",
+  "Origin Title": "line",
+  "Release Date": "date",
+  Description: "text",
+  "IMDB URL": "url",
   "IMDB Rating": "rating10",
   "My Rating": "rating5",
   Watched: "switch",
-  // "Watched At": "datetime",
-  // "Chance to Advice": "priority",
+  "Watched At": "datetime",
+  "Chance to Advice": "priority",
 };

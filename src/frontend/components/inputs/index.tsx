@@ -1,4 +1,5 @@
-import { ChangeEvent, forwardRef } from "react";
+import { forwardRef } from "react";
+import { Control, FieldValues, UseFormSetValue } from "react-hook-form";
 
 import { LibraryElementEnum } from "../../core/enums";
 import { InputCustomProps } from "../../core/types";
@@ -10,36 +11,38 @@ import { TextInputMultiLine } from "./TextInputMultiLine";
 import { TextInputSingleLine } from "./TextInputSingleLine";
 import { UrlInputLine } from "./UrlInputLine";
 
-type LibraryInputProps = InputCustomProps & { type: keyof typeof LibraryElementEnum };
+type LibraryInputProps = InputCustomProps & {
+  control: Control;
+  setValue: UseFormSetValue<FieldValues>;
+  type: keyof typeof LibraryElementEnum;
+};
 
 export const LibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
-  const handleRatingChange = async (event: { target: unknown; type?: unknown } | ChangeEvent<HTMLInputElement>) => {
-    await props.onChange?.(event);
-  };
+  const { control, setValue, ...inputProps } = props;
 
   switch (props.type) {
     case "line":
     default:
-      return <TextInputSingleLine {...props} ref={ref} />;
+      return <TextInputSingleLine {...inputProps} ref={ref} />;
     case "text":
-      return <TextInputMultiLine {...props} ref={ref} />;
+      return <TextInputMultiLine {...inputProps} ref={ref} />;
     case "date":
-      return <DateTimeInput {...props} type="date" ref={ref} />;
+      return <DateTimeInput {...inputProps} type="date" ref={ref} />;
     case "datetime":
-      return <DateTimeInput {...props} type="datetime-local" ref={ref} />;
+      return <DateTimeInput {...inputProps} type="datetime-local" ref={ref} />;
     case "rating5":
-      return <ColoredRatingInput {...props} onChange={handleRatingChange} size={5} precision={1} ref={ref} />;
+      return <ColoredRatingInput {...props} setValue={setValue} size={5} precision={1} ref={ref} />;
     case "rating5precision":
-      return <ColoredRatingInput {...props} onChange={handleRatingChange} size={5} precision={0.5} ref={ref} />;
+      return <ColoredRatingInput {...props} setValue={setValue} size={5} precision={0.5} ref={ref} />;
     case "rating10":
-      return <ColoredRatingInput {...props} onChange={handleRatingChange} size={10} precision={1} ref={ref} />;
+      return <ColoredRatingInput {...props} setValue={setValue} size={10} precision={1} ref={ref} />;
     case "rating10precision":
-      return <ColoredRatingInput {...props} onChange={handleRatingChange} size={10} precision={0.5} ref={ref} />;
+      return <ColoredRatingInput {...props} setValue={setValue} size={10} precision={0.5} ref={ref} />;
     case "priority":
-      return <PriorityInput {...props} ref={ref} />;
+      return <PriorityInput {...inputProps} ref={ref} />;
     case "switch":
-      return <CheckBoxedInput {...props} ref={ref} />;
+      return <CheckBoxedInput {...inputProps} control={control} ref={ref} />;
     case "url":
-      return <UrlInputLine {...props} ref={ref} />;
+      return <UrlInputLine {...inputProps} ref={ref} />;
   }
 });

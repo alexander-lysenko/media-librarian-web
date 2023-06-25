@@ -1,5 +1,4 @@
-import { ChangeEvent } from "react";
-import { ChangeHandler, Control, UseFormRegisterReturn } from "react-hook-form";
+import { ChangeHandler, Control, FieldValues, UseFormRegisterReturn, UseFormSetValue } from "react-hook-form";
 
 import { LibraryElementEnum } from "../enums";
 
@@ -7,7 +6,6 @@ export type InputCustomProps = Omit<UseFormRegisterReturn, "onChange"> & {
   label: string;
   value?: string;
   helperText?: string;
-  control?: Control;
   errorMessage?: string;
   onChange?: ChangeHandler;
 };
@@ -21,9 +19,10 @@ type DateInputProps = {
 };
 
 type RatingProps = {
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   precision: 0.5 | 1;
   size: 5 | 10;
+  control: Control;
+  setValue: UseFormSetValue<FieldValues>;
 };
 
 export type TextInputSingleLineProps = InputCustomProps & LoadingProps;
@@ -31,7 +30,7 @@ export type TextInputMultiLineProps = InputCustomProps;
 export type DateTimeInputProps = InputCustomProps & DateInputProps;
 export type ColoredRatingInputProps = InputCustomProps & RatingProps;
 export type PriorityInputProps = InputCustomProps;
-export type CheckBoxedInputProps = InputCustomProps;
+export type CheckBoxedInputProps = InputCustomProps & { control: Control };
 export type UrlInputProps = InputCustomProps;
 
 type RelatedInputProps<T extends keyof typeof LibraryElementEnum> = { type: T };

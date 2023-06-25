@@ -7,11 +7,17 @@ import { ratingColorByValue } from "../../core";
 import { ColoredRatingInputProps } from "../../core/types";
 
 /**
- * TODO: FIX - not resetting value
+ * Library Item Form - Colored Rating Input
+ * Supports setting value as null by second click on active star
+ * The color is auto applied by value:
+ * - "red" - ratio is under 0.5
+ * - "yellow" - ratio is between 0.5 - 0.89
+ * - "green" - ratio is 0.9 and up
  */
 export const ColoredRatingInput = forwardRef((props: ColoredRatingInputProps, ref) => {
-  const { label, name, errorMessage, helperText, control } = props;
+  const { label, name, errorMessage, helperText } = props;
   const { size, precision } = props;
+  const { control, setValue } = props;
 
   const theme = useTheme();
   const smallViewport = useMediaQuery(theme.breakpoints.down("sm"));
@@ -49,7 +55,8 @@ export const ColoredRatingInput = forwardRef((props: ColoredRatingInputProps, re
                 onBlur={field.onBlur}
                 // onChange={renderProps.field.onChange}
                 onChange={(event, newValue) => {
-                  field.onChange(event);
+                  // Hack to set value around the controlled input
+                  setValue && setValue(field.name, Number(newValue));
                   setStateValue(Number(newValue));
                 }}
                 onChangeActive={(event, newHover) => {

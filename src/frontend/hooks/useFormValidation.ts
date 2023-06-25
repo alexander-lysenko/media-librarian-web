@@ -20,6 +20,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
   const { t } = useTranslation();
 
   const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+  const urlPattern = /^(ht|f)tps?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,9}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/i;
 
   const rules: Record<RegisteredFormNamesEnum, Record<string, RegisterOptions>> = {
     login: {
@@ -199,6 +200,13 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
             setTitleCheckingState(false);
             return !hasTitleTaken || message;
           },
+        },
+      },
+      url: {
+        setValueAs: (value: string) => value.trim(),
+        pattern: {
+          value: urlPattern,
+          message: t("formValidation.urlInvalid"),
         },
       },
     },
