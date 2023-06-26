@@ -8,7 +8,6 @@ import { PriorityInputProps } from "../../core/types";
 /**
  * Library Item Form - Priority Dropdown Input
  * Has 11 levels valued as range [-5, 5]. Default value is 0
- * TODO: FIX undefined pristine state
  */
 export const PriorityInput = (props: PriorityInputProps) => {
   const { label, errorMessage, helperText } = props;
@@ -39,7 +38,6 @@ export const PriorityInput = (props: PriorityInputProps) => {
     <Controller
       name={name}
       control={control}
-      defaultValue={0}
       render={({ field }: UseControllerReturn) => (
         <TextField
           {...field}
@@ -48,6 +46,7 @@ export const PriorityInput = (props: PriorityInputProps) => {
           fullWidth
           margin="dense"
           size="small"
+          defaultValue={0}
           error={!!errorMessage}
           helperText={errorMessage || helperText}
           children={menuItems}

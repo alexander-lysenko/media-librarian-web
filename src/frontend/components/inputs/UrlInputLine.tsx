@@ -13,20 +13,32 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
   const { t } = useTranslation();
   const [stateValue, setStateValue] = useState<string>(props.value as string);
 
-  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
+  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setStateValue(event.currentTarget.value);
     onChange && onChange(event);
   };
 
+  const endAdornment = (
+    <InputAdornment
+      position="end"
+      sx={{ cursor: "pointer" }}
+      disablePointerEvents={!!errorMessage}
+      onClick={() => !!stateValue && !errorMessage && window.open(stateValue, "_blank")}
+    >
+      <Tooltip title={t("common.openInNewTab")} placement="left" arrow>
+        <PublicOutlinedIcon />
+      </Tooltip>
+    </InputAdornment>
+  );
+
   return (
     <TextField
       inputRef={ref}
-      fullWidth
-      id={name}
-      label={label}
       name={name}
+      label={label}
+      fullWidth
       size="small"
       margin="dense"
       autoComplete="off"
@@ -35,20 +47,7 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
       helperText={errorMessage || helperText}
       onChange={handleChange}
       onBlur={onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment
-            position="end"
-            sx={{ cursor: "pointer" }}
-            disablePointerEvents={!!errorMessage}
-            onClick={() => !!stateValue && !errorMessage && window.open(stateValue, "_blank")}
-          >
-            <Tooltip title={t("common.openInNewTab")} placement="left" arrow>
-              <PublicOutlinedIcon />
-            </Tooltip>
-          </InputAdornment>
-        ),
-      }}
+      InputProps={{ endAdornment }}
     />
   );
 });

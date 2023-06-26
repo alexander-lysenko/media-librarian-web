@@ -17,9 +17,16 @@ type LibraryInputProps = InputCustomProps & {
   type: keyof typeof LibraryElementEnum;
 };
 
+/**
+ * Auto select input controls into Library Item Form
+ * based on library schema object
+ *
+ * WARNING: The default values of the inputs (both initial and pre-filled)
+ * must be controlled by React Hook Form
+ */
 export const LibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { type, control, setValue, ...inputProps } = props;
+  const { type, control, ...inputProps } = props;
 
   switch (props.type) {
     case "line":
@@ -32,18 +39,18 @@ export const LibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
     case "url":
       return <UrlInputLine {...inputProps} ref={ref} />;
     case "switch":
-      return <CheckBoxedInput {...inputProps} control={control} ref={ref} />;
+      return <CheckBoxedInput {...inputProps} control={control} />;
     case "date":
-      return <DateTimeInput {...props} type="date" />;
+      return <DateTimeInput {...inputProps} control={control} type="date" />;
     case "datetime":
-      return <DateTimeInput {...props} type="datetime" />;
+      return <DateTimeInput {...inputProps} control={control} type="datetime" />;
     case "rating5":
-      return <ColoredRatingInput {...props} size={5} precision={1} />;
+      return <ColoredRatingInput {...inputProps} control={control} size={5} precision={1} />;
     case "rating5precision":
-      return <ColoredRatingInput {...props} size={5} precision={0.5} />;
+      return <ColoredRatingInput {...inputProps} control={control} size={5} precision={0.5} />;
     case "rating10":
-      return <ColoredRatingInput {...props} size={10} precision={1} />;
+      return <ColoredRatingInput {...inputProps} control={control} size={10} precision={1} />;
     case "rating10precision":
-      return <ColoredRatingInput {...props} size={10} precision={0.5} />;
+      return <ColoredRatingInput {...inputProps} control={control} size={10} precision={0.5} />;
   }
 });

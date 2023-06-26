@@ -8,18 +8,17 @@ import { TextInputMultiLineProps } from "../../core/types";
  * Auto-sized by height, dynamically resizes within 5-20 text rows
  */
 export const TextInputMultiLine = forwardRef((props: TextInputMultiLineProps, ref) => {
-  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
+  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
 
   return (
     <TextField
       inputRef={ref}
+      name={name}
+      label={label}
       fullWidth
       multiline
       minRows={5}
       maxRows={20}
-      id={name}
-      label={label}
-      name={name}
       size="small"
       margin="dense"
       autoComplete="off"

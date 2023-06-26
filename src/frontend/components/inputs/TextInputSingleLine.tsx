@@ -10,16 +10,15 @@ import { TextInputSingleLineProps } from "../../core/types";
  * Supports active (loading) state, by which the endAdornment icon changes
  */
 export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, ref) => {
-  const { label, name, errorMessage, helperText, onBlur, onChange } = props;
+  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
   const { loadingState = false } = props;
 
   return (
     <TextField
       inputRef={ref}
-      fullWidth
-      id={name}
-      label={label}
       name={name}
+      label={label}
+      fullWidth
       size="small"
       margin="dense"
       autoComplete="off"

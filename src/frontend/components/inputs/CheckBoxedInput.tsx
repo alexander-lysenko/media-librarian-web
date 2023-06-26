@@ -7,19 +7,18 @@ import { CheckBoxedInputProps } from "../../core/types";
 /**
  * Library Item Form - Switch (Checkbox) Input
  */
-export const CheckBoxedInput = forwardRef((props: CheckBoxedInputProps, ref) => {
-  const { label, name, errorMessage, helperText, control } = props;
+export const CheckBoxedInput = (props: CheckBoxedInputProps) => {
+  const { label, errorMessage, helperText } = props;
+  const { name, control } = props;
 
   return (
     <FormControl fullWidth margin="dense" error={!!errorMessage}>
       <FormControlLabel
-        ref={ref}
         label={label}
         control={
           <Controller
             name={name}
             control={control}
-            defaultValue={false}
             render={({ field }) => (
               <Checkbox inputRef={field.ref} name={field.name} checked={!!field.value} onChange={field.onChange} />
             )}
@@ -29,4 +28,4 @@ export const CheckBoxedInput = forwardRef((props: CheckBoxedInputProps, ref) => 
       <FormHelperText variant={"outlined"}>{errorMessage || helperText}</FormHelperText>
     </FormControl>
   );
-});
+};

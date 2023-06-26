@@ -13,12 +13,10 @@ import { ColoredRatingInputProps } from "../../core/types";
  * - "red" - ratio is under 0.5
  * - "yellow" - ratio is between 0.5 - 0.89
  * - "green" - ratio is 0.9 and up
- * TODO: FIX undefined pristine state
  */
 export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
-  const { label, name, errorMessage, helperText } = props;
-  const { size, precision } = props;
-  const { control, setValue } = props;
+  const { label, errorMessage, helperText, size, precision } = props;
+  const { name, control } = props;
 
   const theme = useTheme();
   const smallViewport = useMediaQuery(theme.breakpoints.down("sm"));
@@ -26,11 +24,11 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
   const [hover, setHover] = useState(-1);
   const [stateValue, setStateValue] = useState<number | null>(0);
 
-  const inputSx: SxProps = {
+  const generateInputSx = (value: number): SxProps => ({
     mr: 2,
-    color: ratingColorByValue(stateValue || 0, size),
+    color: ratingColorByValue(value || 0, size),
     "&:hover": { color: ratingColorByValue(hover, size) },
-  };
+  });
 
   const handleHover = (event: SyntheticEvent, newHover: number) => {
     event.preventDefault();
@@ -47,22 +45,19 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
           <Controller
             name={name}
             control={control}
-            defaultValue={stateValue}
             render={({ field }: UseControllerReturn) => (
               <Rating
                 ref={field.ref}
                 name={field.name}
                 value={field.value}
                 max={size}
-                sx={inputSx}
+                sx={generateInputSx(field.value)}
                 precision={precision}
                 size={smallViewport ? "small" : "medium"}
                 onBlur={field.onBlur}
                 onChangeActive={handleHover}
                 onChange={(event, newValue) => {
-                  // Hack to set value around the controlled input
-                  // setValue && setValue(field.name, Number(newValue));
-                  field.value = Number(newValue);
+                  field.onChange(Number(newValue));
                   setStateValue(Number(newValue));
                 }}
               />

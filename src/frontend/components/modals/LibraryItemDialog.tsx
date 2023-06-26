@@ -11,13 +11,13 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-
-import { LibraryElementEnum } from "../../core/enums";
 import { useFormValidation } from "../../hooks";
 import { LibraryItemInput } from "../inputs";
+import { useLibraryStore } from "../../store/useLibraryStore";
+import { shallow } from "zustand/shallow";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
@@ -28,15 +28,15 @@ type Props = {
 
 export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handleSubmitted }: Props) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
+  const [schema, getDefaultValues] = useLibraryStore((state) => [state.schema, state.getInitialValues], shallow);
   const [loading, setLoading] = useState<boolean>(false);
 
   const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
-    // defaultValues,
+    defaultValues: defaultValues, // getDefaultValues(),
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
@@ -107,28 +107,15 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   );
 };
 
-const schema: Record<string, keyof typeof LibraryElementEnum> = {
-  "Movie Title": "line",
-  // "Origin Title": "line",
-  "Release Date": "date",
-  // Description: "text",
-  // "IMDB URL": "url",
-  // "IMDB Rating": "rating10",
-  // "My Rating": "rating5",
-  // Watched: "switch",
-  "Watched At": "datetime",
-  "Chance to Advice": "priority",
-};
-
 const defaultValues: Record<string, any> = {
   "Movie Title": "Лицо со шрамом",
-  // "Origin Title": "Scarface",
-  // "Release Date": "1983-12-01",
-  // Description: "In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed.",
-  // "IMDB URL": "https://www.imdb.com/title/tt0086250/",
-  // "IMDB Rating": 8,
-  // "My Rating": 5,
-  // Watched: true,
-  // "Watched At": "2020-01-31 00:00:01",
-  // "Chance to Advice": 5,
+  "Origin Title": "Scarface",
+  "Release Date": "1983-12-01",
+  Description: "In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed.",
+  "IMDB URL": "https://www.imdb.com/title/tt0086250/",
+  "IMDB Rating": 8,
+  "My Rating": 5,
+  Watched: true,
+  "Watched At": "2020-01-31 00:00:01",
+  "Chance to Advice": 5,
 };

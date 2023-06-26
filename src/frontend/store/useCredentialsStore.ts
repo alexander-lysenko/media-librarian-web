@@ -8,6 +8,10 @@ interface CredentialsState {
   clear: () => void;
 }
 
+/**
+ * Store for authentication credentials.
+ * Persists data in local storage
+ */
 export const useCredentialsStore = create<CredentialsState>()(
   persist(
     (set) => ({

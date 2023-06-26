@@ -9,12 +9,11 @@ import { DateTimeInputProps } from "../../core/types";
 
 /**
  * Library Item Form - Date/DateTime Input
- * Native HTML5 date input, fits browser locale
- * TODO: FIX undefined pristine state
+ * Uses MUI X DateTimePicker and Dayjs library
  */
 export const DateTimeInput = (props: DateTimeInputProps) => {
-  const { label, name, errorMessage, helperText } = props;
-  const { control, setValue, type } = props;
+  const { label, errorMessage, helperText, type } = props;
+  const { name, control } = props;
 
   const slotProps: DateTimePickerSlotsComponentsProps<Dayjs> = {
     textField: {
@@ -47,8 +46,7 @@ export const DateTimeInput = (props: DateTimeInputProps) => {
             value={dayjs(field.value, field.value && inputFormatByType[type])}
             onClose={field.onBlur}
             onChange={(value: Dayjs | null) => {
-              setValue(name, value?.format(inputFormatByType[type]));
-              // field.value = value?.format(inputFormatByType[type]);
+              field.onChange(value?.format(inputFormatByType[type]));
             }}
             defaultValue={dayjs()}
             ampm={false}
