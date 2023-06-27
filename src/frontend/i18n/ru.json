@@ -24,6 +24,16 @@
     "rowsPerPage": "Показывать записей:",
     "viewingEntries": "{{from}} - {{to}} из {{total}}, стр. {{page}}"
   },
+  "dateTimePicker": {
+    "cancelButtonLabel": "Отмена",
+    "nextMonth": "След. месяц",
+    "previousMonth": "Пред. месяц",
+    "todayButtonLabel": "Сегодня",
+    "toolbarTitle": {
+      "date": "Выберите дату",
+      "datetime": "Выберите дату и время"
+    }
+  },
   "formValidation": {
     "emailInvalid": "Кажется, формат Вашего e-mail не соответствует действительности",
     "emailNotUnique": "Этот адрес почты уже зарегистрирован",

@@ -24,6 +24,16 @@
     "rowsPerPage": "Rows per page:",
     "viewingEntries": "{{from}} - {{to}} of {{total}}, page {{page}}"
   },
+  "dateTimePicker": {
+    "cancelButtonLabel": "Cancel",
+    "nextMonth": "Next Month",
+    "previousMonth": "Prev. Month",
+    "todayButtonLabel": "Today",
+    "toolbarTitle": {
+      "date": "Select date",
+      "datetime": "Select date and time"
+    }
+  },
   "formValidation": {
     "emailInvalid": "Please provide a valid e-mail address",
     "emailNotUnique": "This email address has already been taken",
