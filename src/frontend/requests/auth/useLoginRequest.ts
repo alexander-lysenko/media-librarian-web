@@ -33,8 +33,8 @@ export const useLoginRequest = (): RequestSlice<LoginRequest, LoginResponse> => 
     },
     onSuccess: (response: AxiosResponse<LoginResponse>) => {
       setStatus("SUCCESS");
+      console.log(response);
       customEvents.onSuccess?.(response);
-
       const { email } = response.request;
       const { token, redirectTo } = response.data;
       setCredentials(email, token);

@@ -17,12 +17,12 @@ class RedirectIfAuthenticated
      *
      * @param Request $request
      * @param Closure $next (\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)
-     * @param string|null ...$guards
+     * @param array|null ...$guards
      * @return Response|RedirectResponse|JsonResponse
      */
     public function handle(Request $request, Closure $next, ...$guards): Response|RedirectResponse|JsonResponse
     {
-        $guards = empty($guards) ? [null] : $guards;
+        $guards = $guards?: [null];
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {

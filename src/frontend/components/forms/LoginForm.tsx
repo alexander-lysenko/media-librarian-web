@@ -13,7 +13,7 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -39,14 +39,18 @@ export const LoginForm = () => {
 
   const { status, fetch: submit, abort, setEvents } = useLoginRequest();
   const loading = status === "LOADING";
-  const responseEvents: BaseApiResponseEvents = {
-    onSuccess: () => reset(),
-    onReject: (reason) => {
-      console.log("Rejected", reason);
-      reset({ password: "" });
-      setError("root.serverError", { message: reason.response?.data.message || reason.message });
-    },
-  };
+
+  const responseEvents = useMemo(
+    (): BaseApiResponseEvents => ({
+      onSuccess: () => reset(),
+      onReject: (reason) => {
+        console.log("Rejected", reason);
+        reset({ password: "" });
+        setError("root.serverError", { message: reason.response?.data.message || reason.message });
+      },
+    }),
+    [reset, setError],
+  );
 
   const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
     await submit({ email: data.email, password: data.password });
@@ -56,7 +60,7 @@ export const LoginForm = () => {
 
   useEffect(() => {
     setEvents(responseEvents);
-  }, [setEvents]);
+  }, [responseEvents, setEvents]);
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
