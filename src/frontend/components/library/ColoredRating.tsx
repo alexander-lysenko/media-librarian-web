@@ -1,8 +1,8 @@
-import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
-import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
+import { StarBorderOutlined, StarOutlined } from "@mui/icons-material";
 import { Box, Rating } from "@mui/material";
-import { green, grey, orange, red } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import { memo, SyntheticEvent, useState } from "react";
+
 import { ratingColorByValue } from "../../core";
 
 type Props = {
@@ -52,10 +52,10 @@ export const ColoredRatingCustom = memo(({ size = 10, name, value, precision, fo
         return (
           <Box component="span" key={index} sx={{ position: "relative" }}>
             <Box component="span" sx={{ position: "absolute", left: 0, top: 0, overflow: "hidden" }} width={"100%"}>
-              <StarOutlinedIcon fontSize={"inherit"} sx={{ color }} />
+              <StarOutlined fontSize={"inherit"} sx={{ color }} />
             </Box>
             <Box component="span" sx={{ display: "inline-flex" }}>
-              <StarBorderOutlinedIcon fontSize={"inherit"} sx={{ color: grey.A400 }} />
+              <StarBorderOutlined fontSize={"inherit"} sx={{ color: grey.A400 }} />
             </Box>
           </Box>
         );

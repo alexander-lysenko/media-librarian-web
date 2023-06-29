@@ -1,7 +1,4 @@
-import ArrowDropDownOutlinedIcon from "@mui/icons-material/ArrowDropDownOutlined";
-import ArrowDropUpOutlinedIcon from "@mui/icons-material/ArrowDropUpOutlined";
-import BadgeIcon from "@mui/icons-material/Badge";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Collapse,
@@ -50,7 +47,7 @@ export const SidebarProfiler = () => {
             </Grid>
             <Grid item xs="auto">
               <IconButton sx={{ p: 0 }}>
-                {collapseOpen ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />}
+                {collapseOpen ? <ArrowDropUpOutlined /> : <ArrowDropDownOutlined />}
               </IconButton>
             </Grid>
           </Grid>
@@ -60,13 +57,13 @@ export const SidebarProfiler = () => {
       <Collapse in={collapseOpen}>
         <ListItemButton key="toProfile">
           <ListItemIcon>
-            <BadgeIcon />
+            <Badge />
           </ListItemIcon>
           <ListItemText disableTypography>Profile</ListItemText>
         </ListItemButton>
         <ListItemButton key="toLogOut">
           <ListItemIcon>
-            <LogoutOutlinedIcon />
+            <LogoutOutlined />
           </ListItemIcon>
           <ListItemText disableTypography>Log Out</ListItemText>
         </ListItemButton>

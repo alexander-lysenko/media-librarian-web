@@ -1,5 +1,4 @@
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
-import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
+import { DriveFileRenameOutlineOutlined, HourglassBottomOutlined } from "@mui/icons-material";
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
 
@@ -29,7 +28,7 @@ export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, 
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            {loadingState ? <HourglassBottomOutlinedIcon /> : <DriveFileRenameOutlineOutlinedIcon />}
+            {loadingState ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
           </InputAdornment>
         ),
       }}

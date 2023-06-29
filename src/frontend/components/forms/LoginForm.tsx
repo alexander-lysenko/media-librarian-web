@@ -1,7 +1,4 @@
-import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
-import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import { AlternateEmailOutlined, LoginOutlined, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -13,7 +10,7 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { forwardRef, useEffect, useMemo, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -88,7 +85,7 @@ export const LoginForm = () => {
         fullWidth
         variant="contained"
         disabled={loading}
-        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlinedIcon />}
+        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlined />}
         sx={{ mt: 3, mb: 2 }}
         children={t("loginPage.signInBtn")}
       />
@@ -114,7 +111,7 @@ const EmailTextField = forwardRef((props: InputCustomProps, ref) => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <AlternateEmailOutlinedIcon />
+            <AlternateEmailOutlined />
           </InputAdornment>
         ),
       }}
@@ -155,7 +152,7 @@ const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
             onMouseUp={handlePassHide}
             onMouseLeave={handlePassHide}
             onTouchStart={togglePassVisible}
-            children={passVisible ? <VisibilityOutlinedIcon /> : <VisibilityOffOutlinedIcon />}
+            children={passVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
           />
         ),
       }}

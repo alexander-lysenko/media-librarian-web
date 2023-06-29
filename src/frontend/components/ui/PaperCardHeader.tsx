@@ -1,16 +1,15 @@
 import { SvgIconComponent } from "@mui/icons-material";
 import {
-  Divider,
   Grid,
   Icon,
   IconButton,
+  IconButtonProps,
   ListItem,
   ListItemIcon,
   ListItemText,
   SxProps,
   Typography,
 } from "@mui/material";
-import { IconButtonProps } from "@mui/material/IconButton/IconButton";
 import { ReactNode } from "react";
 
 type Props = {
@@ -36,7 +35,7 @@ type Props = {
  * @param {SxProps | null} sx
  * @constructor
  */
-export const PaperCardHeader = ({ title, secondaryText, itemIcon, actionIcon, actionEvents, sx }: Props) => {
+export const PaperCardHeader = ({ title, secondaryText, itemIcon, actionIcon, actionEvents }: Props) => {
   return (
     <ListItem component="div" dense divider>
       {itemIcon && <ListItemIcon children={<Icon component={itemIcon} />} />}

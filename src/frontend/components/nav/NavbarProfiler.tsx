@@ -1,5 +1,4 @@
-import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import { BadgeOutlined, LogoutOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Divider,
@@ -75,13 +74,13 @@ export const NavbarProfiler = () => {
         <Divider variant="middle" sx={{ my: 1 }} />
         <MenuItem key="toProfile" component={Link} to={AppRoutes.profile}>
           <ListItemIcon>
-            <BadgeOutlinedIcon />
+            <BadgeOutlined />
           </ListItemIcon>
           <ListItemText disableTypography>{t("app.profile")}</ListItemText>
         </MenuItem>
         <MenuItem key="toLogOut" onClick={handleSignOut}>
           <ListItemIcon>
-            <LogoutOutlinedIcon />
+            <LogoutOutlined />
           </ListItemIcon>
           <ListItemText disableTypography>{t("app.logout")}</ListItemText>
         </MenuItem>

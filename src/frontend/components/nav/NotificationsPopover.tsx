@@ -1,5 +1,4 @@
-import NotificationImportantOutlinedIcon from "@mui/icons-material/NotificationImportantOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import { NotificationImportantOutlined, NotificationsOutlined } from "@mui/icons-material";
 import { Badge, Box, IconButton, Popover, Tooltip, Typography } from "@mui/material";
 import { MouseEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +20,7 @@ export const NotificationsPopover = () => {
       <Tooltip title={t("app.unreadNotifications", { count: notificationsCount })}>
         <IconButton size="large" color="inherit" onClick={handleOpen}>
           <Badge badgeContent={notificationsCount} color="error">
-            <NotificationsOutlinedIcon />
+            <NotificationsOutlined />
           </Badge>
         </IconButton>
       </Tooltip>
@@ -56,7 +55,7 @@ const NoNewNotifications = () => {
       flexDirection="column"
       fontSize={48}
     >
-      <NotificationImportantOutlinedIcon fontSize="inherit" color="success" />
+      <NotificationImportantOutlined fontSize="inherit" color="success" />
       <Typography variant="body1">{t("app.noNewNotifications")}</Typography>
     </Box>
   );

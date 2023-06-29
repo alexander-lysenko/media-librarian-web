@@ -18,7 +18,7 @@ COPY ./config/.bashrc /root/.bashrc
 COPY ./config/.bashrc /var/lib/nginx/.bashrc
 
 COPY ./config/php-fpm.conf /etc/php81/php-fpm.conf
-COPY ./config/xdebug.ini /etc/php81/conf.d/20_xdebug.ini
+COPY ./config/xdebug.ini /etc/php81/conf.d/xdebug.ini
 
 COPY ./docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf

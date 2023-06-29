@@ -1,4 +1,4 @@
-import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
+import { DoneOutlined } from "@mui/icons-material";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
 
 export const SimpleDialog = () => {
@@ -12,7 +12,7 @@ export const SimpleDialog = () => {
         <Button variant="text" onClick={() => false}>
           Cancel
         </Button>
-        <Button type="submit" variant="contained" endIcon={<DoneOutlinedIcon />} children={"Confirm"} />
+        <Button type="submit" variant="contained" endIcon={<DoneOutlined />} children={"Confirm"} />
       </DialogActions>
     </Dialog>
   );

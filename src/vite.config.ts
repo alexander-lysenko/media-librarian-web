@@ -1,6 +1,43 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 
+// @ts-ignore
+import { dependencies } from "./package.json";
+
+// noinspection SpellCheckingInspection
+const vendorDeps = [
+  "react",
+  "react-router-dom",
+  "react-dom",
+  "react-hook-form",
+  "axios",
+  "dayjs",
+  "i18next",
+  "react-i18next",
+  "zustand",
+];
+
+const muiDeps = ["@mui/icons-material", "@mui/system", "@mui/material", "@mui/x-date-pickers"];
+
+function renderChunks(deps: Record<string, string>) {
+  const chunks = {};
+
+  Object.keys(deps).forEach((key) => {
+    switch (true) {
+      case muiDeps.includes(key):
+        chunks["mui"] = [key];
+        break;
+      case vendorDeps.includes(key):
+        break;
+      default:
+        chunks[key] = [key];
+        break;
+    }
+  });
+
+  return chunks;
+}
+
 /**
  * Define config for Vite build
  */
@@ -17,6 +54,13 @@ export default defineConfig(({ command, mode }) => {
       outDir: "public/build",
       rollupOptions: {
         input: ["frontend/index.ts"],
+        output: {
+          compact: false,
+          manualChunks: {
+            vendor: vendorDeps,
+            ...renderChunks(dependencies),
+          },
+        },
       },
       chunkSizeWarningLimit: 500,
     },

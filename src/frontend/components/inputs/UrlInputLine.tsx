@@ -1,4 +1,4 @@
-import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
+import { PublicOutlined } from "@mui/icons-material";
 import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import { ChangeEvent, forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,9 +27,7 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
       disablePointerEvents={!!errorMessage}
       onClick={() => !!stateValue && !errorMessage && window.open(stateValue, "_blank")}
     >
-      <Tooltip title={t("common.openInNewTab")} placement="left" arrow>
-        <PublicOutlinedIcon />
-      </Tooltip>
+      <Tooltip title={t("common.openInNewTab")} placement="left" arrow children={<PublicOutlined />} />
     </InputAdornment>
   );
 

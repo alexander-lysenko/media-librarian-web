@@ -1,5 +1,4 @@
 import { Checkbox, FormControl, FormControlLabel, FormHelperText } from "@mui/material";
-import { forwardRef } from "react";
 import { Controller } from "react-hook-form";
 
 import { CheckBoxedInputProps } from "../../core/types";

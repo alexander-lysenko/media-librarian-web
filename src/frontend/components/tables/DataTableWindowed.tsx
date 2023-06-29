@@ -24,9 +24,9 @@ import {
   DataTableSortingState,
   DataTableStyleProps,
 } from "../../core/types";
+import { LibraryInlineComponents } from "../library/InlineComponents";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
 import { DataTablePagination } from "./DataTablePagination";
-import { LibraryInlineComponents } from "../library/InlineComponents";
 
 type DataTableProps = DataTableBaseProps &
   DataTableStyleProps &

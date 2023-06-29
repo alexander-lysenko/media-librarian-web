@@ -1,11 +1,15 @@
 import "dayjs/locale/en";
 import "dayjs/locale/ru";
 
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import { DateOrTimeView, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { CalendarMonthOutlined } from "@mui/icons-material";
+import {
+  DateOrTimeView,
+  DateTimePicker,
+  DateTimePickerSlotsComponentsProps,
+  LocalizationProvider,
+  PickersInputComponentLocaleText,
+} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePickerSlotsComponentsProps } from "@mui/x-date-pickers/DateTimePicker/DateTimePicker.types";
-import { PickersInputComponentLocaleText } from "@mui/x-date-pickers/locales/utils/pickersLocaleTextApi";
 import dayjs, { Dayjs } from "dayjs";
 import { Controller, UseControllerReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -68,7 +72,7 @@ export const DateTimeInput = (props: DateTimeInputProps) => {
             views={viewByType[type]}
             localeText={localeText}
             slotProps={slotProps}
-            slots={{ openPickerIcon: CalendarMonthOutlinedIcon }}
+            slots={{ openPickerIcon: CalendarMonthOutlined }}
             onClose={field.onBlur}
             onChange={(value: Dayjs | null) => {
               field.onChange(value?.format(inputFormatByType[type]));

@@ -7,7 +7,6 @@ import { DataColumn, DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
-import { DataTable } from "../components/tables/DataTable";
 
 const columns: DataColumn[] = [
   {

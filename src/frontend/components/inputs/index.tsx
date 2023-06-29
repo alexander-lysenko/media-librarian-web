@@ -11,6 +11,14 @@ import { TextInputMultiLine } from "./TextInputMultiLine";
 import { TextInputSingleLine } from "./TextInputSingleLine";
 import { UrlInputLine } from "./UrlInputLine";
 
+export { CheckBoxedInput } from "./CheckBoxedInput";
+export { ColoredRatingInput } from "./ColoredRatingInput";
+export { DateTimeInput } from "./DateTimeInput";
+export { PriorityInput } from "./PriorityInput";
+export { TextInputMultiLine } from "./TextInputMultiLine";
+export { TextInputSingleLine } from "./TextInputSingleLine";
+export { UrlInputLine } from "./UrlInputLine";
+
 type LibraryInputProps = InputCustomProps & {
   control: Control;
   setValue: UseFormSetValue<FieldValues>;

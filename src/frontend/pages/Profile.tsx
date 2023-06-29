@@ -1,25 +1,27 @@
-import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
-import ArrowDropDownOutlinedIcon from "@mui/icons-material/ArrowDropDownOutlined";
-import ArrowDropUpOutlinedIcon from "@mui/icons-material/ArrowDropUpOutlined";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
-import CleaningServicesOutlinedIcon from "@mui/icons-material/CleaningServicesOutlined";
-import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
-import CreateNewFolderOutlinedIcon from "@mui/icons-material/CreateNewFolderOutlined";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
-import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
-import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
-import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
-import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
-import PasswordOutlinedIcon from "@mui/icons-material/PasswordOutlined";
-import PermContactCalendarOutlinedIcon from "@mui/icons-material/PermContactCalendarOutlined";
-import PhotoAlbumOutlinedIcon from "@mui/icons-material/PhotoAlbumOutlined";
-import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
-import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
-import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
+import {
+  AddCircleOutlined,
+  ArrowDropDownOutlined,
+  ArrowDropUpOutlined,
+  CalendarMonthOutlined,
+  CheckCircleOutlined,
+  CleaningServicesOutlined,
+  CollectionsOutlined,
+  CreateNewFolderOutlined,
+  DeleteForeverOutlined,
+  DriveFileRenameOutlineOutlined,
+  EmailOutlined,
+  ErrorOutlined,
+  HighlightOffOutlined,
+  LightModeOutlined,
+  MarkEmailReadOutlined,
+  MarkEmailUnreadOutlined,
+  PasswordOutlined,
+  PermContactCalendarOutlined,
+  PhotoAlbumOutlined,
+  PowerSettingsNewOutlined,
+  RemoveCircleOutlined,
+  TranslateOutlined,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -81,9 +83,9 @@ export const Profile = () => {
         <Paper elevation={3} sx={{ my: 3 }}>
           <PaperCardHeader
             title={t("profile.basicDetails")}
-            itemIcon={PermContactCalendarOutlinedIcon}
+            itemIcon={PermContactCalendarOutlined}
             // secondaryText={"lorem ipsum dolor sit amet"}
-            actionIcon={profileOpen ? ArrowDropUpOutlinedIcon : ArrowDropDownOutlinedIcon}
+            actionIcon={profileOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
             actionEvents={{ onClick: () => setProfileOpen(!profileOpen) }}
           />
           <Grid container display={profileOpen ? "flex" : "none"}>
@@ -101,9 +103,9 @@ export const Profile = () => {
         <Paper elevation={3} sx={{ my: 3 }}>
           <PaperCardHeader
             title={t("profile.myLibraries")}
-            itemIcon={PhotoAlbumOutlinedIcon}
+            itemIcon={PhotoAlbumOutlined}
             secondaryText={"lorem ipsum dolor sit amet"}
-            actionIcon={libOpen ? ArrowDropUpOutlinedIcon : ArrowDropDownOutlinedIcon}
+            actionIcon={libOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
             actionEvents={{ onClick: () => setLibOpen(!libOpen) }}
           />
           <Box display={libOpen ? "block" : "none"}>
@@ -164,7 +166,7 @@ const ProfileActions = () => {
       </ListSubheader>
       <Divider />
       <ListItemButton divider>
-        <ListItemIcon children={<EmailOutlinedIcon />} />
+        <ListItemIcon children={<EmailOutlined />} />
         <ListItemText
           primary={t("profile.preferencesEnum.email")}
           secondary={email}
@@ -173,19 +175,19 @@ const ProfileActions = () => {
         />
       </ListItemButton>
       <ListItemButton divider>
-        <ListItemIcon children={<PasswordOutlinedIcon />} />
+        <ListItemIcon children={<PasswordOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.password")} secondary={"********"} />
       </ListItemButton>
       <ListItemButton divider>
-        <ListItemIcon children={<LightModeOutlinedIcon />} />
+        <ListItemIcon children={<LightModeOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.theme")} secondary={"Dark"} />
       </ListItemButton>
       <ListItemButton divider>
-        <ListItemIcon children={<TranslateOutlinedIcon />} />
+        <ListItemIcon children={<TranslateOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.locale")} secondary={"English"} />
       </ListItemButton>
       <ListItemButton>
-        <ListItemIcon children={<PowerSettingsNewOutlinedIcon />} />
+        <ListItemIcon children={<PowerSettingsNewOutlined />} />
         <ListItemText primary={"Log Out"} secondary={"Tap here to invalidate your session"} />
       </ListItemButton>
     </List>
@@ -197,10 +199,10 @@ const AccountInfo = () => {
   const { created_at, email_verified_at, status } = useProfileStore((state) => state.profile);
 
   const accountStatusIcon: Record<AccountStatusEnum, ReactNode> = {
-    [AccountStatusEnum.CREATED]: <ErrorOutlinedIcon />,
-    [AccountStatusEnum.ACTIVE]: <CheckCircleOutlinedIcon />,
-    [AccountStatusEnum.BANNED]: <RemoveCircleOutlinedIcon />,
-    [AccountStatusEnum.DELETED]: <HighlightOffOutlinedIcon />,
+    [AccountStatusEnum.CREATED]: <ErrorOutlined />,
+    [AccountStatusEnum.ACTIVE]: <CheckCircleOutlined />,
+    [AccountStatusEnum.BANNED]: <RemoveCircleOutlined />,
+    [AccountStatusEnum.DELETED]: <HighlightOffOutlined />,
   };
 
   return (
@@ -210,7 +212,7 @@ const AccountInfo = () => {
       </ListSubheader>
       <Divider />
       <ListItem>
-        <ListItemIcon children={<CalendarMonthOutlinedIcon />} />
+        <ListItemIcon children={<CalendarMonthOutlined />} />
         <ListItemText primary={t("profile.detailsEnum.registrationDate")} secondary={created_at} />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
@@ -223,9 +225,7 @@ const AccountInfo = () => {
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
-        <ListItemIcon>
-          {email_verified_at ? <MarkEmailReadOutlinedIcon /> : <MarkEmailUnreadOutlinedIcon />}
-        </ListItemIcon>
+        <ListItemIcon>{email_verified_at ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
         <ListItemText
           primary={t("profile.detailsEnum.emailStatus")}
           secondary={
@@ -235,7 +235,7 @@ const AccountInfo = () => {
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
-        <ListItemIcon children={<DriveFileRenameOutlineOutlinedIcon />} />
+        <ListItemIcon children={<DriveFileRenameOutlineOutlined />} />
         <ListItemText primary={"About me"} secondary={"Lorem Ipsum is simply dummy text of the..."} />
       </ListItem>
     </List>
@@ -249,7 +249,7 @@ const LibrariesList = ({ actions }: LibraryActions) => {
   return (
     <List dense disablePadding component="div">
       <ListItemButton divider onClick={actions?.handleOpenLibraryDialog}>
-        <ListItemIcon children={<CreateNewFolderOutlinedIcon />} />
+        <ListItemIcon children={<CreateNewFolderOutlined />} />
         <ListItemText
           primary={"Создать библиотеку"}
           secondary={"&nbsp;"}
@@ -259,7 +259,7 @@ const LibrariesList = ({ actions }: LibraryActions) => {
         />
       </ListItemButton>
       <ListItemButton divider onClick={actions?.handleOpenItemDialog}>
-        <ListItemIcon children={<AddCircleOutlinedIcon />} />
+        <ListItemIcon children={<AddCircleOutlined />} />
         <ListItemText
           primary={"Добавить запись"}
           secondary={"&nbsp;"}
@@ -269,14 +269,14 @@ const LibrariesList = ({ actions }: LibraryActions) => {
         />
       </ListItemButton>
       <ListItem divider>
-        <ListItemIcon children={<CollectionsOutlinedIcon />} />
+        <ListItemIcon children={<CollectionsOutlined />} />
         <ListItemText primary={"Test"} secondary={"lorem ipsum"} />
         <ListItemSecondaryAction>
           <IconButton size="small" aria-label="clear">
-            <CleaningServicesOutlinedIcon />
+            <CleaningServicesOutlined />
           </IconButton>
           <IconButton size="small" aria-label="delete">
-            <DeleteForeverOutlinedIcon />
+            <DeleteForeverOutlined />
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>

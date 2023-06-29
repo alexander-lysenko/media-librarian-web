@@ -42,8 +42,7 @@ const FooterWrapper = ({ children }: Props) => {
         backgroundColor: (theme) =>
           theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
       }}
-    >
-      {children}
-    </Box>
+      children={children}
+    />
   );
 };

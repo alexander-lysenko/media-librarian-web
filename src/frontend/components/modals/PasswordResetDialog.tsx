@@ -1,6 +1,4 @@
-import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import LockResetIcon from "@mui/icons-material/LockReset";
+import { AlternateEmailOutlined, LockOutlined, LockReset } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -104,7 +102,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
             variant="contained"
             fullWidth={fullScreen}
             disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <LockResetIcon />}
+            endIcon={loading ? <CircularProgress size={14} /> : <LockReset />}
             children={t("common.save")}
           />
         </DialogActions>
@@ -125,11 +123,7 @@ const EmailTextField = forwardRef((props: Partial<InputCustomProps>, ref) => {
       name="email"
       value={props.value}
       InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <AlternateEmailOutlinedIcon />
-          </InputAdornment>
-        ),
+        endAdornment: <InputAdornment position="end" children={<AlternateEmailOutlined />} />,
       }}
     />
   );
@@ -152,11 +146,7 @@ const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
       onChange={props.onChange}
       onBlur={props.onBlur}
       InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <LockOutlinedIcon />
-          </InputAdornment>
-        ),
+        endAdornment: <InputAdornment position="end" children={<LockOutlined />} />,
       }}
     />
   );

@@ -1,4 +1,4 @@
-import  MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import { MenuOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Box,
@@ -16,7 +16,7 @@ import {
   Typography,
   useScrollTrigger,
 } from "@mui/material";
-import { Fragment, cloneElement, ReactElement, useState } from "react";
+import { cloneElement, Fragment, ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -63,7 +63,7 @@ export const AppNavbar = () => {
             <Toolbar disableGutters>
               <Box sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}>
                 <IconButton size="large" onClick={handleDrawerToggle} color="inherit">
-                  <MenuOutlinedIcon />
+                  <MenuOutlined />
                 </IconButton>
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}>

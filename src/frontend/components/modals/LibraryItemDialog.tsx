@@ -1,4 +1,4 @@
-import SaveAsOutlinedIcon from "@mui/icons-material/SaveAsOutlined";
+import { SaveAsOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -11,13 +11,14 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useFormValidation } from "../../hooks";
-import { LibraryItemInput } from "../inputs";
-import { useLibraryStore } from "../../store/useLibraryStore";
 import { shallow } from "zustand/shallow";
+
+import { useFormValidation } from "../../hooks";
+import { useLibraryStore } from "../../store/useLibraryStore";
+import { LibraryItemInput } from "../inputs";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
@@ -98,7 +99,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
             type="submit"
             variant="contained"
             disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlinedIcon />}
+            endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
             children={isNewEntry ? t("common.create") : t("common.update")}
           />
         </DialogActions>
