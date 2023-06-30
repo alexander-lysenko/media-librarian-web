@@ -34,6 +34,21 @@
       "datetime": "Select date and time"
     }
   },
+  "dialogs": {
+    "changeEmailDialog": {
+      "title": "Change Account's E-mail Address",
+      "subtitle": "You will have to confirm your new e-mail address. We will send you the instructions to your new address."
+    },
+    "changePasswordDialog": {
+      "title": "Change Account's Password",
+      "subtitle": "To get your password changed, please provide your current password first."
+    },
+    "changeUsernameDialog": {
+      "title": "Change Account's Name",
+      "subtitle": "Do you want to be presented with a different name? No Problem!",
+      "whatIsYourName": "What is your name?"
+    }
+  },
   "formValidation": {
     "emailInvalid": "Please provide a valid e-mail address",
     "emailNotUnique": "This email address has already been taken",
@@ -128,9 +143,11 @@
     },
     "basicDetails": "Basic Details",
     "detailsEnum": {
-      "registrationDate": "Registration Date",
       "accountStatus": "Status",
-      "emailStatus": "E-mail status"
+      "emailStatus": "E-mail status",
+      "itemsTotalCount": "Total items collected",
+      "librariesCount": "Libraries in use",
+      "registrationDate": "Registration Date"
     },
     "emailVerifiedEnum": {
       "unverified": "Unverified",
@@ -140,9 +157,10 @@
     "preferences": "Preferences",
     "preferencesEnum": {
       "email": "Change e-mail address",
+      "locale": "Language",
       "password": "Update password",
       "theme": "Interface theme",
-      "locale": "Language"
+      "username": "Change your name"
     }
   },
   "signupPage": {

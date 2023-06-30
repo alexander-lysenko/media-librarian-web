@@ -1,4 +1,5 @@
 export * from "./_dataTable";
+export * from "./_dialogs";
 export * from "./_input";
 export * from "./_requests";
 export * from "./_userprofile";

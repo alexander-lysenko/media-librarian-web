@@ -18,7 +18,7 @@ import { shallow } from "zustand/shallow";
 
 import { useFormValidation } from "../../hooks";
 import { useLibraryStore } from "../../store/useLibraryStore";
-import { LibraryItemInput } from "../inputs";
+import { BasicLibraryItemInput } from "../libraryItemInputs/BasicLibraryItemInput";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
@@ -27,6 +27,14 @@ type Props = {
   isNewEntry?: boolean;
 };
 
+/**
+ * Modal Dialog to Add New Item / Update Existing Item in a Library
+ * @param {boolean} open
+ * @param {boolean} isNewEntry
+ * @param {SyntheticEvent} handleClose
+ * @param {SyntheticEvent} handleSubmitted
+ * @constructor
+ */
 export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handleSubmitted }: Props) => {
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
@@ -41,7 +49,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
-  const { formState, reset, handleSubmit, control, setValue } = useHookForm;
+  const { formState, reset, handleSubmit, control } = useHookForm;
   const { errors } = formState;
 
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
@@ -81,12 +89,11 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           {Object.entries(schema).map(([label, type], index) => {
             return (
-              <LibraryItemInput
+              <BasicLibraryItemInput
                 key={label}
                 type={type}
                 label={label}
                 control={control}
-                setValue={setValue}
                 errorMessage={errors?.[label]?.message as string}
                 {...(index === 0 ? registerFieldDebounced(1000, label, "titleREMOVE") : registerField(label, type))}
               />

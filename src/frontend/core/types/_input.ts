@@ -1,18 +1,17 @@
-import { ChangeHandler, Control, FieldValues, UseFormRegisterReturn, UseFormSetValue } from "react-hook-form";
+import { Control, FieldValues, UseFormRegisterReturn, UseFormSetValue } from "react-hook-form";
 
 import { LibraryElementEnum } from "../enums";
 
-export type InputCustomProps = Omit<UseFormRegisterReturn, "onChange"> & {
+export type InputCustomProps = UseFormRegisterReturn & {
   label: string;
   value?: string;
   helperText?: string;
   errorMessage?: string;
-  onChange?: ChangeHandler;
+  autoFocus?: boolean;
 };
 
 type FormControlProps = {
   control: Control;
-  setValue: UseFormSetValue<FieldValues>;
 };
 
 type LoadingProps = {

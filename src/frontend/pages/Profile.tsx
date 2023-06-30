@@ -2,16 +2,18 @@ import {
   AddCircleOutlined,
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
+  BadgeOutlined,
   CalendarMonthOutlined,
   CheckCircleOutlined,
   CleaningServicesOutlined,
   CollectionsOutlined,
   CreateNewFolderOutlined,
   DeleteForeverOutlined,
-  DriveFileRenameOutlineOutlined,
   EmailOutlined,
   ErrorOutlined,
+  GridViewOutlined,
   HighlightOffOutlined,
+  LibraryBooksOutlined,
   LightModeOutlined,
   MarkEmailReadOutlined,
   MarkEmailUnreadOutlined,
@@ -45,8 +47,13 @@ import { shallow } from "zustand/shallow";
 
 import { AppNavbar, PaperCardHeader } from "../components";
 import { ColoredRating } from "../components/library/ColoredRating";
-import { LibraryCreateDialog } from "../components/modals/LibraryCreateDialog";
-import { LibraryItemDialog } from "../components/modals/LibraryItemDialog";
+import {
+  ChangeEmailDialog,
+  ChangePasswordDialog,
+  ChangeUsernameDialog,
+  LibraryCreateDialog
+} from "../components/modals";
+import { LibraryItemDialog } from "../components/modals";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
 import { AccountStatusEnum } from "../core/types";
@@ -157,15 +164,27 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
 
 const ProfileActions = () => {
   const { t } = useTranslation();
-  const { email } = useProfileStore((state) => state.profile);
+  const { name: username, email } = useProfileStore((state) => state.profile);
+
+  const [usernameDialogOpen, setUsernameDialogOpen] = useState<boolean>(false);
+  const [emailDialogOpen, setEmailDialogOpen] = useState<boolean>(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false);
+  const [DialogOpen, setDialogOpen] = useState<boolean>(false);
 
   return (
     <List dense disablePadding component="div">
-      <ListSubheader disableSticky component="div">
-        {t("profile.preferences")}
-      </ListSubheader>
+      <ListSubheader disableSticky component="div" children={t("profile.preferences")} />
       <Divider />
-      <ListItemButton divider>
+      <ListItemButton divider onClick={() => setUsernameDialogOpen(true)}>
+        <ListItemIcon children={<BadgeOutlined />} />
+        <ListItemText
+          primary={t("profile.preferencesEnum.username")}
+          secondary={username}
+          secondaryTypographyProps={{ noWrap: true }}
+          title={username}
+        />
+      </ListItemButton>
+      <ListItemButton divider onClick={() => setEmailDialogOpen(true)}>
         <ListItemIcon children={<EmailOutlined />} />
         <ListItemText
           primary={t("profile.preferencesEnum.email")}
@@ -174,7 +193,7 @@ const ProfileActions = () => {
           title={email}
         />
       </ListItemButton>
-      <ListItemButton divider>
+      <ListItemButton divider onClick={() => setPasswordDialogOpen(true)}>
         <ListItemIcon children={<PasswordOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.password")} secondary={"********"} />
       </ListItemButton>
@@ -190,6 +209,9 @@ const ProfileActions = () => {
         <ListItemIcon children={<PowerSettingsNewOutlined />} />
         <ListItemText primary={"Log Out"} secondary={"Tap here to invalidate your session"} />
       </ListItemButton>
+      <ChangeUsernameDialog open={usernameDialogOpen} onClose={() => setUsernameDialogOpen(false)} />
+      <ChangeEmailDialog open={emailDialogOpen} onClose={() => setEmailDialogOpen(false)} />
+      <ChangePasswordDialog open={passwordDialogOpen} onClose={() => setPasswordDialogOpen(false)} />
     </List>
   );
 };
@@ -207,9 +229,7 @@ const AccountInfo = () => {
 
   return (
     <List dense disablePadding component="div">
-      <ListSubheader disableSticky component="div">
-        {t("profile.aboutThisProfile")}
-      </ListSubheader>
+      <ListSubheader disableSticky component="div" children={t("profile.aboutThisProfile")} />
       <Divider />
       <ListItem>
         <ListItemIcon children={<CalendarMonthOutlined />} />
@@ -235,9 +255,15 @@ const AccountInfo = () => {
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
-        <ListItemIcon children={<DriveFileRenameOutlineOutlined />} />
-        <ListItemText primary={"About me"} secondary={"Lorem Ipsum is simply dummy text of the..."} />
+        <ListItemIcon>{<LibraryBooksOutlined />}</ListItemIcon>
+        <ListItemText primary={t("profile.detailsEnum.librariesCount")} secondary={"0" /*todo replace with value*/} />
       </ListItem>
+      <Divider sx={{ borderColor: "transparent" }} />
+      <ListItem>
+        <ListItemIcon>{<GridViewOutlined />}</ListItemIcon>
+        <ListItemText primary={t("profile.detailsEnum.itemsTotalCount")} secondary={"0" /*todo replace with value*/} />
+      </ListItem>
+      <Divider sx={{ borderColor: "transparent" }} />
     </List>
   );
 };

@@ -210,6 +210,13 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
       },
     },
+    profile: {
+      username: {
+        setValueAs: (value: string) => value.trim(),
+        required: t("formValidation.usernameRequired") as Message,
+        minLength: { value: 3, message: t("formValidation.usernameMinLength", { n: 3 }) },
+      },
+    },
   };
 
   const { register } = useFormReturn;

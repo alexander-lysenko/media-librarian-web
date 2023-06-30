@@ -34,6 +34,21 @@
       "datetime": "Выберите дату и время"
     }
   },
+  "dialogs": {
+    "changeEmailDialog": {
+      "title": "Изменить e-mail адрес профиля",
+      "subtitle": "Вам нужно будет подтвердить новый адрес электронной почты. Мы вышлем на него письмо с инструкциями."
+    },
+    "changePasswordDialog": {
+      "title": "Изменить пароль",
+      "subtitle": "Чтобы изменить пароль, сначала нужно ввести Ваш текущий пароль."
+    },
+    "changeUsernameDialog": {
+      "title": "Изменить имя профиля",
+      "subtitle": "Хотите, чтобы мы называли Вас по-другому? Без проблем!",
+      "whatIsYourName": "Скажите, как Вас зовут?"
+    }
+  },
   "formValidation": {
     "emailInvalid": "Кажется, формат Вашего e-mail не соответствует действительности",
     "emailNotUnique": "Этот адрес почты уже зарегистрирован",
@@ -128,9 +143,11 @@
     },
     "basicDetails": "Основная информация",
     "detailsEnum": {
-      "registrationDate": "Дата регистрации",
       "accountStatus": "Статус",
-      "emailStatus": "Статус почтового ящика"
+      "emailStatus": "Статус почтового ящика",
+      "itemsTotalCount": "Элементов во всех библиотеках",
+      "librariesCount": "Создано библиотек",
+      "registrationDate": "Дата регистрации"
     },
     "emailVerifiedEnum": {
       "unverified": "Не подтвержден",
@@ -140,9 +157,10 @@
     "preferences": "Настройки аккаунта",
     "preferencesEnum": {
       "email": "Изменить e-mail адрес",
+      "locale": "Язык",
       "password": "Обновить пароль",
       "theme": "Тема оформления",
-      "locale": "Язык"
+      "username": "Изменить имя"
     }
   },
   "signupPage": {

@@ -21,7 +21,6 @@ export { UrlInputLine } from "./UrlInputLine";
 
 type LibraryInputProps = InputCustomProps & {
   control: Control;
-  setValue: UseFormSetValue<FieldValues>;
   type: keyof typeof LibraryElementEnum;
 };
 
@@ -29,10 +28,10 @@ type LibraryInputProps = InputCustomProps & {
  * Auto select input controls into Library Item Form
  * based on library schema object
  *
- * WARNING: The default values of the inputs (both initial and pre-filled)
+ * WARNING: The default values of the libraryItemInputs (both initial and pre-filled)
  * must be controlled by React Hook Form
  */
-export const LibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
+export const BasicLibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { type, control, ...inputProps } = props;
 

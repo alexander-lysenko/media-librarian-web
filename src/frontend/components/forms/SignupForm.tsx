@@ -3,8 +3,6 @@ import {
   BadgeOutlined,
   HourglassBottomOutlined,
   PersonAddAltOutlined,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
 } from "@mui/icons-material";
 import {
   Alert,
@@ -30,6 +28,9 @@ import { useFormValidation } from "../../hooks";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
 import { Language, useLanguageStore, useTranslationStore } from "../../store/useTranslationStore";
+import { PasswordInput } from "../inputs/PasswordInput";
+import { EmailInput } from "../inputs/EmailInput";
+import { TextInput } from "../inputs/TextInput";
 
 /**
  * Sign Up Form functional component
@@ -81,26 +82,28 @@ export const SignupForm = () => {
           {errors.root?.serverError.message as string}
         </Alert>
       </Collapse>
-      <UsernameTextField
+      <TextInput
         {...registerField("username")}
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint") as string}
         errorMessage={errors.username?.message as string}
+        autocomplete={"name"}
+        icon={<BadgeOutlined />}
       />
-      <EmailTextField
+      <EmailInput
         {...registerFieldDebounced(1000, "email")}
         label={t("signupPage.email")}
         helperText={t("signupPage.emailAsLoginHint") as string}
         errorMessage={errors.email?.message as string}
         loadingState={emailChecking}
       />
-      <PasswordTextField
+      <PasswordInput
         {...registerField("password")}
         label={t("signupPage.password")}
         helperText={t("signupPage.passwordHint") as string}
         errorMessage={errors.password?.message as string}
       />
-      <PasswordTextField
+      <PasswordInput
         {...registerField("passwordRepeat")}
         label={t("signupPage.passwordRepeat")}
         helperText={t("signupPage.passwordRepeatHint") as string}
@@ -133,99 +136,6 @@ export const SignupForm = () => {
     </Box>
   );
 };
-
-const UsernameTextField = forwardRef((props: InputCustomProps, ref) => {
-  return (
-    <TextField
-      inputRef={ref}
-      size="small"
-      margin="dense"
-      fullWidth
-      id="username"
-      name="username"
-      label={props.label}
-      error={!!props.errorMessage}
-      helperText={props.errorMessage || props.helperText}
-      autoComplete="name"
-      onChange={props.onChange}
-      onBlur={props.onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <BadgeOutlined />
-          </InputAdornment>
-        ),
-      }}
-    />
-  );
-});
-
-const EmailTextField = forwardRef((props: InputCustomProps & { loadingState: boolean }, ref) => {
-  return (
-    <TextField
-      inputRef={ref}
-      size="small"
-      margin="dense"
-      fullWidth
-      id="email"
-      name="email"
-      autoComplete="email"
-      label={props.label}
-      error={!!props.errorMessage}
-      helperText={props.errorMessage || props.helperText}
-      onChange={props.onChange}
-      onBlur={props.onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            {props.loadingState ? <HourglassBottomOutlined /> : <AlternateEmailOutlined />}
-          </InputAdornment>
-        ),
-      }}
-    />
-  );
-});
-
-const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
-  const { t } = useTranslation();
-  const [passVisible, setPassVisible] = useState<boolean>(false);
-
-  const handlePassVisible = () => setPassVisible(true);
-  const handlePassHide = () => setPassVisible(false);
-  const togglePassVisible = () => setPassVisible(!passVisible);
-
-  return (
-    <TextField
-      inputRef={ref}
-      size="small"
-      margin="dense"
-      fullWidth
-      type={passVisible ? "text" : "password"}
-      id={props.name}
-      name={props.name}
-      label={props.label}
-      error={!!props.errorMessage}
-      helperText={props.errorMessage || props.helperText}
-      autoComplete="current-password"
-      onChange={props.onChange}
-      onBlur={props.onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment
-            position="end"
-            sx={{ cursor: "pointer" }}
-            title={t("common.holdToSeePass")}
-            onMouseDown={handlePassVisible}
-            onMouseUp={handlePassHide}
-            onMouseLeave={handlePassHide}
-            onTouchStart={togglePassVisible}
-            children={passVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
-          />
-        ),
-      }}
-    />
-  );
-});
 
 const LanguageSelect = forwardRef((props: InputCustomProps, ref) => {
   const languages = useTranslationStore((state) => state.languages);

@@ -1,23 +1,14 @@
-import { AlternateEmailOutlined, LoginOutlined, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  Collapse,
-  FormControlLabel,
-  InputAdornment,
-  TextField,
-} from "@mui/material";
-import { forwardRef, useEffect, useMemo, useState } from "react";
+import { LoginOutlined } from "@mui/icons-material";
+import { Alert, Box, Button, Checkbox, CircularProgress, Collapse, FormControlLabel } from "@mui/material";
+import { useEffect, useMemo } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { BaseApiResponseEvents } from "../../core";
-import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { useLoginRequest } from "../../requests/auth/useLoginRequest";
+import { EmailInput } from "../inputs/EmailInput";
+import { PasswordInput } from "../inputs/PasswordInput";
 
 /**
  * Sign In (aka Login) Form functional component
@@ -62,16 +53,16 @@ export const LoginForm = () => {
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
       <Collapse in={!!errors.root?.serverError} unmountOnExit>
-        <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ mt: 2 }}>
+        <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ my: 2 }}>
           {errors.root?.serverError.message as string}
         </Alert>
       </Collapse>
-      <EmailTextField
+      <EmailInput
         {...registerField("email")}
         label={t("loginPage.email")}
         errorMessage={errors.email?.message as string}
       />
-      <PasswordTextField
+      <PasswordInput
         {...registerField("password")}
         label={t("loginPage.password")}
         errorMessage={errors.password?.message as string}
@@ -85,77 +76,10 @@ export const LoginForm = () => {
         fullWidth
         variant="contained"
         disabled={loading}
-        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlined />}
         sx={{ mt: 3, mb: 2 }}
         children={t("loginPage.signInBtn")}
+        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlined />}
       />
     </Box>
   );
 };
-
-const EmailTextField = forwardRef((props: InputCustomProps, ref) => {
-  return (
-    <TextField
-      inputRef={ref}
-      fullWidth
-      size="small"
-      margin="normal"
-      id="email"
-      name="email"
-      label={props.label}
-      error={!!props.errorMessage}
-      helperText={props.errorMessage || props.helperText}
-      autoComplete="email"
-      onChange={props.onChange}
-      onBlur={props.onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <AlternateEmailOutlined />
-          </InputAdornment>
-        ),
-      }}
-    />
-  );
-});
-
-const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
-  const { t } = useTranslation();
-  const [passVisible, setPassVisible] = useState<boolean>(false);
-
-  const handlePassVisible = () => setPassVisible(true);
-  const handlePassHide = () => setPassVisible(false);
-  const togglePassVisible = () => setPassVisible(!passVisible);
-
-  return (
-    <TextField
-      inputRef={ref}
-      fullWidth
-      size="small"
-      margin="normal"
-      type={passVisible ? "text" : "password"}
-      id="password"
-      name="password"
-      label={props.label}
-      error={!!props.errorMessage}
-      helperText={props.errorMessage || props.helperText}
-      autoComplete="current-password"
-      onChange={props.onChange}
-      onBlur={props.onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment
-            position="end"
-            sx={{ cursor: "pointer" }}
-            title={t("common.holdToSeePass")}
-            onMouseDown={handlePassVisible}
-            onMouseUp={handlePassHide}
-            onMouseLeave={handlePassHide}
-            onTouchStart={togglePassVisible}
-            children={passVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
-          />
-        ),
-      }}
-    />
-  );
-});
