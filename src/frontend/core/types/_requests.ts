@@ -10,5 +10,5 @@ export type RequestSlice<Request, Response> = {
   status: RequestStatus;
   fetch: (data: Request) => Promise<Response | void>;
   abort: () => void;
-  setEvents: (events: BaseApiResponseEvents) => void;
+  setRequestEvents: (events: BaseApiResponseEvents) => void;
 };

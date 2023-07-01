@@ -95,7 +95,8 @@
     "rating5": "Rating (5 stars)",
     "rating5precision": "Rating (5 stars, half precision)",
     "switch": "Switch",
-    "text": "Text Area"
+    "text": "Text Area",
+    "url": "Link (URL)"
   },
   "loginPage": {
     "email": "Email Address",

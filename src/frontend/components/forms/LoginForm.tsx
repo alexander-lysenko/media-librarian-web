@@ -25,7 +25,7 @@ export const LoginForm = () => {
   const { formState, handleSubmit, reset, setError } = useHookForm;
   const { errors } = formState;
 
-  const { status, fetch: submit, abort, setEvents } = useLoginRequest();
+  const { status, fetch: submit, abort, setRequestEvents } = useLoginRequest();
   const loading = status === "LOADING";
 
   const responseEvents = useMemo(
@@ -47,8 +47,8 @@ export const LoginForm = () => {
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
 
   useEffect(() => {
-    setEvents(responseEvents);
-  }, [responseEvents, setEvents]);
+    setRequestEvents(responseEvents);
+  }, [responseEvents, setRequestEvents]);
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>

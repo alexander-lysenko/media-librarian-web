@@ -28,7 +28,7 @@ export const TextInput = forwardRef((props: Props, ref) => {
       onChange={onChange}
       onBlur={onBlur}
       InputProps={{
-        endAdornment: <InputAdornment position="end" children={icon || <DriveFileRenameOutlineOutlined />} />,
+        endAdornment: <InputAdornment position="end" children={icon ?? <DriveFileRenameOutlineOutlined />} />,
       }}
     />
   );

@@ -5,6 +5,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+import { GlobalSnackbar } from "./components/ui/GlobalSnackbar";
 import { AppRoutes } from "./core/enums";
 import { App } from "./pages/App";
 import { Landing } from "./pages/Landing";
@@ -45,6 +46,7 @@ const Main = () => {
           <Route path={AppRoutes.profile} element={<Profile />} />
         </Routes>
       </Router>
+      <GlobalSnackbar />
     </ThemeProvider>
   );
 };

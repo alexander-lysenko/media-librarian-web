@@ -1,29 +1,22 @@
 import { AxiosResponse } from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { baseApiRequest, BaseApiRequestConfig, BaseApiResponseEvents } from "../../core";
-import { userLoginEndpoint } from "../../core/links";
+import { profileEndpoint } from "../../core/links";
 import { RequestSlice, RequestStatus } from "../../core/types";
-import { useCredentialsStore } from "../../store/useCredentialsStore";
+import { ProfileData, useProfileStore } from "../../store/useProfileStore";
 
-type LoginRequest = {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
+type ProfileResponse = {
+  user: ProfileData;
 };
 
-type LoginResponse = {
-  redirectTo: string;
-  token: string;
-};
-
-export const useLoginRequest = (): RequestSlice<LoginRequest, LoginResponse> => {
+/**
+ * TODO: Fix infinite requests
+ */
+export const useProfileGetRequest = (): RequestSlice<void, ProfileResponse> => {
   const [status, setStatus] = useState<RequestStatus>("IDLE");
   const [customEvents, setCustomEvents] = useState<BaseApiResponseEvents>({});
-
-  const navigate = useNavigate();
-  const setCredentials = useCredentialsStore((state) => state.setCredentials);
+  const setProfile = useProfileStore((state) => state.setProfile);
 
   const abortController = new AbortController();
   const events: BaseApiResponseEvents = {
@@ -31,14 +24,10 @@ export const useLoginRequest = (): RequestSlice<LoginRequest, LoginResponse> => 
       setStatus("LOADING");
       customEvents.beforeSend?.();
     },
-    onSuccess: (response: AxiosResponse<LoginResponse>) => {
+    onSuccess: (response: AxiosResponse<ProfileResponse>) => {
       setStatus("SUCCESS");
-      console.log(response);
       customEvents.onSuccess?.(response);
-      const { email } = response.request;
-      const { token, redirectTo } = response.data;
-      setCredentials(email, token);
-      navigate(redirectTo);
+      setProfile(response.data.user);
     },
     onReject: (reason) => {
       setStatus("FAILED");
@@ -51,15 +40,15 @@ export const useLoginRequest = (): RequestSlice<LoginRequest, LoginResponse> => 
     onComplete: () => customEvents.onComplete?.(),
   };
 
-  const fetch = async (body: LoginRequest) => {
-    const config: BaseApiRequestConfig<LoginRequest> = {
-      url: userLoginEndpoint,
-      method: "POST",
+  const fetch = async (body: void) => {
+    const config: BaseApiRequestConfig<void> = {
+      url: profileEndpoint,
+      method: "GET",
       data: body,
       signal: abortController.signal,
     };
 
-    return baseApiRequest<LoginRequest, LoginResponse>(config, events);
+    return baseApiRequest<void, ProfileResponse>(config, events);
   };
 
   return {

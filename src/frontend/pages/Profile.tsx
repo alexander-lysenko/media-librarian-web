@@ -43,20 +43,20 @@ import {
 } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { shallow } from "zustand/shallow";
 
 import { AppNavbar, PaperCardHeader } from "../components";
-import { ColoredRating } from "../components/library/ColoredRating";
 import {
   ChangeEmailDialog,
   ChangePasswordDialog,
   ChangeUsernameDialog,
-  LibraryCreateDialog
+  LibraryCreateDialog,
+  LibraryItemDialog,
 } from "../components/modals";
-import { LibraryItemDialog } from "../components/modals";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
 import { AccountStatusEnum } from "../core/types";
+import { useProfileGetRequest } from "../requests/profile/useProfileGetRequest";
+import { enqueueSnack } from "../store/useGlobalSnackbarStore";
 import { useProfileStore } from "../store/useProfileStore";
 
 type LibraryActions = {
@@ -65,23 +65,22 @@ type LibraryActions = {
 
 /**
  * Component representing the Profile page
+ * TODO: Fix infinite requests
  */
 export const Profile = () => {
   const { t } = useTranslation();
+  const { fetch: request, abort, setRequestEvents } = useProfileGetRequest();
+  const profile = useProfileStore((state) => state.profile);
 
   const [profileOpen, setProfileOpen] = useState(true);
   const [libOpen, setLibOpen] = useState(true);
   const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
   const [libAddItemDialogOpen, setLibAddItemDialogOpen] = useState(false);
 
-  const [profile, request] = useProfileStore((state) => [state.profile, state.getRequest], shallow);
-  const { name, email, avatar } = profile;
-
-  useEffect(() => {
-    return () => {
-      request();
-    };
-  }, [request]);
+  // useEffect(() => {
+  //   request();
+  //   return () => abort();
+  // }, [request, abort]);
 
   return (
     <>
@@ -97,7 +96,7 @@ export const Profile = () => {
           />
           <Grid container display={profileOpen ? "flex" : "none"}>
             <Grid item id="profiler" xs={12} md={4} sx={{ maxWidth: { md: 320 } }}>
-              <Profiler username={name} email={email} avatar={avatar} />
+              <Profiler username={profile.name} email={profile.email} avatar={profile.avatar} />
             </Grid>
             <Grid item id="preferences" xs={12} sm={6} md={4} lg={4}>
               <ProfileActions />
@@ -136,7 +135,6 @@ export const Profile = () => {
         handleClose={() => setLibAddItemDialogOpen(false)}
         handleSubmitted={() => false}
       />
-      <ColoredRating value={4.5} size={10} precision={0.5} />
     </>
   );
 };
@@ -169,7 +167,6 @@ const ProfileActions = () => {
   const [usernameDialogOpen, setUsernameDialogOpen] = useState<boolean>(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState<boolean>(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false);
-  const [DialogOpen, setDialogOpen] = useState<boolean>(false);
 
   return (
     <List dense disablePadding component="div">
@@ -205,7 +202,15 @@ const ProfileActions = () => {
         <ListItemIcon children={<TranslateOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.locale")} secondary={"English"} />
       </ListItemButton>
-      <ListItemButton>
+      <ListItemButton
+        onClick={() => {
+          enqueueSnack({
+            message: "Logged Out!",
+            type: "success",
+            enableCloseButton: true,
+          });
+        }}
+      >
         <ListItemIcon children={<PowerSettingsNewOutlined />} />
         <ListItemText primary={"Log Out"} secondary={"Tap here to invalidate your session"} />
       </ListItemButton>

@@ -21,11 +21,11 @@ import { useTranslation } from "react-i18next";
 
 import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
+import { enqueueSnack } from "../../store/useGlobalSnackbarStore";
 
 type Props = {
-  handleSubmitted: (event: SyntheticEvent | Event) => void;
-  handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
+  onClose: (event: SyntheticEvent | Event, reason?: string) => void;
 };
 
 /**
@@ -33,7 +33,7 @@ type Props = {
  * @param { open, handleClose }
  * @constructor
  */
-export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitted }: Props) => {
+export const PasswordRecoveryRequestDialog = ({ open, onClose }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -54,7 +54,7 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
     setTimeout(() => {
       // simulate request
       handleCloseWithReset(event as SyntheticEvent);
-      handleSubmitted(event as SyntheticEvent);
+      enqueueSnack({ type: "success", message: t("passwordRecovery.emailSent") });
     }, 2000);
   };
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
@@ -65,7 +65,7 @@ export const PasswordRecoveryRequestDialog = ({ open, handleClose, handleSubmitt
 
     reset({ email: "" });
     setLoading(false);
-    handleClose(event, reason);
+    onClose(event, reason);
   };
 
   return (

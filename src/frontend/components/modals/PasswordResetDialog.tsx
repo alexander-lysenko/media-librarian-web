@@ -20,11 +20,11 @@ import { useTranslation } from "react-i18next";
 
 import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
+import { enqueueSnack } from "../../store/useGlobalSnackbarStore";
 
 type Props = {
-  handleSubmitted: (event: SyntheticEvent | Event) => void;
-  handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
   open: boolean;
+  onClose: (event: SyntheticEvent | Event, reason?: string) => void;
 };
 
 /**
@@ -32,7 +32,7 @@ type Props = {
  * @param { open, handleClose }
  * @constructor
  */
-export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Props) => {
+export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -54,7 +54,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
 
     reset();
     setLoading(false);
-    handleClose(event, reason);
+    onClose(event, reason);
   };
 
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
@@ -64,7 +64,7 @@ export const PasswordResetDialog = ({ open, handleClose, handleSubmitted }: Prop
     setTimeout(() => {
       // Submit request
       handleCloseWithReset(event as SyntheticEvent);
-      handleSubmitted(event as SyntheticEvent);
+      enqueueSnack({ type: "success", message: t("passwordReset.successfullyReset") });
     }, 2000);
   };
 

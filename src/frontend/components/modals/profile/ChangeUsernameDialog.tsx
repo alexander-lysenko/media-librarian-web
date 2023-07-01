@@ -11,12 +11,13 @@ import {
   Grow,
 } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { SimpleDialogProps } from "../../../core/types";
 import { useFormValidation } from "../../../hooks";
 import { TextInput } from "../../inputs/TextInput";
+import { enqueueSnack } from "../../../store/useGlobalSnackbarStore";
 
 /**
  * Profile - Dialog - Change Account's Username
@@ -33,20 +34,35 @@ export const ChangeUsernameDialog = ({ open, onClose, onSubmit }: SimpleDialogPr
   const { registerField } = useFormValidation("profile", useHookForm);
   const { formState, reset, handleSubmit } = useHookForm;
 
-  const handleClose = (event: SyntheticEvent<Element, Event>) => {
+  const handleClose = (event: SyntheticEvent | Event) => {
     reset();
+    setLoading(false);
     onClose(event);
   };
 
-  const onValidSubmit = () => false;
-  const onInvalidSubmit = () => false;
+  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
+  const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
+    console.log("Form is valid", data);
+    setLoading(true);
+
+    setTimeout(() => {
+      // Submit request
+      setLoading(false);
+      handleClose(event as SyntheticEvent);
+      enqueueSnack({
+        message: "Alright. Your name is " + data.username,
+        type: "success",
+        enableCloseButton: true,
+      });
+    }, 2000);
+  };
 
   return (
-    <Dialog open={open} fullWidth TransitionComponent={Grow} transitionDuration={120} onClose={handleClose}>
+    <Dialog open={open} disableRestoreFocus fullWidth TransitionComponent={Grow} onClose={handleClose}>
       <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
         <DialogTitle variant={"h5"}>{t("dialogs.changeUsernameDialog.title")}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{t("dialogs.changeUsernameDialog.subtitle")}</DialogContentText>
+          <DialogContentText mb={1}>{t("dialogs.changeUsernameDialog.subtitle")}</DialogContentText>
           <TextInput
             {...registerField("username")}
             autoFocus

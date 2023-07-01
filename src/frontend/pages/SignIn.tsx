@@ -9,7 +9,6 @@ import { Copyright } from "../components/Copyright";
 import { LoginForm } from "../components/forms/LoginForm";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
-import { useSnackbar } from "../hooks/useSnackbar";
 
 /**
  * Component representing the SignIn (Login) page
@@ -19,19 +18,11 @@ export const SignIn = () => {
   const searchParams = new URLSearchParams(search);
 
   const { t } = useTranslation();
-  const snackbar = useSnackbar({});
 
   const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = useState<boolean>(false);
   const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState<boolean>(
     searchParams.has("action") && searchParams.get("action") === "recover",
   );
-
-  const emailConfirmedSnackbar = () => {
-    snackbar.show("success", t("passwordRecovery.emailSent"));
-  };
-  const passwordResetSnackbar = () => {
-    snackbar.show("success", t("passwordReset.successfullyReset"));
-  };
 
   const handleRecoveryDialogOpen = () => {
     setPasswordRecoverDialogOpen(true);
@@ -72,17 +63,8 @@ export const SignIn = () => {
           <Copyright />
         </StickyFooter>
       </PageContainer>
-      <PasswordRecoveryRequestDialog
-        handleSubmitted={emailConfirmedSnackbar}
-        handleClose={handleRecoveryDialogClose}
-        open={passwordRecoverDialogOpen}
-      />
-      <PasswordResetDialog
-        handleSubmitted={passwordResetSnackbar}
-        handleClose={handleResetDialogClose}
-        open={passwordResetDialogOpen}
-      />
-      {snackbar.render()}
+      <PasswordRecoveryRequestDialog open={passwordRecoverDialogOpen} onClose={handleRecoveryDialogClose} />
+      <PasswordResetDialog open={passwordResetDialogOpen} onClose={handleResetDialogClose} />
     </Grid>
   );
 };
