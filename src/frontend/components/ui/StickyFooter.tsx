@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Theme, Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 type Props = {
@@ -32,17 +32,8 @@ export const StickyFooter = ({ children }: Props) => {
 };
 
 const FooterWrapper = ({ children }: Props) => {
-  return (
-    <Box
-      component="footer"
-      sx={{
-        py: 3,
-        px: 2,
-        mt: "auto",
-        backgroundColor: (theme) =>
-          theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
-      }}
-      children={children}
-    />
-  );
+  const backgroundColor = (theme: Theme) =>
+    theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[800];
+
+  return <Box component="footer" sx={{ py: 3, px: 2, mt: "auto", backgroundColor }} children={children} />;
 };
