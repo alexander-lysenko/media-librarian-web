@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
-import { StickyFooter } from "../components";
+import { BackgroundContainer, StickyFooter } from "../components";
 import { Copyright } from "../components/Copyright";
 import { SignupForm } from "../components/forms/SignupForm";
 
@@ -43,23 +43,6 @@ export const SignUp = () => {
     </Grid>
   );
 };
-
-const BackgroundContainer = () => (
-  <Grid
-    item
-    xs={false}
-    sm={4}
-    md={7}
-    xl={8}
-    sx={{
-      backgroundImage: "url(https://source.unsplash.com/random?movie,series)",
-      backgroundRepeat: "no-repeat",
-      backgroundColor: (t) => (t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900]),
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}
-  />
-);
 
 type PageContainerProps = {
   children?: ReactNode;

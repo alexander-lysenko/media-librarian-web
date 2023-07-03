@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { Control, FieldValues, UseFormSetValue } from "react-hook-form";
+import { Control } from "react-hook-form";
 
 import { LibraryElementEnum } from "../../core/enums";
 import { InputCustomProps } from "../../core/types";

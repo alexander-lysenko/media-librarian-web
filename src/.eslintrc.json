@@ -11,7 +11,8 @@
     // Enables eslint-plugin-prettier and eslint-config-prettier. This will display Prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
   "plugins": [
-    "simple-import-sort"
+    "simple-import-sort",
+    "react-refresh"
   ],
   "env": {
     "node": true
@@ -23,12 +24,9 @@
     }
   },
   "rules": {
-    "no-console": "warn",
-    "simple-import-sort/imports": "warn",
-    "simple-import-sort/exports": "warn",
-    "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/no-empty-interface": "warn",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
@@ -39,7 +37,11 @@
         "varsIgnorePattern": "^_"
       }
     ],
-    "@typescript-eslint/no-empty-interface": "warn",
-    "@typescript-eslint/ban-ts-comment": "off"
+    "no-console": "warn",
+    "react-refresh/only-export-components": "warn",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "simple-import-sort/exports": "warn",
+    "simple-import-sort/imports": "warn"
   }
 }

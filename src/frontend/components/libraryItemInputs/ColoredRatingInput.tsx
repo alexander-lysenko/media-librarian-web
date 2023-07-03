@@ -22,7 +22,7 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
   const smallViewport = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [hover, setHover] = useState(-1);
-  const [stateValue, setStateValue] = useState<number | null>(0);
+  const [stateValue, setStateValue] = useState<number | null>(null);
 
   const generateInputSx = (value: number): SxProps => ({
     mr: 2,
@@ -51,7 +51,7 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
                 name={field.name}
                 value={field.value}
                 max={size}
-                sx={generateInputSx(field.value)}
+                sx={generateInputSx(stateValue || field.value)}
                 precision={precision}
                 size={smallViewport ? "small" : "medium"}
                 onBlur={field.onBlur}

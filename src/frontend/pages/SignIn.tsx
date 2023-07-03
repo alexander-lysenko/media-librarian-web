@@ -4,7 +4,7 @@ import { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
-import { StickyFooter } from "../components";
+import { BackgroundContainer, StickyFooter } from "../components";
 import { Copyright } from "../components/Copyright";
 import { LoginForm } from "../components/forms/LoginForm";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
@@ -68,23 +68,6 @@ export const SignIn = () => {
     </Grid>
   );
 };
-
-const BackgroundContainer = () => (
-  <Grid
-    item
-    xs={false}
-    sm={4}
-    md={7}
-    xl={8}
-    sx={{
-      backgroundColor: (t) => (t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900]),
-      backgroundImage: "url(https://source.unsplash.com/random?movie-posters)",
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}
-  />
-);
 
 type PageContainerProps = {
   children?: ReactNode;
