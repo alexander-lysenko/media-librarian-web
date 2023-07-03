@@ -3,9 +3,9 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "ax
 import { useCredentialsStore } from "../../store/useCredentialsStore";
 
 /**
- * Request configuration options (slightly overridden AxiosRequestConfig)
+ * Axios Request configuration options (slightly overridden AxiosRequestConfig)
  */
-export type BaseApiRequestConfig<Request> = AxiosRequestConfig<Request> & {
+export type FetchRequestConfig<Request> = AxiosRequestConfig<Request> & {
   /** The API endpoint's route (absolute URL) */
   url: string;
 
@@ -40,7 +40,7 @@ type FinallyEventHandler = () => void;
 /**
  * List of customizable events of request
  */
-export type BaseApiResponseEvents = {
+export type FetchResponseEvents = {
   /** The payload to be executed before the request is run */
   beforeSend?: BeforeSendEventHandler;
 
@@ -72,15 +72,15 @@ const axiosInstance = () => {
 };
 
 /**
- * Base API request instance based on Axios request instance. Designed to be flexible and customizable.
+ * Base API fetch instance based on Axios request instance. Designed to be flexible and customizable.
  *
- * @param {BaseApiRequestConfig} config
- * @param {BaseApiResponseEvents} events
+ * @param {FetchRequestConfig} config
+ * @param {FetchResponseEvents} events
  */
 
-export const baseApiRequest = async <Request, Response>(
-  config: BaseApiRequestConfig<Request>,
-  events: BaseApiResponseEvents,
+export const axiosFetch = async <Request, Response>(
+  config: FetchRequestConfig<Request>,
+  events: FetchResponseEvents,
 ): Promise<Response | void> => {
   const instance = axiosInstance();
 

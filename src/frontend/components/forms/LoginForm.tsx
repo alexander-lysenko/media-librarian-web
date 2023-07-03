@@ -1,12 +1,10 @@
 import { LoginOutlined } from "@mui/icons-material";
 import { Alert, Box, Button, Checkbox, CircularProgress, Collapse, FormControlLabel } from "@mui/material";
-import { useEffect, useMemo } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { BaseApiResponseEvents } from "../../core";
 import { useFormValidation } from "../../hooks";
-import { useLoginRequest } from "../../requests/auth/useLoginRequest";
+import { useUserLoginRequest } from "../../requests/useAuthRequests";
 import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 
@@ -15,40 +13,22 @@ import { PasswordInput } from "../inputs/PasswordInput";
  */
 export const LoginForm = () => {
   const { t } = useTranslation();
-  // const [loading, setLoading] = useState<boolean>(false);
 
   const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
   });
   const { registerField } = useFormValidation("login", useHookForm);
-  const { formState, handleSubmit, reset, setError } = useHookForm;
+  const { formState, handleSubmit, reset } = useHookForm;
   const { errors } = formState;
 
-  const { status, fetch: submit, abort, setRequestEvents } = useLoginRequest();
+  const { status, fetch: submit } = useUserLoginRequest(useHookForm);
   const loading = status === "LOADING";
-
-  const responseEvents = useMemo(
-    (): BaseApiResponseEvents => ({
-      onSuccess: () => reset(),
-      onReject: (reason) => {
-        console.log("Rejected", reason);
-        reset({ password: "" });
-        setError("root.serverError", { message: reason.response?.data.message || reason.message });
-      },
-    }),
-    [reset, setError],
-  );
 
   const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
     await submit({ email: data.email, password: data.password });
-    abort();
   };
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
-
-  useEffect(() => {
-    setRequestEvents(responseEvents);
-  }, [responseEvents, setRequestEvents]);
 
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
