@@ -65,7 +65,7 @@ const axiosInstance = () => {
 
   instance.defaults.timeout = 5000;
   instance.defaults.headers.post["Content-Type"] = "application/json";
-  instance.defaults.headers.common["Authorization"] = "Bearer 0000";
+  instance.defaults.headers.common["Authorization"] = null;
   instance.defaults.validateStatus = (status: number): boolean => status >= 200 && status < 400;
 
   return instance;

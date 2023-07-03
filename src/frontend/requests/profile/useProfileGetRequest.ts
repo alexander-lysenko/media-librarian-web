@@ -11,14 +11,15 @@ type ProfileResponse = {
 };
 
 /**
- * TODO: Fix infinite requests
+ *
  */
 export const useProfileGetRequest = (): RequestSlice<void, ProfileResponse> => {
   const [status, setStatus] = useState<RequestStatus>("IDLE");
   const [customEvents, setCustomEvents] = useState<BaseApiResponseEvents>({});
+  const [abortController] = useState<AbortController>(new AbortController());
+
   const setProfile = useProfileStore((state) => state.setProfile);
 
-  const abortController = new AbortController();
   const events: BaseApiResponseEvents = {
     beforeSend: () => {
       setStatus("LOADING");
@@ -26,21 +27,24 @@ export const useProfileGetRequest = (): RequestSlice<void, ProfileResponse> => {
     },
     onSuccess: (response: AxiosResponse<ProfileResponse>) => {
       setStatus("SUCCESS");
+      console.log(response);
       customEvents.onSuccess?.(response);
       setProfile(response.data.user);
     },
     onReject: (reason) => {
       setStatus("FAILED");
+      console.log("Rejected", reason);
       customEvents.onReject?.(reason);
     },
     onError: (error) => {
       setStatus("FAILED");
+      console.log("failed", error);
       customEvents.onError?.(error);
     },
     onComplete: () => customEvents.onComplete?.(),
   };
 
-  const fetch = async (body: void) => {
+  const fetch = async (body: void): Promise<ProfileResponse | void> => {
     const config: BaseApiRequestConfig<void> = {
       url: profileEndpoint,
       method: "GET",
@@ -48,7 +52,7 @@ export const useProfileGetRequest = (): RequestSlice<void, ProfileResponse> => {
       signal: abortController.signal,
     };
 
-    return baseApiRequest<void, ProfileResponse>(config, events);
+    return await baseApiRequest<void, ProfileResponse>(config, events);
   };
 
   return {

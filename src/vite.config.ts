@@ -17,7 +17,14 @@ const vendorDeps = [
   "zustand",
 ];
 
-const muiDeps = ["@mui/icons-material", "@mui/system", "@mui/material", "@mui/x-date-pickers"];
+const muiDeps = [
+  "@emotion/styled",
+  "@emotion/react",
+  "@mui/icons-material",
+  "@mui/system",
+  "@mui/material",
+  "@mui/x-date-pickers",
+];
 
 function renderChunks(deps: Record<string, string>) {
   const chunks = {};
@@ -51,11 +58,13 @@ export default defineConfig(({ command, mode }) => {
     plugins: [react(), splitVendorChunkPlugin()],
     build: {
       manifest: true,
+      minify: "esbuild",
+      // minify: false,
+      // sourcemap: true,
       outDir: "public/build",
       rollupOptions: {
         input: ["frontend/index.ts"],
         output: {
-          compact: false,
           manualChunks: {
             vendor: vendorDeps,
             ...renderChunks(dependencies),

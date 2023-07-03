@@ -41,7 +41,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppNavbar, PaperCardHeader } from "../components";
@@ -65,22 +65,25 @@ type LibraryActions = {
 
 /**
  * Component representing the Profile page
- * TODO: Fix infinite requests
  */
 export const Profile = () => {
   const { t } = useTranslation();
-  const { fetch: request, abort, setRequestEvents } = useProfileGetRequest();
+  const { fetch: request } = useProfileGetRequest();
   const profile = useProfileStore((state) => state.profile);
+
+  const dataFetchedRef = useRef(false);
 
   const [profileOpen, setProfileOpen] = useState(true);
   const [libOpen, setLibOpen] = useState(true);
   const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
   const [libAddItemDialogOpen, setLibAddItemDialogOpen] = useState(false);
 
-  // useEffect(() => {
-  //   request();
-  //   return () => abort();
-  // }, [request, abort]);
+  useEffect(() => {
+    if (!dataFetchedRef.current) {
+      dataFetchedRef.current = true;
+      void request();
+    }
+  }, [request]);
 
   return (
     <>
