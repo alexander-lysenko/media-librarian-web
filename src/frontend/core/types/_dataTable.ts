@@ -1,20 +1,23 @@
 import { SxProps } from "@mui/material";
 import { CSSProperties, MouseEvent } from "react";
 
-import { LibraryElementEnum } from "../enums";
+import { LibraryElement } from "./_library";
 
 export type SortDirection = "asc" | "desc";
 
-export type DataRow = Record<string, unknown>;
-export type DataRowNew = { id: string } & Record<string, unknown>;
+export type DataRow = { id: number } & Record<string, unknown>;
 
 export type DataColumn = {
-  id: string;
-  label?: string;
-  component: keyof typeof LibraryElementEnum;
+  label: string;
+  type: LibraryElement;
+};
+
+export type DataColumnStyleProps = {
   headerCellStyle?: CSSProperties;
   contentCellStyle?: CSSProperties;
 };
+
+export type DataColumnPropsByType = Record<LibraryElement, DataColumnStyleProps>;
 
 export type SortOptions = {
   column: string;
@@ -27,7 +30,7 @@ export type DataTableBaseProps = {
 };
 
 export type DataTableSelectedItemState = {
-  selectedItem?: number | null;
+  selectedItem: number | null;
   setSelectedItem?: (item: number | null) => void;
 };
 
@@ -48,13 +51,6 @@ export type DataTablePaginationProps = {
 
 export type DataTableHeaderProps = DataTableSortingState & {
   columns: DataColumn[];
-};
-
-export type DataTableContentsProps = {
-  columns: DataColumn[];
-  row: DataRow;
-  selectedItem: number | null;
-  setSelectedItem?: (item: number | null) => void;
 };
 
 export type DataTableStyleProps = {

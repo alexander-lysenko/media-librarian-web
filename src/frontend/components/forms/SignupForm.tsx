@@ -179,10 +179,10 @@ const ThemeSelect = forwardRef((props: InputCustomProps, ref) => {
         onChange={props.onChange}
       >
         <MenuItem key={"light"} value={"light"}>
-          {t("theme.presetLight")}
+          {t("theme.light")}
         </MenuItem>
         <MenuItem key={"dark"} value={"dark"}>
-          {t("theme.presetDark")}
+          {t("theme.dark")}
         </MenuItem>
       </Select>
       <FormHelperText>{props.helperText}</FormHelperText>

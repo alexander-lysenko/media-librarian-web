@@ -54,7 +54,7 @@ import {
 } from "../components/modals";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
-import { AccountStatusEnum } from "../core/types";
+import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
 import { enqueueSnack } from "../store/useGlobalSnackbarStore";
 import { useProfileStore } from "../store/useProfileStore";

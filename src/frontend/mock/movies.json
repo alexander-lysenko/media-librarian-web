@@ -1,42 +1,62 @@
 [
     {
-        "Название": "Лицо со шрамом (Scarface)",
-        "Описание": "In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed.",
-        "Дата выхода": "9 декабря 1983г.",
-        "Дата просмотра": "7 августа 2016г.",
-        "Оценка": 0,
-        "Отзыв": "Отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв "
+        "Movie Title": "Лицо со шрамом (1983)",
+        "Origin Title": "Scarface",
+        "Release Date": "1983-12-01",
+        "Description": "In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed.",
+        "IMDB URL": "https://www.imdb.com/title/tt0086250/",
+        "IMDB Rating": 8,
+        "My Rating": 5,
+        "Watched": true,
+        "Watched At": "2016-08-07 00:00:01",
+        "Chance to Advice": 5
     },
     {
-        "Название": "Враг государства (Enemy of The State)",
-        "Описание": "За считанные дни из законопослушного гражданина Дин превратился в опасного преступника, на которого была объявлена настоящая охота.",
-        "Дата выхода": "20 ноября 1998г.",
-        "Дата просмотра": "16 мая 2021г.",
-        "Оценка": 2,
-        "Отзыв": "Отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв "
+        "Movie Title": "Враг государства (1998)",
+        "Origin Title": "Enemy of The State",
+        "Release Date": "1998-11-20",
+        "Description": "A lawyer becomes targeted by a corrupt politician and his N.S.A. goons when he accidentally receives key evidence to a politically motivated crime.",
+        "IMDB URL": "https://www.imdb.com/title/tt0120660/",
+        "IMDB Rating": 7,
+        "My Rating": 4,
+        "Watched": true,
+        "Watched At": "2021-05-16 00:00:01",
+        "Chance to Advice": 4
     },
     {
-        "Название": "Матрица (The Matrix)",
-        "Описание": "Жизнь Томаса Андерсона разделена на две части: днём он — офисный работник, а ночью превращается в хакера по имени Нео.",
-        "Дата выхода": "31 марта 1999г.",
-        "Дата просмотра": "1 января 2010г.",
-        "Оценка": 3.5,
-        "Отзыв": "Отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв "
+        "Movie Title": "Матрица (1999)",
+        "Origin Title": "The Matrix",
+        "Release Date": "1999-03-31",
+        "Description": "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence.",
+        "IMDB URL": "https://www.imdb.com/title/tt0133093/",
+        "IMDB Rating": 9,
+        "My Rating": 3,
+        "Watched": false,
+        "Watched At": "2010-01-01 00:00:01",
+        "Chance to Advice": 2
     },
     {
-        "Название": "Ворон (The Crow)",
-        "Описание": "Спустя год Эрик Дрэйвен выбирается из могилы и отправляется на поиски убийц. Человек ли он? Или Ворон, жаждущий возмездия?",
-        "Дата выхода": "11 мая 1994г.",
-        "Дата просмотра": "16 апреля 2021г.",
-        "Оценка": 4,
-        "Отзыв": "Отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв "
+        "Movie Title": "Ворон (1994)",
+        "Origin Title": "The Crow",
+        "Release Date": "1994-05-11",
+        "Description": "A man brutally murdered comes back to life as an undead avenger of his and his fiancée's murder.",
+        "IMDB URL": "https://www.imdb.com/title/tt0109506/",
+        "IMDB Rating": 7,
+        "My Rating": 2,
+        "Watched": true,
+        "Watched At": "2021-04-16 00:00:01",
+        "Chance to Advice": 0
     },
     {
-        "Название": "Хоттабыч (}{0ТТ@БЬ)Ч)",
-        "Описание": "Спасаясь от своих врагов, Гена и Хоттабыч летают на линолеуме-самолете над Красной площадью, путешествуют по сетям Мировой Паутины и практикуют магию",
-        "Дата выхода": "10 августа 2006г.",
-        "Дата просмотра": "31 марта 2020г.",
-        "Оценка": 5,
-        "Отзыв": "Отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв отзыв "
+        "Movie Title": "Хоттабыч (2006)",
+        "Origin Title": "Khottabych",
+        "Release Date": "2006-08-10",
+        "Description": "Gena is a hacker by heart and soul. He's a good fella. But he got himself in some real troubles. And the only thing that can save him - is a thousand years old Djinni, who attempts to learn how to live in the modern world.",
+        "IMDB URL": "https://www.imdb.com/title/tt0466043/",
+        "IMDB Rating": 6,
+        "My Rating": 0,
+        "Watched": true,
+        "Watched At": "2020-03-31 00:00:01",
+        "Chance to Advice": -5
     }
 ]

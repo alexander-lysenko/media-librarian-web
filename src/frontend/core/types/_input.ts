@@ -1,6 +1,6 @@
-import { Control, FieldValues, UseFormRegisterReturn, UseFormSetValue } from "react-hook-form";
+import { Control, UseFormRegisterReturn } from "react-hook-form";
 
-import { LibraryElementEnum } from "../enums";
+import { LibraryElement } from "./_library";
 
 export type InputCustomProps = UseFormRegisterReturn & {
   label: string;
@@ -35,7 +35,7 @@ export type PriorityInputProps = InputCustomProps & { control: Control };
 export type CheckBoxedInputProps = InputCustomProps & { control: Control };
 export type UrlInputProps = InputCustomProps;
 
-type RelatedInputProps<T extends keyof typeof LibraryElementEnum> = { type: T };
+type RelatedInputProps<T extends LibraryElement> = { type: T };
 
 export type LibraryInputNarrowProps =
   | (RelatedInputProps<"line"> & InputCustomProps & LoadingProps)

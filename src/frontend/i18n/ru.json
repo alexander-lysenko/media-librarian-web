@@ -4,6 +4,7 @@
     "noNewNotifications": "Тишь да гладь, ничего нового",
     "openProfileMenu": "Открыть меню профиля",
     "profile": "Профиль",
+    "uiTheme": "Тема оформления",
     "unreadNotifications_few": "{{count}} новых уведомления",
     "unreadNotifications_many": "{{count}} новых уведомлений",
     "unreadNotifications_one": "{{count}} новое уведомление",
@@ -15,10 +16,12 @@
     "cancel": "Отмена",
     "create": "Создать",
     "holdToSeePass": "Зажмите чтобы увидеть пароль",
+    "no": "Нет",
     "openInNewTab": "Открыть в новой вкладке",
     "save": "Сохранить",
     "submit": "Отправить",
-    "update": "Обновить"
+    "update": "Обновить",
+    "yes": "Да"
   },
   "dataTable": {
     "rowsPerPage": "Показывать записей:",
@@ -183,7 +186,7 @@
     "usernameHint": "Скажите нам, как мы можем к Вам обращаться."
   },
   "theme": {
-    "presetDark": "Темная",
-    "presetLight": "Светлая"
+    "dark": "Темная",
+    "light": "Светлая"
   }
 }

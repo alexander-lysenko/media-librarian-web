@@ -4,6 +4,7 @@
     "noNewNotifications": "You've all caught up!",
     "openProfileMenu": "Open Profile Menu",
     "profile": "Profile",
+    "uiTheme": "Interface Theme",
     "unreadNotifications_few": "",
     "unreadNotifications_many": "",
     "unreadNotifications_one": "{{count}} New Notification",
@@ -15,10 +16,12 @@
     "cancel": "Cancel",
     "create": "Create",
     "holdToSeePass": "Long tap to make password visible",
+    "no": "No",
     "openInNewTab": "Open in a new tab",
     "save": "Save",
     "submit": "Submit",
-    "update": "Update"
+    "update": "Update",
+    "yes": "Yes"
   },
   "dataTable": {
     "rowsPerPage": "Rows per page:",
@@ -183,7 +186,7 @@
     "usernameHint": "Tell us your name or how you'd like to be addressed."
   },
   "theme": {
-    "presetDark": "Dark",
-    "presetLight": "Light"
+    "dark": "Dark",
+    "light": "Light"
   }
 }

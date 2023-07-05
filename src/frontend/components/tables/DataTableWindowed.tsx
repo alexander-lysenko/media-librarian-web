@@ -1,4 +1,3 @@
-// eslint-disable
 import {
   Table,
   TableBody,
@@ -10,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { SxProps } from "@mui/system";
-import { ChangeEvent, CSSProperties, MouseEvent } from "react";
+import { ChangeEvent, CSSProperties, forwardRef, MouseEvent } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, ListItemKeySelector } from "react-window";
 
@@ -24,7 +23,8 @@ import {
   DataTableSortingState,
   DataTableStyleProps,
 } from "../../core/types";
-import { LibraryInlineComponents } from "../library/InlineComponents";
+import { useLibraryTableStore } from "../../store/useLibraryTableStore";
+import { LibraryItemRow } from "../library/LibraryItemRow";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
 import { DataTablePagination } from "./DataTablePagination";
 
@@ -98,7 +98,7 @@ export const DataTableWindowed = (props: DataTableProps) => {
         {loading ? (
           <LoadingOverlayInner />
         ) : (
-          <TableContents
+          <TableContents2
             tableSx={tableSx}
             columns={columns}
             rows={rows}
@@ -137,22 +137,22 @@ const TableContents = (props: TableContentsProps) => {
     return (data[index].id as number | undefined) || index;
   };
 
-  const Wrapper = ({ children, ...props }: any) => {
+  const Wrapper = forwardRef(({ children, ...props }: any, ref) => {
     console.log(props);
     return (
-      <Table stickyHeader size="small" sx={{ height: "100%", ...tableSx }} {...props}>
+      <Table stickyHeader size="small" sx={{ height: "100%", ...tableSx }} {...props} ref={ref}>
         <TableHeadRow columns={columns} sort={sort} onSort={onSort} />
         {children}
       </Table>
     );
-  };
+  });
 
   return (
     <AutoSizer id="auto-sizer">
-      {({ height, width }) => (
+      {({ height, width }: { height: number; width: number }) => (
         <FixedSizeList
-          height={height as number}
-          width={width as number}
+          height={height}
+          width={width}
           outerElementType={Wrapper}
           innerElementType={TableBody}
           itemCount={rows.length}
@@ -177,16 +177,18 @@ const TableContents = (props: TableContentsProps) => {
 };
 
 const TableHeadRow = ({ columns, sort, onSort }: TableHeadRowProps) => {
+  const columnsOptions = useLibraryTableStore((state) => state.columnsOptions);
   return (
     <TableHead>
       <TableRow>
         {columns.map((column) => {
-          const isSortActive = sort?.column === column.id;
-          const sortDirection = sort?.column === column.id ? sort?.direction : "asc";
+          const isSortActive = sort?.column === column.label;
+          const sortDirection = sort?.column === column.label ? sort?.direction : "asc";
+          const headerStyle = columnsOptions[column.type].headerCellStyle;
 
           return (
-            <TableCell key={column.id} sx={column.headerCellStyle} sortDirection={sortDirection}>
-              <TableSortLabel active={isSortActive} direction={sortDirection} onClick={onSort?.(column.id)}>
+            <TableCell key={column.label} sx={headerStyle} sortDirection={sortDirection}>
+              <TableSortLabel active={isSortActive} direction={sortDirection} onClick={onSort?.(column.label)}>
                 <Typography variant="subtitle2" noWrap children={column.label} />
               </TableSortLabel>
             </TableCell>
@@ -205,11 +207,11 @@ const TableBodyWindowed = ({ rows, columns, selectedItem, onRowClick }: TableBod
   return (
     <TableBody>
       <AutoSizer id={"autosizer"}>
-        {({ height, width }) => {
+        {({ height, width }: { height: number; width: number }) => {
           return (
             <FixedSizeList
-              height={height as number}
-              width={width as number}
+              height={height}
+              width={width}
               itemCount={rows.length}
               itemSize={28}
               itemKey={itemKey}
@@ -236,13 +238,7 @@ const TableBodyWindowed = ({ rows, columns, selectedItem, onRowClick }: TableBod
 const TableBodyRow = ({ row, columns, selected, onRowClick, sx, style }: TableBodyRowProps) => {
   return (
     <TableRow hover selected={selected} onClick={onRowClick} sx={sx} style={style} component="tr">
-      {columns.map((column) => (
-        <TableCell key={column.id} sx={{ py: 0.25, px: 1, ...column.contentCellStyle }}>
-          {column.component
-            ? column.component(row[column.id] as never)
-            : ((value) => <Typography variant="body2" noWrap children={value} />)(row[column.id] as never)}
-        </TableCell>
-      ))}
+      <LibraryItemRow key={row.id} row={row} columns={columns} />
     </TableRow>
   );
 };

@@ -5,11 +5,11 @@ export enum AppRoutes {
   profile = "/profile",
 }
 
-export enum DataType {
-  text = "text",
-  varchar255 = "varchar(255)",
-  date = "date",
-  datetime = "datetime",
+export enum AccountStatusEnum {
+  CREATED = "CREATED",
+  ACTIVE = "ACTIVE",
+  BANNED = "BANNED",
+  DELETED = "DELETED",
 }
 
 export enum LibraryElementEnum {
@@ -24,13 +24,6 @@ export enum LibraryElementEnum {
   priority = "priority",
   switch = "switch",
   url = "url",
-}
-
-export enum dbToAppTypeEnum {
-  varchar255 = "line",
-  text = "text",
-  date = "date",
-  datetime = "datetime",
 }
 
 export enum RegisteredFormNamesEnum {

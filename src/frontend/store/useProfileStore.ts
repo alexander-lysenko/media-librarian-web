@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { AccountStatusEnum } from "../core/types";
+import { AccountStatusEnum } from "../core/enums";
 
 export type ProfileData = {
   id: number;

@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
 import { create } from "zustand";
 
-import { LibraryElementEnum } from "../core/enums";
+import { LibraryElement } from "../core/types";
 
-type LibraryElements = keyof typeof LibraryElementEnum;
-type LibrarySchema = Record<string, LibraryElements>;
+type LibrarySchema = Record<string, LibraryElement>;
 type DefaultValues = Record<string, string | number | boolean>;
 
 type LibraryState = {
@@ -33,7 +32,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   setSchema: (schema: LibrarySchema) => set({ schema }),
   getInitialValues: () => {
     const columns = get().schema;
-    const defaultValues: Record<LibraryElements, () => string | number | boolean> = {
+    const defaultValues: Record<LibraryElement, () => string | number | boolean> = {
       line: () => "",
       text: () => "",
       url: () => "",
@@ -47,7 +46,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       rating10precision: () => 0,
     };
 
-    return Object.entries(columns).reduce((acc: DefaultValues, [column, type]: [string, LibraryElements]) => {
+    return Object.entries(columns).reduce((acc: DefaultValues, [column, type]: [string, LibraryElement]) => {
       acc[column] = defaultValues[type]();
       return acc;
     }, {});

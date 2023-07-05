@@ -21,16 +21,11 @@ import {
   DataTableSortingState,
   DataTableStyleProps,
 } from "../../core/types";
-import { LibraryInlineComponents } from "../library/InlineComponents";
+import { useLibraryTableStore } from "../../store/useLibraryTableStore";
+import { LibraryItemRow } from "../library/LibraryItemRow";
 import { DataTablePagination } from "./DataTablePagination";
 
-type DataTableProps = DataTableBaseProps &
-  DataTableStyleProps &
-  DataTableSelectedItemState & {
-    sorting: DataTableSortingState;
-    pagination: DataTablePaginationProps;
-    loading: boolean;
-  };
+type TableProps = DataTableStyleProps & { loading: boolean };
 
 type TableContentsProps = DataTableBaseProps &
   Pick<DataTableSelectedItemState, "selectedItem"> &
@@ -38,68 +33,15 @@ type TableContentsProps = DataTableBaseProps &
   Pick<DataTableStyleProps, "tableSx"> &
   DataTableEventsProps;
 
-const LoadingOverlay = () => {
-  return (
-    <Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <CircularProgress disableShrink />
-    </Box>
-  );
-};
-
-const TableContents = (props: TableContentsProps) => {
-  const { tableSx, columns, rows, sort, selectedItem, onSort, onRowClick } = props;
-
-  return (
-    <Table stickyHeader size="small" sx={tableSx}>
-      <TableHead>
-        <TableRow>
-          {columns.map((column, index) => {
-            return (
-              <TableCell key={column.id + index} sx={{ px: 1, ...column.headerCellStyle }} sortDirection="asc">
-                <TableSortLabel
-                  active={sort?.column === column.id}
-                  direction={sort?.column === column.id ? sort?.direction : "asc"}
-                  onClick={onSort(column.id)}
-                  children={
-                    <Typography variant="subtitle2" noWrap>
-                      {column.label}
-                    </Typography>
-                  }
-                />
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows.map((row, index) => (
-          <TableRow
-            key={index}
-            hover
-            selected={index === selectedItem}
-            onClick={onRowClick(index)}
-            children={columns.map((column, index) => {
-              const LibraryComponent = LibraryInlineComponents[column.component];
-              return (
-                <TableCell key={column.id + index} sx={{ py: 0.25, px: 1, ...column.contentCellStyle }}>
-                  <LibraryComponent value={row[column.id] as never} truncate />
-                </TableCell>
-              );
-            })}
-          />
-        ))}
-      </TableBody>
-    </Table>
-  );
-};
-
 /**
  * Data Table component, displays Library items
  */
-export const DataTable = (props: DataTableProps) => {
-  const { columns, rows, sorting, pagination, loading, selectedItem, setSelectedItem, containerSx, tableSx } = props;
-  const { sort, setSort } = sorting;
-  const { page, rowsPerPage, setPage, setRowsPerPage } = pagination;
+export const DataTable = (props: TableProps) => {
+  const { loading, containerSx, tableSx } = props;
+
+  const { columns, rows } = useLibraryTableStore((state) => state);
+  const { sort, setSort, page, setPage, rowsPerPage, setRowsPerPage, selectedItem, setSelectedItem } =
+    useLibraryTableStore((state) => state);
 
   const handleChangePage = (event: MouseEvent | null, newPage: number) => {
     event?.preventDefault();
@@ -158,5 +100,51 @@ export const DataTable = (props: DataTableProps) => {
         />
       </Paper>
     </Box>
+  );
+};
+
+const LoadingOverlay = () => {
+  return (
+    <Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <CircularProgress disableShrink />
+    </Box>
+  );
+};
+
+const TableContents = (props: TableContentsProps) => {
+  const { tableSx, columns, rows, sort, selectedItem, onSort, onRowClick } = props;
+  const columnsOptions = useLibraryTableStore((state) => state.columnsOptions);
+
+  return (
+    <Table stickyHeader size="small" sx={tableSx}>
+      <TableHead>
+        <TableRow>
+          {columns.map((column, index) => {
+            const headerStyle = columnsOptions[column.type].headerCellStyle;
+            return (
+              <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection="asc">
+                <TableSortLabel
+                  active={sort?.column === column.label}
+                  direction={sort?.column === column.label ? sort?.direction : "asc"}
+                  onClick={onSort(column.label)}
+                  children={
+                    <Typography variant="subtitle2" noWrap>
+                      {column.label}
+                    </Typography>
+                  }
+                />
+              </TableCell>
+            );
+          })}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map((row, index) => (
+          <TableRow key={index} hover selected={index === selectedItem} onClick={onRowClick(index)}>
+            <LibraryItemRow key={index + 1} row={row} columns={columns} />
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
