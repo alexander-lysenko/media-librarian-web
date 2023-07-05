@@ -34,10 +34,10 @@ type LibraryTableState = {
 
 const columnsOptions: DataColumnPropsByType = {
   line: {
-    contentCellStyle: { maxWidth: 150 },
+    contentCellStyle: { maxWidth: 250 },
   },
   text: {
-    contentCellStyle: { maxWidth: 250 },
+    contentCellStyle: { maxWidth: 350 },
   },
   url: {
     contentCellStyle: { maxWidth: 150 },
@@ -63,7 +63,7 @@ const columnsOptions: DataColumnPropsByType = {
     contentCellStyle: { maxWidth: 250 },
   },
   switch: {
-    contentCellStyle: { maxWidth: 150 },
+    contentCellStyle: { maxWidth: 100 },
   },
   priority: {
     contentCellStyle: { maxWidth: 150 },

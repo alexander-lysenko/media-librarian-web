@@ -2,11 +2,9 @@ import { Container, Paper, Typography } from "@mui/material";
 import { useState } from "react";
 
 import { AppNavbar } from "../components";
-import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
-import { DataTableWindowed } from "../components/tables/DataTableWindowed";
-import { useLibraryTableStore } from "../store/useLibraryTableStore";
-import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 import { DataTable } from "../components/tables/DataTable";
+import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
+import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 
 export const App = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -23,18 +21,12 @@ export const App = () => {
           <DataTableVirtualized
             loading={loading}
             containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}
-            componentProps={{
-              table: {
-                size: "small",
-                // sx: { height: 400 },
-              },
-            }}
+            componentProps={{}}
           />
-
-          {/*<DataTable*/}
-          {/*  loading={loading}*/}
-          {/*  containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}*/}
-          {/*/>*/}
+          <DataTable
+            loading={loading}
+            containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}
+          />
         </Paper>
       </Container>
     </>

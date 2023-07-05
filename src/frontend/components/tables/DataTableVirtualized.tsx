@@ -104,7 +104,7 @@ export const DataTableVirtualized = (props: TableVirtualizedProps) => {
         <TableVirtuoso
           style={{ height: "100%" }}
           data={rows}
-          initialItemCount={25}
+          initialItemCount={50}
           ref={ref}
           // increaseViewportBy={320}
           fixedItemHeight={33}
@@ -131,16 +131,16 @@ const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
   //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
   // }),
   TableHead: forwardRef(({ context, ...props }, ref) => {
-    return <StyledTableHead {...context?.tableHead} {...props} ref={ref} />;
+    return <StyledTableHead {...props} {...context?.tableHead} ref={ref} />;
   }),
   TableBody: forwardRef(({ context, children }, ref) => {
     return <TableBody {...context?.tableBody} children={children} ref={ref} />;
   }),
   Table: ({ context, children, style }) => {
-    return <Table {...context?.table} children={children} style={style} />;
+    return <Table size="small" style={style} {...context?.table} children={children} />;
   },
   TableRow: ({ item: _item, context, ...props }) => {
-    return <TableRow {...context?.tableRow} {...props} />;
+    return <TableRow {...props} {...context?.tableRow} />;
   },
   FillerRow: ({ height }) => {
     return <tr children={<td colSpan={2} style={{ height }} />} />;
@@ -154,7 +154,7 @@ const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
       {columns.map((column, index) => {
         const headerStyle = columnsOptions[column.type].headerCellStyle;
         return (
-          <StyledHeaderCell key={column.label + index} style={headerStyle} sortDirection={sort?.direction}>
+          <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection={sort?.direction}>
             <TableSortLabel
               active={sort?.column === column.label}
               direction={sort?.column === column.label ? sort?.direction : "asc"}
@@ -167,16 +167,12 @@ const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
                 </Typography>
               }
             />
-          </StyledHeaderCell>
+          </TableCell>
         );
       })}
     </TableRow>
   );
 };
-
-const StyledHeaderCell = styled(TableCell)`
-  //padding: 4px 8px;
-`;
 
 const StyledTableHead = styled(TableHead)<TableHeadProps>(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,

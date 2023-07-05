@@ -16,7 +16,6 @@ import { ChangeEvent, MouseEvent, MouseEventHandler } from "react";
 import {
   DataTableBaseProps,
   DataTableEventsProps,
-  DataTablePaginationProps,
   DataTableSelectedItemState,
   DataTableSortingState,
   DataTableStyleProps,
@@ -25,7 +24,7 @@ import { useLibraryTableStore } from "../../store/useLibraryTableStore";
 import { LibraryItemRow } from "../library/LibraryItemRow";
 import { DataTablePagination } from "./DataTablePagination";
 
-type TableProps = DataTableStyleProps & { loading: boolean };
+type DataTableProps = DataTableStyleProps & { loading: boolean };
 
 type TableContentsProps = DataTableBaseProps &
   Pick<DataTableSelectedItemState, "selectedItem"> &
@@ -36,7 +35,7 @@ type TableContentsProps = DataTableBaseProps &
 /**
  * Data Table component, displays Library items
  */
-export const DataTable = (props: TableProps) => {
+export const DataTable = (props: DataTableProps) => {
   const { loading, containerSx, tableSx } = props;
 
   const { columns, rows } = useLibraryTableStore((state) => state);
@@ -122,7 +121,7 @@ const TableContents = (props: TableContentsProps) => {
           {columns.map((column, index) => {
             const headerStyle = columnsOptions[column.type].headerCellStyle;
             return (
-              <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection="asc">
+              <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection={sort?.direction}>
                 <TableSortLabel
                   active={sort?.column === column.label}
                   direction={sort?.column === column.label ? sort?.direction : "asc"}
