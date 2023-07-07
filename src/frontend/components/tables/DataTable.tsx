@@ -11,7 +11,7 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, MouseEvent, MouseEventHandler } from "react";
+import { MouseEventHandler } from "react";
 
 import {
   DataTableBaseProps,
@@ -21,8 +21,8 @@ import {
   DataTableStyleProps,
 } from "../../core/types";
 import { useLibraryTableStore } from "../../store/useLibraryTableStore";
-import { LibraryItemRow } from "../library/LibraryItemRow";
 import { DataTablePagination } from "./DataTablePagination";
+import { LibraryItemRow } from "./LibraryItemRow";
 
 type DataTableProps = DataTableStyleProps & { loading: boolean };
 
@@ -39,19 +39,7 @@ export const DataTable = (props: DataTableProps) => {
   const { loading, containerSx, tableSx } = props;
 
   const { columns, rows } = useLibraryTableStore((state) => state);
-  const { sort, setSort, page, setPage, rowsPerPage, setRowsPerPage, selectedItem, setSelectedItem } =
-    useLibraryTableStore((state) => state);
-
-  const handleChangePage = (event: MouseEvent | null, newPage: number) => {
-    event?.preventDefault();
-
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
+  const { sort, setSort, selectedItem, setSelectedItem } = useLibraryTableStore((state) => state);
 
   const handleSorting =
     (columnId: string): MouseEventHandler =>
@@ -90,13 +78,7 @@ export const DataTable = (props: DataTableProps) => {
             />
           )}
         </TableContainer>
-        <DataTablePagination
-          count={rows.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        <DataTablePagination count={rows.length} />
       </Paper>
     </Box>
   );
@@ -140,7 +122,7 @@ const TableContents = (props: TableContentsProps) => {
       <TableBody>
         {rows.map((row, index) => (
           <TableRow key={index} hover selected={index === selectedItem} onClick={onRowClick(index)}>
-            <LibraryItemRow key={index + 1} row={row} columns={columns} />
+            <LibraryItemRow key={index + 1} row={row} columns={columns} columnsOptions={columnsOptions} />
           </TableRow>
         ))}
       </TableBody>

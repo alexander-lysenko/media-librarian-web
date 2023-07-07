@@ -73,7 +73,7 @@ const columnsOptions: DataColumnPropsByType = {
 const origDataRows: Omit<DataRow, "id">[] = Array.from(movies);
 const dataRows: DataRow[] = [];
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 10000; i++) {
   origDataRows.forEach((item, index) => {
     dataRows.push({ id: index + 1 + i * origDataRows.length, ...item });
   });

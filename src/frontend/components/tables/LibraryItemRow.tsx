@@ -1,13 +1,13 @@
+import { Star, StarBorder, StarHalf } from "@mui/icons-material";
 import { TableCell, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { memo } from "react";
+import { memo, ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ratingColorByValue } from "../../core";
 import { LibraryElementEnum } from "../../core/enums";
-import { DataColumn, DataRow } from "../../core/types";
-import { useLibraryTableStore } from "../../store/useLibraryTableStore";
-import { ColoredRating } from "./ColoredRating";
+import { DataColumn, DataColumnPropsByType, DataRow } from "../../core/types";
 import { useLanguageStore } from "../../store/useTranslationStore";
 
 type LibraryCellContentProps = {
@@ -18,11 +18,17 @@ type LibraryCellContentProps = {
 type RowContentsProps = {
   columns: DataColumn[];
   row: DataRow;
+  columnsOptions: DataColumnPropsByType;
 };
 
 type DateFieldProps = {
-  format: "date" | "dateTime";
+  format: "date" | "datetime";
   value: string;
+};
+
+type RatingProps = {
+  size: 5 | 10;
+  value: number;
 };
 
 /**
@@ -31,9 +37,7 @@ type DateFieldProps = {
  * @param {DataColumn[]} columns
  * @constructor
  */
-export const LibraryItemRow = ({ row, columns }: RowContentsProps) => {
-  const columnsOptions = useLibraryTableStore((state) => state.columnsOptions);
-
+export const LibraryItemRow = memo(({ row, columns, columnsOptions }: RowContentsProps) => {
   return (
     <>
       {columns.map((column) => {
@@ -48,32 +52,24 @@ export const LibraryItemRow = ({ row, columns }: RowContentsProps) => {
       })}
     </>
   );
-};
+});
 
 const CellContents = memo(({ type, value }: LibraryCellContentProps) => {
   switch (type) {
     case "line":
-      return <Typography variant="body2" noWrap title={value} children={value} />;
     case "text":
       return <Typography variant="body2" noWrap title={value} children={value} />;
     case "url":
       return <Typography variant="body2" noWrap children={value} />;
     case "date":
-      return <DateField format="date" value={value} />;
     case "datetime":
-      return <DateField format="dateTime" value={value} />;
+      return <DateField format={type} value={value} />;
     case "rating5":
-      // return <Typography variant="body2" noWrap children={value as ReactNode} />;
-      return <ColoredRating readOnly value={value} size={5} precision={1} />;
     case "rating5precision":
-      // return <Typography variant="body2" noWrap children={value as ReactNode} />;
-      return <ColoredRating readOnly value={value} size={5} precision={0.5} />;
+      return <RatingField value={value} size={5} />;
     case "rating10":
-      // return <Typography variant="body2" noWrap children={value as ReactNode} />;
-      return <ColoredRating readOnly value={value} size={10} precision={1} />;
     case "rating10precision":
-      // return <Typography variant="body2" noWrap children={value as ReactNode} />;
-      return <ColoredRating readOnly value={value} size={10} precision={0.5} />;
+      return <RatingField value={value} size={10} />;
     case "priority":
       return <PriorityField value={value as number} />;
     case "switch":
@@ -87,7 +83,7 @@ const DateField = memo(({ format, value }: DateFieldProps) => {
   dayjs.extend(localizedFormat, {});
   const outputFormat: Record<DateFieldProps["format"], string> = {
     date: "LL",
-    dateTime: "ll LTS",
+    datetime: "ll LTS",
   };
 
   return (
@@ -120,4 +116,28 @@ const SwitchField = memo(({ value }: { value: boolean }) => {
   const { t } = useTranslation();
 
   return <>{value ? t("common.yes") : t("common.no")}</>;
+});
+
+const RatingField = memo(({ size, value }: RatingProps) => {
+  const stars: ReactElement[] = [];
+
+  new Array(size).fill(0).forEach((_, index) => {
+    switch (true) {
+      case value >= index + 1:
+        stars.push(<Star key={index} fontSize="small" />);
+        break;
+      case value % 1 > 0 && value > index && value < index + 1:
+        stars.push(<StarHalf key={index} fontSize="small" />);
+        break;
+      default:
+        stars.push(<StarBorder key={index} fontSize="small" color={"disabled"} />);
+        break;
+    }
+  });
+
+  return (
+    <Typography variant="body2" lineHeight={0} noWrap color={ratingColorByValue(value, size)}>
+      {stars.concat()}
+    </Typography>
+  );
 });

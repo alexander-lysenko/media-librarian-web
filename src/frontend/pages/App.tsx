@@ -23,10 +23,10 @@ export const App = () => {
             containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}
             componentProps={{}}
           />
-          <DataTable
-            loading={loading}
-            containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}
-          />
+          {/*<DataTable*/}
+          {/*  loading={loading}*/}
+          {/*  containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}*/}
+          {/*/>*/}
         </Paper>
       </Container>
     </>
