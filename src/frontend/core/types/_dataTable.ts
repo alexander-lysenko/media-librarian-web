@@ -1,4 +1,4 @@
-import { SxProps } from "@mui/material";
+import { SxProps, TableBodyProps, TableContainerProps, TableHeadProps, TableProps, TableRowProps } from "@mui/material";
 import { CSSProperties, MouseEvent } from "react";
 
 import { LibraryElement } from "./_library";
@@ -29,24 +29,18 @@ export type DataTableBaseProps = {
   rows: DataRow[];
 };
 
-export type DataTableSelectedItemState = {
-  selectedItem: number | null;
-  setSelectedItem?: (item: number | null) => void;
-};
-
 export type DataTableSortingState = {
   sort?: SortOptions | undefined;
   setSort?: (sort?: SortOptions) => void;
 };
 
 export type DataTablePaginationProps = {
+  total: number;
   page: number;
   rowsPerPage: number;
-  total: number;
 
   setPage: (page: number) => void;
   setRowsPerPage: (rowsPerPage: number) => void;
-  setTotal?: (total: number) => void;
 };
 
 export type DataTableHeaderProps = DataTableSortingState & {
@@ -62,4 +56,22 @@ export type DataTableStyleProps = {
 export type DataTableEventsProps = {
   onSort: (columnId: string) => (event: MouseEvent) => void;
   onRowClick: (rowId: string | number) => (event: MouseEvent) => void;
+};
+
+export type VirtuosoContextProps = {
+  tableContainer?: TableContainerProps;
+  table?: TableProps;
+  tableHead?: TableHeadProps;
+  tableRow?: TableRowProps;
+  tableBody?: TableBodyProps;
+};
+
+export type DataTableComponentProps = DataTableBaseProps &
+  DataTableStyleProps &
+  DataTableHeaderProps & {
+    loading: boolean;
+  };
+
+export type DataTableVirtualizedProps = DataTableComponentProps & {
+  componentProps?: VirtuosoContextProps;
 };

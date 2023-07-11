@@ -1,7 +1,6 @@
 import {
   Box,
   CircularProgress,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -11,35 +10,24 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useState } from "react";
 
-import {
-  DataTableBaseProps,
-  DataTableEventsProps,
-  DataTableSelectedItemState,
-  DataTableSortingState,
-  DataTableStyleProps,
-} from "../../core/types";
-import { useLibraryTableStore } from "../../store/useLibraryTableStore";
-import { DataTablePagination } from "./DataTablePagination";
+import { DataTableComponentProps, DataTableEventsProps } from "../../core/types";
 import { LibraryItemRow } from "./LibraryItemRow";
 
-type DataTableProps = DataTableStyleProps & { loading: boolean };
-
-type TableContentsProps = DataTableBaseProps &
-  Pick<DataTableSelectedItemState, "selectedItem"> &
-  Pick<DataTableSortingState, "sort"> &
-  Pick<DataTableStyleProps, "tableSx"> &
-  DataTableEventsProps;
+type TableContentsProps = Omit<DataTableComponentProps, "loading"> &
+  DataTableEventsProps & {
+    selectedItem: number | null;
+  };
 
 /**
  * Data Table component, displays Library items
  */
-export const DataTable = (props: DataTableProps) => {
+export const DataTable = (props: DataTableComponentProps) => {
   const { loading, containerSx, tableSx } = props;
+  const { rows, columns, columnsOptions, sort, setSort } = props;
 
-  const { columns, rows } = useLibraryTableStore((state) => state);
-  const { sort, setSort, selectedItem, setSelectedItem } = useLibraryTableStore((state) => state);
+  const [selectedItem, setSelectedItem] = useState<number | null>(null);
 
   const handleSorting =
     (columnId: string): MouseEventHandler =>
@@ -57,30 +45,26 @@ export const DataTable = (props: DataTableProps) => {
     (rowId: string | number): MouseEventHandler =>
     (event) => {
       event.preventDefault();
-      setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
+      setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
     };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%" }}>
-        <TableContainer sx={{ ...containerSx, position: "relative" }}>
-          {loading ? (
-            <LoadingOverlay />
-          ) : (
-            <TableContents
-              tableSx={tableSx}
-              columns={columns}
-              rows={rows}
-              sort={sort}
-              selectedItem={selectedItem}
-              onSort={handleSorting}
-              onRowClick={handleSelectItem}
-            />
-          )}
-        </TableContainer>
-        <DataTablePagination />
-      </Paper>
-    </Box>
+    <TableContainer sx={{ ...containerSx, position: "relative" }}>
+      {loading ? (
+        <LoadingOverlay />
+      ) : (
+        <TableContents
+          tableSx={tableSx}
+          columns={columns}
+          rows={rows}
+          columnsOptions={columnsOptions}
+          sort={sort}
+          selectedItem={selectedItem}
+          onSort={handleSorting}
+          onRowClick={handleSelectItem}
+        />
+      )}
+    </TableContainer>
   );
 };
 
@@ -93,8 +77,7 @@ const LoadingOverlay = () => {
 };
 
 const TableContents = (props: TableContentsProps) => {
-  const { tableSx, columns, rows, sort, selectedItem, onSort, onRowClick } = props;
-  const columnsOptions = useLibraryTableStore((state) => state.columnsOptions);
+  const { tableSx, columns, columnsOptions, rows, sort, selectedItem, onSort, onRowClick } = props;
 
   return (
     <Table stickyHeader size="small" sx={tableSx}>

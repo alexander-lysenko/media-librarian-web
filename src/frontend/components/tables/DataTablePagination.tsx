@@ -1,18 +1,12 @@
 import { LabelDisplayedRowsArgs, TablePagination, useMediaQuery, useTheme } from "@mui/material";
 import { ChangeEvent, memo, MouseEvent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { shallow } from "zustand/shallow";
 
 import { detectRowsPerPageOptions } from "../../core";
-import { useLibraryTableStore } from "../../store/useLibraryTableStore";
+import { DataTablePaginationProps } from "../../core/types";
 
-export const DataTablePagination = memo(() => {
-  const count = useLibraryTableStore((state) => state.rows.length);
-  const [page, setPage] = useLibraryTableStore((state) => [state.page, state.setPage], shallow);
-  const [rowsPerPage, setRowsPerPage] = useLibraryTableStore(
-    (state) => [state.rowsPerPage, state.setRowsPerPage],
-    shallow,
-  );
+export const DataTablePagination = memo((props: DataTablePaginationProps) => {
+  const { total, page, setPage, rowsPerPage, setRowsPerPage } = props;
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -32,28 +26,24 @@ export const DataTablePagination = memo(() => {
     },
     [setPage, setRowsPerPage],
   );
-
   const labelDisplayedRows = useCallback(
-    ({ from, to, count, page }: LabelDisplayedRowsArgs) =>
-      t("dataTable.viewingEntries", {
-        from,
-        to,
-        total: count !== -1 ? count : `> ${to}`,
-        page: page + 1,
-      }),
+    ({ from, to, count, page }: LabelDisplayedRowsArgs) => {
+      const total = count !== -1 ? count : `> ${to}`;
+      return t("dataTable.viewingEntries", { from, to, total, page: page + 1 });
+    },
     [t],
   );
 
   return (
     <TablePagination
       component="div"
-      count={count}
+      count={total}
       page={page}
       rowsPerPage={rowsPerPage}
       getItemAriaLabel={(type) => type}
       onPageChange={handleChangePage}
       onRowsPerPageChange={handleChangeRowsPerPage}
-      rowsPerPageOptions={detectRowsPerPageOptions(count, t("common.all") as string)}
+      rowsPerPageOptions={detectRowsPerPageOptions(total, t("common.all") as string)}
       labelRowsPerPage={isLargeViewport ? t("dataTable.rowsPerPage") : null}
       labelDisplayedRows={labelDisplayedRows}
     />
