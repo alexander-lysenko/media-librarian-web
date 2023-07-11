@@ -78,7 +78,7 @@ export const DataTable = (props: DataTableProps) => {
             />
           )}
         </TableContainer>
-        <DataTablePagination count={rows.length} />
+        <DataTablePagination />
       </Paper>
     </Box>
   );

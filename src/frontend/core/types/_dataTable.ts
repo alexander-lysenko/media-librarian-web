@@ -51,6 +51,7 @@ export type DataTablePaginationProps = {
 
 export type DataTableHeaderProps = DataTableSortingState & {
   columns: DataColumn[];
+  columnsOptions: DataColumnPropsByType;
 };
 
 export type DataTableStyleProps = {

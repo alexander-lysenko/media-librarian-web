@@ -22,6 +22,7 @@ import { DataRow, DataTableEventsProps, DataTableHeaderProps, DataTableStyleProp
 import { useLibraryTableStore } from "../../store/useLibraryTableStore";
 import { DataTablePagination } from "./DataTablePagination";
 import { LibraryItemRow } from "./LibraryItemRow";
+import { shallow } from "zustand/shallow";
 
 type ContextProps = {
   tableContainer?: TableContainerProps;
@@ -46,8 +47,16 @@ type TableHeaderProps = DataTableHeaderProps & Pick<DataTableEventsProps, "onSor
 export const DataTableVirtualized = (props: TableVirtualizedProps) => {
   const { loading, containerSx, componentProps } = props;
 
-  const { columns, rows, columnsOptions } = useLibraryTableStore((state) => state);
-  const { sort, setSort, selectedItem, setSelectedItem } = useLibraryTableStore((state) => state);
+  const [columns, rows, columnsOptions] = useLibraryTableStore(
+    (state) => [state.columns, state.rows, state.columnsOptions],
+    shallow,
+  );
+  const [sort, setSort, selectedItem, setSelectedItem] = useLibraryTableStore((state) => [
+    state.sort,
+    state.setSort,
+    state.selectedItem,
+    state.setSelectedItem,
+  ]);
 
   const ref = useRef<VirtuosoHandle>(null);
   const listRef = useRef<HTMLElement | Window | null>(null);
@@ -64,11 +73,11 @@ export const DataTableVirtualized = (props: TableVirtualizedProps) => {
       }
     };
 
-  const handleSelectItem: MouseEventHandler<HTMLTableRowElement> = (event: MouseEvent) => {
+  const handleSelectItem = useCallback<MouseEventHandler<HTMLTableRowElement>>((event: MouseEvent) => {
     console.log(event);
     event.preventDefault();
     // setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
-  };
+  }, []);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -119,7 +128,9 @@ export const DataTableVirtualized = (props: TableVirtualizedProps) => {
           overscan={30}
           style={{ height: "100%" }}
           components={virtuosoTableComponents}
-          fixedHeaderContent={() => <FixedHeaderContent columns={columns} sort={sort} onSort={handleSorting} />}
+          fixedHeaderContent={() => (
+            <FixedHeaderContent columns={columns} columnsOptions={columnsOptions} sort={sort} onSort={handleSorting} />
+          )}
           itemContent={(index, row) => (
             <LibraryItemRow key={index + 1} row={row} columns={columns} columnsOptions={columnsOptions} />
           )}
@@ -132,7 +143,7 @@ export const DataTableVirtualized = (props: TableVirtualizedProps) => {
           }}
         />
       </TableContainer>
-      <DataTablePagination count={rows.length} />
+      <DataTablePagination />
     </Box>
   );
 };
@@ -158,33 +169,30 @@ const virtuosoTableComponents: TableComponents<DataRow, ContextProps> = {
   },
 };
 
-const FixedHeaderContent = ({ columns, sort, onSort }: TableHeaderProps) => {
-  const columnsOptions = useLibraryTableStore((state) => state.columnsOptions);
-  return (
-    <TableRow>
-      {columns.map((column, index) => {
-        const headerStyle = columnsOptions[column.type].headerCellStyle;
+const FixedHeaderContent = memo(({ columns, columnsOptions, sort, onSort }: TableHeaderProps) => {
+  const cells = columns.map((column, index) => {
+    const headerStyle = columnsOptions[column.type].headerCellStyle;
 
-        return (
-          <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection={sort?.direction}>
-            <TableSortLabel
-              active={sort?.column === column.label}
-              direction={sort?.column === column.label ? sort?.direction : "asc"}
-              onClick={onSort(column.label)}
-              hideSortIcon
-              sx={{ width: "100%" }}
-              children={
-                <Typography variant="subtitle2" noWrap paragraph={false}>
-                  {column.label}
-                </Typography>
-              }
-            />
-          </TableCell>
-        );
-      })}
-    </TableRow>
-  );
-};
+    return (
+      <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection={sort?.direction}>
+        <TableSortLabel
+          active={sort?.column === column.label}
+          direction={sort?.column === column.label ? sort?.direction : "asc"}
+          onClick={onSort(column.label)}
+          hideSortIcon
+          sx={{ width: "100%" }}
+          children={
+            <Typography variant="subtitle2" noWrap>
+              {column.label}
+            </Typography>
+          }
+        />
+      </TableCell>
+    );
+  });
+
+  return <TableRow>{cells}</TableRow>;
+});
 
 const StyledTableHead = styled(TableHead)<TableHeadProps>(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,

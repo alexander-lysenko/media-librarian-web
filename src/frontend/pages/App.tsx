@@ -7,7 +7,7 @@ import { DataTableVirtualized } from "../components/tables/DataTableVirtualized"
 import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
 
 export const App = () => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore();
 
   return (
