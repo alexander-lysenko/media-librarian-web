@@ -1,6 +1,8 @@
 import { createTheme, StyledEngineProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -24,11 +26,13 @@ const getLanguage = useLanguageStore.getState().getLanguage;
 
 // init i18n (needs to be bundled ;))
 i18n.init({ lng: getLanguage(), debug }).then(() => null);
+// init dayjs
+dayjs.extend(localizedFormat, {});
 
 const rootElement = document.getElementById("root") as Element;
 const root = createRoot(rootElement);
 
-const Main = () => {
+export const Main = () => {
   const colorMode = useThemeStore((state) => state.mode);
   // @ts-ignore
   window.useCredentialsStore = useCredentialsStore((state) => state);

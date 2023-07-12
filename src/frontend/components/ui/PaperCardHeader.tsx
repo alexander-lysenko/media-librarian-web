@@ -23,7 +23,7 @@ type Props = {
 
 /**
  * Custom Card Header component which looks more like a Bootstrap Card header.
- * Designed to use inside Paper
+ * Designed to use inside the Paper component.
  * The following items be added optionally:
  * - An icon - to the left edge
  * - A button (action) - to the right edge. The action may control a state externally

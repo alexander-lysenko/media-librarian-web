@@ -10,33 +10,54 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { forwardRef, memo, MouseEvent, MouseEventHandler, useCallback, useRef, useState } from "react";
+import {
+  createContext,
+  forwardRef,
+  memo,
+  MouseEvent,
+  MouseEventHandler,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { TableComponents, TableVirtuoso, VirtuosoHandle } from "react-virtuoso";
 
 import { DataRow, DataTableVirtualizedProps, VirtuosoContextProps } from "../../core/types";
-import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
 import { LibraryItemRow } from "./LibraryItemRow";
 
-type TableHeaderProps = Pick<DataTableVirtualizedProps, "columns" | "columnsOptions" | "sort" | "setSort">;
+type TableHeaderProps = Pick<DataTableVirtualizedProps, "columns" | "columnOptions" | "sort" | "setSort">;
+type SelectedItemContextValue = {
+  selectedItem: number | null;
+  handleItemClick: (itemId: number) => (event: MouseEvent) => void;
+};
+
+const SelectedItemContext = createContext<SelectedItemContextValue>({
+  selectedItem: null,
+  handleItemClick: () => () => false,
+});
 
 /**
- * Data Table component with virtualization
+ * Standalone Data Table component to display Library items, virtualized.
+ * Powered by react-virtuoso.
  * @see https://github.com/petyosi/react-virtuoso/issues/609
  * @see https://github.com/petyosi/react-virtuoso/issues/204
  */
 export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
-  const { loading, containerSx, componentProps } = props;
-  const { rows, columns, columnsOptions, sort, setSort } = props;
+  const { containerSx, componentProps } = props;
+  const { rows, columns, columnOptions, sort, setSort } = props;
 
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
   const ref = useRef<VirtuosoHandle>(null);
   const listRef = useRef<HTMLElement | Window | null>(null);
 
-  const handleSelectItem = useCallback<MouseEventHandler<HTMLTableRowElement>>((event: MouseEvent) => {
-    console.log(event.currentTarget);
-    event.preventDefault();
-    // setSelectedItem && setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
-  }, []);
+  const handleItemClick = useCallback(
+    (itemId: number) => (event: MouseEvent) => {
+      event.preventDefault();
+      setSelectedItem(selectedItem === itemId ? null : itemId);
+    },
+    [selectedItem],
+  );
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -76,44 +97,24 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
 
   return (
     <TableContainer sx={{ ...containerSx, position: "relative" }}>
-      {loading ? (
-        <LoadingOverlayInner />
-      ) : (
+      <SelectedItemContext.Provider value={{ selectedItem, handleItemClick }}>
         <TableVirtuoso
           ref={ref}
           scrollerRef={scroller}
           data={rows}
-          // initialItemCount={50}
-          // increaseViewportBy={320}
-          // overscan={30}
+          totalCount={rows.length}
           fixedItemHeight={33}
           style={{ height: "100%" }}
           components={virtuosoTableComponents}
-          // components={{
-          //   ...virtuosoTableComponents,
-          //   TableRow: memo(({ item, context, ...props }) => {
-          //     return (
-          //       <TableRow hover {...props} {...context?.tableRow} selected={item.id === selectedItem}>
-          //         <LibraryItemRow key={item.id} row={item} columns={columns} columnsOptions={columnsOptions} />
-          //       </TableRow>
-          //     );
-          //   }),
-          // }}
+          context={componentProps}
           fixedHeaderContent={() => (
-            <FixedHeaderContent columns={columns} columnsOptions={columnsOptions} sort={sort} setSort={setSort} />
+            <FixedHeaderContent columns={columns} columnOptions={columnOptions} sort={sort} setSort={setSort} />
           )}
           itemContent={(index, row) => (
-            <LibraryItemRow key={index + 1} row={row} columns={columns} columnsOptions={columnsOptions} />
+            <LibraryItemRow key={index + 1} row={row} columns={columns} columnOptions={columnOptions} />
           )}
-          context={{
-            tableRow: {
-              onClick: handleSelectItem,
-              // selected: index === selectedItem,
-            },
-            ...componentProps,
-          }}
         />
-      )}
+      </SelectedItemContext.Provider>
     </TableContainer>
   );
 });
@@ -122,24 +123,27 @@ const virtuosoTableComponents: TableComponents<DataRow, VirtuosoContextProps> = 
   // Scroller: forwardRef(({ context, ...props }, ref) => {
   //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
   // }),
-  Table: ({ context, children, style }) => {
+  Table: memo(({ context, children, style }) => {
     return <Table size="small" style={style} {...context?.table} children={children} />;
-  },
+  }),
+  FillerRow: memo(({ height }) => {
+    return <tr children={<td colSpan={2} style={{ height }} />} />;
+  }),
   TableHead: forwardRef(({ context, ...props }, ref) => {
     return <StyledTableHead ref={ref} {...props} {...context?.tableHead} />;
   }),
   TableBody: forwardRef(({ context, children }, ref) => {
     return <TableBody ref={ref} {...context?.tableBody} children={children} />;
   }),
-  TableRow: memo(({ item: _item, context, ...props }) => {
-    return <TableRow hover {...props} {...context?.tableRow} />;
+  TableRow: memo(({ item, context, ...props }) => {
+    const { selectedItem, handleItemClick } = useContext(SelectedItemContext);
+    const selected = selectedItem === item.id;
+
+    return <TableRow hover selected={selected} onClick={handleItemClick(item.id)} {...props} {...context?.tableRow} />;
   }),
-  FillerRow: ({ height }) => {
-    return <tr children={<td colSpan={2} style={{ height }} />} />;
-  },
 };
 
-const FixedHeaderContent = memo(({ columns, columnsOptions, sort, setSort }: TableHeaderProps) => {
+const FixedHeaderContent = memo(({ columns, columnOptions, sort, setSort }: TableHeaderProps) => {
   const handleSorting = useCallback(
     (columnId: string): MouseEventHandler =>
       (event) => {
@@ -157,7 +161,7 @@ const FixedHeaderContent = memo(({ columns, columnsOptions, sort, setSort }: Tab
   return (
     <TableRow>
       {columns.map((column, index) => {
-        const headerStyle = columnsOptions[column.type].headerCellStyle;
+        const headerStyle = columnOptions[column.type].headerCellStyle;
 
         return (
           <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection={sort?.direction}>

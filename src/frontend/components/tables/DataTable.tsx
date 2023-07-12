@@ -1,6 +1,4 @@
 import {
-  Box,
-  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -21,11 +19,13 @@ type TableContentsProps = Omit<DataTableComponentProps, "loading"> &
   };
 
 /**
- * Data Table component, displays Library items
+ * Standalone Data Table component to display Library items.
+ * Non-virtualized
+ * Becomes incredibly slow on a large set of data
  */
 export const DataTable = (props: DataTableComponentProps) => {
-  const { loading, containerSx, tableSx } = props;
-  const { rows, columns, columnsOptions, sort, setSort } = props;
+  const { containerSx, tableSx } = props;
+  const { rows, columns, columnOptions, sort, setSort } = props;
 
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
 
@@ -50,41 +50,30 @@ export const DataTable = (props: DataTableComponentProps) => {
 
   return (
     <TableContainer sx={{ ...containerSx, position: "relative" }}>
-      {loading ? (
-        <LoadingOverlay />
-      ) : (
-        <TableContents
-          tableSx={tableSx}
-          columns={columns}
-          rows={rows}
-          columnsOptions={columnsOptions}
-          sort={sort}
-          selectedItem={selectedItem}
-          onSort={handleSorting}
-          onRowClick={handleSelectItem}
-        />
-      )}
+      <TableContents
+        tableSx={tableSx}
+        columns={columns}
+        rows={rows}
+        columnOptions={columnOptions}
+        sort={sort}
+        selectedItem={selectedItem}
+        onSort={handleSorting}
+        onRowClick={handleSelectItem}
+      />
     </TableContainer>
   );
 };
 
-const LoadingOverlay = () => {
-  return (
-    <Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <CircularProgress disableShrink />
-    </Box>
-  );
-};
-
 const TableContents = (props: TableContentsProps) => {
-  const { tableSx, columns, columnsOptions, rows, sort, selectedItem, onSort, onRowClick } = props;
+  const { tableSx, columns, columnOptions, rows, sort, selectedItem, onSort, onRowClick } = props;
 
   return (
     <Table stickyHeader size="small" sx={tableSx}>
       <TableHead>
         <TableRow>
           {columns.map((column, index) => {
-            const headerStyle = columnsOptions[column.type].headerCellStyle;
+            const headerStyle = columnOptions[column.type].headerCellStyle;
+
             return (
               <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection={sort?.direction}>
                 <TableSortLabel
@@ -105,7 +94,7 @@ const TableContents = (props: TableContentsProps) => {
       <TableBody>
         {rows.map((row, index) => (
           <TableRow key={index} hover selected={index === selectedItem} onClick={onRowClick(index)}>
-            <LibraryItemRow key={index + 1} row={row} columns={columns} columnsOptions={columnsOptions} />
+            <LibraryItemRow key={index + 1} row={row} columns={columns} columnOptions={columnOptions} />
           </TableRow>
         ))}
       </TableBody>

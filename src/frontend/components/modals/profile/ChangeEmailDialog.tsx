@@ -15,6 +15,13 @@ import { useTranslation } from "react-i18next";
 import { SimpleDialogProps } from "../../../core/types";
 import { EmailInput } from "../../inputs/EmailInput";
 
+/**
+ * TODO: WIP
+ * @param open
+ * @param onClose
+ * @param onSubmit
+ * @constructor
+ */
 export const ChangeEmailDialog = ({ open, onClose, onSubmit }: SimpleDialogProps) => {
   const { t } = useTranslation();
 

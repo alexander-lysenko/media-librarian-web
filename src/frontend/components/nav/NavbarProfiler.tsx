@@ -9,7 +9,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 import { MouseEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ import { useThemeStore } from "../../store/useThemeStore";
 
 /**
  * Profile Avatar and menu designed to use inside AppBar
- * TODO: implement data source, navigation links
+ * TODO: add navigation links/actions
  */
 export const NavbarProfiler = () => {
   const { t } = useTranslation();
@@ -55,14 +55,14 @@ export const NavbarProfiler = () => {
         </IconButton>
       </Tooltip>
       <Menu
-        PaperProps={{ sx: { maxWidth: 300 } }}
-        sx={{ mt: { xs: 5, sm: 6 } }}
         id="menu-appbar"
         keepMounted
         anchorEl={anchorElUser}
+        open={!!anchorElUser}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
-        open={Boolean(anchorElUser)}
+        sx={{ mt: { xs: 5, sm: 6 } }}
+        slotProps={{ paper: { sx: { maxWidth: 300 } } }}
         onClose={handleCloseUserMenu}
       >
         <ListItem dense>

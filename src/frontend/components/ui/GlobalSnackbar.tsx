@@ -9,7 +9,7 @@ import { useGlobalSnackbarStore } from "../../store/useGlobalSnackbarStore";
  * Recommended to be placed into a higher or main component.
  * The data source is powered by a store. A snackbar can be pushed from any place of code
  *  using enqueueSnack() imported from useGlobalSnackbarStore.
- * Snacks can be queued, but the components prints the only snack at once
+ * Snacks can be queued, but the components print the only snack at once
  *
  * @see enqueueSnack
  * @see useGlobalSnackbarStore

@@ -18,6 +18,10 @@ import { SidebarProfiler } from "./SidebarProfiler";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
+/**
+ * @deprecated
+ * @constructor
+ */
 export const SidebarDrawer = () => {
   const { open, setOpen } = useSidebarDrawerOpenStore((state) => state);
   const theme = useTheme();

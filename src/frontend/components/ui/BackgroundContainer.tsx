@@ -1,5 +1,9 @@
 import { Grid, Theme } from "@mui/material";
 
+/**
+ * The component can be used as a Container with background-image taken randomly from Unsplash.
+ * @constructor
+ */
 export const BackgroundContainer = () => (
   <Grid
     item

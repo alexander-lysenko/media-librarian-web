@@ -1,5 +1,11 @@
 import { Link, Typography } from "@mui/material";
 
+/**
+ * Simple Copyright component
+ * TODO: WIP
+ * @param props
+ * @constructor
+ */
 export const Copyright = (props: object) => {
   const date = new Date().getFullYear();
 

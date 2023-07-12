@@ -6,8 +6,8 @@ type Props = {
 };
 
 /**
- * To get this component worked properly (i.e. real sticky footer experience), you must set the height
- * (actual or minimal) of parent component as 100vh using the 'sx' prop.
+ * To get this component worked properly (i.e., real sticky footer experience), you must set the height
+ * (actual or minimal) of a parent component as "100vh" using the 'sx' prop.
  * The parent component should use CSS Flex Box as well.
  *
  * Examples:

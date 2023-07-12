@@ -29,6 +29,7 @@ type Props = {
 
 /**
  * Password Reset Dialog
+ * TODO: WIP
  * @param { open, handleClose }
  * @constructor
  */

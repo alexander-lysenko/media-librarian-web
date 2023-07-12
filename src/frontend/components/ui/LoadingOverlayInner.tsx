@@ -1,8 +1,13 @@
 import { Box, CircularProgress } from "@mui/material";
 import { SxProps } from "@mui/system";
 
-export const LoadingOverlayInner = () => {
-  const sx: SxProps = {
+/***
+ * Customizable loading overlay, designed to be embedded
+ * @param sx
+ * @constructor
+ */
+export const LoadingOverlayInner = ({ sx }: { sx?: SxProps }) => {
+  const initialSx: SxProps = {
     height: "100%",
     width: "100%",
     display: "flex",
@@ -11,7 +16,7 @@ export const LoadingOverlayInner = () => {
   };
 
   return (
-    <Box className="loading-overlay" sx={sx}>
+    <Box className="loading-overlay" sx={{ ...initialSx, ...sx }}>
       <CircularProgress disableShrink />
     </Box>
   );

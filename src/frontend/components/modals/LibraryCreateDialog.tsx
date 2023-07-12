@@ -57,6 +57,13 @@ type InlineTemplateProps = {
   onRemove: () => void;
 };
 
+/**
+ * TODO: WIP
+ * @param open
+ * @param handleClose
+ * @param handleSubmitted
+ * @constructor
+ */
 export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();

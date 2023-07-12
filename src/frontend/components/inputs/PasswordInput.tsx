@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import { InputCustomProps } from "../../core/types";
 
 /**
- * Common Input for Password
+ * Common Input for Password.
+ * Supports interactive "Hold to see the password" action on click and hold by endAdornment icon
  */
 export const PasswordInput = forwardRef((props: InputCustomProps, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;

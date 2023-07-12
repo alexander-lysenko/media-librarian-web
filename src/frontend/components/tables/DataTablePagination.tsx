@@ -5,6 +5,11 @@ import { useTranslation } from "react-i18next";
 import { detectRowsPerPageOptions } from "../../core";
 import { DataTablePaginationProps } from "../../core/types";
 
+/**
+ * Self-sufficient Pagination component for DataTable.
+ * Controls a dedicated store.
+ * To get the pagination made effect, use `subscribe` to the store
+ */
 export const DataTablePagination = memo((props: DataTablePaginationProps) => {
   const { total, page, setPage, rowsPerPage, setRowsPerPage } = props;
 

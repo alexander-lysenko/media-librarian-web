@@ -25,11 +25,10 @@ type LibraryInputProps = InputCustomProps & {
 };
 
 /**
- * Auto select input controls into Library Item Form
- * based on library schema object
+ * Auto selects input controls into Library Item Form
+ * based on the schema object of Library
  *
- * WARNING: The default values of the libraryItemInputs (both initial and pre-filled)
- * must be controlled by React Hook Form
+ * WARNING: React Hook Form must control the default values of the libraryItemInputs (both initial and pre-filled)
  */
 export const BasicLibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

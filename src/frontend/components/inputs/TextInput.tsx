@@ -9,6 +9,10 @@ type Props = InputCustomProps & {
   icon?: ReactElement<SvgIconComponent>;
 };
 
+/**
+ * Common single-line text input.
+ * Supports switchable native autocomplete and customizable end adornment icon
+ */
 export const TextInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
   const { autoFocus, autocomplete, icon } = props;

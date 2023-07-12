@@ -16,6 +16,13 @@ import { useTranslation } from "react-i18next";
 import { SimpleDialogProps } from "../../../core/types";
 import { PasswordInput } from "../../inputs/PasswordInput";
 
+/**
+ * TODO: WIP
+ * @param open
+ * @param onClose
+ * @param onSubmit
+ * @constructor
+ */
 export const ChangePasswordDialog = ({ open, onClose, onSubmit }: SimpleDialogProps) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);

@@ -45,7 +45,7 @@ export type DataTablePaginationProps = {
 
 export type DataTableHeaderProps = DataTableSortingState & {
   columns: DataColumn[];
-  columnsOptions: DataColumnPropsByType;
+  columnOptions: DataColumnPropsByType;
 };
 
 export type DataTableStyleProps = {
@@ -66,11 +66,7 @@ export type VirtuosoContextProps = {
   tableBody?: TableBodyProps;
 };
 
-export type DataTableComponentProps = DataTableBaseProps &
-  DataTableStyleProps &
-  DataTableHeaderProps & {
-    loading: boolean;
-  };
+export type DataTableComponentProps = DataTableBaseProps & DataTableStyleProps & DataTableHeaderProps;
 
 export type DataTableVirtualizedProps = DataTableComponentProps & {
   componentProps?: VirtuosoContextProps;

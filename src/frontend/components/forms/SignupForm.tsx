@@ -1,9 +1,4 @@
-import {
-  AlternateEmailOutlined,
-  BadgeOutlined,
-  HourglassBottomOutlined,
-  PersonAddAltOutlined,
-} from "@mui/icons-material";
+import { BadgeOutlined, PersonAddAltOutlined } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -12,12 +7,10 @@ import {
   Collapse,
   FormControl,
   FormHelperText,
-  InputAdornment,
   InputLabel,
   MenuItem,
   PaletteMode,
-  Select,
-  TextField,
+  Select
 } from "@mui/material";
 import { ChangeEvent, forwardRef, useState } from "react";
 import { ChangeHandler, FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
@@ -33,7 +26,7 @@ import { EmailInput } from "../inputs/EmailInput";
 import { TextInput } from "../inputs/TextInput";
 
 /**
- * Sign Up Form functional component
+ * Sign Up (Register) Form functional component
  */
 export const SignupForm = () => {
   const { t } = useTranslation();

@@ -22,6 +22,7 @@ const profileSx: SxProps = { p: 2, backgroundImage: "url(https://source.unsplash
 
 /**
  * Part of Sidebar Navigation Drawer - Profile Section
+ * @deprecated
  */
 export const SidebarProfiler = () => {
   const [collapseOpen, setCollapseOpen] = useState<boolean>(false);

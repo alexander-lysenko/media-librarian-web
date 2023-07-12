@@ -3,6 +3,10 @@ import { Badge, Box, IconButton, Popover, Tooltip, Typography } from "@mui/mater
 import { MouseEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+/**
+ * TODO: WIP
+ * @constructor
+ */
 export const NotificationsPopover = () => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

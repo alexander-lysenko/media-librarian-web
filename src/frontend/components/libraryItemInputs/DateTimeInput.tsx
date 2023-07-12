@@ -19,7 +19,7 @@ import { useLanguageStore } from "../../store/useTranslationStore";
 
 /**
  * Library Item Form - Date/DateTime Input
- * Uses MUI X DateTimePicker and Dayjs library
+ * Powered by MUI X DateTimePicker and Dayjs
  */
 export const DateTimeInput = (props: DateTimeInputProps) => {
   const { label, errorMessage, helperText, type } = props;

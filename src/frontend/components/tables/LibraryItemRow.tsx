@@ -1,7 +1,6 @@
 import { Star, StarBorder, StarHalf } from "@mui/icons-material";
 import { TableCell, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import localizedFormat from "dayjs/plugin/localizedFormat";
 import { memo, ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -18,7 +17,7 @@ type LibraryCellContentProps = {
 type RowContentsProps = {
   columns: DataColumn[];
   row: DataRow;
-  columnsOptions: DataColumnPropsByType;
+  columnOptions: DataColumnPropsByType;
 };
 
 type DateFieldProps = {
@@ -32,17 +31,18 @@ type RatingProps = {
 };
 
 /**
- *
+ * Generative DataTable row.
+ * Combines a table data row by columns' configuration and related data set.
  * @param {DataRow} row
  * @param {DataColumn[]} columns
  * @constructor
  */
-export const LibraryItemRow = memo(({ row, columns, columnsOptions }: RowContentsProps) => {
+export const LibraryItemRow = memo(({ row, columns, columnOptions }: RowContentsProps) => {
   return (
     <>
       {columns.map((column) => {
         const value = row[column.label] as never;
-        const columnStyle = columnsOptions[column.type].contentCellStyle;
+        const columnStyle = columnOptions[column.type].contentCellStyle;
 
         return (
           <TableCell key={column.label + row.id} style={{ ...columnStyle, padding: "6px 8px" }}>
@@ -79,8 +79,6 @@ const CellContents = memo(({ type, value }: LibraryCellContentProps) => {
 
 const DateField = memo(({ format, value }: DateFieldProps) => {
   const locale = useLanguageStore((state) => state.getLanguage());
-
-  dayjs.extend(localizedFormat, {});
   const outputFormat: Record<DateFieldProps["format"], string> = {
     date: "LL",
     datetime: "ll LTS",

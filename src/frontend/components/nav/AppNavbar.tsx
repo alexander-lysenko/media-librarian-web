@@ -40,6 +40,11 @@ type DrawerProps = {
   navRoutes: NavRoute[];
 };
 
+/**
+ * Application's Top navigation bar.
+ * Add here some links, notifications, interactions and various else.
+ * @constructor
+ */
 export const AppNavbar = () => {
   const { t } = useTranslation();
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);

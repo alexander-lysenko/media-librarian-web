@@ -9,7 +9,7 @@ import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 
 /**
- * Sign In (aka Login) Form functional component
+ * Sign In (Login) Form functional component
  */
 export const LoginForm = () => {
   const { t } = useTranslation();
