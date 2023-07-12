@@ -30,6 +30,7 @@ export const App = () => {
   // const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore();
 
   const requestData = useCallback(() => {
+    // https://github.com/pmndrs/zustand#transient-updates-for-often-occurring-state-changes
     console.log("Requesting data...");
     setLoading(true);
 
