@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { KeyboardEvent, MouseEvent } from "react";
 
-import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
+import { useLibraryDrawerStore } from "../store/useLibraryDrawerStore";
 import { SidebarProfiler } from "./SidebarProfiler";
 
 type Anchor = "top" | "left" | "bottom" | "right";
@@ -23,7 +23,7 @@ type Anchor = "top" | "left" | "bottom" | "right";
  * @constructor
  */
 export const SidebarDrawer = () => {
-  const { open, setOpen } = useSidebarDrawerOpenStore((state) => state);
+  const { open, setOpen } = useLibraryDrawerStore((state) => state);
   const theme = useTheme();
   const isLargeViewport = useMediaQuery(theme.breakpoints.up("md"));
 

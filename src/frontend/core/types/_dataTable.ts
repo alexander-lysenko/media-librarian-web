@@ -29,6 +29,11 @@ export type DataTableBaseProps = {
   rows: DataRow[];
 };
 
+export type DataTableSelectedItemState = {
+  selectedItem?: number | null;
+  setSelectedItem?: (selectedItem: number | null) => void;
+};
+
 export type DataTableSortingState = {
   sort?: SortOptions | undefined;
   setSort?: (sort?: SortOptions) => void;
@@ -68,6 +73,7 @@ export type VirtuosoContextProps = {
 
 export type DataTableComponentProps = DataTableBaseProps & DataTableStyleProps & DataTableHeaderProps;
 
-export type DataTableVirtualizedProps = DataTableComponentProps & {
-  componentProps?: VirtuosoContextProps;
-};
+export type DataTableVirtualizedProps = DataTableComponentProps &
+  DataTableSelectedItemState & {
+    componentProps?: VirtuosoContextProps;
+  };

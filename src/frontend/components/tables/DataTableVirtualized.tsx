@@ -10,17 +10,7 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import {
-  createContext,
-  forwardRef,
-  memo,
-  MouseEvent,
-  MouseEventHandler,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { createContext, forwardRef, memo, MouseEvent, MouseEventHandler, useCallback, useContext, useRef } from "react";
 import { TableComponents, TableVirtuoso, VirtuosoHandle } from "react-virtuoso";
 
 import { DataRow, DataTableVirtualizedProps, VirtuosoContextProps } from "../../core/types";
@@ -44,19 +34,18 @@ const SelectedItemContext = createContext<SelectedItemContextValue>({
  * @see https://github.com/petyosi/react-virtuoso/issues/204
  */
 export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
-  const { containerSx, componentProps } = props;
+  const { containerSx, componentProps, selectedItem, setSelectedItem } = props;
   const { rows, columns, columnOptions, sort, setSort } = props;
 
-  const [selectedItem, setSelectedItem] = useState<number | null>(null);
   const ref = useRef<VirtuosoHandle>(null);
   const listRef = useRef<HTMLElement | Window | null>(null);
 
   const handleItemClick = useCallback(
     (itemId: number) => (event: MouseEvent) => {
       event.preventDefault();
-      setSelectedItem(selectedItem === itemId ? null : itemId);
+      setSelectedItem && setSelectedItem(selectedItem === itemId ? null : itemId);
     },
-    [selectedItem],
+    [selectedItem, setSelectedItem],
   );
 
   const handleKeyDown = useCallback(
@@ -97,7 +86,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
 
   return (
     <TableContainer sx={{ ...containerSx, position: "relative" }}>
-      <SelectedItemContext.Provider value={{ selectedItem, handleItemClick }}>
+      <SelectedItemContext.Provider value={{ selectedItem: selectedItem as number | null, handleItemClick }}>
         <TableVirtuoso
           ref={ref}
           scrollerRef={scroller}

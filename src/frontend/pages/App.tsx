@@ -10,24 +10,29 @@ import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
-import { useSidebarDrawerOpenStore } from "../store/useSidebarDrawerOpenStore";
+import { LibraryDrawer } from "../components/nav/LibraryDrawer";
+import { useLibraryDrawerStore } from "../store/useLibraryDrawerStore";
 
 export const App = () => {
-  const [columns, rows, total, setTotal, setRows] = useLibraryTableStore(
-    (state) => [state.columns, state.rows, state.total, state.setTotal, state.setRows],
-    shallow,
-  );
-  const [sort, setSort, columnOptions] = useLibraryTableStore(
-    (state) => [state.sort, state.setSort, state.columnOptions],
-    shallow,
-  );
-  const [page, setPage, rowsPerPage, setRowsPerPage] = useLibraryTableStore(
-    (state) => [state.page, state.setPage, state.rowsPerPage, state.setRowsPerPage],
-    shallow,
-  );
+  // const [columns, rows, total, setTotal, setRows] = useLibraryTableStore(
+  //   (state) => [state.columns, state.rows, state.total, state.setTotal, state.setRows],
+  //   shallow,
+  // );
+  // const [sort, setSort, columnOptions] = useLibraryTableStore(
+  //   (state) => [state.sort, state.setSort, state.columnOptions],
+  //   shallow,
+  // );
+  // const [page, setPage, rowsPerPage, setRowsPerPage] = useLibraryTableStore(
+  //   (state) => [state.page, state.setPage, state.rowsPerPage, state.setRowsPerPage],
+  //   shallow,
+  // );
+
+  const { columns, rows, total, setTotal, setRows, sort, setSort, columnOptions } = useLibraryTableStore();
+  const { page, setPage, rowsPerPage, setRowsPerPage } = useLibraryTableStore();
+
+  const { open, setOpen, selectedItem, setSelectedItem } = useLibraryDrawerStore();
 
   const [loading, setLoading] = useState<boolean>(true);
-  // const { open: isDrawerOpen, setOpen: setDrawerOpen } = useSidebarDrawerOpenStore();
 
   const requestData = useCallback(() => {
     // https://github.com/pmndrs/zustand#transient-updates-for-often-occurring-state-changes
@@ -82,6 +87,8 @@ export const App = () => {
                 columnOptions={columnOptions}
                 sort={sort}
                 setSort={setSort}
+                selectedItem={selectedItem}
+                setSelectedItem={setSelectedItem}
                 containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}
               />
               <DataTablePagination
@@ -95,6 +102,7 @@ export const App = () => {
           )}
         </Paper>
       </Container>
+      <LibraryDrawer />
     </>
   );
 };
