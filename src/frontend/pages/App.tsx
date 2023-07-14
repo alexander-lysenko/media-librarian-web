@@ -3,15 +3,15 @@ import { useCallback, useEffect, useState } from "react";
 import { shallow } from "zustand/shallow";
 
 import { AppNavbar } from "../components";
+import { LibraryDrawer } from "../components/libraryItem/LibraryDrawer";
 import { DataTable } from "../components/tables/DataTable";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { DataRow } from "../core/types";
 import movies from "../mock/movies.json";
-import { useLibraryTableStore } from "../store/useLibraryTableStore";
-import { LibraryDrawer } from "../components/nav/LibraryDrawer";
 import { useLibraryDrawerStore } from "../store/useLibraryDrawerStore";
+import { useLibraryTableStore } from "../store/useLibraryTableStore";
 
 export const App = () => {
   // const [columns, rows, total, setTotal, setRows] = useLibraryTableStore(
