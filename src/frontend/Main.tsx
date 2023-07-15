@@ -18,6 +18,7 @@ import { useCredentialsStore } from "./store/useCredentialsStore";
 import { useThemeStore } from "./store/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
+import { ConfirmDialog } from "./components/modals";
 
 const debug = import.meta.env.VITE_APP_DEBUG;
 
@@ -51,6 +52,7 @@ export const Main = () => {
         </Routes>
       </Router>
       <GlobalSnackbar />
+      <ConfirmDialog />
     </ThemeProvider>
   );
 };

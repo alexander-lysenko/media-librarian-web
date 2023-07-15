@@ -1,24 +1,44 @@
-import { CloseOutlined } from "@mui/icons-material";
-import { Box, Button, Container, Divider, Drawer, IconButton, SxProps, Theme, Typography } from "@mui/material";
-import { MouseEventHandler, ReactNode, useEffect } from "react";
+import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from "@mui/icons-material";
+import {
+  Box,
+  Container,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  SxProps,
+  Theme,
+} from "@mui/material";
+import { memo, MouseEventHandler, ReactElement, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { shallow } from "zustand/shallow";
 
-import { DataRow } from "../../core/types";
+import { LibraryElement } from "../../core/types";
 import { useLibraryDrawerStore } from "../../store/useLibraryDrawerStore";
 import { useLibraryTableStore } from "../../store/useLibraryTableStore";
 import { PosterBox } from "./PosterBox";
+import { PrintDate } from "./PrintDate";
+import { PrintPriority } from "./PrintPriority";
+import { PrintRating } from "./PrintRating";
+import { PrintSwitch } from "./PrintSwitch";
 
 /**
  *
  * @constructor
  */
 export const LibraryDrawer = () => {
+  const { t } = useTranslation();
+
   const { open, setOpen, selectedItem } = useLibraryDrawerStore();
-  const item: DataRow | undefined = useLibraryTableStore((state) =>
-    state.rows.find((dataRow) => dataRow.id === selectedItem),
+  const [item, columns] = useLibraryTableStore(
+    (state) => [state.rows.find((dataRow) => dataRow.id === selectedItem), state.columns],
+    shallow,
   );
 
   const responsiveSx: SxProps<Theme> = {
-    width: { xs: "100%", sm: 360, md: 480, xl: 720 },
+    width: { xs: "100%", sm: 480, md: 480, xl: 480 },
     background: (theme) => theme.palette.background.paper,
   };
 
@@ -49,26 +69,31 @@ export const LibraryDrawer = () => {
     >
       <CloseButton onClose={handleClose as unknown as MouseEventHandler} />
       <Box sx={{ overflowY: "auto" }}>
-        <PosterBox title={item?.["Movie Title"] as string} src="https://source.unsplash.com/wMkaMXTJjlQ" height={360} />
+        <PosterBox
+          title={item?.[columns[0].label] as string}
+          src="https://source.unsplash.com/wMkaMXTJjlQ"
+          height={360}
+        />
         <Divider />
-        <Container>
-          <DrawerContent item={item} />
-        </Container>
+        <List dense disablePadding component={Container}>
+          {columns.slice(1).map((column) => (
+            <ListItem key={column.label} disableGutters>
+              <ListItemText
+                primary={column.label}
+                secondary={<ItemCellContents type={column.type} value={item?.[column.label] as never} />}
+              />
+            </ListItem>
+          ))}
+        </List>
       </Box>
-      {/*<DialogTitle>{"Hello"}</DialogTitle>*/}
-      {/*<PosterBox src="" height={360} />*/}
       <Divider sx={{ mt: "auto" }} />
-      <Box component="footer" sx={{ py: 2, px: 2, display: "flex", justifyContent: "space-between", gap: 1 }}>
-        <Button type="button" variant="contained">
-          Edit
-        </Button>
-        <Button type="button" variant="contained">
-          Delete
-        </Button>
+      <Box component="footer" sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between", gap: 1 }}>
+        <IconButton type="button" color="info" children={<EditNoteOutlined />} />
+        <IconButton type="button" color="error" children={<DeleteOutlined />} />
         <Box flex="1 0 auto" />
-        <Button type="button" variant="contained">
-          Close
-        </Button>
+        <IconButton type="button" onClick={handleClose as unknown as MouseEventHandler}>
+          <CloseOutlined color="disabled" />
+        </IconButton>
       </Box>
     </Drawer>
   );
@@ -83,138 +108,25 @@ const CloseButton = ({ onClose }: { onClose: MouseEventHandler }) => (
   />
 );
 
-const DrawerContent = ({ item }: { item: DataRow | undefined }) => {
-  return (
-    <Box>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-      <Typography variant={"h5"} noWrap>
-        {item?.["Movie Title"] as ReactNode}
-      </Typography>
-    </Box>
-  );
-};
+const ItemCellContents = memo(({ type, value }: { type: LibraryElement; value: never }) => {
+  switch (type) {
+    case "line":
+    case "text":
+      return value as ReactElement;
+    case "url":
+      return <a href={value} children={value} target="_blank" rel="noreferrer" />;
+    case "date":
+    case "datetime":
+      return <PrintDate format={type} value={value} />;
+    case "rating5":
+    case "rating5precision":
+      return <PrintRating value={value} size={5} />;
+    case "rating10":
+    case "rating10precision":
+      return <PrintRating value={value} size={10} />;
+    case "priority":
+      return <PrintPriority value={value as number} />;
+    case "switch":
+      return <PrintSwitch asText value={value as boolean} />;
+  }
+});

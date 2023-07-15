@@ -1,3 +1,4 @@
+export * from "./ConfirmDialog";
 export * from "./LibraryCreateDialog";
 export * from "./LibraryItemDialog";
 export * from "./profile/ChangeEmailDialog";

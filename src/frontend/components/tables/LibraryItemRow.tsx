@@ -1,16 +1,10 @@
-import { Star, StarBorder, StarHalf } from "@mui/icons-material";
 import { TableCell, Typography } from "@mui/material";
-import dayjs from "dayjs";
-import { memo, ReactElement } from "react";
-import { useTranslation } from "react-i18next";
-
-import { ratingColorByValue } from "../../core";
-import { LibraryElementEnum } from "../../core/enums";
-import { DataColumn, DataColumnPropsByType, DataRow } from "../../core/types";
-import { useLanguageStore } from "../../store/useTranslationStore";
+import { memo } from "react";
+import { DataColumn, DataColumnPropsByType, DataRow, LibraryElement } from "../../core/types";
+import { PrintDate, PrintPriority, PrintRating, PrintSwitch } from "../libraryItem";
 
 type LibraryCellContentProps = {
-  type: keyof typeof LibraryElementEnum;
+  type: LibraryElement;
   value: never;
 };
 
@@ -18,16 +12,6 @@ type RowContentsProps = {
   columns: DataColumn[];
   row: DataRow;
   columnOptions: DataColumnPropsByType;
-};
-
-type DateFieldProps = {
-  format: "date" | "datetime";
-  value: string;
-};
-
-type RatingProps = {
-  size: 5 | 10;
-  value: number;
 };
 
 /**
@@ -60,82 +44,43 @@ const CellContents = memo(({ type, value }: LibraryCellContentProps) => {
     case "text":
       return <Typography variant="body2" noWrap title={value} children={value} />;
     case "url":
-      return <Typography variant="body2" noWrap children={value} />;
+      return (
+        <Typography variant="body2" noWrap>
+          <a href={value} title={value} target="_blank" rel="noreferrer" children={value} />
+        </Typography>
+      );
     case "date":
     case "datetime":
-      return <DateField format={type} value={value} />;
+      return (
+        <Typography variant="body2" noWrap>
+          <PrintDate format={type} value={value} />
+        </Typography>
+      );
     case "rating5":
     case "rating5precision":
-      return <RatingField value={value} size={5} />;
+      return (
+        <Typography variant="body2" lineHeight={0} noWrap>
+          <PrintRating value={value} size={5} />
+        </Typography>
+      );
     case "rating10":
     case "rating10precision":
-      return <RatingField value={value} size={10} />;
+      return (
+        <Typography variant="body2" lineHeight={0} noWrap>
+          <PrintRating value={value} size={10} />
+        </Typography>
+      );
     case "priority":
-      return <PriorityField value={value as number} />;
+      return (
+        <Typography variant="body2" noWrap>
+          <PrintPriority value={value as number} />
+        </Typography>
+      );
     case "switch":
-      return <SwitchField value={value as boolean} />;
+      return (
+        <Typography variant="body2" noWrap>
+          <PrintSwitch asText value={value as boolean} />
+        </Typography>
+      );
   }
-});
-
-const DateField = memo(({ format, value }: DateFieldProps) => {
-  const locale = useLanguageStore((state) => state.getLanguage());
-  const outputFormat: Record<DateFieldProps["format"], string> = {
-    date: "LL",
-    datetime: "ll LTS",
-  };
-
-  return (
-    <Typography variant="body2" noWrap>
-      {dayjs(value).locale(locale).format(outputFormat[format])}
-    </Typography>
-  );
-});
-
-const PriorityField = memo(({ value }: { value: number }) => {
-  const { t } = useTranslation();
-  const options: Record<number, string> = {
-    "-5": t("priorityOptions.-5"),
-    "-4": t("priorityOptions.-4"),
-    "-3": t("priorityOptions.-3"),
-    "-2": t("priorityOptions.-2"),
-    "-1": t("priorityOptions.-1"),
-    "0": t("priorityOptions.0"),
-    "1": t("priorityOptions.1"),
-    "2": t("priorityOptions.2"),
-    "3": t("priorityOptions.3"),
-    "4": t("priorityOptions.4"),
-    "5": t("priorityOptions.5"),
-  };
-
-  return <Typography variant="body2" noWrap children={options[value]} />;
-});
-
-const SwitchField = memo(({ value }: { value: boolean }) => {
-  const { t } = useTranslation();
-
-  return <>{value ? t("common.yes") : t("common.no")}</>;
-});
-
-const RatingField = memo(({ size, value }: RatingProps) => {
-  const stars: ReactElement[] = [];
-
-  new Array(size).fill(0).forEach((_, index) => {
-    switch (true) {
-      case value >= index + 1:
-        stars.push(<Star key={index} fontSize="small" />);
-        break;
-      case value % 1 > 0 && value > index && value < index + 1:
-        stars.push(<StarHalf key={index} fontSize="small" />);
-        break;
-      default:
-        stars.push(<StarBorder key={index} fontSize="small" color={"disabled"} />);
-        break;
-    }
-  });
-
-  return (
-    <Typography variant="body2" lineHeight={0} noWrap color={ratingColorByValue(value, size)}>
-      {stars.concat()}
-    </Typography>
-  );
 });

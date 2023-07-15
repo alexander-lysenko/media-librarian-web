@@ -42,6 +42,9 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
 
   const handleItemClick = useCallback(
     (itemId: number) => (event: MouseEvent) => {
+      if ((event.target as HTMLElement).hasAttribute("href")) {
+        return true;
+      }
       event.preventDefault();
       setSelectedItem && setSelectedItem(selectedItem === itemId ? null : itemId);
     },

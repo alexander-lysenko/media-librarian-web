@@ -14,14 +14,23 @@
   "common": {
     "all": "All",
     "cancel": "Cancel",
+    "close": "Close",
     "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
     "holdToSeePass": "Long tap to make password visible",
     "no": "No",
+    "ok": "OK",
     "openInNewTab": "Open in a new tab",
     "save": "Save",
     "submit": "Submit",
     "update": "Update",
     "yes": "Yes"
+  },
+  "confirm": {
+    "cannotBeUndone": "Please keep in mind that the action cannot be undone!",
+    "deleteItem": "Do you wish to delete this item?",
+    "title": "Confirm Your Action"
   },
   "dataTable": {
     "rowsPerPage": "Rows per page:",

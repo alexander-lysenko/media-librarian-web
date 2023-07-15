@@ -44,6 +44,9 @@ export const DataTable = (props: DataTableComponentProps) => {
   const handleSelectItem =
     (rowId: string | number): MouseEventHandler =>
     (event) => {
+      if ((event.target as HTMLElement).hasAttribute("href")) {
+        return true;
+      }
       event.preventDefault();
       setSelectedItem(selectedItem === (rowId as number) ? null : (rowId as number));
     };
