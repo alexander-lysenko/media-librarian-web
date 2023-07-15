@@ -77,7 +77,7 @@ export const LibraryDrawer = () => {
         <Divider />
         <List dense disablePadding component={Container}>
           {columns.slice(1).map((column) => (
-            <ListItem key={column.label} disableGutters>
+            <ListItem key={column.label}>
               <ListItemText
                 primary={column.label}
                 secondary={<ItemCellContents type={column.type} value={item?.[column.label] as never} />}
