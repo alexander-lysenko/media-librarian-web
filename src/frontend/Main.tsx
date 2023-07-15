@@ -7,6 +7,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+import { ConfirmDialog } from "./components/modals";
 import { GlobalSnackbar } from "./components/ui/GlobalSnackbar";
 import { AppRoutes } from "./core/enums";
 import { App } from "./pages/App";
@@ -18,7 +19,6 @@ import { useCredentialsStore } from "./store/useCredentialsStore";
 import { useThemeStore } from "./store/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
-import { ConfirmDialog } from "./components/modals";
 
 const debug = import.meta.env.VITE_APP_DEBUG;
 

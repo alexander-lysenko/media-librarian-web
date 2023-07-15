@@ -7,6 +7,7 @@ type LibrarySchema = Record<string, LibraryElement>;
 type DefaultValues = Record<string, string | number | boolean>;
 
 type LibraryState = {
+  name: string;
   schema: LibrarySchema;
   setSchema: (schema: LibrarySchema) => void;
   getInitialValues: () => DefaultValues;
@@ -17,6 +18,7 @@ type LibraryState = {
  */
 export const useLibraryStore = create<LibraryState>((set, get) => ({
   // todo: empty by default
+  name: "Movies",
   schema: {
     "Movie Title": "line",
     "Origin Title": "line",

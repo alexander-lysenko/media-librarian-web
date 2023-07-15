@@ -53,11 +53,6 @@ export type DataTableHeaderProps = DataTableSortingState & {
   columnOptions: DataColumnPropsByType;
 };
 
-export type DataTableStyleProps = {
-  containerSx?: SxProps;
-  tableSx?: SxProps;
-};
-
 export type DataTableEventsProps = {
   onSort: (columnId: string) => (event: MouseEvent) => void;
   onRowClick: (rowId: string | number) => (event: MouseEvent) => void;
@@ -71,7 +66,7 @@ export type VirtuosoContextProps = {
   tableBody?: TableBodyProps;
 };
 
-export type DataTableComponentProps = DataTableBaseProps & DataTableStyleProps & DataTableHeaderProps;
+export type DataTableComponentProps = DataTableBaseProps & DataTableHeaderProps;
 
 export type DataTableVirtualizedProps = DataTableComponentProps &
   DataTableSelectedItemState & {

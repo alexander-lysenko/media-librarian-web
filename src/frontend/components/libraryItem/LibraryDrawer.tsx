@@ -25,7 +25,7 @@ import { PrintRating } from "./PrintRating";
 import { PrintSwitch } from "./PrintSwitch";
 
 /**
- *
+ * A right-side drawer displaying the entire item selected from a Library
  * @constructor
  */
 export const LibraryDrawer = () => {
@@ -75,16 +75,18 @@ export const LibraryDrawer = () => {
           height={360}
         />
         <Divider />
-        <List dense disablePadding component={Container}>
-          {columns.slice(1).map((column) => (
-            <ListItem key={column.label}>
-              <ListItemText
-                primary={column.label}
-                secondary={<ItemCellContents type={column.type} value={item?.[column.label] as never} />}
-              />
-            </ListItem>
-          ))}
-        </List>
+        <Container>
+          <List dense disablePadding>
+            {columns.slice(1).map((column) => (
+              <ListItem key={column.label} disableGutters>
+                <ListItemText
+                  primary={column.label}
+                  secondary={<ItemCellContents type={column.type} value={item?.[column.label] as never} />}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Container>
       </Box>
       <Divider sx={{ mt: "auto" }} />
       <Box component="footer" sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between", gap: 1 }}>

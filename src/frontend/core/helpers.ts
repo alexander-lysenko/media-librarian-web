@@ -119,3 +119,19 @@ export const stringAvatar = (name: string): AvatarProps => ({
   },
   children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
 });
+
+/**
+ * Create a slug-like text from a string. Useful for attribute "id" provided to inputs
+ * @param string
+ * @param separator
+ */
+// noinspection JSUnusedGlobalSymbols
+export const slugify = (string: string, separator = "-") => {
+  return string
+    .normalize("NFD") // split an accented letter in the base letter and the ascent
+    .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-zА-я0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
+    .replace(/\s+/g, separator);
+};

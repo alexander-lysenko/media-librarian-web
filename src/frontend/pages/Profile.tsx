@@ -1,5 +1,4 @@
 import {
-  AddCircleOutlined,
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
   BadgeOutlined,
@@ -43,6 +42,7 @@ import {
 } from "@mui/material";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { shallow } from "zustand/shallow";
 
 import { AppNavbar, PaperCardHeader } from "../components";
 import {
@@ -50,18 +50,14 @@ import {
   ChangePasswordDialog,
   ChangeUsernameDialog,
   LibraryCreateDialog,
-  LibraryItemDialog,
 } from "../components/modals";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
 import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
 import { enqueueSnack } from "../store/useGlobalSnackbarStore";
+import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
 import { useProfileStore } from "../store/useProfileStore";
-
-type LibraryActions = {
-  actions: Record<string, () => void>;
-};
 
 /**
  * Component representing the Profile page
@@ -70,13 +66,15 @@ export const Profile = () => {
   const { t } = useTranslation();
   const { fetch: request } = useProfileGetRequest();
   const profile = useProfileStore((state) => state.profile);
+  const [libraryDialogOpen, setLibraryDialogOpen] = useLibraryCreateFormStore(
+    (state) => [state.open, state.setOpen],
+    shallow,
+  );
 
   const dataFetchedRef = useRef(false);
 
   const [profileOpen, setProfileOpen] = useState(true);
   const [libOpen, setLibOpen] = useState(true);
-  const [libCreateDialogOpen, setLibCreateDialogOpen] = useState(false);
-  const [libAddItemDialogOpen, setLibAddItemDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!dataFetchedRef.current) {
@@ -118,24 +116,14 @@ export const Profile = () => {
             actionEvents={{ onClick: () => setLibOpen(!libOpen) }}
           />
           <Box display={libOpen ? "block" : "none"}>
-            <LibrariesList
-              actions={{
-                handleOpenLibraryDialog: () => setLibCreateDialogOpen(true),
-                handleOpenItemDialog: () => setLibAddItemDialogOpen(true),
-              }}
-            />
+            <LibrariesList />
           </Box>
         </Paper>
       </Container>
       <SimpleDialog />
       <LibraryCreateDialog
-        open={libCreateDialogOpen}
-        handleClose={() => setLibCreateDialogOpen(false)}
-        handleSubmitted={() => false}
-      />
-      <LibraryItemDialog
-        open={libAddItemDialogOpen}
-        handleClose={() => setLibAddItemDialogOpen(false)}
+        open={libraryDialogOpen}
+        handleClose={() => setLibraryDialogOpen(false)}
         handleSubmitted={() => false}
       />
     </>
@@ -276,30 +264,21 @@ const AccountInfo = () => {
   );
 };
 
-const LibrariesList = ({ actions }: LibraryActions) => {
+const LibrariesList = () => {
   const { t } = useTranslation();
-  const { email } = useProfileStore((state) => state.profile);
+  const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
+
+  const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
 
   return (
     <List dense disablePadding component="div">
-      <ListItemButton divider onClick={actions?.handleOpenLibraryDialog}>
+      <ListItemButton divider onClick={handleOpenLibraryDialog}>
         <ListItemIcon children={<CreateNewFolderOutlined />} />
         <ListItemText
-          primary={"Создать библиотеку"}
-          secondary={"&nbsp;"}
+          primary={t("libraryCreate.title")}
+          secondary={t("libraryCreate.useLibraryWizard")}
           primaryTypographyProps={{ noWrap: true, textTransform: "uppercase" }}
           secondaryTypographyProps={{ noWrap: true }}
-          title={email}
-        />
-      </ListItemButton>
-      <ListItemButton divider onClick={actions?.handleOpenItemDialog}>
-        <ListItemIcon children={<AddCircleOutlined />} />
-        <ListItemText
-          primary={"Добавить запись"}
-          secondary={"&nbsp;"}
-          primaryTypographyProps={{ noWrap: true, textTransform: "uppercase" }}
-          secondaryTypographyProps={{ noWrap: true }}
-          title={email}
         />
       </ListItemButton>
       <ListItem divider>

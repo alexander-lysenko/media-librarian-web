@@ -116,11 +116,11 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
         onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
-        <DialogTitle variant={"h5"}>{t("libraryCreateDialog.title")}</DialogTitle>
+        <DialogTitle variant={"h5"}>{t("libraryCreate.title")}</DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           <CustomTextField
             {...registerFieldDebounced(1000, "title")}
-            label={t("libraryCreateDialog.libraryTitle")}
+            label={t("libraryCreate.libraryTitle")}
             errorMessage={errors.title?.message as string}
             margin="none"
             InputProps={{
@@ -131,7 +131,7 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
               ),
             }}
           />
-          <Typography variant="subtitle1" children={t("libraryCreateDialog.fieldsSet")} mt={1} />
+          <Typography variant="subtitle1" children={t("libraryCreate.fieldsSet")} mt={1} />
           <Divider sx={{ mb: 0.5 }} />
           {watchingFields.map((field, index) => {
             return (
@@ -150,7 +150,7 @@ export const LibraryCreateDialog = ({ open, handleClose, handleSubmitted }: Prop
             variant="outlined"
             onClick={handleAddNewField}
             startIcon={<AddCircleOutlined />}
-            children={fullScreen ? t("libraryCreateDialog.field") : t("libraryCreateDialog.addNewField")}
+            children={fullScreen ? t("libraryCreate.field") : t("libraryCreate.addNewField")}
           />
           <Box flex="1 0 auto" />
           <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
@@ -175,7 +175,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
       <Grid item xs={12} sm={7}>
         <CustomTextField
           {...registerField(`fields.${index}.name`, "name")}
-          label={t("libraryCreateDialog.fieldName")}
+          label={t("libraryCreate.fieldName")}
           errorMessage={(errors as FieldErrors<{ fields: FieldValues[] }>)?.fields?.[index]?.name?.message as string}
           InputLabelProps={{ shrink: true }}
         />
@@ -183,7 +183,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
       <Grid item xs={10} sm={4}>
         <CustomInputDropdown
           {...registerField(`fields.${index}.type`, "type")}
-          label={t("libraryCreateDialog.fieldType")}
+          label={t("libraryCreate.fieldType")}
           helperText={""}
           disabled={leading}
         />
@@ -191,7 +191,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
       <Grid item xs={2} sm={1} textAlign={"right"}>
         <FormControl size="small" margin="dense">
           <Tooltip
-            title={t(leading ? "libraryCreateDialog.fieldCantBeRemoved" : "libraryCreateDialog.removeField")}
+            title={t(leading ? "libraryCreate.fieldCantBeRemoved" : "libraryCreate.removeField")}
             placement="left"
             arrow
           >

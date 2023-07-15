@@ -1,38 +1,35 @@
-import { Box, Container, Paper, Typography } from "@mui/material";
+import { AddCircleOutlined } from "@mui/icons-material";
+import { Box, Button, Container, Paper, styled, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
 import { AppNavbar } from "../components";
-import { LibraryDrawer } from "../components/libraryItem/LibraryDrawer";
-import { DataTable } from "../components/tables/DataTable";
+import { LibraryDrawer } from "../components/libraryItem";
+import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryDrawerStore } from "../store/useLibraryDrawerStore";
+import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
+import { useLibraryStore } from "../store/useLibraryStore";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 
 export const App = () => {
-  // const [columns, rows, total, setTotal, setRows] = useLibraryTableStore(
-  //   (state) => [state.columns, state.rows, state.total, state.setTotal, state.setRows],
-  //   shallow,
-  // );
-  // const [sort, setSort, columnOptions] = useLibraryTableStore(
-  //   (state) => [state.sort, state.setSort, state.columnOptions],
-  //   shallow,
-  // );
-  // const [page, setPage, rowsPerPage, setRowsPerPage] = useLibraryTableStore(
-  //   (state) => [state.page, state.setPage, state.rowsPerPage, state.setRowsPerPage],
-  //   shallow,
-  // );
+  const { t } = useTranslation();
 
+  const { name: libraryName } = useLibraryStore();
   const { columns, rows, total, setTotal, setRows, sort, setSort, columnOptions } = useLibraryTableStore();
   const { page, setPage, rowsPerPage, setRowsPerPage } = useLibraryTableStore();
 
-  const { open, setOpen, selectedItem, setSelectedItem } = useLibraryDrawerStore();
+  const { selectedItem, setSelectedItem } = useLibraryDrawerStore();
+  const [itemDialogOpen, setItemDialogOpen] = useLibraryItemFormStore((state) => [state.open, state.setOpen], shallow);
 
   const [loading, setLoading] = useState<boolean>(true);
+  const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItem, setSelectedItem };
+  const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage };
 
   const requestData = useCallback(() => {
     // https://github.com/pmndrs/zustand#transient-updates-for-often-occurring-state-changes
@@ -73,36 +70,46 @@ export const App = () => {
     <>
       <AppNavbar />
       <Container maxWidth="xl">
-        <Typography variant="h4" paragraph>
-          Movies
-        </Typography>
-        <Paper elevation={3}>
+        <StyledHeaderBox>
+          <Typography variant="h4" noWrap children={libraryName} />
+          <Button
+            type="button"
+            variant="contained"
+            startIcon={<AddCircleOutlined />}
+            onClick={() => setItemDialogOpen(true)}
+            children={t("libraryItem.title.create")}
+          />
+        </StyledHeaderBox>
+        <Paper elevation={3} sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }}>
           {loading ? (
-            <LoadingOverlayInner sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }} />
+            <LoadingOverlayInner />
           ) : (
-            <Box sx={{ width: "100%" }}>
-              <DataTableVirtualized
-                rows={rows}
-                columns={columns}
-                columnOptions={columnOptions}
-                sort={sort}
-                setSort={setSort}
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-                containerSx={{ height: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 206px)" } }}
-              />
-              <DataTablePagination
-                total={total}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                setPage={setPage}
-                setRowsPerPage={setRowsPerPage}
-              />
-            </Box>
+            <StyledTableBox>
+              <DataTableVirtualized {...dataTableProps} />
+              <DataTablePagination {...paginationProps} />
+            </StyledTableBox>
           )}
         </Paper>
       </Container>
       <LibraryDrawer />
+      <LibraryItemDialog
+        open={itemDialogOpen}
+        handleClose={() => setItemDialogOpen(false)}
+        handleSubmitted={() => false}
+      />
     </>
   );
 };
+
+const StyledHeaderBox = styled(Box)({
+  display: "flex",
+  alignItems: "baseline",
+  justifyContent: "space-between",
+  paddingBottom: 16,
+});
+
+const StyledTableBox = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+});

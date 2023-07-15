@@ -79,7 +79,7 @@
     "usernameMinLength": "Expected a full Personal Name (min {{n}} symbols)",
     "usernameRequired": "Personal Name is required"
   },
-  "libraryCreateDialog": {
+  "libraryCreate": {
     "addNewField": "Add a Field",
     "field": "Field",
     "fieldCantBeRemoved": "This field cannot be removed",
@@ -89,9 +89,10 @@
     "libraryTitle": "Library Title",
     "optionNone": "None selected",
     "removeField": "Remove this field",
-    "title": "Create New Library"
+    "title": "Create New Library",
+    "useLibraryWizard": "using Library Creation Wizard"
   },
-  "libraryItemDialog": {
+  "libraryItem": {
     "title": {
       "create": "New Entry",
       "edit": "Update Entry"

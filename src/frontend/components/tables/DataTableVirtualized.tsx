@@ -34,7 +34,7 @@ const SelectedItemContext = createContext<SelectedItemContextValue>({
  * @see https://github.com/petyosi/react-virtuoso/issues/204
  */
 export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
-  const { containerSx, componentProps, selectedItem, setSelectedItem } = props;
+  const { componentProps, selectedItem, setSelectedItem } = props;
   const { rows, columns, columnOptions, sort, setSort } = props;
 
   const ref = useRef<VirtuosoHandle>(null);
@@ -88,7 +88,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
   );
 
   return (
-    <TableContainer sx={{ ...containerSx, position: "relative" }}>
+    <StyledTableContainer>
       <SelectedItemContext.Provider value={{ selectedItem: selectedItem as number | null, handleItemClick }}>
         <TableVirtuoso
           ref={ref}
@@ -107,7 +107,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
           )}
         />
       </SelectedItemContext.Provider>
-    </TableContainer>
+    </StyledTableContainer>
   );
 });
 
@@ -174,6 +174,11 @@ const FixedHeaderContent = memo(({ columns, columnOptions, sort, setSort }: Tabl
       })}
     </TableRow>
   );
+});
+
+const StyledTableContainer = styled(TableContainer)({
+  flex: "1 0 auto",
+  position: "relative",
 });
 
 const StyledTableHead = styled(TableHead)<TableHeadProps>(({ theme }) => ({

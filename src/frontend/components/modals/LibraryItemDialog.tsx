@@ -85,7 +85,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
         <DialogTitle variant="h5">
-          {isNewEntry ? t("libraryItemDialog.title.create") : t("libraryItemDialog.title.edit")}
+          {isNewEntry ? t("libraryItem.title.create") : t("libraryItem.title.edit")}
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           {Object.entries(schema).map(([label, type], index) => {

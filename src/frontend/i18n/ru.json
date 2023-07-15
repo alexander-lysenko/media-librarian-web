@@ -79,7 +79,7 @@
     "usernameMinLength": "Попробуйте ввести полное имя (не менее {{n}} символов)",
     "usernameRequired": "Поле с именем не должно оставаться пустым"
   },
-  "libraryCreateDialog": {
+  "libraryCreate": {
     "addNewField": "Добавить еще поле",
     "field": "Поле",
     "fieldCantBeRemoved": "Это поле нельзя убрать",
@@ -89,9 +89,10 @@
     "libraryTitle": "Название библиотеки",
     "optionNone": "Не выбрано",
     "removeField": "Убрать это поле",
-    "title": "Создать новую библиотеку"
+    "title": "Создать новую библиотеку",
+    "useLibraryWizard": "используя Мастер создания библиотеки"
   },
-  "libraryItemDialog": {
+  "libraryItem": {
     "title": {
       "create": "Новая запись",
       "edit": "Редактировать запись"
