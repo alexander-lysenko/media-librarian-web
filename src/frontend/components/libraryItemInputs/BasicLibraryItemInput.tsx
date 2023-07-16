@@ -44,7 +44,7 @@ export const BasicLibraryItemInput = forwardRef((props: LibraryInputProps, ref) 
       return <PriorityInput {...inputProps} control={control} />;
     case "url":
       return <UrlInputLine {...inputProps} ref={ref} />;
-    case "switch":
+    case "checkmark":
       return <CheckBoxedInput {...inputProps} control={control} />;
     case "date":
       return <DateTimeInput {...inputProps} control={control} type="date" />;

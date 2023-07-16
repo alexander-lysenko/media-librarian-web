@@ -23,7 +23,9 @@ class SqliteLibraryMeta extends Model
 {
     use HasFactory;
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     */
     public $fillable = [
         'tbl_name',
         'schema',
@@ -41,7 +43,8 @@ class SqliteLibraryMeta extends Model
     protected $connection = DatabaseSwitch::CONNECTION_PATH;
 
     /**
-     * The method is overridden. The table is designed to use only `createdAt` from `timestamps` set.
+     * The method is overridden.
+     * The table is designed to use only `createdAt` from the `timestamps` set.
      * The field `updatedAt` is to be ignored.
      * @inheritdoc
      * @return string|null
@@ -68,8 +71,10 @@ class SqliteLibraryMeta extends Model
             InputDataTypeEnum::DATETIME_INPUT => $table->timestamp($name)->nullable(),
             InputDataTypeEnum::URL_INPUT => $table->string($name)->nullable(),
             InputDataTypeEnum::CHECKBOX_INPUT => $table->boolean($name)->nullable(),
-            InputDataTypeEnum::RATING5_INPUT => $table->unsignedTinyInteger($name)->nullable(),
-            InputDataTypeEnum::RATING10_INPUT => $table->unsignedSmallInteger($name)->nullable(),
+            InputDataTypeEnum::RATING_5_INPUT => $table->unsignedTinyInteger($name)->nullable(),
+            InputDataTypeEnum::RATING_5_PRECISION_INPUT => $table->unsignedDecimal($name)->nullable(),
+            InputDataTypeEnum::RATING_10_INPUT => $table->unsignedSmallInteger($name)->nullable(),
+            InputDataTypeEnum::RATING_10_PRECISION_INPUT => $table->unsignedFloat($name)->nullable(),
             InputDataTypeEnum::PRIORITY_INPUT => $table->tinyInteger($name)->nullable(),
         };
     }

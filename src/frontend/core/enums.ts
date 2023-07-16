@@ -22,7 +22,7 @@ export enum LibraryElementEnum {
   rating10 = "rating10",
   rating10precision = "rating10precision",
   priority = "priority",
-  switch = "switch",
+  checkmark = "checkmark",
   url = "url",
 }
 

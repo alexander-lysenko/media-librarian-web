@@ -128,7 +128,7 @@ const ItemCellContents = memo(({ type, value }: { type: LibraryElement; value: n
       return <PrintRating value={value} size={10} />;
     case "priority":
       return <PrintPriority value={value as number} />;
-    case "switch":
+    case "checkmark":
       return <PrintSwitch asText value={value as boolean} />;
   }
 });

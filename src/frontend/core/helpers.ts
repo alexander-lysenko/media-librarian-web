@@ -38,7 +38,7 @@ export const dataColumnPropsByType: DataColumnPropsByType = {
   rating10precision: {
     contentCellStyle: { maxWidth: 250 },
   },
-  switch: {
+  checkmark: {
     contentCellStyle: { maxWidth: 100 },
   },
   priority: {

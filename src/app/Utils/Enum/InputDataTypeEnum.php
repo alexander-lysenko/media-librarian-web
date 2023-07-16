@@ -13,8 +13,10 @@ class InputDataTypeEnum
     public const DATETIME_INPUT = 'datetime';
     public const URL_INPUT = 'url';
     public const CHECKBOX_INPUT = 'checkmark';
-    public const RATING5_INPUT = 'rating_5stars';
-    public const RATING10_INPUT = 'rating_10stars';
+    public const RATING_5_INPUT = 'rating5';
+    public const RATING_5_PRECISION_INPUT = 'rating5precision';
+    public const RATING_10_INPUT = 'rating10';
+    public const RATING_10_PRECISION_INPUT = 'rating10precision';
     public const PRIORITY_INPUT = 'priority';
 
     public const TYPE_UI_NAME = [
@@ -24,8 +26,10 @@ class InputDataTypeEnum
         self::DATETIME_INPUT => self::DATETIME_INPUT,
         self::URL_INPUT => self::URL_INPUT,
         self::CHECKBOX_INPUT => self::CHECKBOX_INPUT,
-        self::RATING5_INPUT => self::RATING5_INPUT,
-        self::RATING10_INPUT => self::RATING10_INPUT,
+        self::RATING_5_INPUT => self::RATING_5_INPUT,
+        self::RATING_5_PRECISION_INPUT => self::RATING_5_PRECISION_INPUT,
+        self::RATING_10_INPUT => self::RATING_10_INPUT,
+        self::RATING_10_PRECISION_INPUT => self::RATING_10_PRECISION_INPUT,
         self::PRIORITY_INPUT => self::PRIORITY_INPUT,
     ];
 }

@@ -40,7 +40,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
-  const [schema, getDefaultValues] = useLibraryStore((state) => [state.schema, state.getInitialValues], shallow);
+  const [fields, getDefaultValues] = useLibraryStore((state) => [state.fields, state.getInitialValues], shallow);
   const [loading, setLoading] = useState<boolean>(false);
 
   const useHookForm = useForm({
@@ -88,7 +88,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
           {isNewEntry ? t("libraryItem.title.create") : t("libraryItem.title.edit")}
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
-          {Object.entries(schema).map(([label, type], index) => {
+          {Object.entries(fields).map(([label, type], index) => {
             return (
               <BasicLibraryItemInput
                 key={label}

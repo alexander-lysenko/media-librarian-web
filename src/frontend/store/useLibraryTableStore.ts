@@ -31,7 +31,7 @@ type LibraryTableState = {
   setRows: (rows: DataRow[]) => void;
 };
 
-const columns = Object.entries(useLibraryStore.getState().schema).map(([label, type]) => ({
+const columns = Object.entries(useLibraryStore.getState().fields).map(([label, type]) => ({
   label,
   type,
 }));

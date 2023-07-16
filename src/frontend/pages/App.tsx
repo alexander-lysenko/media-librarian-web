@@ -16,11 +16,12 @@ import { useLibraryDrawerStore } from "../store/useLibraryDrawerStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 import { useLibraryStore } from "../store/useLibraryStore";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
+import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
 
 export const App = () => {
   const { t } = useTranslation();
 
-  const { name: libraryName } = useLibraryStore();
+  const { id: libraryId, title: libraryName } = useLibraryStore();
   const { columns, rows, total, setTotal, setRows, sort, setSort, columnOptions } = useLibraryTableStore();
   const { page, setPage, rowsPerPage, setRowsPerPage } = useLibraryTableStore();
 
@@ -30,6 +31,8 @@ export const App = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItem, setSelectedItem };
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage };
+
+  // const { fetch: request, status } = useLibraryItemsGetRequest();
 
   const requestData = useCallback(() => {
     // https://github.com/pmndrs/zustand#transient-updates-for-often-occurring-state-changes

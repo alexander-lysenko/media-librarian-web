@@ -19,7 +19,19 @@ use Throwable;
     schema: 'DataTypes',
     description: 'List of available types to be used for building inputs',
     type: 'string',
-    enum: ['line', 'text', 'date', 'datetime', 'url', 'checkmark', 'rating_5stars', 'rating_10stars', 'priority'],
+    enum: [
+        '"line" - Single-line plain text',
+        '"text" - Multi-line plain text',
+        '"date" - Date (format YYYY-MM-DD)',
+        '"datetime" - Date with Time (format YYYY-MM-DD hh:mm:ss)',
+        '"url" - URL address displayed as hyperlink (interactive)',
+        '"checkmark" - Boolean value (1 or 0) displayed as "Yes" or "No"',
+        '"rating5" - Rating displayed as 5 stars',
+        '"rating5precision" - Rating displayed as 5 stars (half star available)',
+        '"rating10" - Rating displayed as 10 stars',
+        '"rating10precision" - Rating displayed as 10 stars (half star available)',
+        '"priority" - Select a value from range [-5 to 5], each one has its own name (from "Lowest" to "Highest")',
+    ],
 ), OA\Schema(
     schema: 'LibraryExample',
     description: "Key-value pair representing data types and describing the structure of a Library's table",
@@ -30,15 +42,15 @@ use Throwable;
         'Release Date' => 'date',
         'Description' => 'text',
         'IMDB URL' => 'url',
-        'IMDB Rating' => 'rating_10stars',
-        'My Rating' => 'rating_5stars',
+        'IMDB Rating' => 'rating10',
+        'My Rating' => 'rating5precision',
         'Watched' => 'checkmark',
         'Watched At' => 'datetime',
         'Chance to Advice' => 'priority',
     ],
 )]
 /**
- * Libraries Controller - manage list of Libraries, CRUD operations for the Libraries
+ * Library Controller - manage CRUD operations for the Libraries
  */
 class LibraryController extends ApiV1Controller
 {
@@ -105,7 +117,7 @@ class LibraryController extends ApiV1Controller
                     new OA\Property(property: 'title', type: 'string', example: 'Movies'),
                     new OA\Property(
                         property: 'fields',
-                        description: 'See the schema to view the available types to be passed',
+                        description: 'See the schema to view all the available types can be passed',
                         type: 'array',
                         items: new OA\Items(properties: [
                             new OA\Property(property: 'name', type: 'string', example: 'Movie Title'),
@@ -117,8 +129,8 @@ class LibraryController extends ApiV1Controller
                             ['name' => 'Release Date', 'type' => 'date'],
                             ['name' => 'Description', 'type' => 'text'],
                             ['name' => 'IMDB URL', 'type' => 'url'],
-                            ['name' => 'IMDB Rating', 'type' => 'rating_10stars'],
-                            ['name' => 'My Rating', 'type' => 'rating_5stars'],
+                            ['name' => 'IMDB Rating', 'type' => 'rating10'],
+                            ['name' => 'My Rating', 'type' => 'rating5precision'],
                             ['name' => 'Watched', 'type' => 'checkmark'],
                             ['name' => 'Watched At', 'type' => 'datetime'],
                             ['name' => 'Chance to Advice', 'type' => 'priority'],
@@ -281,7 +293,7 @@ class LibraryController extends ApiV1Controller
         $connection = $sqliteLibraryMeta->getConnection();
 
         $connection->transaction(function () use ($connection, $sqliteLibraryMeta) {
-            // Remove posters (use background job)
+            // Remove posters (use a background job)
 
             $connection->getSchemaBuilder()->drop($sqliteLibraryMeta->tbl_name);
             $sqliteLibraryMeta->delete();
@@ -332,7 +344,7 @@ class LibraryController extends ApiV1Controller
         $connection = $sqliteLibraryMeta->getConnection();
 
         $connection->transaction(function () use ($connection, $sqliteLibraryMeta, &$itemsAffected) {
-            // Remove posters (use background job)
+            // Remove posters (use a background job)
 
             $itemsAffected = $connection->query()
                 ->select($connection->raw('count(*) as count'))

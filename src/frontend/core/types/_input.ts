@@ -47,5 +47,5 @@ export type LibraryInputNarrowProps =
   | (RelatedInputProps<"rating10"> & InputCustomProps & RatingProps)
   | (RelatedInputProps<"rating10precision"> & InputCustomProps & RatingProps)
   | (RelatedInputProps<"priority"> & InputCustomProps)
-  | (RelatedInputProps<"switch"> & InputCustomProps)
+  | (RelatedInputProps<"checkmark"> & InputCustomProps)
   | (RelatedInputProps<"url"> & InputCustomProps);

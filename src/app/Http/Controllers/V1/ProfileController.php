@@ -61,14 +61,14 @@ class ProfileController extends ApiV1Controller
     /**
      *
      */
-    public function update()
+    public function update(): void
     {
     }
 
     /**
      *
      */
-    public function changePassword()
+    public function changePassword(): void
     {
     }
 

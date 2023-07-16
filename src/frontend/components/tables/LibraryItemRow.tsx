@@ -76,7 +76,7 @@ const CellContents = memo(({ type, value }: LibraryCellContentProps) => {
           <PrintPriority value={value as number} />
         </Typography>
       );
-    case "switch":
+    case "checkmark":
       return (
         <Typography variant="body2" noWrap>
           <PrintSwitch asText value={value as boolean} />
