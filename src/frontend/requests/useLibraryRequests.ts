@@ -14,6 +14,10 @@ type LibraryResponse = {
   };
 };
 
+export const useLibrariesGetRequest = () => {
+  return;
+};
+
 /**
  * Example of simulated request
  */

@@ -28,7 +28,7 @@ export const GlobalSnackbar = () => {
     setOpen(false);
     setTimeout(() => {
       removeSnack();
-      // If there are snacks in queue, triggers to open them after the current one was closed.
+      // If there are snacks in the queue, triggers to open them after the current one was closed.
       // The trigger is delayed to get animations worked properly
       snacks.length > 0 && setOpen(true);
     }, 200);

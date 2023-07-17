@@ -15,7 +15,7 @@ import { Landing } from "./pages/Landing";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
-import { useCredentialsStore } from "./store/useCredentialsStore";
+import { useAuthCredentialsStore } from "./store/useAuthCredentialsStore";
 import { useThemeStore } from "./store/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
@@ -36,7 +36,7 @@ const root = createRoot(rootElement);
 export const Main = () => {
   const colorMode = useThemeStore((state) => state.mode);
   // @ts-ignore
-  window.useCredentialsStore = useCredentialsStore((state) => state);
+  window.useCredentialsStore = useAuthCredentialsStore((state) => state);
 
   return (
     <ThemeProvider theme={createTheme(getDesignTokens(colorMode))}>

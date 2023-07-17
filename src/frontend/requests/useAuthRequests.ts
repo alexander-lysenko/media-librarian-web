@@ -7,7 +7,7 @@ import { FetchResponseEvents } from "../core";
 import { userLoginEndpoint } from "../core/links";
 import { UseRequestReturn } from "../core/types";
 import { useApiRequest } from "../hooks";
-import { useCredentialsStore } from "../store/useCredentialsStore";
+import { useAuthCredentialsStore } from "../store/useAuthCredentialsStore";
 
 type LoginRequest = {
   email: string;
@@ -28,7 +28,7 @@ type HookReturn = UseRequestReturn<LoginRequest, LoginResponse>;
  */
 export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormReturn): HookReturn => {
   const navigate = useNavigate();
-  const setCredentials = useCredentialsStore((state) => state.setCredentials);
+  const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
 
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<LoginResponse>) => {

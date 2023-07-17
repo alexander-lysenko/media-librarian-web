@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axios";
 
-import { useCredentialsStore } from "../../store/useCredentialsStore";
+import { useAuthCredentialsStore } from "../../store/useAuthCredentialsStore";
 
 /**
  * Axios Request configuration options (slightly overridden AxiosRequestConfig)
@@ -86,7 +86,7 @@ export const axiosFetch = async <Request, Response>(
 
   const { beforeSend, onSuccess, onReject, onError, onComplete } = events;
 
-  const bearerToken = useCredentialsStore.getState().token;
+  const bearerToken = useAuthCredentialsStore.getState().token;
   if (!config?.headers?.["Authorization"]) {
     config = { ...config, headers: { ...config.headers, Authorization: `Bearer ${bearerToken}` } };
   }

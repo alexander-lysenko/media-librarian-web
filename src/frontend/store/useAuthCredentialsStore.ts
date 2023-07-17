@@ -12,7 +12,7 @@ interface CredentialsState {
  * Store for authentication credentials.
  * Persists data in local storage
  */
-export const useCredentialsStore = create<CredentialsState>()(
+export const useAuthCredentialsStore = create<CredentialsState>()(
   persist(
     (set) => ({
       email: "",
