@@ -12,11 +12,12 @@ import { DataTableVirtualized } from "../components/tables/DataTableVirtualized"
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { DataRow } from "../core/types";
 import movies from "../mock/movies.json";
-import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
 import { useLibraryDrawerStore } from "../store/useLibraryDrawerStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 import { useLibraryStore } from "../store/useLibraryStore";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
+import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
+import { useLibraryGetRequest } from "../requests/useLibraryRequests";
 
 export const App = () => {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ export const App = () => {
   const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItem, setSelectedItem };
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage };
 
+  // const { fetch: request, status } = useLibraryGetRequest();
   // const { fetch: request, status } = useLibraryItemsGetRequest();
 
   const requestData = useCallback(() => {
