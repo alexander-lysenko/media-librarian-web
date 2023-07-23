@@ -22,10 +22,6 @@ type LibraryCreateRequestProps = {
   setOpen: (value: boolean) => void;
 };
 
-export const useLibrariesGetRequest = () => {
-  return;
-};
-
 /**
  * Request to get the schema of all available libraries
  * [GET] /api/v1/libraries

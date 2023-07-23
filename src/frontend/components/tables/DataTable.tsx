@@ -1,4 +1,5 @@
 import {
+  styled,
   Table,
   TableBody,
   TableCell,
@@ -24,7 +25,6 @@ type TableContentsProps = Omit<DataTableComponentProps, "loading"> &
  * Becomes incredibly slow on a large set of data
  */
 export const DataTable = (props: DataTableComponentProps) => {
-  const { containerSx, tableSx } = props;
   const { rows, columns, columnOptions, sort, setSort } = props;
 
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
@@ -52,9 +52,8 @@ export const DataTable = (props: DataTableComponentProps) => {
     };
 
   return (
-    <TableContainer sx={{ ...containerSx, position: "relative" }}>
+    <StyledTableContainer>
       <TableContents
-        tableSx={tableSx}
         columns={columns}
         rows={rows}
         columnOptions={columnOptions}
@@ -63,15 +62,15 @@ export const DataTable = (props: DataTableComponentProps) => {
         onSort={handleSorting}
         onRowClick={handleSelectItem}
       />
-    </TableContainer>
+    </StyledTableContainer>
   );
 };
 
 const TableContents = (props: TableContentsProps) => {
-  const { tableSx, columns, columnOptions, rows, sort, selectedItem, onSort, onRowClick } = props;
+  const { columns, columnOptions, rows, sort, selectedItem, onSort, onRowClick } = props;
 
   return (
-    <Table stickyHeader size="small" sx={tableSx}>
+    <Table stickyHeader size="small">
       <TableHead>
         <TableRow>
           {columns.map((column, index) => {
@@ -104,3 +103,8 @@ const TableContents = (props: TableContentsProps) => {
     </Table>
   );
 };
+
+const StyledTableContainer = styled(TableContainer)({
+  flex: "1 0 auto",
+  position: "relative",
+});
