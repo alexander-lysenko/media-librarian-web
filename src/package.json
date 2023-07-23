@@ -7,10 +7,10 @@
   "main": "frontend/index.ts",
   "scripts": {
     "build": "vite build",
+    "sort:package": "npx sort-package-json",
     "tscheck": "tsc -noEmit",
-    "dev": "vite",
-    "dev:vite-clear-cache": "DEBUG=vite-tsconfig-paths  vite --force",
-    "sort:package": "npx sort-package-json"
+    "vite:force": "DEBUG=vite-tsconfig-paths vite --force",
+    "vite:run": "vite"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { useState } from "react";
+import { ErrorOption } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { FetchResponseEvents } from "../core";
@@ -20,6 +21,7 @@ type LibraryCreateRequestProps = {
   reset: () => void;
   setLoading: (value: boolean) => void;
   setOpen: (value: boolean) => void;
+  setError: (name: never, error: ErrorOption) => void;
 };
 
 /**
@@ -86,6 +88,7 @@ export const useLibraryCreateRequest = ({
   reset,
   setLoading,
   setOpen,
+  setError,
 }: LibraryCreateRequestProps): UseRequestReturn<CreateLibraryRequest, CreateLibraryResponse> => {
   const { t } = useTranslation();
 
@@ -103,6 +106,12 @@ export const useLibraryCreateRequest = ({
       setLoading(false);
       setOpen(false);
     },
+    onReject: (reason) => {
+      setLoading(false);
+      setError("root.serverError" as never, {
+        message: `${reason.code}: ${reason.response?.data.message || reason.message}`,
+      });
+    },
     onError: () => {
       setLoading(false);
     },
@@ -113,7 +122,6 @@ export const useLibraryCreateRequest = ({
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // simulation // todo: remove
   });
 
   return { status, fetch, abort, setResponseEvents };

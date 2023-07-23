@@ -1,4 +1,4 @@
-import { DriveFileRenameOutlineOutlined, SvgIconComponent } from "@mui/icons-material";
+import { SvgIconComponent } from "@mui/icons-material";
 import { InputAdornment, TextField, TextFieldProps } from "@mui/material";
 import { forwardRef, ReactElement } from "react";
 
@@ -34,7 +34,7 @@ export const TextInput = forwardRef((props: Props, ref) => {
       onBlur={onBlur}
       InputLabelProps={{ shrink: true }}
       InputProps={{
-        endAdornment: <InputAdornment position="end" children={icon ?? <DriveFileRenameOutlineOutlined />} />,
+        endAdornment: icon ? <InputAdornment position="end" children={icon} /> : undefined,
       }}
     />
   );
