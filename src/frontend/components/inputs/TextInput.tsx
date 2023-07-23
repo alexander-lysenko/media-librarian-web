@@ -1,11 +1,12 @@
 import { DriveFileRenameOutlineOutlined, SvgIconComponent } from "@mui/icons-material";
-import { InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField, TextFieldProps } from "@mui/material";
 import { forwardRef, ReactElement } from "react";
 
 import { InputCustomProps } from "../../core/types";
 
 type Props = InputCustomProps & {
-  autocomplete?: string;
+  margin?: TextFieldProps["margin"];
+  autoComplete?: TextFieldProps["autoComplete"];
   icon?: ReactElement<SvgIconComponent>;
 };
 
@@ -15,7 +16,7 @@ type Props = InputCustomProps & {
  */
 export const TextInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
-  const { autoFocus, autocomplete, icon } = props;
+  const { margin, autoFocus, autoComplete, icon } = props;
 
   return (
     <TextField
@@ -26,11 +27,12 @@ export const TextInput = forwardRef((props: Props, ref) => {
       helperText={errorMessage || helperText}
       fullWidth
       size="small"
-      margin="dense"
-      autoComplete={autocomplete || "off"}
+      margin={margin || "dense"}
+      autoComplete={autoComplete || "off"}
       autoFocus={autoFocus}
       onChange={onChange}
       onBlur={onBlur}
+      InputLabelProps={{ shrink: true }}
       InputProps={{
         endAdornment: <InputAdornment position="end" children={icon ?? <DriveFileRenameOutlineOutlined />} />,
       }}

@@ -6,4 +6,5 @@ export const userLoginEndpoint = "/api/v1/user/login";
 export const profileEndpoint = "/api/v1/profile";
 
 export const librariesEndpoint = "/api/v1/libraries";
+export const libraryEndpoint = "/api/v1/libraries/{id}";
 export const libraryItemsEndpoint = "/api/v1/libraries/{id}/items";

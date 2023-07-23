@@ -17,13 +17,13 @@ export enum LibraryElementEnum {
   text = "text",
   date = "date",
   datetime = "datetime",
+  url = "url",
+  checkmark = "checkmark",
   rating5 = "rating5",
   rating5precision = "rating5precision",
   rating10 = "rating10",
   rating10precision = "rating10precision",
   priority = "priority",
-  checkmark = "checkmark",
-  url = "url",
 }
 
 export enum RegisteredFormNamesEnum {

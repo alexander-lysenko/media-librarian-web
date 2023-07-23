@@ -9,3 +9,5 @@ export type LibrarySchema = {
   title: string;
   fields: LibraryFields;
 };
+
+export type FormDefaultValues = Record<string, string | number | boolean>;

@@ -1,26 +1,63 @@
 import { AxiosResponse } from "axios";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { FetchResponseEvents } from "../core";
-import { LibrarySchema, UseRequestReturn } from "../core/types";
+import { librariesEndpoint, libraryEndpoint } from "../core/links";
+import {
+  CreateLibraryRequest,
+  CreateLibraryResponse,
+  GetLibrariesResponse,
+  GetLibraryResponse,
+  PatchLibraryResponse,
+  UseRequestReturn,
+} from "../core/types";
+import { useApiRequest } from "../hooks";
 import { enqueueSnack } from "../store/useGlobalSnackbarStore";
 import { useLibraryStore } from "../store/useLibraryStore";
 
-type LibraryResponse = {
-  data: LibrarySchema;
-  meta: {
-    created_at: string;
-    items_count: number;
-  };
+type LibraryCreateRequestProps = {
+  reset: () => void;
+  setLoading: (value: boolean) => void;
+  setOpen: (value: boolean) => void;
 };
 
 /**
- * Example of simulated request
+ * Request to get the schema of all available libraries
+ * [GET] /api/v1/libraries
  */
-export const useLibraryGetRequest = (): UseRequestReturn<number, LibraryResponse> => {
+export const useLibrariesGetRequest = (): UseRequestReturn<number, GetLibrariesResponse> => {
+  // const { setLibrary } = useLibraryStore();
+  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+    onSuccess: (response: AxiosResponse<GetLibrariesResponse>) => {
+      const itemsCount = response.data.data.length;
+      // setLibrary(id, title, fields);
+      enqueueSnack({
+        type: "info",
+        message: `loaded ${itemsCount} items`,
+      });
+    },
+  });
+
+  const { fetch, abort, status } = useApiRequest<number, GetLibrariesResponse>({
+    method: "GET",
+    endpoint: librariesEndpoint,
+    customEvents: responseEvents,
+    verbose: true,
+    simulate: true, // simulation // todo: remove
+  });
+
+  return { status, fetch, abort, setResponseEvents };
+};
+
+/**
+ * Request to get the schema of a specific library by its ID
+ * [GET] /api/v1/libraries/{id}
+ */
+export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryResponse> => {
   const { setLibrary } = useLibraryStore();
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
-    onSuccess: (response: AxiosResponse<LibraryResponse>) => {
+    onSuccess: (response: AxiosResponse<GetLibraryResponse>) => {
       const { id, title, fields } = response.data.data;
       setLibrary(id, title, fields);
       enqueueSnack({
@@ -30,37 +67,103 @@ export const useLibraryGetRequest = (): UseRequestReturn<number, LibraryResponse
     },
   });
 
-  const libraryResponse: LibraryResponse = {
-    data: {
-      id: 1,
-      title: "Movies",
-      fields: {
-        "Movie Title": "line",
-        "Origin Title": "line",
-        "Release Date": "date",
-        Description: "text",
-        "IMDB URL": "url",
-        "IMDB Rating": "rating10",
-        "My Rating": "rating5precision",
-        Watched: "checkmark",
-        "Watched At": "datetime",
-        "Chance to Advice": "priority",
-      },
-    },
-    meta: {
-      created_at: "1970-01-01 00:00:00",
-      items_count: 1,
-    },
-  };
+  const { fetch, abort, status } = useApiRequest<void, GetLibraryResponse>({
+    method: "GET",
+    endpoint: libraryEndpoint,
+    customEvents: responseEvents,
+    verbose: true,
+    simulate: true, // simulation // todo: remove
+  });
 
-  const status = "IDLE";
-  const fetch = async (data: number): Promise<LibraryResponse | void> =>
-    await new Promise<LibraryResponse>((resolve) => {
-      setTimeout(() => {
-        resolve(libraryResponse);
-      }, 1000);
-    }).then((response) => responseEvents.onSuccess?.(response as unknown as AxiosResponse<LibraryResponse>));
-  const abort = () => false;
+  return { status, fetch, abort, setResponseEvents };
+};
+
+/**
+ * Request to create a library
+ * [POST] /api/v1/libraries
+ */
+export const useLibraryCreateRequest = ({
+  reset,
+  setLoading,
+  setOpen,
+}: LibraryCreateRequestProps): UseRequestReturn<CreateLibraryRequest, CreateLibraryResponse> => {
+  const { t } = useTranslation();
+
+  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+    beforeSend: () => {
+      setLoading(true);
+    },
+    onSuccess: (response) => {
+      const { title } = response.data.data;
+      enqueueSnack({
+        type: "success",
+        message: t("notifications.libraryCreated", { title }),
+      });
+      reset();
+      setLoading(false);
+      setOpen(false);
+    },
+    onError: () => {
+      setLoading(false);
+    },
+  });
+
+  const { fetch, abort, status } = useApiRequest<CreateLibraryRequest, CreateLibraryResponse>({
+    method: "POST",
+    endpoint: librariesEndpoint,
+    customEvents: responseEvents,
+    verbose: true,
+    simulate: true, // simulation // todo: remove
+  });
+
+  return { status, fetch, abort, setResponseEvents };
+};
+
+/**
+ * Request to delete a library
+ * [DELETE] /api/v1/libraries/{id}
+ */
+export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
+  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+    // should be filled from the place of request call
+  });
+
+  const { fetch, abort, status } = useApiRequest<void, void>({
+    method: "DELETE",
+    endpoint: librariesEndpoint,
+    customEvents: responseEvents,
+    verbose: true,
+    simulate: true, // simulation // todo: remove
+  });
+
+  return { status, fetch, abort, setResponseEvents };
+};
+
+/**
+ * Request to clean a library (delete all items from a library but not the library itself)
+ * [PATCH] /api/v1/libraries/{id}
+ */
+export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryResponse> => {
+  const { t } = useTranslation();
+
+  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+    onSuccess: (response: AxiosResponse<PatchLibraryResponse>) => {
+      const { title } = response.data.data;
+      const { items_affected: itemsAffected } = response.data.meta;
+      enqueueSnack({
+        type: "info",
+        message: t("notifications.libraryCleaned", { title, itemsAffected }),
+      });
+    },
+  });
+
+  const { fetch, abort, status } = useApiRequest<void, PatchLibraryResponse>({
+    method: "PATCH",
+    endpoint: librariesEndpoint,
+    customEvents: responseEvents,
+    verbose: true,
+    simulate: true, // simulation // todo: remove
+  });
 
   return { status, fetch, abort, setResponseEvents };
 };

@@ -1,16 +1,14 @@
 import dayjs from "dayjs";
 import { create } from "zustand";
 
-import { LibraryElement, LibraryFields } from "../core/types";
-
-type DefaultValues = Record<string, string | number | boolean>;
+import { FormDefaultValues, LibraryElement, LibraryFields } from "../core/types";
 
 type LibraryState = {
   id?: number;
   title: string;
   fields: LibraryFields;
   setLibrary: (id: number, name: string, schema: LibraryFields) => void;
-  getInitialValues: () => DefaultValues;
+  getInitialValues: () => FormDefaultValues;
 };
 
 /**
@@ -37,7 +35,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       rating10precision: () => 0,
     };
 
-    return Object.entries(columns).reduce((acc: DefaultValues, [column, type]: [string, LibraryElement]) => {
+    return Object.entries(columns).reduce((acc: FormDefaultValues, [column, type]: [string, LibraryElement]) => {
       acc[column] = defaultValues[type]();
       return acc;
     }, {});

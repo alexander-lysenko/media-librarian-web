@@ -66,15 +66,11 @@ export const Profile = () => {
   const { t } = useTranslation();
   const { fetch: request } = useProfileGetRequest();
   const profile = useProfileStore((state) => state.profile);
-  const [libraryDialogOpen, setLibraryDialogOpen] = useLibraryCreateFormStore(
-    (state) => [state.open, state.setOpen],
-    shallow,
-  );
 
   const dataFetchedRef = useRef(false);
 
-  const [profileOpen, setProfileOpen] = useState(true);
-  const [libOpen, setLibOpen] = useState(true);
+  const [profileSectionOpen, setProfileSectionOpen] = useState(true);
+  const [libSectionOpen, setLibSectionOpen] = useState(true);
 
   useEffect(() => {
     if (!dataFetchedRef.current) {
@@ -92,10 +88,10 @@ export const Profile = () => {
             title={t("profile.basicDetails")}
             itemIcon={PermContactCalendarOutlined}
             // secondaryText={"lorem ipsum dolor sit amet"}
-            actionIcon={profileOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
-            actionEvents={{ onClick: () => setProfileOpen(!profileOpen) }}
+            actionIcon={profileSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
+            actionEvents={{ onClick: () => setProfileSectionOpen(!profileSectionOpen) }}
           />
-          <Grid container display={profileOpen ? "flex" : "none"}>
+          <Grid container display={profileSectionOpen ? "flex" : "none"}>
             <Grid item id="profiler" xs={12} md={4} sx={{ maxWidth: { md: 320 } }}>
               <Profiler username={profile.name} email={profile.email} avatar={profile.avatar} />
             </Grid>
@@ -112,20 +108,16 @@ export const Profile = () => {
             title={t("profile.myLibraries")}
             itemIcon={PhotoAlbumOutlined}
             secondaryText={"lorem ipsum dolor sit amet"}
-            actionIcon={libOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
-            actionEvents={{ onClick: () => setLibOpen(!libOpen) }}
+            actionIcon={libSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
+            actionEvents={{ onClick: () => setLibSectionOpen(!libSectionOpen) }}
           />
-          <Box display={libOpen ? "block" : "none"}>
+          <Box display={libSectionOpen ? "block" : "none"}>
             <LibrariesList />
           </Box>
         </Paper>
       </Container>
       <SimpleDialog />
-      <LibraryCreateDialog
-        open={libraryDialogOpen}
-        handleClose={() => setLibraryDialogOpen(false)}
-        handleSubmitted={() => false}
-      />
+      <LibraryCreateDialog />
     </>
   );
 };

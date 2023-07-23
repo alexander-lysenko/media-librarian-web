@@ -67,7 +67,7 @@ export const ChangeUsernameDialog = ({ open, onClose, onSubmit }: SimpleDialogPr
           <TextInput
             {...registerField("username")}
             autoFocus
-            autocomplete={"name"}
+            autoComplete={"name"}
             label={t("dialogs.changeUsernameDialog.whatIsYourName")}
             errorMessage={formState.errors?.username?.message as string}
             icon={<BadgeOutlined />}

@@ -80,7 +80,7 @@ export const SignupForm = () => {
         label={t("signupPage.username")}
         helperText={t("signupPage.usernameHint") as string}
         errorMessage={errors.username?.message as string}
-        autocomplete={"name"}
+        autoComplete={"name"}
         icon={<BadgeOutlined />}
       />
       <EmailInput

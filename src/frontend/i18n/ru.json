@@ -101,6 +101,7 @@
   "libraryTypes": {
     "date": "Дата",
     "datetime": "Дата + Время",
+    "checkmark": "Переключатель",
     "line": "Строка",
     "priority": "Приоритет",
     "rating10": "Оценка (10 звезд)",
@@ -120,6 +121,15 @@
     "signInBtn": "Войти",
     "subtitle": "Войдите в свой аккаунт, чтобы получить доступ к библиотекам.",
     "title": "Вход"
+  },
+  "notifications": {
+    "libraryCleaned_few": "Библиотека \"{{title}}\" очищена. Удалено {{itemsAffected}} записи",
+    "libraryCleaned_many": "Библиотека \"{{title}}\" очищена. Удалено {{itemsAffected}} записей",
+    "libraryCleaned_one": "Библиотека \"{{title}}\" очищена. Удалена {{itemsAffected}} запись",
+    "libraryCleaned_other": "Библиотека \"{{title}}\" очищена. Удалено {{itemsAffected}} записей",
+    "libraryCleaned_zero": "Библиотека \"{{title}}\" очищена. К счастью, записей в ней не было",
+    "libraryCreated": "Создана библиотека: {{title}}",
+    "libraryDeleted": "Библиотека \"{{title}}\" удалена"
   },
   "passwordRecovery": {
     "emailSent": "Мы отправили Вам письмо. Проверьте почтовый ящик.",

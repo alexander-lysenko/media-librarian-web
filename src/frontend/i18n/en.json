@@ -100,6 +100,7 @@
   },
   "libraryTypes": {
     "date": "Date",
+    "checkmark": "Switch",
     "datetime": "Date+Time",
     "line": "Text Line",
     "priority": "Priority",
@@ -120,6 +121,15 @@
     "signInBtn": "Sign In",
     "subtitle": "Log into your account to access your libraries.",
     "title": "Sign In"
+  },
+  "notifications": {
+    "libraryCleaned_few": "",
+    "libraryCleaned_many": "",
+    "libraryCleaned_one": "Library \"{{title}}\" has been cleaned up. {{itemsAffected}} item deleted",
+    "libraryCleaned_other": "Library \"{{title}}\" has been cleaned up. {{itemsAffected}} items deleted",
+    "libraryCleaned_zero": "Library \"{{title}}\" has been cleaned up. No items deleted",
+    "libraryCreated": "New library created: {{title}}",
+    "libraryDeleted": "Library \"{{title}}\" has been deleted"
   },
   "passwordRecovery": {
     "emailSent": "We have sent an e-mail for you. Please check your inbox.",

@@ -8,3 +8,4 @@ export { NotificationsPopover } from "./nav/NotificationsPopover";
 export { BackgroundContainer } from "./ui/BackgroundContainer";
 export { PaperCardHeader } from "./ui/PaperCardHeader";
 export { StickyFooter } from "./ui/StickyFooter";
+export { TooltipWrapper } from "./ui/TooltipWrapper";
