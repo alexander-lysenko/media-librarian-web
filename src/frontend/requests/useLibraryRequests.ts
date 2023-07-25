@@ -34,10 +34,10 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
     onSuccess: (response: AxiosResponse<GetLibrariesResponse>) => {
       const itemsCount = response.data.data.length;
       setLibraries(response.data.data);
-      enqueueSnack({
-        type: "info",
-        message: `loaded ${itemsCount} items`,
-      });
+      // enqueueSnack({
+      //   type: "info",
+      //   message: `loaded ${itemsCount} items`,
+      // });
     },
   });
 
@@ -158,7 +158,7 @@ export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryR
       const { items_affected: itemsAffected } = response.data.meta;
       enqueueSnack({
         type: "info",
-        message: t("notifications.libraryCleaned", { title, itemsAffected }),
+        message: t("notifications.libraryCleaned", { title, count: itemsAffected }),
       });
     },
   });

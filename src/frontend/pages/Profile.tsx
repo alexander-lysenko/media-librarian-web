@@ -97,7 +97,7 @@ export const Profile = () => {
         </Paper>
         <Paper elevation={3} sx={{ my: 3 }}>
           <PaperCardHeader
-            title={t("profile.myLibraries")}
+            title={t("myLibraries.title")}
             itemIcon={PhotoAlbumOutlined}
             secondaryText={"lorem ipsum dolor sit amet"}
             actionIcon={libSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}

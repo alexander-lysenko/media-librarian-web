@@ -9,7 +9,7 @@
     "unreadNotifications_many": "",
     "unreadNotifications_one": "{{count}} New Notification",
     "unreadNotifications_other": "{{count}} New Notifications",
-    "unreadNotifications_zero": "No new notifications"
+    "unreadNotifications_zero": "No New Notifications"
   },
   "common": {
     "all": "All",
@@ -30,6 +30,8 @@
   "confirm": {
     "cannotBeUndone": "Please keep in mind that the action cannot be undone!",
     "deleteItem": "Do you wish to delete this item?",
+    "cleanupLibrary": "Do you wish to erase all items from this Library?",
+    "deleteLibrary": "Do you wish to delete this Library completely, including all the items inside?",
     "title": "Confirm Your Action"
   },
   "dataTable": {
@@ -89,8 +91,7 @@
     "libraryTitle": "Library Title",
     "optionNone": "None selected",
     "removeField": "Remove this field",
-    "title": "Create New Library",
-    "useLibraryWizard": "using Library Creation Wizard"
+    "title": "Create New Library"
   },
   "libraryItem": {
     "title": {
@@ -125,8 +126,8 @@
   "notifications": {
     "libraryCleaned_few": "",
     "libraryCleaned_many": "",
-    "libraryCleaned_one": "Library \"{{title}}\" has been cleaned up. {{itemsAffected}} item deleted",
-    "libraryCleaned_other": "Library \"{{title}}\" has been cleaned up. {{itemsAffected}} items deleted",
+    "libraryCleaned_one": "Library \"{{title}}\" has been cleaned up. {{count}} item deleted",
+    "libraryCleaned_other": "Library \"{{title}}\" has been cleaned up. {{count}} items deleted",
     "libraryCleaned_zero": "Library \"{{title}}\" has been cleaned up. No items deleted",
     "libraryCreated": "New library created: {{title}}",
     "libraryDeleted": "Library \"{{title}}\" has been deleted"
@@ -177,7 +178,6 @@
       "unverified": "Unverified",
       "verified": "Verified"
     },
-    "myLibraries": "My Libraries",
     "preferences": "Preferences",
     "preferencesEnum": {
       "email": "Change e-mail address",
@@ -186,6 +186,13 @@
       "theme": "Interface theme",
       "username": "Change your name"
     }
+  },
+  "myLibraries": {
+    "cleanupThisLibrary": "Cleanup This Library",
+    "createLibrary": "Create New Library",
+    "deleteThisLibrary": "Delete This Library",
+    "title": "My Libraries",
+    "useLibraryWizard": "using Library Creation Wizard"
   },
   "signupPage": {
     "email": "Email Address",
