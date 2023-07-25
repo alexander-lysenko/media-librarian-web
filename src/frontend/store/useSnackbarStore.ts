@@ -20,7 +20,7 @@ type SnackbarStore = {
 /**
  * Store for queued snack notifications
  */
-export const useGlobalSnackbarStore = create<SnackbarStore>((set, get) => ({
+export const useSnackbarStore = create<SnackbarStore>((set, get) => ({
   open: false,
   setOpen: (open: boolean) => set({ open }),
   snacks: [],
@@ -40,4 +40,4 @@ export const useGlobalSnackbarStore = create<SnackbarStore>((set, get) => ({
 /**
  * A shortcut to push a snack notification from everywhere in the code
  */
-export const enqueueSnack = useGlobalSnackbarStore.getState().enqueueSnack;
+export const enqueueSnack = useSnackbarStore.getState().enqueueSnack;

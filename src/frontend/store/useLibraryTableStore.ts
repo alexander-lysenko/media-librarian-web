@@ -3,7 +3,6 @@ import { subscribeWithSelector } from "zustand/middleware";
 
 import { dataColumnPropsByType } from "../core";
 import { DataColumn, DataColumnPropsByType, DataRow } from "../core/types";
-import { useLibraryStore } from "./useLibraryStore";
 
 type SortDirection = "asc" | "desc";
 
@@ -31,15 +30,15 @@ type LibraryTableState = {
   setRows: (rows: DataRow[]) => void;
 };
 
-const columns = Object.entries(useLibraryStore.getState().fields).map(([label, type]) => ({
-  label,
-  type,
-}));
+// const columns = Object.entries(useLibraryListStore.getState().fields).map(([label, type]) => ({
+//   label,
+//   type,
+// }));
 
 export const useLibraryTableStore = create(
   subscribeWithSelector<LibraryTableState>((set) => ({
     columnOptions: dataColumnPropsByType,
-    columns: columns,
+    columns: [],
     rows: [],
     page: 0,
     rowsPerPage: -1,

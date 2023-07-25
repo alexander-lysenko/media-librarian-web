@@ -4,10 +4,6 @@ import {
   BadgeOutlined,
   CalendarMonthOutlined,
   CheckCircleOutlined,
-  CleaningServicesOutlined,
-  CollectionsOutlined,
-  CreateNewFolderOutlined,
-  DeleteForeverOutlined,
   EmailOutlined,
   ErrorOutlined,
   GridViewOutlined,
@@ -29,12 +25,10 @@ import {
   Container,
   Divider,
   Grid,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemSecondaryAction,
   ListItemText,
   ListSubheader,
   Paper,
@@ -42,9 +36,8 @@ import {
 } from "@mui/material";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { shallow } from "zustand/shallow";
 
-import { AppNavbar, PaperCardHeader } from "../components";
+import { AppNavbar, MyLibraries, PaperCardHeader } from "../components";
 import {
   ChangeEmailDialog,
   ChangePasswordDialog,
@@ -55,8 +48,7 @@ import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
 import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
-import { enqueueSnack } from "../store/useGlobalSnackbarStore";
-import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
+import { enqueueSnack } from "../store/useSnackbarStore";
 import { useProfileStore } from "../store/useProfileStore";
 
 /**
@@ -112,7 +104,7 @@ export const Profile = () => {
             actionEvents={{ onClick: () => setLibSectionOpen(!libSectionOpen) }}
           />
           <Box display={libSectionOpen ? "block" : "none"}>
-            <LibrariesList />
+            <MyLibraries />
           </Box>
         </Paper>
       </Container>
@@ -252,39 +244,6 @@ const AccountInfo = () => {
         <ListItemText primary={t("profile.detailsEnum.itemsTotalCount")} secondary={"0" /*todo replace with value*/} />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
-    </List>
-  );
-};
-
-const LibrariesList = () => {
-  const { t } = useTranslation();
-  const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
-
-  const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
-
-  return (
-    <List dense disablePadding component="div">
-      <ListItemButton divider onClick={handleOpenLibraryDialog}>
-        <ListItemIcon children={<CreateNewFolderOutlined />} />
-        <ListItemText
-          primary={t("libraryCreate.title")}
-          secondary={t("libraryCreate.useLibraryWizard")}
-          primaryTypographyProps={{ noWrap: true, textTransform: "uppercase" }}
-          secondaryTypographyProps={{ noWrap: true }}
-        />
-      </ListItemButton>
-      <ListItem divider>
-        <ListItemIcon children={<CollectionsOutlined />} />
-        <ListItemText primary={"Test"} secondary={"lorem ipsum"} />
-        <ListItemSecondaryAction>
-          <IconButton size="small" aria-label="clear">
-            <CleaningServicesOutlined />
-          </IconButton>
-          <IconButton size="small" aria-label="delete">
-            <DeleteForeverOutlined />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
     </List>
   );
 };

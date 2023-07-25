@@ -2,7 +2,7 @@ import { Alert, Slide, Snackbar } from "@mui/material";
 import { SyntheticEvent } from "react";
 import { shallow } from "zustand/shallow";
 
-import { useGlobalSnackbarStore } from "../../store/useGlobalSnackbarStore";
+import { useSnackbarStore } from "../../store/useSnackbarStore";
 
 /**
  * Snackbar - Global Component
@@ -12,11 +12,11 @@ import { useGlobalSnackbarStore } from "../../store/useGlobalSnackbarStore";
  * Snacks can be queued, but the components print the only snack at once
  *
  * @see enqueueSnack
- * @see useGlobalSnackbarStore
+ * @see useSnackbarStore
  * @constructor
  */
 export const GlobalSnackbar = () => {
-  const { open, setOpen, snacks, removeSnack } = useGlobalSnackbarStore((state) => state, shallow);
+  const { open, setOpen, snacks, removeSnack } = useSnackbarStore((state) => state, shallow);
   const snack = snacks[0];
 
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {

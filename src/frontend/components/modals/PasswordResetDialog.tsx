@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 
 import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
-import { enqueueSnack } from "../../store/useGlobalSnackbarStore";
+import { enqueueSnack } from "../../store/useSnackbarStore";
 
 type Props = {
   open: boolean;

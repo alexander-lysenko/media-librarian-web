@@ -17,8 +17,8 @@ import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
 import { useFormValidation } from "../../hooks";
-import { useLibraryStore } from "../../store/useLibraryStore";
-import { BasicLibraryItemInput } from "../libraryItemInputs/BasicLibraryItemInput";
+import { useLibraryListStore } from "../../store/useLibraryListStore";
+import { BasicLibraryItemInput } from "../libraryItemInput/BasicLibraryItemInput";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
@@ -40,7 +40,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
-  const [fields, getDefaultValues] = useLibraryStore((state) => [state.fields, state.getInitialValues], shallow);
+  const [fields, getDefaultValues] = useLibraryListStore((state) => [state.fields, state.getInitialValues], shallow);
   const [loading, setLoading] = useState<boolean>(false);
 
   const useHookForm = useForm({

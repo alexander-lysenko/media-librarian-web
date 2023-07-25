@@ -5,16 +5,16 @@ import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
 import { AppNavbar } from "../components";
-import { LibraryDrawer } from "../components/libraryItem";
+import { LibraryDrawer } from "../components/libraryItemPrint";
 import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { DataRow } from "../core/types";
 import movies from "../mock/movies.json";
-import { useLibraryDrawerStore } from "../store/useLibraryDrawerStore";
+import { usePreviewDrawerStore } from "../store/usePreviewDrawerStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
-import { useLibraryStore } from "../store/useLibraryStore";
+import { useLibraryListStore } from "../store/useLibraryListStore";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
 import { useLibraryGetRequest } from "../requests/useLibraryRequests";
@@ -22,11 +22,11 @@ import { useLibraryGetRequest } from "../requests/useLibraryRequests";
 export const App = () => {
   const { t } = useTranslation();
 
-  const { id: libraryId, title: libraryName } = useLibraryStore();
+  const { id: libraryId, title: libraryName } = useLibraryListStore();
   const { columns, rows, total, setTotal, setRows, sort, setSort, columnOptions } = useLibraryTableStore();
   const { page, setPage, rowsPerPage, setRowsPerPage } = useLibraryTableStore();
 
-  const { selectedItem, setSelectedItem } = useLibraryDrawerStore();
+  const { selectedItem, setSelectedItem } = usePreviewDrawerStore();
   const [itemDialogOpen, setItemDialogOpen] = useLibraryItemFormStore((state) => [state.open, state.setOpen], shallow);
 
   const [loading, setLoading] = useState<boolean>(true);

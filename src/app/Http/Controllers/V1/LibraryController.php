@@ -69,7 +69,7 @@ class LibraryController extends ApiV1Controller
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'data', type: 'array', items: new OA\Items(properties: [
                         new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'name', type: 'string', example: 'Movies'),
+                        new OA\Property(property: 'title', type: 'string', example: 'Movies'),
                         new OA\Property(property: 'fields', ref: self::SCHEMA_LIBRARY_REF),
                     ])),
                 ])
@@ -92,7 +92,7 @@ class LibraryController extends ApiV1Controller
             $item = [];
 
             $item['id'] = $row->id;
-            $item['name'] = $row->tbl_name;
+            $item['title'] = $row->tbl_name;
             $item['fields'] = json_decode($row->meta, true, 512, JSON_OBJECT_AS_ARRAY);
 
             return $item;

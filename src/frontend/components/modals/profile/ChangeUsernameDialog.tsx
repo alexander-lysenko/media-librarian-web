@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { SimpleDialogProps } from "../../../core/types";
 import { useFormValidation } from "../../../hooks";
 import { TextInput } from "../../inputs/TextInput";
-import { enqueueSnack } from "../../../store/useGlobalSnackbarStore";
+import { enqueueSnack } from "../../../store/useSnackbarStore";
 
 /**
  * TODO: WIP

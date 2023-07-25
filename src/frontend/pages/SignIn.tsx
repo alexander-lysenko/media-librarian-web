@@ -4,8 +4,7 @@ import { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
-import { BackgroundContainer, StickyFooter } from "../components";
-import { Copyright } from "../components/Copyright";
+import { BackgroundContainer, Copyright, StickyFooter } from "../components";
 import { LoginForm } from "../components/forms/LoginForm";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";

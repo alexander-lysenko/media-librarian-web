@@ -7,7 +7,7 @@ interface DrawerOpenState {
   setSelectedItem: (selectedItem: number | null) => void;
 }
 
-export const useLibraryDrawerStore = create<DrawerOpenState>((set) => ({
+export const usePreviewDrawerStore = create<DrawerOpenState>((set) => ({
   open: false,
   setOpen: (open: boolean) => set(() => ({ open })),
   selectedItem: null,

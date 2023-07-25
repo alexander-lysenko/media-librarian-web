@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
 import { LibraryElement } from "../../core/types";
-import { useLibraryDrawerStore } from "../../store/useLibraryDrawerStore";
+import { usePreviewDrawerStore } from "../../store/usePreviewDrawerStore";
 import { useLibraryTableStore } from "../../store/useLibraryTableStore";
 import { PosterBox } from "./PosterBox";
 import { PrintDate } from "./PrintDate";
@@ -31,7 +31,7 @@ import { PrintSwitch } from "./PrintSwitch";
 export const LibraryDrawer = () => {
   const { t } = useTranslation();
 
-  const { open, setOpen, selectedItem } = useLibraryDrawerStore();
+  const { open, setOpen, selectedItem } = usePreviewDrawerStore();
   const [item, columns] = useLibraryTableStore(
     (state) => [state.rows.find((dataRow) => dataRow.id === selectedItem), state.columns],
     shallow,

@@ -5,7 +5,7 @@ import { FetchResponseEvents } from "../core";
 import { profileEndpoint } from "../core/links";
 import { UseRequestReturn } from "../core/types";
 import { useApiRequest } from "../hooks";
-import { enqueueSnack } from "../store/useGlobalSnackbarStore";
+import { enqueueSnack } from "../store/useSnackbarStore";
 import { ProfileData, useProfileStore } from "../store/useProfileStore";
 
 type GetProfileResponse = {

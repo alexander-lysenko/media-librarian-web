@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
 import { BackgroundContainer, StickyFooter } from "../components";
-import { Copyright } from "../components/Copyright";
+import { Copyright } from "../components/ui/Copyright";
 import { SignupForm } from "../components/forms/SignupForm";
 
 /**

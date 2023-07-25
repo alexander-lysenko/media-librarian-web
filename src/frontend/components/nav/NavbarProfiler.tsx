@@ -49,7 +49,7 @@ export const NavbarProfiler = () => {
 
   return (
     <>
-      <Tooltip title={t("app.openProfileMenu")}>
+      <Tooltip arrow title={t("app.openProfileMenu")}>
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, ml: 1 }}>
           <Avatar alt={username} src={avatar} {...stringAvatar(username)} />
         </IconButton>

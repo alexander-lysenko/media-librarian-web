@@ -14,8 +14,8 @@ import {
   UseRequestReturn,
 } from "../core/types";
 import { useApiRequest } from "../hooks";
-import { enqueueSnack } from "../store/useGlobalSnackbarStore";
-import { useLibraryStore } from "../store/useLibraryStore";
+import { useLibraryListStore } from "../store/useLibraryListStore";
+import { enqueueSnack } from "../store/useSnackbarStore";
 
 type LibraryCreateRequestProps = {
   reset: () => void;
@@ -28,12 +28,12 @@ type LibraryCreateRequestProps = {
  * Request to get the schema of all available libraries
  * [GET] /api/v1/libraries
  */
-export const useLibrariesGetRequest = (): UseRequestReturn<number, GetLibrariesResponse> => {
-  // const { setLibrary } = useLibraryStore();
+export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesResponse> => {
+  const { setLibraries } = useLibraryListStore();
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibrariesResponse>) => {
       const itemsCount = response.data.data.length;
-      // setLibrary(id, title, fields);
+      setLibraries(response.data.data);
       enqueueSnack({
         type: "info",
         message: `loaded ${itemsCount} items`,
@@ -41,12 +41,12 @@ export const useLibrariesGetRequest = (): UseRequestReturn<number, GetLibrariesR
     },
   });
 
-  const { fetch, abort, status } = useApiRequest<number, GetLibrariesResponse>({
+  const { fetch, abort, status } = useApiRequest<void, GetLibrariesResponse>({
     method: "GET",
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // simulation // todo: remove
+    // simulate: true, // simulation // todo: remove
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -57,11 +57,9 @@ export const useLibrariesGetRequest = (): UseRequestReturn<number, GetLibrariesR
  * [GET] /api/v1/libraries/{id}
  */
 export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryResponse> => {
-  const { setLibrary } = useLibraryStore();
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibraryResponse>) => {
-      const { id, title, fields } = response.data.data;
-      setLibrary(id, title, fields);
+      // const { id, title, fields } = response.data.data;
       enqueueSnack({
         type: "success",
         message: "loaded",

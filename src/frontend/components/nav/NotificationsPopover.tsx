@@ -21,7 +21,7 @@ export const NotificationsPopover = () => {
 
   return (
     <>
-      <Tooltip title={t("app.unreadNotifications", { count: notificationsCount })}>
+      <Tooltip arrow title={t("app.unreadNotifications", { count: notificationsCount })}>
         <IconButton size="large" color="inherit" onClick={handleOpen}>
           <Badge badgeContent={notificationsCount} color="error">
             <NotificationsOutlined />
