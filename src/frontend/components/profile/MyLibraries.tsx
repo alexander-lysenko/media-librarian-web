@@ -3,8 +3,11 @@ import {
   CollectionsOutlined,
   CreateNewFolderOutlined,
   DeleteForeverOutlined,
+  InboxOutlined,
 } from "@mui/icons-material";
 import {
+  Box,
+  Button,
   IconButton,
   List,
   ListItem,
@@ -12,6 +15,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import { MouseEventHandler, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,10 +25,11 @@ import {
   useLibraryCleanupRequest,
   useLibraryDeleteRequest,
 } from "../../requests/useLibraryRequests";
-import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
-import { TooltipWrapper } from "../ui/TooltipWrapper";
-import { useLibraryListStore } from "../../store/useLibraryListStore";
 import { confirmDialog } from "../../store/useConfirmDialogStore";
+import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
+import { useLibraryListStore } from "../../store/useLibraryListStore";
+import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
+import { TooltipWrapper } from "../ui/TooltipWrapper";
 
 export const MyLibraries = () => {
   const { t } = useTranslation();
@@ -33,7 +38,7 @@ export const MyLibraries = () => {
 
   const dataFetchedRef = useRef(false);
 
-  const { fetch: getLibraries } = useLibrariesGetRequest();
+  const { fetch: getLibraries, status } = useLibrariesGetRequest();
   const { fetch: deleteLibrary } = useLibraryDeleteRequest();
   const { fetch: cleanupLibrary } = useLibraryCleanupRequest();
 
@@ -70,6 +75,12 @@ export const MyLibraries = () => {
       });
     };
 
+  if (status === "LOADING") {
+    return <LoadingOverlayInner sx={{ height: 180 }} />;
+  }
+  if (libraries.length === 0) {
+    return <EmptyState />;
+  }
   return (
     <List dense disablePadding component="div">
       <ListItemButton divider onClick={handleOpenLibraryDialog}>
@@ -109,5 +120,21 @@ export const MyLibraries = () => {
         );
       })}
     </List>
+  );
+};
+
+const EmptyState = () => {
+  const { t } = useTranslation();
+  const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
+  const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
+
+  return (
+    <Box p={2} height={240} display="flex" alignItems="center" justifyContent="center" flexDirection="column">
+      <InboxOutlined sx={{ fontSize: 96 }} />
+      <Typography paragraph variant="body2" textAlign="center">
+        {t("myLibraries.noLibraries")}
+      </Typography>
+      <Button variant="outlined" children={t("myLibraries.createLibrary")} onClick={handleOpenLibraryDialog} />
+    </Box>
   );
 };
