@@ -32,12 +32,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
   const { setLibraries } = useLibraryListStore();
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibrariesResponse>) => {
-      const itemsCount = response.data.data.length;
       setLibraries(response.data.data);
-      // enqueueSnack({
-      //   type: "info",
-      //   message: `loaded ${itemsCount} items`,
-      // });
     },
   });
 
@@ -59,11 +54,12 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
 export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryResponse> => {
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibraryResponse>) => {
+      void response;
       // const { id, title, fields } = response.data.data;
-      enqueueSnack({
-        type: "success",
-        message: "loaded",
-      });
+      // enqueueSnack({
+      //   type: "success",
+      //   message: "loaded",
+      // });
     },
   });
 
@@ -72,7 +68,7 @@ export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryRespons
     endpoint: libraryEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // simulation // todo: remove
+    // simulate: true, // simulation // todo: remove
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -120,6 +116,7 @@ export const useLibraryCreateRequest = ({
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
     verbose: true,
+    // simulate: true, // simulation // todo: remove
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -131,15 +128,21 @@ export const useLibraryCreateRequest = ({
  */
 export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
-    // should be filled from the place of request call
+    // onSuccess & onError should be filled from the place of request call
+    onReject: (reason) => {
+      enqueueSnack({
+        type: "error",
+        message: `${reason.code} ${reason.message}`,
+      });
+    },
   });
 
   const { fetch, abort, status } = useApiRequest<void, void>({
     method: "DELETE",
-    endpoint: librariesEndpoint,
+    endpoint: libraryEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // simulation // todo: remove
+    // simulate: true, // simulation // todo: remove
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -161,14 +164,20 @@ export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryR
         message: t("notifications.libraryCleaned", { title, count: itemsAffected }),
       });
     },
+    onReject: (reason) => {
+      enqueueSnack({
+        type: "error",
+        message: `${reason.code} ${reason.message}`,
+      });
+    },
   });
 
   const { fetch, abort, status } = useApiRequest<void, PatchLibraryResponse>({
     method: "PATCH",
-    endpoint: librariesEndpoint,
+    endpoint: libraryEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // simulation // todo: remove
+    // simulate: true, // simulation // todo: remove
   });
 
   return { status, fetch, abort, setResponseEvents };

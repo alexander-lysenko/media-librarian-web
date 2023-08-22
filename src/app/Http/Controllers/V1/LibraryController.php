@@ -362,6 +362,6 @@ class LibraryController extends ApiV1Controller
             'items_affected' => (int)$itemsAffected,
         ];
 
-        return $resource->response(200);
+        return $resource->response()->setStatusCode(200);
     }
 }

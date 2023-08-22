@@ -41,7 +41,7 @@ import { useTranslation } from "react-i18next";
 import { LibraryElementEnum } from "../../core/enums";
 import { CreateLibraryRequest } from "../../core/types";
 import { useFormValidation } from "../../hooks";
-import { useLibraryCreateRequest } from "../../requests/useLibraryRequests";
+import { useLibrariesGetRequest, useLibraryCreateRequest } from "../../requests/useLibraryRequests";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 import { TextInput } from "../inputs/TextInput";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
@@ -78,6 +78,7 @@ export const LibraryCreateDialog = () => {
 
   // REQUEST
   const { fetch: submit } = useLibraryCreateRequest({ reset, setLoading, setOpen, setError });
+  const { fetch: getLibraries } = useLibrariesGetRequest();
 
   // EVENTS
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
@@ -94,7 +95,7 @@ export const LibraryCreateDialog = () => {
   const handleAddNewField = () => append({ name: "", type: LibraryElementEnum.line }, { shouldFocus: true });
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
-    await submit(data as CreateLibraryRequest);
+    await submit(data as CreateLibraryRequest).then(() => getLibraries());
   };
 
   return (
