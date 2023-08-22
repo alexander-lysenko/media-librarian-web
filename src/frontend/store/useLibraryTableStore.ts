@@ -30,11 +30,6 @@ type LibraryTableState = {
   setRows: (rows: DataRow[]) => void;
 };
 
-// const columns = Object.entries(useLibraryListStore.getState().fields).map(([label, type]) => ({
-//   label,
-//   type,
-// }));
-
 export const useLibraryTableStore = create(
   subscribeWithSelector<LibraryTableState>((set) => ({
     columnOptions: dataColumnPropsByType,

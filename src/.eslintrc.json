@@ -1,17 +1,22 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": [
-    "react-app",
-    // Create React App base settings
+    // Recommended ESLint rules,
     "eslint:recommended",
-    // recommended ESLint rules
+    // Recommended rules from @typescript-eslint/eslint-plugin,
     "plugin:@typescript-eslint/recommended",
-    // recommended rules from @typescript-eslint/eslint-plugin
-    "plugin:prettier/recommended"
-    // Enables eslint-plugin-prettier and eslint-config-prettier. This will display Prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+    // Enables eslint-plugin-prettier and eslint-config-prettier.,
+    // This will display Prettier errors as ESLint errors.,
+    // Make sure this is always the last configuration in the extent array.,
+    "plugin:prettier/recommended",
+    // React specific linting rules,
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended"
   ],
   "plugins": [
     "simple-import-sort",
+    "react",
     "react-refresh"
   ],
   "env": {
@@ -39,7 +44,8 @@
     ],
     "no-console": "warn",
     "react-refresh/only-export-components": "warn",
-    "react/jsx-uses-react": "off",
+    // "react/jsx-uses-react": "off",
+    "react/no-children-prop": "off",
     "react/react-in-jsx-scope": "off",
     "simple-import-sort/exports": "warn",
     "simple-import-sort/imports": "warn"

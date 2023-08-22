@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { memo, MouseEventHandler, ReactElement, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { shallow } from "zustand/shallow";
 
 import { LibraryElement } from "../../core/types";
 import { usePreviewDrawerStore } from "../../store/usePreviewDrawerStore";
@@ -32,10 +31,10 @@ export const LibraryDrawer = () => {
   const { t } = useTranslation();
 
   const { open, setOpen, selectedItem } = usePreviewDrawerStore();
-  const [item, columns] = useLibraryTableStore(
-    (state) => [state.rows.find((dataRow) => dataRow.id === selectedItem), state.columns],
-    shallow,
-  );
+  const [item, columns] = useLibraryTableStore((state) => [
+    state.rows.find((dataRow) => dataRow.id === selectedItem),
+    state.columns,
+  ]);
 
   const responsiveSx: SxProps<Theme> = {
     width: { xs: "100%", sm: 480, md: 480, xl: 480 },

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { FetchResponseEvents } from "../core";
 import { DataRow, UseRequestReturn } from "../core/types";
 import movies from "../mock/movies.json";
-import { enqueueSnack } from "../store/useSnackbarStore";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
+import { enqueueSnack } from "../store/useSnackbarStore";
 
 type LibraryDataResponse = {
   items: DataRow[];

@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 import { FormDefaultValues, LibraryElement, LibraryFields } from "../core/types";
 
-export const useFormDefaultValues = (fields: LibraryFields) => {
+export const useFormDefaultValues = (fields: LibraryFields | undefined) => {
   const defaultValues: Record<LibraryElement, () => string | number | boolean> = {
     line: () => "",
     text: () => "",
@@ -17,7 +17,7 @@ export const useFormDefaultValues = (fields: LibraryFields) => {
     priority: () => 0,
   };
 
-  return Object.entries(fields).reduce((acc: FormDefaultValues, [column, type]: [string, LibraryElement]) => {
+  return Object.entries(fields || {}).reduce((acc: FormDefaultValues, [column, type]: [string, LibraryElement]) => {
     acc[column] = defaultValues[type]();
 
     return acc;

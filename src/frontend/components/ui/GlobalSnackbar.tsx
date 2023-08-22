@@ -1,6 +1,5 @@
 import { Alert, Slide, Snackbar } from "@mui/material";
 import { SyntheticEvent } from "react";
-import { shallow } from "zustand/shallow";
 
 import { useSnackbarStore } from "../../store/useSnackbarStore";
 
@@ -16,7 +15,7 @@ import { useSnackbarStore } from "../../store/useSnackbarStore";
  * @constructor
  */
 export const GlobalSnackbar = () => {
-  const { open, setOpen, snacks, removeSnack } = useSnackbarStore((state) => state, shallow);
+  const { open, setOpen, snacks, removeSnack } = useSnackbarStore((state) => state);
   const snack = snacks[0];
 
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {

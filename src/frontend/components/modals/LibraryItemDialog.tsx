@@ -14,9 +14,9 @@ import {
 import { SyntheticEvent, useState } from "react";
 import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { shallow } from "zustand/shallow";
 
 import { useFormValidation } from "../../hooks";
+import { useFormDefaultValues } from "../../hooks/useFormDefaultValues";
 import { useLibraryListStore } from "../../store/useLibraryListStore";
 import { BasicLibraryItemInput } from "../libraryItemInput/BasicLibraryItemInput";
 
@@ -40,13 +40,17 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
-  const [fields, getDefaultValues] = useLibraryListStore((state) => [state.fields, state.getInitialValues], shallow);
+  const [selectedLibrary, fields] = useLibraryListStore((state) => [
+    state.getSelectedLibraryId(),
+    state.getSelectedLibrary()?.fields,
+  ]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const formDefaultValues = useFormDefaultValues(fields);
   const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
-    defaultValues: defaultValues, // getDefaultValues(),
+    defaultValues: defaultValues || formDefaultValues,
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
@@ -88,7 +92,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
           {isNewEntry ? t("libraryItem.title.create") : t("libraryItem.title.edit")}
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
-          {Object.entries(fields).map(([label, type], index) => {
+          {Object.entries(fields || {}).map(([label, type], index) => {
             return (
               <BasicLibraryItemInput
                 key={label}

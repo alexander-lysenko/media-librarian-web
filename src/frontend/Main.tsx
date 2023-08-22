@@ -1,14 +1,12 @@
-import { createTheme, StyledEngineProvider } from "@mui/material";
-import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
+import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+import { GlobalSnackbar } from "./components";
 import { ConfirmDialog } from "./components/modals";
-import { GlobalSnackbar } from "./components/ui/GlobalSnackbar";
 import { AppRoutes } from "./core/enums";
 import { App } from "./pages/App";
 import { Landing } from "./pages/Landing";
