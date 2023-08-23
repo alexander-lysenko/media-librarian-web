@@ -1,6 +1,7 @@
 import type { FetchResponseEvents } from "../request/axiosFetch";
 import type { LibraryElement, LibrarySchema } from "./_library";
 import type { Method } from "axios";
+import { DataRow } from "./_dataTable";
 
 type PathParams = Record<string, string | number>;
 
@@ -68,4 +69,18 @@ export type CreateLibraryRequest = {
 
 export type CreateLibraryResponse = {
   data: LibrarySchema;
+};
+
+// == useLibraryItemsRequests == //
+
+export type GetLibraryItemsRequest = void;
+
+export type GetLibraryItemsResponse = {
+  items: DataRow[];
+  pagination: {
+    currentPage: number;
+    lastPage: number;
+    perPage: number;
+    total: number;
+  };
 };

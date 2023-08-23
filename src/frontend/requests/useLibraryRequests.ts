@@ -4,12 +4,14 @@ import { useTranslation } from "react-i18next";
 import { librariesEndpoint, libraryEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
 import { useLibraryListStore } from "../store/useLibraryListStore";
+import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { enqueueSnack } from "../store/useSnackbarStore";
 
 import type { FetchResponseEvents } from "../core";
 import type {
   CreateLibraryRequest,
   CreateLibraryResponse,
+  DataColumn,
   GetLibrariesResponse,
   GetLibraryResponse,
   PatchLibraryResponse,
@@ -30,10 +32,17 @@ type LibraryCreateRequestProps = {
  * [GET] /api/v1/libraries
  */
 export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesResponse> => {
-  const { setLibraries } = useLibraryListStore();
+  const { setLibraries, getSelectedLibrary } = useLibraryListStore((state) => state);
+  const { setColumns } = useLibraryTableStore((state) => state);
+
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibrariesResponse>) => {
       setLibraries(response.data.data);
+      const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(getSelectedLibrary()?.fields || {}).map(
+        ([label, type]) => ({ label, type }),
+      );
+
+      setColumns(fieldsOfSelectedLibrary);
     },
   });
 
@@ -42,7 +51,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    // simulate: true, // simulation // todo: remove
+    simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -69,7 +78,7 @@ export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryRespons
     endpoint: libraryEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    // simulate: true, // simulation // todo: remove
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -117,7 +126,7 @@ export const useLibraryCreateRequest = ({
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    // simulate: true, // simulation // todo: remove
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -143,7 +152,7 @@ export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
     endpoint: libraryEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    // simulate: true, // simulation // todo: remove
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -178,7 +187,7 @@ export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryR
     endpoint: libraryEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    // simulate: true, // simulation // todo: remove
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };

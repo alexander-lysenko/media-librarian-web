@@ -1,18 +1,6 @@
-import type { LibrarySchema } from "../core/types";
+import type { GetLibrariesResponse, GetLibraryResponse } from "../core/types";
 
-type LibraryResponse = {
-  data: LibrarySchema;
-  meta: {
-    created_at: string;
-    items_count: number;
-  };
-};
-
-type LibraryListResponse = {
-  data: LibrarySchema[];
-};
-
-export const libraryResponse: LibraryResponse = {
+export const libraryResponse: GetLibraryResponse = {
   data: {
     id: 1,
     title: "Movies",
@@ -35,7 +23,7 @@ export const libraryResponse: LibraryResponse = {
   },
 };
 
-export const librariesResponse: LibraryListResponse = {
+export const librariesResponse: GetLibrariesResponse = {
   data: [
     {
       id: 1,

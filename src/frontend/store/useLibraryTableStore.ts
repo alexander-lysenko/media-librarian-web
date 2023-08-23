@@ -37,7 +37,7 @@ export const useLibraryTableStore = create(
     columns: [],
     rows: [],
     page: 0,
-    rowsPerPage: -1,
+    rowsPerPage: 50,
     total: 0,
     sort: undefined,
     setPage: (page) => set({ page }),

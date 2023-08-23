@@ -1,6 +1,6 @@
 import { AddCircleOutlined } from "@mui/icons-material";
 import { Box, Button, Container, Paper, styled, Typography } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
@@ -10,71 +10,56 @@ import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import movies from "../mock/movies.json";
+import { getFakeLibraryItems } from "../mock/libraryItemsResponse";
+import { librariesResponse } from "../mock/libraryResponse";
+import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
+import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
+import { useLibraryListStore } from "../store/useLibraryListStore";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { usePreviewDrawerStore } from "../store/usePreviewDrawerStore";
 
-import type { DataRow } from "../core/types";
-
 export const App = () => {
   const { t } = useTranslation();
+  const dataFetchedRef = useRef(false);
 
-  // const { id: libraryId, title: libraryName } = useLibraryListStore();
-  const { columns, rows, total, setTotal, setRows, sort, setSort, columnOptions } = useLibraryTableStore();
-  const { page, setPage, rowsPerPage, setRowsPerPage } = useLibraryTableStore();
+  const getSelectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary);
+  const { columns, rows, total, sort, setSort, columnOptions } = useLibraryTableStore((state) => state);
+  const { page, setPage, rowsPerPage, setRowsPerPage } = useLibraryTableStore((state) => state);
 
-  const { selectedItem, setSelectedItem } = usePreviewDrawerStore();
+  const { selectedItem, setSelectedItem } = usePreviewDrawerStore((state) => state);
   const [itemDialogOpen, setItemDialogOpen] = useLibraryItemFormStore((state) => [state.open, state.setOpen]);
 
-  const [loading, setLoading] = useState<boolean>(true);
   const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItem, setSelectedItem };
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage };
 
-  // const { fetch: request, status } = useLibraryGetRequest();
-  // const { fetch: request, status } = useLibraryItemsGetRequest();
+  const { fetch: getLibraries, status: useLibrariesGetStatus } = useLibrariesGetRequest();
+  const { fetch: fetchItems, status: useLibraryItemsGetStatus } = useLibraryItemsGetRequest();
 
-  const requestData = useCallback(() => {
-    // https://github.com/pmndrs/zustand#transient-updates-for-often-occurring-state-changes
-    console.log("Requesting data...");
-    setLoading(true);
-
-    const origDataRows: Omit<DataRow, "id">[] = Array.from(movies);
-    const dataRows: DataRow[] = [];
-    const rowsLength = rowsPerPage > 0 ? rowsPerPage / 5 : 10000;
-
-    for (let i = 0; i < rowsLength; i++) {
-      origDataRows.forEach((item, index) => {
-        dataRows.push({
-          id: index + 1 + i * origDataRows.length,
-          ...item,
-          "Movie Title": `${index + 1 + i * origDataRows.length} ${item["Movie Title"]}`,
-          "Origin Title": `${index + 1 + i * origDataRows.length} ${item["Origin Title"]}`,
-          "IMDB URL": `${index + 1 + i * origDataRows.length} ${item["IMDB URL"]}`,
-          Description: `${index + 1 + i * origDataRows.length} ${item["Description"]}`,
-        });
-      });
+  const getItems = useCallback(() => {
+    const selectedLibraryId = getSelectedLibrary()?.id;
+    if (selectedLibraryId) {
+      void fetchItems(undefined, { id: selectedLibraryId }, { fakeResponse: getFakeLibraryItems() });
     }
-    setTimeout(() => {
-      setRows(dataRows);
-      setTotal(50000);
-      setLoading(false);
-    }, 2000);
-  }, []);
+  }, [fetchItems, getSelectedLibrary]);
 
   useEffect(() => {
-    useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], requestData, {
-      equalityFn: shallow,
-      fireImmediately: true,
-    });
-  }, []);
+    if (!dataFetchedRef.current) {
+      dataFetchedRef.current = true;
+      void getLibraries(undefined, {}, { fakeResponse: librariesResponse });
+      useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], getItems, {
+        equalityFn: shallow,
+        fireImmediately: true,
+      });
+    }
+  }, [getItems, getLibraries]);
 
   return (
     <>
       <AppNavbar />
       <Container maxWidth="xl">
         <StyledHeaderBox>
-          <Typography variant="h4" noWrap children={"libraryName"} />
+          <Typography variant="h4" noWrap children={getSelectedLibrary()?.title} />
           <Button
             type="button"
             variant="contained"
@@ -84,7 +69,7 @@ export const App = () => {
           />
         </StyledHeaderBox>
         <Paper elevation={3} sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }}>
-          {loading ? (
+          {useLibrariesGetStatus === "LOADING" || useLibraryItemsGetStatus === "LOADING" ? (
             <LoadingOverlayInner />
           ) : (
             <StyledTableBox>

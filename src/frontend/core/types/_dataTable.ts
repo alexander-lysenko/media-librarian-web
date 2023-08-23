@@ -1,5 +1,3 @@
-import { SxProps } from "@mui/material";
-
 import type { LibraryElement } from "./_library";
 import type { TableBodyProps, TableContainerProps, TableHeadProps, TableProps, TableRowProps } from "@mui/material";
 import type { CSSProperties, MouseEvent } from "react";

@@ -24,6 +24,8 @@ export const useApiRequest = <Request, Response>(
     beforeSend: () => {
       setStatus("LOADING");
       customEvents.beforeSend?.();
+      // eslint-disable-next-line no-console
+      verbose && console.log(`Requesting: ${method} ${url}`);
     },
     onSuccess: (response: Response | AxiosResponse<Response>) => {
       setStatus("SUCCESS");
