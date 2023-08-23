@@ -1,4 +1,4 @@
-import { LibraryElementEnum } from "../enums";
+import type { LibraryElementEnum } from "../enums";
 
 export type LibraryElement = keyof typeof LibraryElementEnum;
 

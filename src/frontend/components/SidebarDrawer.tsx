@@ -11,10 +11,11 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { KeyboardEvent, MouseEvent } from "react";
 
 import { usePreviewDrawerStore } from "../store/usePreviewDrawerStore";
 import { SidebarProfiler } from "./SidebarProfiler";
+
+import type { KeyboardEvent, MouseEvent } from "react";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 

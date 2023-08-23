@@ -12,8 +12,9 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { SimpleDialogProps } from "../../../core/types";
 import { EmailInput } from "../../inputs/EmailInput";
+
+import type { SimpleDialogProps } from "../../../core/types";
 
 /**
  * TODO: WIP

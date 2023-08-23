@@ -1,5 +1,7 @@
-import { memo, ReactElement } from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
+
+import type { ReactElement } from "react";
 
 export const PrintPriority = memo(({ value }: { value: number }) => {
   const { t } = useTranslation();

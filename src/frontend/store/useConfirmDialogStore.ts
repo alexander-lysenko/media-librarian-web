@@ -1,5 +1,6 @@
-import { MouseEventHandler, ReactNode } from "react";
 import { create } from "zustand";
+
+import type { MouseEventHandler, ReactNode } from "react";
 
 export type ConfirmDialogProps = {
   message: ReactNode;

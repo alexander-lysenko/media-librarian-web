@@ -1,7 +1,8 @@
-import { SxProps, TableBodyProps, TableContainerProps, TableHeadProps, TableProps, TableRowProps } from "@mui/material";
-import { CSSProperties, MouseEvent } from "react";
+import { SxProps } from "@mui/material";
 
-import { LibraryElement } from "./_library";
+import type { LibraryElement } from "./_library";
+import type { TableBodyProps, TableContainerProps, TableHeadProps, TableProps, TableRowProps } from "@mui/material";
+import type { CSSProperties, MouseEvent } from "react";
 
 export type SortDirection = "asc" | "desc";
 

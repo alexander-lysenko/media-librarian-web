@@ -1,12 +1,14 @@
-import { AxiosResponse } from "axios";
 import { useState } from "react";
 
-import { FetchResponseEvents } from "../core";
 import { profileEndpoint } from "../core/links";
-import { UseRequestReturn } from "../core/types";
 import { useApiRequest } from "../hooks";
+import { useProfileStore } from "../store/useProfileStore";
 import { enqueueSnack } from "../store/useSnackbarStore";
-import { ProfileData, useProfileStore } from "../store/useProfileStore";
+
+import type { FetchResponseEvents } from "../core";
+import type { UseRequestReturn } from "../core/types";
+import type { ProfileData } from "../store/useProfileStore";
+import type { AxiosResponse } from "axios";
 
 type GetProfileResponse = {
   user: ProfileData;

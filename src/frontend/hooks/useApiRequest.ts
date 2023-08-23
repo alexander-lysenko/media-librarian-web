@@ -1,8 +1,10 @@
-import { AxiosResponse } from "axios";
 import { useState } from "react";
 
-import { axiosFetch, FetchRequestConfig, FetchResponseEvents } from "../core";
-import { ApiRequestFetch, ApiRequestHookConfig, ApiRequestHookReturn, RequestStatus } from "../core/types";
+import { axiosFetch } from "../core";
+
+import type { FetchRequestConfig, FetchResponseEvents } from "../core";
+import type { ApiRequestFetch, ApiRequestHookConfig, ApiRequestHookReturn, RequestStatus } from "../core/types";
+import type { AxiosResponse } from "axios";
 
 /**
  * Use this hook as base to configure any API requests in the project.

@@ -1,8 +1,10 @@
 import { Star, StarBorder, StarHalf } from "@mui/icons-material";
 import { Typography } from "@mui/material";
-import { memo, ReactElement } from "react";
+import { memo } from "react";
 
 import { ratingColorByValue } from "../../core";
+
+import type { ReactElement } from "react";
 
 type RatingProps = {
   size: 5 | 10;

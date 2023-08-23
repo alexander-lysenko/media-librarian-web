@@ -1,5 +1,7 @@
 {
-  "parser": "@typescript-eslint/parser",
+  "env": {
+    "node": true
+  },
   "extends": [
     // Recommended ESLint rules,
     "eslint:recommended",
@@ -14,23 +16,22 @@
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended"
   ],
-  "plugins": [
-    "simple-import-sort",
-    "react",
-    "react-refresh"
-  ],
-  "env": {
-    "node": true
-  },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
     "ecmaFeatures": {
       "jsx": true
     }
   },
+  "plugins": [
+    "simple-import-sort",
+    "react",
+    "react-refresh"
+  ],
   "rules": {
     "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-interface": "warn",
     "@typescript-eslint/no-unused-vars": [
       "warn",
@@ -44,10 +45,42 @@
     ],
     "no-console": "warn",
     "react-refresh/only-export-components": "warn",
-    // "react/jsx-uses-react": "off",
+    "react/display-name": "off",
     "react/no-children-prop": "off",
+    "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "simple-import-sort/exports": "warn",
-    "simple-import-sort/imports": "warn"
+    "simple-import-sort/imports": [
+      "warn",
+      {
+        "groups": [
+          // Side effect imports,
+          // Node.js builtins,
+          // Packages,
+          // Absolute imports, Anything not matched in another group,
+          // ---
+          // Relative imports, Anything that starts with a dot,
+          // ----
+          // Type imports
+          [
+            "^\\u0000",
+            "^node:",
+            "^@?\\w",
+            "^"
+          ],
+          [
+            "^\\."
+          ],
+          [
+            "^.+\\u0000$"
+          ]
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "18"
+    }
   }
 }

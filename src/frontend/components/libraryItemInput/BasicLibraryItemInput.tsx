@@ -1,8 +1,5 @@
 import { forwardRef } from "react";
-import { Control } from "react-hook-form";
 
-import { LibraryElementEnum } from "../../core/enums";
-import { InputCustomProps } from "../../core/types";
 import { CheckBoxedInput } from "./CheckBoxedInput";
 import { ColoredRatingInput } from "./ColoredRatingInput";
 import { DateTimeInput } from "./DateTimeInput";
@@ -10,6 +7,10 @@ import { PriorityInput } from "./PriorityInput";
 import { TextInputMultiLine } from "./TextInputMultiLine";
 import { TextInputSingleLine } from "./TextInputSingleLine";
 import { UrlInputLine } from "./UrlInputLine";
+
+import type { LibraryElementEnum } from "../../core/enums";
+import type { InputCustomProps } from "../../core/types";
+import type { Control } from "react-hook-form";
 
 export { CheckBoxedInput } from "./CheckBoxedInput";
 export { ColoredRatingInput } from "./ColoredRatingInput";

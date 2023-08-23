@@ -10,10 +10,12 @@ import {
   DialogTitle,
   Grow,
 } from "@mui/material";
-import { MouseEventHandler, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useConfirmDialogStore } from "../../store/useConfirmDialogStore";
+
+import type { MouseEventHandler } from "react";
 
 /**
  * Confirmation Dialog - Global Component

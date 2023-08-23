@@ -1,5 +1,11 @@
 import { debounce } from "@mui/material/utils";
-import {
+import { useTranslation } from "react-i18next";
+
+import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
+import { useSignupFormStore } from "../store/useSignupFormStore";
+
+import type { RegisteredFormNamesEnum } from "../core/enums";
+import type {
   ChangeHandler,
   FieldValues,
   Message,
@@ -7,11 +13,6 @@ import {
   UseFormRegisterReturn,
   UseFormReturn,
 } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-
-import { RegisteredFormNamesEnum } from "../core/enums";
-import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
-import { useSignupFormStore } from "../store/useSignupFormStore";
 
 type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
 

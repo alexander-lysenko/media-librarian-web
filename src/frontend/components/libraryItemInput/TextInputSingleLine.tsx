@@ -2,7 +2,7 @@ import { DriveFileRenameOutlineOutlined, HourglassBottomOutlined } from "@mui/ic
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
 
-import { TextInputSingleLineProps } from "../../core/types";
+import type { TextInputSingleLineProps } from "../../core/types";
 
 /**
  * Library Item Form - Single Line Text Input

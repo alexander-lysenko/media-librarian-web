@@ -1,16 +1,8 @@
-import { SvgIconComponent } from "@mui/icons-material";
-import {
-  Grid,
-  Icon,
-  IconButton,
-  IconButtonProps,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  SxProps,
-  Typography,
-} from "@mui/material";
-import { ReactNode } from "react";
+import { Grid, Icon, IconButton, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material";
+
+import type { SvgIconComponent } from "@mui/icons-material";
+import type { IconButtonProps, SxProps } from "@mui/material";
+import type { ReactNode } from "react";
 
 type Props = {
   title: string | ReactNode;

@@ -1,6 +1,5 @@
-import { Control, UseFormRegisterReturn } from "react-hook-form";
-
-import { LibraryElement } from "./_library";
+import type { LibraryElement } from "./_library";
+import type { Control, UseFormRegisterReturn } from "react-hook-form";
 
 export type InputCustomProps = UseFormRegisterReturn & {
   label: string;

@@ -1,9 +1,10 @@
 import { PublicOutlined } from "@mui/icons-material";
 import { InputAdornment, TextField, Tooltip } from "@mui/material";
-import { ChangeEvent, forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { UrlInputProps } from "../../core/types";
+import type { UrlInputProps } from "../../core/types";
+import type { ChangeEvent } from "react";
 
 /**
  * Library Item Form - Single Line Text Input for URL

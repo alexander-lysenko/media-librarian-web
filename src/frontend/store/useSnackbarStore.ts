@@ -1,8 +1,8 @@
-import { AlertColor } from "@mui/material";
-import { ReactNode } from "react";
-import { create } from "zustand";
-import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
+import { createWithEqualityFn } from "zustand/traditional";
+
+import type { AlertColor } from "@mui/material";
+import type { ReactNode } from "react";
 
 type SnackOptions = {
   message: ReactNode;

@@ -5,16 +5,19 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableHeadProps,
   TableRow,
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { createContext, forwardRef, memo, MouseEvent, MouseEventHandler, useCallback, useContext, useRef } from "react";
-import { TableComponents, TableVirtuoso, VirtuosoHandle } from "react-virtuoso";
+import { createContext, forwardRef, memo, useCallback, useContext, useRef } from "react";
+import { TableVirtuoso } from "react-virtuoso";
 
-import { DataRow, DataTableVirtualizedProps, VirtuosoContextProps } from "../../core/types";
 import { LibraryItemRow } from "./LibraryItemRow";
+
+import type { DataRow, DataTableVirtualizedProps, VirtuosoContextProps } from "../../core/types";
+import type { TableHeadProps } from "@mui/material";
+import type { MouseEvent, MouseEventHandler } from "react";
+import type { TableComponents, VirtuosoHandle } from "react-virtuoso";
 
 type TableHeaderProps = Pick<DataTableVirtualizedProps, "columns" | "columnOptions" | "sort" | "setSort">;
 type SelectedItemContextValue = {

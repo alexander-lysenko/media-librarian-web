@@ -11,7 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -19,6 +19,8 @@ import { stringAvatar } from "../../core";
 import { AppRoutes } from "../../core/enums";
 import { useProfileStore } from "../../store/useProfileStore";
 import { useThemeStore } from "../../store/useThemeStore";
+
+import type { MouseEvent } from "react";
 
 /**
  * Profile Avatar and menu designed to use inside AppBar

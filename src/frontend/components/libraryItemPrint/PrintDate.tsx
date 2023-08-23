@@ -1,7 +1,9 @@
 import dayjs from "dayjs";
-import { memo, ReactElement } from "react";
+import { memo } from "react";
 
 import { useLanguageStore } from "../../store/useTranslationStore";
+
+import type { ReactElement } from "react";
 
 type DateFieldProps = {
   format: "date" | "datetime";

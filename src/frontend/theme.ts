@@ -1,6 +1,7 @@
-import { PaletteMode, PaletteOptions, ThemeOptions } from "@mui/material";
 import { blue, red, yellow } from "@mui/material/colors";
-import { TypographyOptions } from "@mui/material/styles/createTypography";
+
+import type { PaletteMode, PaletteOptions, ThemeOptions } from "@mui/material";
+import type { TypographyOptions } from "@mui/material/styles/createTypography";
 
 const lightPalette: PaletteOptions = {
   primary: {

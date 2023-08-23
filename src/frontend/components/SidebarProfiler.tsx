@@ -12,10 +12,12 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { SxProps } from "@mui/system";
-import { MouseEventHandler, useState } from "react";
+import { useState } from "react";
 
 import { stringAvatar } from "../core";
+
+import type { SxProps } from "@mui/system";
+import type { MouseEventHandler } from "react";
 
 const { sx, children } = stringAvatar("User Name");
 const profileSx: SxProps = { p: 2, backgroundImage: "url(https://source.unsplash.com/7OCUyev2M9E/256x155)" };

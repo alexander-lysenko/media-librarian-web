@@ -1,5 +1,7 @@
-import { Box, Grid, Theme, Typography } from "@mui/material";
-import { ReactNode } from "react";
+import { Box, Grid, Typography } from "@mui/material";
+
+import type { Theme } from "@mui/material";
+import type { ReactNode } from "react";
 
 type Props = {
   children: ReactNode;

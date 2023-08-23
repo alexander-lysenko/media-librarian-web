@@ -17,7 +17,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { MouseEventHandler, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -30,6 +30,8 @@ import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore
 import { useLibraryListStore } from "../../store/useLibraryListStore";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
+
+import type { MouseEventHandler } from "react";
 
 export const MyLibraries = () => {
   const { t } = useTranslation();

@@ -1,9 +1,10 @@
 import { MenuItem, TextField } from "@mui/material";
 import { useMemo } from "react";
-import { Controller, UseControllerReturn } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { PriorityInputProps } from "../../core/types";
+import type { PriorityInputProps } from "../../core/types";
+import type { UseControllerReturn } from "react-hook-form";
 
 /**
  * Library Item Form - Priority Dropdown Input

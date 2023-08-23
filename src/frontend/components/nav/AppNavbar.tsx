@@ -16,13 +16,15 @@ import {
   Typography,
   useScrollTrigger,
 } from "@mui/material";
-import { cloneElement, Fragment, ReactElement, useState } from "react";
+import { cloneElement, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { AppRoutes } from "../../core/enums";
 import { NavbarProfiler } from "./NavbarProfiler";
 import { NotificationsPopover } from "./NotificationsPopover";
+
+import type { ReactElement } from "react";
 
 interface Props {
   children?: ReactElement;

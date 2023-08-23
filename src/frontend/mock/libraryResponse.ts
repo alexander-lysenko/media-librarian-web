@@ -1,4 +1,4 @@
-import { LibrarySchema } from "../core/types";
+import type { LibrarySchema } from "../core/types";
 
 type LibraryResponse = {
   data: LibrarySchema;

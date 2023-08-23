@@ -14,13 +14,16 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { forwardRef, SyntheticEvent, useState } from "react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { forwardRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { enqueueSnack } from "../../store/useSnackbarStore";
+
+import type { InputCustomProps } from "../../core/types";
+import type { SyntheticEvent } from "react";
+import type { FieldValues, SubmitHandler } from "react-hook-form";
 
 type Props = {
   open: boolean;

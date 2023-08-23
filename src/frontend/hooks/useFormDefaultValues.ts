@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import { FormDefaultValues, LibraryElement, LibraryFields } from "../core/types";
+import type { FormDefaultValues, LibraryElement, LibraryFields } from "../core/types";
 
 export const useFormDefaultValues = (fields: LibraryFields | undefined) => {
   const defaultValues: Record<LibraryElement, () => string | number | boolean> = {

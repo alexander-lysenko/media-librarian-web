@@ -1,6 +1,8 @@
 import { Switch } from "@mui/material";
-import { memo, ReactElement } from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
+
+import type { ReactElement } from "react";
 
 export const PrintSwitch = memo(({ value, asText }: { value: boolean; asText?: boolean }) => {
   const { t } = useTranslation();

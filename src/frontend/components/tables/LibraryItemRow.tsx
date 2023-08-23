@@ -1,8 +1,9 @@
 import { TableCell, Typography } from "@mui/material";
 import { memo } from "react";
 
-import { DataColumn, DataColumnPropsByType, DataRow, LibraryElement } from "../../core/types";
 import { PrintDate, PrintPriority, PrintRating, PrintSwitch } from "../libraryItemPrint";
+
+import type { DataColumn, DataColumnPropsByType, DataRow, LibraryElement } from "../../core/types";
 
 type LibraryCellContentProps = {
   type: LibraryElement;

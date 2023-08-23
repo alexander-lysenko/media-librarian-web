@@ -1,10 +1,13 @@
 import { FormControl, FormControlLabel, FormHelperText, Rating, useMediaQuery, useTheme } from "@mui/material";
-import { SxProps } from "@mui/system";
-import { SyntheticEvent, useState } from "react";
-import { Controller, UseControllerReturn } from "react-hook-form";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
 
 import { ratingColorByValue } from "../../core";
-import { ColoredRatingInputProps } from "../../core/types";
+
+import type { ColoredRatingInputProps } from "../../core/types";
+import type { SxProps } from "@mui/system";
+import type { SyntheticEvent } from "react";
+import type { UseControllerReturn } from "react-hook-form";
 
 /**
  * Library Item Form - Colored Rating Input

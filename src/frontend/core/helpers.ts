@@ -1,7 +1,7 @@
-import { AvatarProps } from "@mui/material";
 import { green, grey, orange, red } from "@mui/material/colors";
 
-import { DataColumnPropsByType } from "./types";
+import type { DataColumnPropsByType } from "./types";
+import type { AvatarProps } from "@mui/material";
 
 type RowsPerPageOptions = Array<number | { label: string; value: number }> | [];
 

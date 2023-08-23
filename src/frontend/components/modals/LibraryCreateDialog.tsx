@@ -21,30 +21,31 @@ import {
   MenuItem,
   styled,
   TextField,
-  TextFieldProps,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { SyntheticEvent, useState } from "react";
-import {
-  FieldErrors,
-  FieldValues,
-  SubmitErrorHandler,
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-  UseFormRegisterReturn,
-} from "react-hook-form";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { LibraryElementEnum } from "../../core/enums";
-import { CreateLibraryRequest } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { useLibrariesGetRequest, useLibraryCreateRequest } from "../../requests/useLibraryRequests";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 import { TextInput } from "../inputs/TextInput";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
+
+import type { CreateLibraryRequest } from "../../core/types";
+import type { TextFieldProps } from "@mui/material";
+import type { SyntheticEvent } from "react";
+import type {
+  FieldErrors,
+  FieldValues,
+  SubmitErrorHandler,
+  SubmitHandler,
+  UseFormRegisterReturn,
+} from "react-hook-form";
 
 type InlineTemplateProps = {
   index: number;

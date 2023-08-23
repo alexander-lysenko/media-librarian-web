@@ -9,10 +9,12 @@ import {
   TableSortLabel,
   Typography,
 } from "@mui/material";
-import { MouseEventHandler, useState } from "react";
+import { useState } from "react";
 
-import { DataTableComponentProps, DataTableEventsProps } from "../../core/types";
 import { LibraryItemRow } from "./LibraryItemRow";
+
+import type { DataTableComponentProps, DataTableEventsProps } from "../../core/types";
+import type { MouseEventHandler } from "react";
 
 type TableContentsProps = Omit<DataTableComponentProps, "loading"> &
   DataTableEventsProps & {

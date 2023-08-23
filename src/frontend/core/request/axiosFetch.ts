@@ -1,6 +1,8 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axios";
+import axios from "axios";
 
 import { useAuthCredentialsStore } from "../../store/useAuthCredentialsStore";
+
+import type { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axios";
 
 /**
  * Axios Request configuration options (slightly overridden AxiosRequestConfig)

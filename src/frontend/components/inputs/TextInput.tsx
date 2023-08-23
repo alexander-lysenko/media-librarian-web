@@ -1,8 +1,10 @@
-import { SvgIconComponent } from "@mui/icons-material";
-import { InputAdornment, TextField, TextFieldProps } from "@mui/material";
-import { forwardRef, ReactElement } from "react";
+import { InputAdornment, TextField } from "@mui/material";
+import { forwardRef } from "react";
 
-import { InputCustomProps } from "../../core/types";
+import type { InputCustomProps } from "../../core/types";
+import type { SvgIconComponent } from "@mui/icons-material";
+import type { TextFieldProps } from "@mui/material";
+import type { ReactElement } from "react";
 
 type Props = InputCustomProps & {
   margin?: TextFieldProps["margin"];

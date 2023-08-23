@@ -1,11 +1,12 @@
-import { AxiosResponse } from "axios";
 import { useState } from "react";
 
-import { FetchResponseEvents } from "../core";
-import { DataRow, UseRequestReturn } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { enqueueSnack } from "../store/useSnackbarStore";
+
+import type { FetchResponseEvents } from "../core";
+import type { DataRow, UseRequestReturn } from "../core/types";
+import type { AxiosResponse } from "axios";
 
 type LibraryDataResponse = {
   items: DataRow[];

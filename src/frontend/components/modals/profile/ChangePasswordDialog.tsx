@@ -13,8 +13,9 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { SimpleDialogProps } from "../../../core/types";
 import { PasswordInput } from "../../inputs/PasswordInput";
+
+import type { SimpleDialogProps } from "../../../core/types";
 
 /**
  * TODO: WIP

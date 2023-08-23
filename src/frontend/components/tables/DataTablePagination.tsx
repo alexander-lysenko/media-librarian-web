@@ -1,9 +1,12 @@
-import { LabelDisplayedRowsArgs, TablePagination, useMediaQuery, useTheme } from "@mui/material";
-import { ChangeEvent, memo, MouseEvent, useCallback } from "react";
+import { TablePagination, useMediaQuery, useTheme } from "@mui/material";
+import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 import { detectRowsPerPageOptions } from "../../core";
-import { DataTablePaginationProps } from "../../core/types";
+
+import type { DataTablePaginationProps } from "../../core/types";
+import type { LabelDisplayedRowsArgs } from "@mui/material";
+import type { ChangeEvent, MouseEvent } from "react";
 
 /**
  * Self-sufficient Pagination component for DataTable.

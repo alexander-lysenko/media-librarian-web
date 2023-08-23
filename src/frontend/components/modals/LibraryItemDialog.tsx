@@ -11,14 +11,17 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { SyntheticEvent, useState } from "react";
-import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
 import { useFormDefaultValues } from "../../hooks/useFormDefaultValues";
 import { useLibraryListStore } from "../../store/useLibraryListStore";
 import { BasicLibraryItemInput } from "../libraryItemInput/BasicLibraryItemInput";
+
+import type { SyntheticEvent } from "react";
+import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 type Props = {
   handleSubmitted: (event: SyntheticEvent | Event) => void;
@@ -120,7 +123,7 @@ export const LibraryItemDialog = ({ open, isNewEntry = false, handleClose, handl
   );
 };
 
-const defaultValues: Record<string, any> = {
+const defaultValues: Record<string, string | number | boolean> = {
   "Movie Title": "Лицо со шрамом",
   "Origin Title": "Scarface",
   "Release Date": "1983-12-01",

@@ -1,4 +1,6 @@
-import { Tooltip, TooltipProps } from "@mui/material";
+import { Tooltip } from "@mui/material";
+
+import type { TooltipProps } from "@mui/material";
 
 /**
  * MUI Tooltip - preset with additional wrapping that helps the tooltip appear over disabled items (optional).

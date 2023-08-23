@@ -34,7 +34,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppNavbar, MyLibraries, PaperCardHeader } from "../components";
@@ -48,8 +48,10 @@ import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
 import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
-import { enqueueSnack } from "../store/useSnackbarStore";
 import { useProfileStore } from "../store/useProfileStore";
+import { enqueueSnack } from "../store/useSnackbarStore";
+
+import type { ReactNode } from "react";
 
 /**
  * Component representing the Profile page

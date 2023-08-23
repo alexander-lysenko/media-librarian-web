@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import { forwardRef } from "react";
 
-import { TextInputMultiLineProps } from "../../core/types";
+import type { TextInputMultiLineProps } from "../../core/types";
 
 /**
  * Library Item Form - Single Line Text Input

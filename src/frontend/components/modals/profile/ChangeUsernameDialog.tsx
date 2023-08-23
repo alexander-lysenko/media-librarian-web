@@ -10,14 +10,17 @@ import {
   DialogTitle,
   Grow,
 } from "@mui/material";
-import { SyntheticEvent, useState } from "react";
-import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { SimpleDialogProps } from "../../../core/types";
 import { useFormValidation } from "../../../hooks";
-import { TextInput } from "../../inputs/TextInput";
 import { enqueueSnack } from "../../../store/useSnackbarStore";
+import { TextInput } from "../../inputs/TextInput";
+
+import type { SimpleDialogProps } from "../../../core/types";
+import type { SyntheticEvent } from "react";
+import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
  * TODO: WIP

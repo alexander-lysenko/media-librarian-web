@@ -9,21 +9,25 @@ import {
   FormHelperText,
   InputLabel,
   MenuItem,
-  PaletteMode,
-  Select
+  Select,
 } from "@mui/material";
-import { ChangeEvent, forwardRef, useState } from "react";
-import { ChangeHandler, FieldValues, SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import { forwardRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { InputCustomProps } from "../../core/types";
 import { useFormValidation } from "../../hooks";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
 import { useThemeStore } from "../../store/useThemeStore";
-import { Language, useLanguageStore, useTranslationStore } from "../../store/useTranslationStore";
-import { PasswordInput } from "../inputs/PasswordInput";
+import { useLanguageStore, useTranslationStore } from "../../store/useTranslationStore";
 import { EmailInput } from "../inputs/EmailInput";
+import { PasswordInput } from "../inputs/PasswordInput";
 import { TextInput } from "../inputs/TextInput";
+
+import type { InputCustomProps } from "../../core/types";
+import type { Language } from "../../store/useTranslationStore";
+import type { PaletteMode } from "@mui/material";
+import type { ChangeEvent } from "react";
+import type { ChangeHandler, FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
  * Sign Up (Register) Form functional component

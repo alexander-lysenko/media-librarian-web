@@ -1,27 +1,19 @@
 import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from "@mui/icons-material";
-import {
-  Box,
-  Container,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  SxProps,
-  Theme,
-} from "@mui/material";
-import { memo, MouseEventHandler, ReactElement, useEffect } from "react";
+import { Box, Container, Divider, Drawer, IconButton, List, ListItem, ListItemText } from "@mui/material";
+import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { LibraryElement } from "../../core/types";
-import { usePreviewDrawerStore } from "../../store/usePreviewDrawerStore";
 import { useLibraryTableStore } from "../../store/useLibraryTableStore";
+import { usePreviewDrawerStore } from "../../store/usePreviewDrawerStore";
 import { PosterBox } from "./PosterBox";
 import { PrintDate } from "./PrintDate";
 import { PrintPriority } from "./PrintPriority";
 import { PrintRating } from "./PrintRating";
 import { PrintSwitch } from "./PrintSwitch";
+
+import type { LibraryElement } from "../../core/types";
+import type { SxProps, Theme } from "@mui/material";
+import type { MouseEventHandler, ReactElement } from "react";
 
 /**
  * A right-side drawer displaying the entire item selected from a Library

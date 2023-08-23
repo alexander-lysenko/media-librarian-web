@@ -2,7 +2,7 @@ import { AlternateEmailOutlined, HourglassBottomOutlined } from "@mui/icons-mate
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
 
-import { InputCustomProps } from "../../core/types";
+import type { InputCustomProps } from "../../core/types";
 
 type Props = InputCustomProps & {
   loadingState?: boolean;

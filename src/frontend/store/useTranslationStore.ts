@@ -1,10 +1,12 @@
-import i18next, { i18n } from "i18next";
+import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import en from "../i18n/en.json";
 import ru from "../i18n/ru.json";
+
+import type { i18n } from "i18next";
 
 export type Language = "en" | "ru";
 export type LanguageDefinitions = { [lang in Language]: string };

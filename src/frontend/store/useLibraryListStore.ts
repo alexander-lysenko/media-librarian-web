@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { shallow } from "zustand/shallow";
 import { createWithEqualityFn } from "zustand/traditional";
 
-import { LibrarySchema } from "../core/types";
+import type { LibrarySchema } from "../core/types";
 
 type LibraryState = {
   libraries: LibrarySchema[];

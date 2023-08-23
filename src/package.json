@@ -9,6 +9,8 @@
     "build": "vite build",
     "dev": "vite",
     "dev:force": "DEBUG=vite-tsconfig-paths vite --force",
+    "lint:check": "eslint frontend/**/*.{ts,tsx}",
+    "lint:fix": "eslint --fix frontend/**/*.{ts,tsx}",
     "sort:package": "npx sort-package-json",
     "tscheck": "tsc -noEmit"
   },
@@ -18,11 +20,6 @@
     ],
     "*.{json,css,md}": [
       "prettier --write"
-    ]
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
     ]
   },
   "dependencies": {

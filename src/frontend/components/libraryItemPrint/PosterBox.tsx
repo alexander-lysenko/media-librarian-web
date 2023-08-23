@@ -1,5 +1,7 @@
-import { Box, Container, styled, Theme, Typography } from "@mui/material";
-import { SystemProps } from "@mui/system";
+import { Box, Container, styled, Typography } from "@mui/material";
+
+import type { Theme } from "@mui/material";
+import type { SystemProps } from "@mui/system";
 
 type Props = {
   src: string;

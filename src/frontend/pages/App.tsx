@@ -2,6 +2,7 @@ import { AddCircleOutlined } from "@mui/icons-material";
 import { Box, Button, Container, Paper, styled, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { shallow } from "zustand/shallow";
 
 import { AppNavbar } from "../components";
 import { LibraryDrawer } from "../components/libraryItemPrint";
@@ -9,12 +10,12 @@ import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import { DataRow } from "../core/types";
 import movies from "../mock/movies.json";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
 import { usePreviewDrawerStore } from "../store/usePreviewDrawerStore";
-import { shallow } from "zustand/shallow";
+
+import type { DataRow } from "../core/types";
 
 export const App = () => {
   const { t } = useTranslation();

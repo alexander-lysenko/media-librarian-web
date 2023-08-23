@@ -1,7 +1,7 @@
 import { Checkbox, FormControl, FormControlLabel, FormHelperText } from "@mui/material";
 import { Controller } from "react-hook-form";
 
-import { CheckBoxedInputProps } from "../../core/types";
+import type { CheckBoxedInputProps } from "../../core/types";
 
 /**
  * Library Item Form - Switch (Checkbox) Input

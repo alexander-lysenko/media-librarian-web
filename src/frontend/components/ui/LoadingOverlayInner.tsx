@@ -1,5 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
-import { SxProps } from "@mui/system";
+
+import type { SxProps } from "@mui/system";
 
 /***
  * Customizable loading overlay, designed to be embedded

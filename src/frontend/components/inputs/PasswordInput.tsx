@@ -3,7 +3,7 @@ import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { InputCustomProps } from "../../core/types";
+import type { InputCustomProps } from "../../core/types";
 
 /**
  * Common Input for Password.

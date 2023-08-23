@@ -1,7 +1,6 @@
-import { Method } from "axios";
-
-import { FetchResponseEvents } from "../request/axiosFetch";
-import { LibraryElement, LibrarySchema } from "./_library";
+import type { FetchResponseEvents } from "../request/axiosFetch";
+import type { LibraryElement, LibrarySchema } from "./_library";
+import type { Method } from "axios";
 
 type PathParams = Record<string, string | number>;
 
