@@ -1,49 +1,15 @@
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 
-// @ts-ignore
-import { dependencies } from "./package.json";
+import type { ManualChunksOption } from "rollup";
 
-// noinspection SpellCheckingInspection
-const vendorDeps = [
-  "react",
-  "react-router-dom",
-  "react-dom",
-  "react-hook-form",
-  "axios",
-  "dayjs",
-  "i18next",
-  "react-i18next",
-  "zustand",
-];
-
-const muiDeps = [
-  "@emotion/styled",
-  "@emotion/react",
-  "@mui/icons-material",
-  "@mui/system",
-  "@mui/material",
-  "@mui/x-date-pickers",
-];
-
-function renderChunks(deps: Record<string, string>) {
-  const chunks = {};
-
-  Object.keys(deps).forEach((key) => {
-    switch (true) {
-      case muiDeps.includes(key):
-        chunks["mui"] = [key];
-        break;
-      case vendorDeps.includes(key):
-        break;
-      default:
-        chunks[key] = [key];
-        break;
-    }
-  });
-
-  return chunks;
-}
+const combineManualChunks: ManualChunksOption = (id) => {
+  if (id.includes("node_modules/@mui") || id.includes("node_modules/@emotion")) {
+    return "mui";
+  } else if (id.includes("node_modules")) {
+    return "vendor";
+  }
+};
 
 /**
  * Define config for Vite build
@@ -65,10 +31,7 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         input: ["frontend/index.ts"],
         output: {
-          manualChunks: {
-            vendor: vendorDeps,
-            ...renderChunks(dependencies),
-          },
+          manualChunks: combineManualChunks,
         },
       },
       chunkSizeWarningLimit: 500,

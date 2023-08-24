@@ -25,13 +25,13 @@ export const App = () => {
 
   const getSelectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary);
   const { columns, rows, total, sort, setSort, columnOptions } = useLibraryTableStore((state) => state);
-  const { page, setPage, rowsPerPage, setRowsPerPage } = useLibraryTableStore((state) => state);
+  const { page, setPage, rowsPerPage, applyRowsPerPage } = useLibraryTableStore((state) => state);
 
   const { selectedItem, setSelectedItem } = usePreviewDrawerStore((state) => state);
   const [itemDialogOpen, setItemDialogOpen] = useLibraryItemFormStore((state) => [state.open, state.setOpen]);
 
   const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItem, setSelectedItem };
-  const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage };
+  const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage: applyRowsPerPage };
 
   const { fetch: getLibraries, status: useLibrariesGetStatus } = useLibrariesGetRequest();
   const { fetch: fetchItems, status: useLibraryItemsGetStatus } = useLibraryItemsGetRequest();
@@ -46,12 +46,13 @@ export const App = () => {
   useEffect(() => {
     if (!dataFetchedRef.current) {
       dataFetchedRef.current = true;
-      void getLibraries(undefined, {}, { fakeResponse: librariesResponse });
-      useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], getItems, {
-        equalityFn: shallow,
-        fireImmediately: true,
-      });
+      getLibraries(undefined, {}, { fakeResponse: librariesResponse }).then(getItems);
     }
+
+    return useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], getItems, {
+      equalityFn: shallow,
+      fireImmediately: false,
+    });
   }, [getItems, getLibraries]);
 
   return (

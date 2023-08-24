@@ -29,10 +29,10 @@ export const DataTablePagination = memo((props: DataTablePaginationProps) => {
   );
   const handleChangeRowsPerPage = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setPage(0);
+      // NOTE: applyRowsPerPage is used here - the action also resets page number
       setRowsPerPage(parseInt(event.target.value, 10));
     },
-    [setPage, setRowsPerPage],
+    [setRowsPerPage],
   );
   const labelDisplayedRows = useCallback(
     ({ from, to, count, page }: LabelDisplayedRowsArgs) => {

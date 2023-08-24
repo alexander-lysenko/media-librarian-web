@@ -12,14 +12,15 @@ import type { AxiosResponse } from "axios";
  * Request to get items from a specific library
  * [GET] /api/v1/libraries/{id}/items
  * WIP
- * todo: add sorting and pagination params
+ * todo: add sorting and pagination query params
  */
 export const useLibraryItemsGetRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
-  const { setRows, setTotal, setPage, setRowsPerPage } = useLibraryTableStore((state) => state);
+  const { setRows, setTotal, setSort, setPage, setRowsPerPage } = useLibraryTableStore((state) => state);
 
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {
       const { items, pagination } = response.data;
+      setSort(undefined); // todo: get that from response
       setTotal(pagination.total);
       setPage(pagination.currentPage);
       setRowsPerPage(pagination.perPage);

@@ -22,13 +22,14 @@ type LibraryTableState = {
   total: number;
   sort: SortOptions | undefined;
 
-  setPage: (page: number) => void;
-  setRowsPerPage: (rowsPerPage: number) => void;
-  setTotal: (total: number) => void;
-  setSort: (sort?: SortOptions) => void;
-
   setColumns: (columns: DataColumn[]) => void;
   setRows: (rows: DataRow[]) => void;
+
+  setTotal: (total: number) => void;
+  setSort: (sort?: SortOptions) => void;
+  setPage: (page: number) => void;
+  setRowsPerPage: (rowsPerPage: number) => void;
+  applyRowsPerPage: (rowsPerPage: number) => void;
 };
 
 export const useLibraryTableStore = create(
@@ -40,11 +41,12 @@ export const useLibraryTableStore = create(
     rowsPerPage: 50,
     total: 0,
     sort: undefined,
-    setPage: (page) => set({ page }),
-    setRowsPerPage: (rowsPerPage) => set({ rowsPerPage }),
+    setColumns: (columns: DataColumn[]) => set({ columns }),
+    setRows: (rows: DataRow[]) => set({ rows }),
     setTotal: (total: number) => set({ total }),
-    setSort: (sort) => set({ sort }),
-    setColumns: (columns) => set({ columns }),
-    setRows: (rows) => set({ rows }),
+    setSort: (sort: SortOptions | undefined) => set({ sort }),
+    setPage: (page: number) => set({ page }),
+    setRowsPerPage: (rowsPerPage: number) => set({ rowsPerPage }),
+    applyRowsPerPage: (rowsPerPage: number) => set({ rowsPerPage, page: 0 }),
   })),
 );
