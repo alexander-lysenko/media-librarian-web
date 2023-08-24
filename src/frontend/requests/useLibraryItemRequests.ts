@@ -3,6 +3,7 @@ import { useState } from "react";
 import { libraryItemsEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
 import { useLibraryTableStore } from "../store/useLibraryTableStore";
+import { enqueueSnack } from "../store/useSnackbarStore";
 
 import type { FetchResponseEvents } from "../core";
 import type { GetLibraryItemsRequest, GetLibraryItemsResponse, UseRequestReturn } from "../core/types";
@@ -25,6 +26,13 @@ export const useLibraryItemsGetRequest = (): UseRequestReturn<GetLibraryItemsReq
       setPage(pagination.currentPage);
       setRowsPerPage(pagination.perPage);
       setRows(items);
+    },
+    onError: (reason) => {
+      setRows([]);
+      enqueueSnack({
+        message: `${reason.message}: ${reason.response?.data?.message}`,
+        type: "error",
+      });
     },
   });
 

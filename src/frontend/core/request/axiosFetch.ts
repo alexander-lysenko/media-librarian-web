@@ -36,7 +36,7 @@ export type ErrorResponse = {
 type BeforeSendEventHandler = () => void;
 type SuccessEventHandler = (response: AxiosResponse) => Promise<never> | void;
 type RejectEventHandler = (reason: AxiosError<ErrorResponse>) => PromiseLike<never> | never | void;
-type ErrorEventHandler = (reason: unknown) => void;
+type ErrorEventHandler = (reason: AxiosError<ErrorResponse>) => void;
 type FinallyEventHandler = () => void;
 
 /**
@@ -97,7 +97,7 @@ export const axiosFetch = async <Request, Response>(
 
   return await instance
     .request<Response>(config)
-    .then<Response | void, never | void>(onSuccess, onReject)
-    .catch(onError)
+    .then<Response | void, never | void>(onSuccess, onError)
+    .catch(onReject)
     .finally(onComplete);
 };
