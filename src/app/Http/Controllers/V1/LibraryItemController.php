@@ -107,6 +107,7 @@ class LibraryItemController extends ApiV1Controller
     {
         // Todo: Add search model, filtering, sorting
         $paginatedResource = SqliteLibraryMeta::getLibraryTableQuery($request->id)
+            ->orderBy($request->get('sort')) // todo: implement
             ->paginate(perPage: $request->get('perPage'), page: $request->get('page'));
 
         $pagination = [
@@ -309,6 +310,58 @@ class LibraryItemController extends ApiV1Controller
     {
         SqliteLibraryMeta::getLibraryTableQuery($request->id)->delete($request->item);
         return new JsonResponse(null, 204);
+    }
+
+    #[OA\Post(
+        path: '/api/v1/libraries/{id}/items/search',
+        operationId: 'items-search',
+        description: 'Just the same as `[GET] /api/v1/libraries/{id}/items` but supports flexible search term',
+        summary: 'Search/Filter Items From a Library',
+        security: self::SECURITY_SCHEME_BEARER,
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\JsonContent(properties: [
+                    new OA\Property(property: 'term', ref: self::SCHEMA_LIBRARY_ENTRY_REQUEST_REF),
+                ]),
+            ]
+        ),
+        tags: ['items'],
+        parameters: [
+            new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF),
+            new OA\Parameter(ref: self::PARAM_PAGE_REF),
+            new OA\Parameter(ref: self::PARAM_PER_PAGE_REF),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OK',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(
+                        property: 'items',
+                        type: 'array',
+                        items: new OA\Items(ref: self::SCHEMA_LIBRARY_ENTRY_REF)
+                    ),
+                    new OA\Property(property: 'pagination', properties: [
+                        new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                        new OA\Property(property: 'lastPage', type: 'integer', example: 15),
+                        new OA\Property(property: 'perPage', type: 'integer', example: 20),
+                        new OA\Property(property: 'total', type: 'integer', example: 299),
+                    ]),
+                ])
+            ),
+            new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
+            new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
+            new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
+        ],
+    )]
+    /**
+     * @todo: implement
+     * @return JsonResponse
+     */
+    public function search(): JsonResponse
+    {
+        return new JsonResponse(null, 200);
     }
 
     #[OA\Get(
