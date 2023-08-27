@@ -45,7 +45,7 @@ class LibraryItemRequest extends FormRequest
         /**
          * If the upper level validation fails, an exception will be thrown and the rules below will never run.
          * If the upper level validation succeeds, the validated values may be used in the lower level rules.
-         * ['id' => "1"] // Example of the result of succeeded validation (illustrated by field "id")
+         * ['id' => "1"] // This is the example of successful validation result (illustrated by field "id")
          */
 
         $idValidated = $this->validate([

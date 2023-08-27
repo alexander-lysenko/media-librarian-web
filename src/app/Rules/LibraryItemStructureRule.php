@@ -51,28 +51,28 @@ class LibraryItemStructureRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        // Get the metadata of a collection
-        /** @var SqliteLibraryMeta $collectionModel */
-        $collectionModel = SqliteLibraryMeta::query()->where('id', $this->libraryId)->get()->first();
+        // Get the metadata of a Library
+        /** @var SqliteLibraryMeta $libraryModel */
+        $libraryModel = SqliteLibraryMeta::query()->where('id', $this->libraryId)->get()->first();
 
         // Create a set of validation rules for every field type
         $rulesDefaultSet = static::extractRules();
 
-        // Prepare rules, fields and attributes
-        $collectionFields = json_decode($collectionModel->meta, true);
-        $collectionKeys = array_keys($collectionFields);
-        $firstField = $collectionKeys[0];
+        // Prepare rules, fields, and attributes
+        $libraryFields = json_decode($libraryModel->meta, true);
+        $attributes = array_keys($libraryFields);
+        $firstAttribute = $attributes[0];
         $rules = [];
-        $customAttributes = array_combine($collectionKeys, $collectionKeys);
+        $customAttributes = array_combine($attributes, $attributes);
 
-        // Match field to type
-        foreach ($collectionFields as $key => $type) {
+        // Match attribute to type
+        foreach ($libraryFields as $key => $type) {
             $rules[$key] = $rulesDefaultSet[$type];
         }
 
-        // Add the "unique" validation rule for the title of a collection's entry (first field of an entry)
-        $tableWithConnection = implode('.', [DatabaseSwitch::CONNECTION_PATH, $collectionModel->tbl_name]);
-        $rules[$firstField][] = Rule::unique($tableWithConnection, $firstField)
+        // Add the "unique" validation rule for the title of a Library's entry (first field of an entry)
+        $tableWithConnection = implode('.', [DatabaseSwitch::CONNECTION_PATH, $libraryModel->tbl_name]);
+        $rules[$firstAttribute][] = Rule::unique($tableWithConnection, $firstAttribute)
             ->ignore($this->libraryItemId);
 
         // Perform all the validations
@@ -92,8 +92,10 @@ class LibraryItemStructureRule implements ValidationRule
             'checkmark' => ['present', 'boolean'],
             'date' => ['present', 'date', 'date_format:Y-m-d'],
             'datetime' => ['present', 'date', 'date_format:Y-m-d H:i:s'],
-            'rating_10stars' => ['present', 'numeric', 'between:0,10'],
-            'rating_5stars' => ['present', 'numeric', 'between:0,5'],
+            'rating5' => ['present', 'integer', 'between:0,5'],
+            'rating5precision' => ['present', 'numeric', 'between:0,5'],
+            'rating10' => ['present', 'integer', 'between:0,10'],
+            'rating10precision' => ['present', 'numeric', 'between:0,10'],
             'priority' => ['present', 'numeric', 'between:-5,5'],
         ];
     }

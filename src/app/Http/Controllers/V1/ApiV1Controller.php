@@ -56,6 +56,8 @@ abstract class ApiV1Controller extends BaseController
 
     public const PARAM_LIBRARY_ID_REF = '#/components/parameters/libraryId';
     public const PARAM_ITEM_ID_REF = '#/components/parameters/itemId';
+    public const PARAM_SORT_ATTR_REF = '#/components/parameters/sortAttribute';
+    public const PARAM_SORT_DIR_REF = '#/components/parameters/sortDirection';
     public const PARAM_PAGE_REF = '#/components/parameters/page';
     public const PARAM_PER_PAGE_REF = '#/components/parameters/perPage';
 
@@ -73,6 +75,8 @@ abstract class ApiV1Controller extends BaseController
     public const SCHEMA_LIBRARY_ENTRY_REF = '#/components/schemas/LibraryItemExample';
     public const SCHEMA_LIBRARY_ENTRY_REQUEST_REF = '#/components/schemas/LibraryItemRequestExample';
 
+    public const SCHEMA_SORT_OBJ_REF = '#/components/schemas/sort';
+    public const SCHEMA_PAGINATION_OBJ_REF = '#/components/schemas/pagination';
     public const SCHEMA_POSTER_BASE64_REF = '#/components/schemas/PosterBase64Example';
 
     #[OA\Parameter(
@@ -96,6 +100,26 @@ abstract class ApiV1Controller extends BaseController
     private string $entryId = self::PARAM_ITEM_ID_REF;
 
     #[OA\Parameter(
+        parameter: 'sortAttribute',
+        name: 'sort[attribute]',
+        description: 'Sort (set sorting attribute)',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'string', example: 'id'),
+    )]
+    private string $sortAttribute = self::PARAM_SORT_ATTR_REF;
+
+    #[OA\Parameter(
+        parameter: 'sortDirection',
+        name: 'sort[direction]',
+        description: 'Sort (set sorting direction)',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'string', enum: ['asc', 'desc'], nullable: true),
+    )]
+    private string $sortDirection = self::PARAM_SORT_DIR_REF;
+
+    #[OA\Parameter(
         parameter: 'page',
         name: 'page',
         description: 'Pagination (set current page)',
@@ -114,6 +138,30 @@ abstract class ApiV1Controller extends BaseController
         schema: new OA\Schema(type: 'integer', default: 50, enum: [0, 25, 50, 100, 250]),
     )]
     private string $perPage = self::PARAM_PER_PAGE_REF;
+
+    #[OA\Schema(
+        schema: 'sort',
+        description: 'An object with sort preferences in the response data',
+        properties: [
+            new OA\Property(property: 'attribute', type: 'string', example: 'id'),
+            new OA\Property(property: 'direction', type: 'string', enum: ['asc', 'desc']),
+        ],
+        type: 'object'
+    )]
+    private string $sortObj = self::SCHEMA_SORT_OBJ_REF;
+
+    #[OA\Schema(
+        schema: 'pagination',
+        description: 'An object with pagination preferences in the response data',
+        properties: [
+            new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+            new OA\Property(property: 'lastPage', type: 'integer', example: 15),
+            new OA\Property(property: 'perPage', type: 'integer', example: 20),
+            new OA\Property(property: 'total', type: 'integer', example: 299),
+        ],
+        type: 'object'
+    )]
+    private string $paginationObj = self::SCHEMA_PAGINATION_OBJ_REF;
 
     #[OA\Schema(
         schema: 'PosterBase64Example',

@@ -6,6 +6,7 @@ use App\Http\Requests\V1\LibraryItemCreateRequest;
 use App\Http\Requests\V1\LibraryItemRequest;
 use App\Http\Requests\V1\LibraryItemUpdateRequest;
 use App\Http\Requests\V1\LibraryIdRequest;
+use App\Http\Requests\V1\LibraryPaginatedRequest;
 use App\Http\Resources\LibraryItemResource;
 use App\Jobs\PosterUploadJob;
 use App\Models\SqliteLibraryMeta;
@@ -73,6 +74,8 @@ class LibraryItemController extends ApiV1Controller
         tags: ['items'],
         parameters: [
             new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF),
+            new OA\Parameter(ref: self::PARAM_SORT_ATTR_REF),
+            new OA\Parameter(ref: self::PARAM_SORT_DIR_REF),
             new OA\Parameter(ref: self::PARAM_PAGE_REF),
             new OA\Parameter(ref: self::PARAM_PER_PAGE_REF),
         ],
@@ -86,12 +89,8 @@ class LibraryItemController extends ApiV1Controller
                         type: 'array',
                         items: new OA\Items(ref: self::SCHEMA_LIBRARY_ENTRY_REF)
                     ),
-                    new OA\Property(property: 'pagination', properties: [
-                        new OA\Property(property: 'currentPage', type: 'integer', example: 1),
-                        new OA\Property(property: 'lastPage', type: 'integer', example: 15),
-                        new OA\Property(property: 'perPage', type: 'integer', example: 20),
-                        new OA\Property(property: 'total', type: 'integer', example: 299),
-                    ]),
+                    new OA\Property(property: 'sort', ref: self::SCHEMA_SORT_OBJ_REF),
+                    new OA\Property(property: 'pagination', ref: self::SCHEMA_PAGINATION_OBJ_REF),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -105,7 +104,6 @@ class LibraryItemController extends ApiV1Controller
      */
     public function index(LibraryIdRequest $request): JsonResponse
     {
-        // Todo: Add search model, filtering, sorting
         $paginatedResource = SqliteLibraryMeta::getLibraryTableQuery($request->id)
             ->orderBy($request->get('sort')) // todo: implement
             ->paginate(perPage: $request->get('perPage'), page: $request->get('page'));
@@ -320,15 +318,15 @@ class LibraryItemController extends ApiV1Controller
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
-            content: [
-                new OA\JsonContent(properties: [
-                    new OA\Property(property: 'term', ref: self::SCHEMA_LIBRARY_ENTRY_REQUEST_REF),
-                ]),
-            ]
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'term', ref: self::SCHEMA_LIBRARY_ENTRY_REQUEST_REF),
+            ])
         ),
         tags: ['items'],
         parameters: [
             new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF),
+            new OA\Parameter(ref: self::PARAM_SORT_ATTR_REF),
+            new OA\Parameter(ref: self::PARAM_SORT_DIR_REF),
             new OA\Parameter(ref: self::PARAM_PAGE_REF),
             new OA\Parameter(ref: self::PARAM_PER_PAGE_REF),
         ],
@@ -342,12 +340,8 @@ class LibraryItemController extends ApiV1Controller
                         type: 'array',
                         items: new OA\Items(ref: self::SCHEMA_LIBRARY_ENTRY_REF)
                     ),
-                    new OA\Property(property: 'pagination', properties: [
-                        new OA\Property(property: 'currentPage', type: 'integer', example: 1),
-                        new OA\Property(property: 'lastPage', type: 'integer', example: 15),
-                        new OA\Property(property: 'perPage', type: 'integer', example: 20),
-                        new OA\Property(property: 'total', type: 'integer', example: 299),
-                    ]),
+                    new OA\Property(property: 'sort', ref: self::SCHEMA_SORT_OBJ_REF),
+                    new OA\Property(property: 'pagination', ref: self::SCHEMA_PAGINATION_OBJ_REF),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -356,10 +350,11 @@ class LibraryItemController extends ApiV1Controller
         ],
     )]
     /**
-     * @todo: implement
+     * @param LibraryPaginatedRequest $request
      * @return JsonResponse
+     * @todo: implement
      */
-    public function search(): JsonResponse
+    public function search(LibraryPaginatedRequest $request): JsonResponse
     {
         return new JsonResponse(null, 200);
     }

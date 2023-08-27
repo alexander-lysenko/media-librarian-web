@@ -65,5 +65,6 @@ Route::middleware(['auth.bearer:sanctum'])
         Route::put('/{item}', [LibraryItemController::class, 'update'])->name('update');
         Route::delete('/{item}', [LibraryItemController::class, 'delete'])->name('delete');
 
+        Route::post('/search', [LibraryItemController::class, 'search'])->name('search');
         Route::get('/random', [LibraryItemController::class, 'random'])->name('random');
     });

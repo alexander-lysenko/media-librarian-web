@@ -36,10 +36,8 @@ class LibraryIdRequest extends FormRequest
      */
     public function rules(): array
     {
-        $libraryMetaClass = SqliteLibraryMeta::class;
-
         return [
-            'id' => ['required', 'integer', 'min:1', Rule::exists($libraryMetaClass, 'id')],
+            'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
         ];
     }
 }

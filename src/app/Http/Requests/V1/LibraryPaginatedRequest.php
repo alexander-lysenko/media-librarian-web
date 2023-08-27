@@ -3,25 +3,15 @@
 namespace App\Http\Requests\V1;
 
 use App\Models\SqliteLibraryMeta;
-use App\Rules\LibraryItemStructureRule;
-use App\Utils\FileHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * A request entity to validate the data passed to CREATE a new Item into an existing Library
+ * A request entity to validate search/sort/pagination terms passed to get a paginated view of a Library
  * @property int $id
- * @property array $contents
- * @property mixed $poster
  */
-class LibraryItemCreateRequest extends FormRequest
+class LibraryPaginatedRequest extends FormRequest
 {
-    /**
-     * Indicates whether validation should stop after the first rule failure.
-     * @var bool
-     */
-    protected $stopOnFirstFailure = true;
-
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -37,15 +27,7 @@ class LibraryItemCreateRequest extends FormRequest
      */
     public function prepareForValidation(): void
     {
-        $poster = null;
-        if (!empty($this->input('poster'))) {
-            $poster = FileHelper::fromBase64($this->input('poster'));
-        }
-
-        $this->merge([
-            'id' => $this->route('id'),
-            'poster' => $poster,
-        ]);
+        $this->merge(['id' => $this->route('id')]);
     }
 
     /**
@@ -60,13 +42,24 @@ class LibraryItemCreateRequest extends FormRequest
          * ['id' => "1"] // This is the example of successful validation result (illustrated by field "id")
          */
 
-        $preValidated = $this->validate([
+        $idValidated = $this->validate([
             'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
         ]);
 
+        // Get the metadata of a Library
+        /** @var SqliteLibraryMeta $libraryModel */
+        $libraryModel = SqliteLibraryMeta::query()->where('id', $idValidated['id'])->get()->first();
+
+        // Prepare rules, fields, and attributes
+        $libraryFields = json_decode($libraryModel->meta, true);
+        $attributes = array_keys($libraryFields);
+
         return [
-            'contents' => ['required', 'array', new LibraryItemStructureRule($preValidated['id'])],
-            'poster' => ['nullable', 'file', 'max:4096', 'mimes:jpg,png'],
+            'sort' => ['nullable', 'array:attribute,direction'],
+            'sort.attribute' => ['nullable', 'required_with:sort.direction', 'string', Rule::in($attributes)],
+            'sort.direction' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'perPage' => ['nullable', 'integer', 'min:0', 'max:250'],
         ];
     }
 }
