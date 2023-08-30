@@ -104,7 +104,7 @@ class LibraryItemStructureRule implements ValidationRule
             'checkmark' => ['present', 'boolean'],
             'date' => ['present', 'date_format:Y-m-d'],
             'datetime' => ['present', 'date_format:Y-m-d H:i:s'],
-                'rating5' => ['present', 'integer', 'between:0,5'],
+            'rating5' => ['present', 'integer', 'between:0,5'],
             'rating5precision' => ['present', 'numeric', 'between:0,5'],
             'rating10' => ['present', 'integer', 'between:0,10'],
             'rating10precision' => ['present', 'numeric', 'between:0,10'],

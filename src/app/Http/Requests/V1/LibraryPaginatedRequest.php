@@ -53,15 +53,15 @@ class LibraryPaginatedRequest extends FormRequest
 
         // Prepare rules, fields, and attributes
         $libraryFields = json_decode($libraryModel->meta, true);
-        $attributes = array_keys($libraryFields) + ['id'];
+        $attributes = array_keys($libraryFields);
 
         return [
             'sort' => ['nullable', 'array:attribute,direction'],
-            'sort.attribute' => ['nullable', 'required_with:sort.direction', 'string', Rule::in($attributes)],
+            'sort.attribute' => ['nullable', 'required_with:sort.direction', Rule::in(['id', ...$attributes])],
             'sort.direction' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:0', 'max:250'],
-            'term' => ['nullable', new LibrarySearchTermRule($libraryFields)]
+            'term' => ['nullable', new LibrarySearchTermRule($libraryFields)],
         ];
     }
 }

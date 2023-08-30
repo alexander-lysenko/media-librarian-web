@@ -85,13 +85,20 @@ class LibrarySearchTermRule implements ValidationRule
 
         // Prepare rules, fields, and attributes
         $rules = [];
-        // $attributes = array_keys($this->librarySchema);
-        // $customAttributes = array_combine($attributes, $attributes);
+        $libraryAttributes = array_keys($this->librarySchema);
+        $queryAttributes = array_keys($value);
+        $validatingAttributes = array_combine($queryAttributes, $queryAttributes);
 
-        // Match attribute to type
-        // foreach ($this->librarySchema as $key => $type) {
-        //     $rules[$key] = $rulesDefaultSet[$type];
-        // }
+        Validator::make(
+            $validatingAttributes,
+            array_map(static fn() => [Rule::in($libraryAttributes)], $validatingAttributes),
+            array_map(static fn() => trans('validation.custom.field_unrecognized'), $validatingAttributes),
+        )->validate();
+
+        // Match attribute to type (wip)
+        foreach ($value as $field => $criteria) {
+            // $rules["{$field}.0"] = $rulesDefaultSet[$field];
+        }
 
         // Perform all the validations
         // Validator::make($value, $rules, [], $customAttributes)->validate();

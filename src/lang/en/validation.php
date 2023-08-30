@@ -158,6 +158,7 @@ return [
         'entry' => [
             'exists' => 'The entry with provided ID does not exist.'
         ],
+        'field_unrecognized' => "The field ':attribute' is unrecognized.",
     ],
 
     /*
