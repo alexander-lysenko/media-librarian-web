@@ -3,6 +3,7 @@
 namespace App\Http\Requests\V1;
 
 use App\Models\SqliteLibraryMeta;
+use App\Rules\LibrarySearchTermRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -52,7 +53,7 @@ class LibraryPaginatedRequest extends FormRequest
 
         // Prepare rules, fields, and attributes
         $libraryFields = json_decode($libraryModel->meta, true);
-        $attributes = array_keys($libraryFields);
+        $attributes = array_keys($libraryFields) + ['id'];
 
         return [
             'sort' => ['nullable', 'array:attribute,direction'],
@@ -60,6 +61,7 @@ class LibraryPaginatedRequest extends FormRequest
             'sort.direction' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:0', 'max:250'],
+            'term' => ['nullable', new LibrarySearchTermRule($libraryFields)]
         ];
     }
 }

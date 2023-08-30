@@ -41,7 +41,19 @@ class LibraryItemStructureRule implements ValidationRule
 
     /**
      * Determine if the validation rule passes.
-     * WIP
+     * Example of a valid request attribute:
+     * [
+     *   'Movie Title' => "Лицо со шрамом (1983)",
+     *   'Origin Title' => "Scarface",
+     *   'Release Date' => "1983-12-01",
+     *   'Description' => "In 1980 Miami, a determined Cuban immigrant takes over a drug cartel and succumbs to greed.",
+     *   'IMDB URL' => "https://www.imdb.com/title/tt0086250/",
+     *   'IMDB Rating' => 8,
+     *   'My Rating' => 5,
+     *   'Watched' => true,
+     *   'Watched At' => "2020-01-01 00:00:01",
+     *   'Chance to Advice' => 5
+     * ]
      *
      * @param string $attribute
      * @param mixed $value
@@ -90,9 +102,9 @@ class LibraryItemStructureRule implements ValidationRule
             'text' => ['present', 'string'],
             'url' => ['present', 'url', 'max:255'],
             'checkmark' => ['present', 'boolean'],
-            'date' => ['present', 'date', 'date_format:Y-m-d'],
-            'datetime' => ['present', 'date', 'date_format:Y-m-d H:i:s'],
-            'rating5' => ['present', 'integer', 'between:0,5'],
+            'date' => ['present', 'date_format:Y-m-d'],
+            'datetime' => ['present', 'date_format:Y-m-d H:i:s'],
+                'rating5' => ['present', 'integer', 'between:0,5'],
             'rating5precision' => ['present', 'numeric', 'between:0,5'],
             'rating10' => ['present', 'integer', 'between:0,10'],
             'rating10precision' => ['present', 'numeric', 'between:0,10'],

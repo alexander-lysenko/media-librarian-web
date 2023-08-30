@@ -74,9 +74,8 @@ abstract class ApiV1Controller extends BaseController
     public const SCHEMA_LIBRARY_REF = '#/components/schemas/LibraryExample';
     public const SCHEMA_LIBRARY_ENTRY_REF = '#/components/schemas/LibraryItemExample';
     public const SCHEMA_LIBRARY_ENTRY_REQUEST_REF = '#/components/schemas/LibraryItemRequestExample';
+    public const SCHEMA_LIBRARY_SEARCH_TERM_REF = '#/components/schemas/LibrarySearchTermExample';
 
-    public const SCHEMA_SORT_OBJ_REF = '#/components/schemas/sort';
-    public const SCHEMA_PAGINATION_OBJ_REF = '#/components/schemas/pagination';
     public const SCHEMA_POSTER_BASE64_REF = '#/components/schemas/PosterBase64Example';
 
     #[OA\Parameter(
@@ -138,30 +137,6 @@ abstract class ApiV1Controller extends BaseController
         schema: new OA\Schema(type: 'integer', default: 50, enum: [0, 25, 50, 100, 250]),
     )]
     private string $perPage = self::PARAM_PER_PAGE_REF;
-
-    #[OA\Schema(
-        schema: 'sort',
-        description: 'An object with sort preferences in the response data',
-        properties: [
-            new OA\Property(property: 'attribute', type: 'string', example: 'id'),
-            new OA\Property(property: 'direction', type: 'string', enum: ['asc', 'desc']),
-        ],
-        type: 'object'
-    )]
-    private string $sortObj = self::SCHEMA_SORT_OBJ_REF;
-
-    #[OA\Schema(
-        schema: 'pagination',
-        description: 'An object with pagination preferences in the response data',
-        properties: [
-            new OA\Property(property: 'currentPage', type: 'integer', example: 1),
-            new OA\Property(property: 'lastPage', type: 'integer', example: 15),
-            new OA\Property(property: 'perPage', type: 'integer', example: 20),
-            new OA\Property(property: 'total', type: 'integer', example: 299),
-        ],
-        type: 'object'
-    )]
-    private string $paginationObj = self::SCHEMA_PAGINATION_OBJ_REF;
 
     #[OA\Schema(
         schema: 'PosterBase64Example',

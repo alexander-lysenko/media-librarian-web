@@ -19,6 +19,7 @@ use OpenApi\Attributes as OA;
 #[OA\Tag(name: 'items', description: 'Manage Items of a Library')]
 #[OA\Schema(
     schema: 'LibraryItemExample',
+    title: 'LibraryItemExample',
     description: "Example of a Library's Item passed into response." .
     'Every key except `id` represents the structure of a Library created previously.' .
     'Keys map may be different and it depends on the chosen Library.',
@@ -41,6 +42,7 @@ use OpenApi\Attributes as OA;
     ]
 ), OA\Schema(
     schema: 'LibraryItemRequestExample',
+    title: 'LibraryItemRequestExample',
     description: 'Example of payload to update an Item or create a new one in the Library.',
     properties: [
         new OA\Property(property: 'Movie Title', example: 'Лицо со шрамом (1983)'),
@@ -56,6 +58,51 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'Watched', example: true),
         new OA\Property(property: 'Watched At', example: '2020-01-01 00:00:01'),
         new OA\Property(property: 'Chance to Advice', example: 5),
+    ],
+), OA\Schema(
+    schema: 'LibrarySearchTermExample',
+    title: 'LibrarySearchTermExample',
+    description: 'Example of payload to filter items in the Library.',
+    properties: [
+        new OA\Property(property: 'Movie Title', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'startsAt'),
+            new OA\Property('value', example: 'The'),
+        ])),
+        new OA\Property(property: 'Origin Title', type: 'array', items: new OA\Items(oneOf: [
+        ])),
+        new OA\Property(property: 'Release Date', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'greaterThan'),
+            new OA\Property('value', example: '1999-12-31'),
+        ])),
+        new OA\Property(property: 'Description', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'contains'),
+            new OA\Property('value', example: 'computer hacker'),
+        ])),
+        new OA\Property(property: 'IMDB URL', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'equalTo'),
+            new OA\Property('value', example: null),
+        ])),
+        new OA\Property(property: 'IMDB Rating', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'between'),
+            new OA\Property('value', example: 5),
+            new OA\Property('value2', example: 9),
+        ])),
+        new OA\Property(property: 'My Rating', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'lessThan'),
+            new OA\Property('value', example: 5),
+        ])),
+        new OA\Property(property: 'Watched', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'notEqualTo'),
+            new OA\Property('value', example: false),
+        ])),
+        new OA\Property(property: 'Watched At', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'lessThan'),
+            new OA\Property('value', example: '2023-01-01 00:00:00'),
+        ])),
+        new OA\Property(property: 'Chance to Advice', type: 'array', items: new OA\Items(oneOf: [
+            new OA\Property('operator', example: 'equalTo'),
+            new OA\Property('value', example: 0),
+        ])),
     ],
 )]
 /**
@@ -89,8 +136,16 @@ class LibraryItemController extends ApiV1Controller
                         type: 'array',
                         items: new OA\Items(ref: self::SCHEMA_LIBRARY_ENTRY_REF)
                     ),
-                    new OA\Property(property: 'sort', ref: self::SCHEMA_SORT_OBJ_REF),
-                    new OA\Property(property: 'pagination', ref: self::SCHEMA_PAGINATION_OBJ_REF),
+                    new OA\Property(property: 'sort', properties: [
+                        new OA\Property(property: 'attribute', type: 'string', example: 'id'),
+                        new OA\Property(property: 'direction', type: 'string', example: 'desc'),
+                    ]),
+                    new OA\Property(property: 'pagination', properties: [
+                        new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                        new OA\Property(property: 'lastPage', type: 'integer', example: 15),
+                        new OA\Property(property: 'perPage', type: 'integer', example: 20),
+                        new OA\Property(property: 'total', type: 'integer', example: 299),
+                    ]),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -319,7 +374,7 @@ class LibraryItemController extends ApiV1Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(properties: [
-                new OA\Property(property: 'term', ref: self::SCHEMA_LIBRARY_ENTRY_REQUEST_REF),
+                new OA\Property(property: 'term', ref: self::SCHEMA_LIBRARY_SEARCH_TERM_REF),
             ])
         ),
         tags: ['items'],
@@ -340,8 +395,16 @@ class LibraryItemController extends ApiV1Controller
                         type: 'array',
                         items: new OA\Items(ref: self::SCHEMA_LIBRARY_ENTRY_REF)
                     ),
-                    new OA\Property(property: 'sort', ref: self::SCHEMA_SORT_OBJ_REF),
-                    new OA\Property(property: 'pagination', ref: self::SCHEMA_PAGINATION_OBJ_REF),
+                    new OA\Property(property: 'sort', properties: [
+                        new OA\Property(property: 'attribute', type: 'string', example: 'id'),
+                        new OA\Property(property: 'direction', type: 'string', example: 'desc'),
+                    ]),
+                    new OA\Property(property: 'pagination', properties: [
+                        new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                        new OA\Property(property: 'lastPage', type: 'integer', example: 15),
+                        new OA\Property(property: 'perPage', type: 'integer', example: 20),
+                        new OA\Property(property: 'total', type: 'integer', example: 299),
+                    ]),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),

@@ -2,8 +2,12 @@
 
 namespace App\Rules;
 
+use App\Http\Middleware\DatabaseSwitch;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 /**
  * A request validation rule to verify complex search term to filter items from a Library.
@@ -54,19 +58,43 @@ class LibrarySearchTermRule implements ValidationRule
 
     /**
      * Determine if the validation rule passes.
-     * WIP
+     * Example of a valid request attribute:
+     * [
+     *   'Movie Title' => ['startsAt' 'The'],
+     *   'Origin Title' => [], // empty filter (also may be omitted)
+     *   'Release Date' => ['greaterThan', '1999-12-31'],
+     *   'Description' => ['contains', 'computer hacker'],
+     *   'IMDB URL' => ['equalTo', null],
+     *   'IMDB Rating' => ['between', 5, 9],
+     *   'My Rating' => ['lessThan', 5],
+     *   'Watched' => ['notEqualTo', false],
+     *   'Watched At' => ['lessThan', '2023-01-01 00:00:00'],
+     *   'Chance to Advice' => ['equalTo', '0'],
+     * ]
      *
      * @param string $attribute
      * @param mixed $value
      * @param Closure $fail
      * @return void
+     * @throws ValidationException
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // Create a set of validation rules for every field type
+        $rulesDefaultSet = static::extractRules();
 
-        $attributes = array_keys($this->librarySchema);
+        // Prepare rules, fields, and attributes
+        $rules = [];
+        // $attributes = array_keys($this->librarySchema);
+        // $customAttributes = array_combine($attributes, $attributes);
+
+        // Match attribute to type
+        // foreach ($this->librarySchema as $key => $type) {
+        //     $rules[$key] = $rulesDefaultSet[$type];
+        // }
+
         // Perform all the validations
-        // Validator::make($value, $rules, [], $attributes)->validate();
+        // Validator::make($value, $rules, [], $customAttributes)->validate();
     }
 
     /**
@@ -76,6 +104,36 @@ class LibrarySearchTermRule implements ValidationRule
     private static function extractRules(): array
     {
         return [
+            'line.0' => [Rule::in(['equalTo', 'contains', 'doesntContain', 'startsWith', 'endsWith'])],
+            'line.1' => ['nullable', 'string', 'max:255'],
+            'text.0' => [Rule::in(['equalTo', 'contains', 'doesntContain', 'startsWith', 'endsWith'])],
+            'text.1' => ['nullable', 'string', 'max:255'],
+            'url.0' => [Rule::in(['equalTo', 'contains', 'doesntContain', 'startsWith', 'endsWith'])],
+            'url.1' => ['nullable', 'string', 'max:255'],
+
+            'checkmark.0' => [Rule::in(['equalTo', 'notEqualTo'])],
+            'checkmark.1' => ['nullable', 'boolean'],
+            'date.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
+            'date.1' => ['required_with:date.2', 'date_format:Y-m-d'],
+            'date.2' => ['required_if:date.0,between', 'date_format:Y-m-d'],
+            'datetime.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
+            'datetime.1' => ['required_with:datetime.2', 'date_format:Y-m-d H:i:s'],
+            'datetime.2' => ['required_if:datetime.0,between', 'date_format:Y-m-d H:i:s'],
+
+            'rating5.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
+            'rating5.1' => ['required_with:rating5.2', 'integer', 'between:0,5'],
+            'rating5.2' => ['required_if:rating5.0,between', 'integer', 'between:0,5'],
+            'rating5precision.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
+            'rating5precision.1' => ['required_with:rating5precision.2', 'numeric', 'between:0,5'],
+            'rating5precision.2' => ['required_if:rating5precision.0,between', 'numeric', 'between:0,5'],
+            'rating10.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
+            'rating10.1' => ['required_with:rating10.2', 'integer', 'between:0,10'],
+            'rating10.2' => ['required_if:rating10.0,between', 'integer', 'between:0,10'],
+            'rating10precision.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
+            'rating10precision.1' => ['required_with:rating10precision.2', 'numeric', 'between:0,10'],
+            'rating10precision.2' => ['required_if:rating10precision.0,between', 'numeric', 'between:0,10'],
+            'priority.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan'])],
+            'priority.1' => ['nullable', 'string', 'max:255'],
         ];
     }
 }
