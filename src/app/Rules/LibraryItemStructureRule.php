@@ -41,7 +41,7 @@ class LibraryItemStructureRule implements ValidationRule
 
     /**
      * Determine if the validation rule passes.
-     * Example of a valid request attribute:
+     * Example of a valid request attribute (keys may be different depending on library structure):
      * [
      *   'Movie Title' => "Лицо со шрамом (1983)",
      *   'Origin Title' => "Scarface",

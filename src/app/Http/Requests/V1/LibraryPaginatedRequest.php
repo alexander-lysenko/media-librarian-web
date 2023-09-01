@@ -31,6 +31,8 @@ class LibraryPaginatedRequest extends FormRequest
         $this->merge(['id' => $this->route('id')]);
     }
 
+    private array $libraryFields = [];
+
     /**
      * Get the validation rules that apply to the request.
      * @return array<string, mixed>
@@ -52,16 +54,31 @@ class LibraryPaginatedRequest extends FormRequest
         $libraryModel = SqliteLibraryMeta::query()->where('id', $idValidated['id'])->get()->first();
 
         // Prepare rules, fields, and attributes
-        $libraryFields = json_decode($libraryModel->meta, true);
-        $attributes = array_keys($libraryFields);
+        $libraryMeta = json_decode($libraryModel->meta, true);
+        $this->libraryFields = array_keys($libraryMeta);
+
+        $attributesForRule = implode(',', $this->libraryFields);
 
         return [
             'sort' => ['nullable', 'array:attribute,direction'],
-            'sort.attribute' => ['nullable', 'required_with:sort.direction', Rule::in(['id', ...$attributes])],
+            'sort.attribute' => ['nullable', 'required_with:sort.direction', Rule::in(['id', ...$this->libraryFields])],
             'sort.direction' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:0', 'max:250'],
-            'term' => ['nullable', new LibrarySearchTermRule($libraryFields)],
+            'term' => ['nullable', "array:$attributesForRule", new LibrarySearchTermRule($this->libraryFields)],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'term.array' => trans('validation.custom.term.array', [
+                'values' => implode(', ', $this->libraryFields),
+            ]),
         ];
     }
 }

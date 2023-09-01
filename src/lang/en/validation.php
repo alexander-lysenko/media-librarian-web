@@ -158,6 +158,9 @@ return [
         'entry' => [
             'exists' => 'The entry with provided ID does not exist.'
         ],
+        'term' => [
+            'array' => 'The :attribute must contain some of the following keys: [:values]'
+        ],
         'field_unrecognized' => "The field ':attribute' is unrecognized.",
     ],
 

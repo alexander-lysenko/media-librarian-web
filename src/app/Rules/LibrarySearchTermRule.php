@@ -43,7 +43,23 @@ class LibrarySearchTermRule implements ValidationRule
     /**
      * Schema of a Library, based on an entry from SqliteLibraryMeta.
      * The schema is an associative array of attribute=>type to be parsed for validation rules
+     *
+     * Example of a schema (keys may be different depending on library structure):
+     * [
+     *   "Movie Title" => "line",
+     *   "Origin Title" => "line",
+     *   "Release Date" => "date",
+     *   "Description" => "text",
+     *   "IMDB URL" => "url",
+     *   "IMDB Rating" => "rating10",
+     *   "My Rating" => "rating5precision",
+     *   "Watched" => "checkmark",
+     *   "Watched At" => "datetime",
+     *   "Chance to Advice" => "priority"
+     * ]
      * @var array
+     * @noinspection GrazieInspection
+     * @noinspection UnknownInspectionInspection
      */
     private array $librarySchema;
 
@@ -58,7 +74,7 @@ class LibrarySearchTermRule implements ValidationRule
 
     /**
      * Determine if the validation rule passes.
-     * Example of a valid request attribute:
+     * Example of a valid request attribute (keys may be different depending on library structure):
      * [
      *   'Movie Title' => ['startsAt' 'The'],
      *   'Origin Title' => [], // empty filter (also may be omitted)
@@ -89,11 +105,11 @@ class LibrarySearchTermRule implements ValidationRule
         $queryAttributes = array_keys($value);
         $validatingAttributes = array_combine($queryAttributes, $queryAttributes);
 
-        Validator::make(
-            $validatingAttributes,
-            array_map(static fn() => [Rule::in($libraryAttributes)], $validatingAttributes),
-            array_map(static fn() => trans('validation.custom.field_unrecognized'), $validatingAttributes),
-        )->validate();
+        // Validator::make(
+        //     $validatingAttributes,
+        //     array_map(static fn() => [Rule::in($libraryAttributes)], $validatingAttributes),
+        //     array_map(static fn() => trans('validation.custom.field_unrecognized'), $validatingAttributes),
+        // )->validate();
 
         // Match attribute to type (wip)
         foreach ($value as $field => $criteria) {
