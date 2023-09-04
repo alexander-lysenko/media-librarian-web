@@ -153,16 +153,17 @@ return [
             'rule-name' => 'custom-message',
         ],
         'id' => [
-            'exists' => 'The collection with provided ID does not exist.'
+            'exists' => 'The collection with provided ID does not exist.',
         ],
         'entry' => [
-            'exists' => 'The entry with provided ID does not exist.'
+            'exists' => 'The entry with provided ID does not exist.',
         ],
         'term' => [
-            'array' => 'The :attribute must contain some of the following keys: [:values]'
+            'array' => 'The :attribute must contain some of the following keys: [:values]',
         ],
         'field_unrecognized' => "The field ':attribute' is unrecognized.",
 
+        /* === Overridden default rules start from here === */
         'boolean' => "The field ':attribute' field must be true or false.",
         'between' => [
             'array' => "The field ':attribute' must have between :min and :max items.",
@@ -200,6 +201,12 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'library_filter' => [
+            '0' => "filter option of ':attribute'",
+            '1' => "value 1 of ':attribute'",
+            '2' => "value 2 of ':attribute'",
+        ],
+    ],
 
 ];

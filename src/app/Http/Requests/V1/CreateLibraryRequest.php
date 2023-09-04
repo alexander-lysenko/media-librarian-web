@@ -34,8 +34,8 @@ class CreateLibraryRequest extends FormRequest
             'title' => ['required', 'string', new UniqueLibraryNameRule()],
             'fields.*' => ['required', 'array:name,type', 'max:30'],
 
-            'fields.*.name' => ['required', 'string', 'distinct:ignore_case'],
-            'fields.*.type' => ['required', 'string', Rule::in(InputDataTypeEnum::TYPE_UI_NAME)],
+            'fields.*.name' => ['required', 'distinct:ignore_case', 'regex:/^[a-zA-Z0-9\s]+$/'],
+            'fields.*.type' => ['required', Rule::in(InputDataTypeEnum::TYPE_UI_NAME)],
             'fields.0.type' => [Rule::in(InputDataTypeEnum::LINE_INPUT)],
         ];
     }

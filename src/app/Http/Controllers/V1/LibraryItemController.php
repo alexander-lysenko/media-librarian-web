@@ -65,7 +65,7 @@ use OpenApi\Attributes as OA;
     description: 'Example of payload to filter items in the Library.',
     properties: [
         new OA\Property(property: 'Movie Title', type: 'array', items: new OA\Items(oneOf: [
-            new OA\Property('operator', example: 'startsAt'),
+            new OA\Property('operator', example: 'startsWith'),
             new OA\Property('value', example: 'The'),
         ])),
         new OA\Property(property: 'Origin Title', type: 'array', items: new OA\Items(oneOf: [

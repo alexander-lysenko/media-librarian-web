@@ -75,7 +75,7 @@ class LibrarySearchTermRule implements ValidationRule
      * Determine if the validation rule passes.
      * Example of a valid request attribute (keys may be different depending on library structure):
      * [
-     *   'Movie Title' => ['startsAt' 'The'],
+     *   'Movie Title' => ['startsWith' 'The'],
      *   'Origin Title' => [], // empty filter (also may be omitted)
      *   'Release Date' => ['greaterThan', '1999-12-31'],
      *   'Description' => ['contains', 'computer hacker'],
@@ -101,30 +101,37 @@ class LibrarySearchTermRule implements ValidationRule
 
         // Prepare rules, fields, and attributes
         $rules = [];
+        $attributes = [];
         $librarySchema = $this->librarySchema;
         $libraryFields = array_keys($librarySchema);
-        $validatingAttributes = array_combine(array_keys($value), array_keys($value));
-        $libraryAttributes = array_combine(array_keys($libraryFields), array_keys($libraryFields));
 
         // Ensure that there are no unrecognized attributes passed
-        Validator::make(
-            $validatingAttributes,
-            array_map(static fn() => [Rule::in($libraryFields)], $validatingAttributes),
-            array_map(static fn() => trans('validation.custom.field_unrecognized'), $validatingAttributes),
-            $validatingAttributes
-        )->validate();
+        $validatingAttributes = [];
+        $validatingRules = [];
+        $validatingMessages = [];
+        foreach ($value as $field => $_) {
+            $validatingAttributes[$field] = $field;
+            $validatingRules["$attribute.$field"] = [Rule::in($libraryFields)];
+            $validatingMessages["$attribute.$field"] = trans('validation.custom.field_unrecognized', ['attribute' => $field]);
+        }
+        Validator::make([$attribute => $validatingAttributes], $validatingRules, $validatingMessages)->validate();
 
         // Match attribute to type (wip)
         foreach ($librarySchema as $field => $type) {
-            $rules["$field.0"] = $rulesOptionsSet[$type];
-            $rules["$field.1"] = $rulesDefaultSet[$type];
+            $transOptions = ['attribute' => $field];
 
-            $rules["$field.2"] = $rulesDefaultSet[$type];
-            array_unshift($rules["$field.2"], "required_if:$field.0,between");
+            $rules["$attribute.$field.0"] = $rulesOptionsSet[$type];
+            $rules["$attribute.$field.1"] = $rulesDefaultSet[$type];
+            $rules["$attribute.$field.2"] = $rulesDefaultSet[$type];
+            array_unshift($rules["$attribute.$field.2"], "required_if:$attribute.$field.0,between");
+
+            $attributes["$attribute.$field.0"] = trans('validation.attributes.library_filter.0', $transOptions);
+            $attributes["$attribute.$field.1"] = trans('validation.attributes.library_filter.1', $transOptions);
+            $attributes["$attribute.$field.2"] = trans('validation.attributes.library_filter.2', $transOptions);
         }
 
         // Perform all the validations
-        Validator::make($value, $rules, [], $libraryAttributes)->validate();
+        Validator::make([$attribute => $value], $rules, [], $attributes)->validate();
     }
 
     /**
@@ -133,11 +140,10 @@ class LibrarySearchTermRule implements ValidationRule
      */
     private static function extractTypedRules(): array
     {
-
         return [
             'line' => ['string', 'max:255'],
             'text' => ['string'],
-            'url' => ['url', 'max:255'],
+            'url' => ['string', 'max:255'],
             'checkmark' => ['boolean'],
             'date' => ['date_format:Y-m-d'],
             'datetime' => ['date_format:Y-m-d H:i:s'],
