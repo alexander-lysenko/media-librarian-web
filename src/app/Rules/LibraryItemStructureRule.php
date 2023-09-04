@@ -71,14 +71,22 @@ class LibraryItemStructureRule implements ValidationRule
         $rulesDefaultSet = static::extractRules();
 
         // Prepare rules, fields, and attributes
-        $libraryFields = json_decode($libraryModel->meta, true);
-        $attributes = array_keys($libraryFields);
-        $firstAttribute = $attributes[0];
+        $librarySchema = json_decode($libraryModel->meta, true);
+        $libraryFields = array_keys($librarySchema);
+        $firstAttribute = $libraryFields[0];
         $rules = [];
-        $customAttributes = array_combine($attributes, $attributes);
 
-        // Match attribute to type
-        foreach ($libraryFields as $key => $type) {
+        // Ensure that there are no unrecognized attributes passed
+        $validatingAttributes = array_combine(array_keys($value), array_keys($value));
+        Validator::make(
+            $validatingAttributes,
+            array_map(static fn() => [Rule::in($libraryFields)], $validatingAttributes),
+            array_map(static fn() => trans('validation.custom.field_unrecognized'), $validatingAttributes),
+            $validatingAttributes,
+        )->validate();
+
+        // Match attribute to type, based on Library schema
+        foreach ($librarySchema as $key => $type) {
             $rules[$key] = $rulesDefaultSet[$type];
         }
 
@@ -88,7 +96,7 @@ class LibraryItemStructureRule implements ValidationRule
             ->ignore($this->libraryItemId);
 
         // Perform all the validations
-        Validator::make($value, $rules, [], $customAttributes)->validate();
+        Validator::make($value, $rules, static::messages(), array_combine($libraryFields, $libraryFields))->validate();
     }
 
     /**
@@ -109,6 +117,20 @@ class LibraryItemStructureRule implements ValidationRule
             'rating10' => ['present', 'integer', 'between:0,10'],
             'rating10precision' => ['present', 'numeric', 'between:0,10'],
             'priority' => ['present', 'numeric', 'between:-5,5'],
+        ];
+    }
+
+    private static function messages(): array
+    {
+        return [
+            'boolean' => trans('validation.custom.boolean'),
+            'between' => trans('validation.custom.between'),
+            'date_format' => trans('validation.custom.date_format'),
+            'integer' => trans('validation.custom.integer'),
+            'max' => trans('validation.custom.max'),
+            'numeric' => trans('validation.custom.numeric'),
+            'present' => trans('validation.custom.present'),
+            'string' => trans('validation.custom.string'),
         ];
     }
 }

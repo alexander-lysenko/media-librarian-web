@@ -2,7 +2,6 @@
 
 namespace App\Rules;
 
-use App\Http\Middleware\DatabaseSwitch;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
@@ -97,66 +96,85 @@ class LibrarySearchTermRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // Create a set of validation rules for every field type
-        $rulesDefaultSet = static::extractRules();
+        $rulesDefaultSet = static::extractTypedRules();
+        $rulesOptionsSet = static::extractOptionRules();
 
         // Prepare rules, fields, and attributes
         $rules = [];
-        $libraryAttributes = array_keys($this->librarySchema);
-        $queryAttributes = array_keys($value);
-        $validatingAttributes = array_combine($queryAttributes, $queryAttributes);
+        $librarySchema = $this->librarySchema;
+        $libraryFields = array_keys($librarySchema);
+        $validatingAttributes = array_combine(array_keys($value), array_keys($value));
+        $libraryAttributes = array_combine(array_keys($libraryFields), array_keys($libraryFields));
 
-        // Validator::make(
-        //     $validatingAttributes,
-        //     array_map(static fn() => [Rule::in($libraryAttributes)], $validatingAttributes),
-        //     array_map(static fn() => trans('validation.custom.field_unrecognized'), $validatingAttributes),
-        // )->validate();
+        // Ensure that there are no unrecognized attributes passed
+        Validator::make(
+            $validatingAttributes,
+            array_map(static fn() => [Rule::in($libraryFields)], $validatingAttributes),
+            array_map(static fn() => trans('validation.custom.field_unrecognized'), $validatingAttributes),
+            $validatingAttributes
+        )->validate();
 
         // Match attribute to type (wip)
-        foreach ($value as $field => $criteria) {
-            // $rules["{$field}.0"] = $rulesDefaultSet[$field];
+        foreach ($librarySchema as $field => $type) {
+            $rules["$field.0"] = $rulesOptionsSet[$type];
+            $rules["$field.1"] = $rulesDefaultSet[$type];
+
+            $rules["$field.2"] = $rulesDefaultSet[$type];
+            array_unshift($rules["$field.2"], "required_if:$field.0,between");
         }
 
         // Perform all the validations
-        // Validator::make($value, $rules, [], $customAttributes)->validate();
+        Validator::make($value, $rules, [], $libraryAttributes)->validate();
     }
 
     /**
      * The default validation rules for every type of field
      * @return array[]
      */
-    private static function extractRules(): array
+    private static function extractTypedRules(): array
     {
+
         return [
-            'line.0' => [Rule::in(['equalTo', 'contains', 'doesntContain', 'startsWith', 'endsWith'])],
-            'line.1' => ['nullable', 'string', 'max:255'],
-            'text.0' => [Rule::in(['equalTo', 'contains', 'doesntContain', 'startsWith', 'endsWith'])],
-            'text.1' => ['nullable', 'string', 'max:255'],
-            'url.0' => [Rule::in(['equalTo', 'contains', 'doesntContain', 'startsWith', 'endsWith'])],
-            'url.1' => ['nullable', 'string', 'max:255'],
+            'line' => ['string', 'max:255'],
+            'text' => ['string'],
+            'url' => ['url', 'max:255'],
+            'checkmark' => ['boolean'],
+            'date' => ['date_format:Y-m-d'],
+            'datetime' => ['date_format:Y-m-d H:i:s'],
+            'rating5' => ['integer', 'between:0,5'],
+            'rating5precision' => ['numeric', 'between:0,5'],
+            'rating10' => ['integer', 'between:0,10'],
+            'rating10precision' => ['numeric', 'between:0,10'],
+            'priority' => ['numeric', 'between:-5,5'],
+        ];
+    }
 
-            'checkmark.0' => [Rule::in(['equalTo', 'notEqualTo'])],
-            'checkmark.1' => ['nullable', 'boolean'],
-            'date.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
-            'date.1' => ['required_with:date.2', 'date_format:Y-m-d'],
-            'date.2' => ['required_if:date.0,between', 'date_format:Y-m-d'],
-            'datetime.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
-            'datetime.1' => ['required_with:datetime.2', 'date_format:Y-m-d H:i:s'],
-            'datetime.2' => ['required_if:datetime.0,between', 'date_format:Y-m-d H:i:s'],
+    /**
+     * The available options to filter values for every type of field
+     * @return array[]
+     */
+    private static function extractOptionRules(): array
+    {
+        $optionTypeMap = [
+            'text' => ['equalTo', 'contains', 'doesntContain', 'startsWith', 'endsWith'],
+            'bool' => ['equalTo', 'notEqualTo'],
+            'date' => ['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'],
+            'number' => ['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'],
+            'priority' => ['equalTo', 'notEqualTo', 'greaterThan', 'lessThan'],
+        ];
 
-            'rating5.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
-            'rating5.1' => ['required_with:rating5.2', 'integer', 'between:0,5'],
-            'rating5.2' => ['required_if:rating5.0,between', 'integer', 'between:0,5'],
-            'rating5precision.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
-            'rating5precision.1' => ['required_with:rating5precision.2', 'numeric', 'between:0,5'],
-            'rating5precision.2' => ['required_if:rating5precision.0,between', 'numeric', 'between:0,5'],
-            'rating10.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
-            'rating10.1' => ['required_with:rating10.2', 'integer', 'between:0,10'],
-            'rating10.2' => ['required_if:rating10.0,between', 'integer', 'between:0,10'],
-            'rating10precision.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan', 'between'])],
-            'rating10precision.1' => ['required_with:rating10precision.2', 'numeric', 'between:0,10'],
-            'rating10precision.2' => ['required_if:rating10precision.0,between', 'numeric', 'between:0,10'],
-            'priority.0' => [Rule::in(['equalTo', 'notEqualTo', 'greaterThan', 'lessThan'])],
-            'priority.1' => ['nullable', 'string', 'max:255'],
+        return [
+            'line' => [Rule::in($optionTypeMap['text'])],
+            'text' => [Rule::in($optionTypeMap['text'])],
+            'url' => [Rule::in($optionTypeMap['text'])],
+            'checkmark' => [Rule::in($optionTypeMap['bool'])],
+            'date' => [Rule::in($optionTypeMap['date'])],
+            'datetime' => [Rule::in($optionTypeMap['date'])],
+            'rating5' => [Rule::in($optionTypeMap['number'])],
+            'rating5precision' => [Rule::in($optionTypeMap['number'])],
+            'rating10' => [Rule::in($optionTypeMap['number'])],
+            'rating10precision' => [Rule::in($optionTypeMap['number'])],
+            'priority' => [Rule::in($optionTypeMap['priority'])],
         ];
     }
 }

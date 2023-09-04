@@ -162,6 +162,31 @@ return [
             'array' => 'The :attribute must contain some of the following keys: [:values]'
         ],
         'field_unrecognized' => "The field ':attribute' is unrecognized.",
+
+        'boolean' => "The field ':attribute' field must be true or false.",
+        'between' => [
+            'array' => "The field ':attribute' must have between :min and :max items.",
+            'file' => "The field ':attribute' must be between :min and :max kilobytes.",
+            'numeric' => "The field ':attribute' must be between :min and :max.",
+            'string' => "The field ':attribute' must be between :min and :max characters.",
+        ],
+        'date_format' => "The field ':attribute' does not match the format :format.",
+        'integer' => "The field ':attribute' must be an integer number.",
+        'max' => [
+            'array' => "The field ':attribute' must not have more than :max items.",
+            'file' => "The field ':attribute' must not be greater than :max kilobytes.",
+            'numeric' => "The field ':attribute' must not be greater than :max.",
+            'string' => "The field ':attribute' must not be greater than :max characters.",
+        ],
+        'min' => [
+            'array' => "The field ':attribute' must have at least :min items.",
+            'file' => "The field ':attribute' must be at least :min kilobytes.",
+            'numeric' => "The field ':attribute' must be at least :min.",
+            'string' => "The field ':attribute' must be at least :min characters.",
+        ],
+        'numeric' => "The field ':attribute' must be a number.",
+        'present' => "The field ':attribute' must be present.",
+        'string' => "The field ':attribute' must be a string.",
     ],
 
     /*

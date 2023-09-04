@@ -65,7 +65,7 @@ class LibraryPaginatedRequest extends FormRequest
             'sort.direction' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:0', 'max:250'],
-            'term' => ['nullable', "array:$attributesForRule", new LibrarySearchTermRule($this->libraryFields)],
+            'term' => ['nullable', "array:$attributesForRule", new LibrarySearchTermRule($libraryMeta)],
         ];
     }
 
