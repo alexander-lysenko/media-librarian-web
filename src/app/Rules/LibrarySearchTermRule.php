@@ -112,7 +112,8 @@ class LibrarySearchTermRule implements ValidationRule
         foreach ($value as $field => $_) {
             $validatingAttributes[$field] = $field;
             $validatingRules["$attribute.$field"] = [Rule::in($libraryFields)];
-            $validatingMessages["$attribute.$field"] = trans('validation.custom.field_unrecognized', ['attribute' => $field]);
+            $validatingMessages["$attribute.$field"] =
+                trans('validation.custom.field_unrecognized', ['attribute' => $field]);
         }
         Validator::make([$attribute => $validatingAttributes], $validatingRules, $validatingMessages)->validate();
 
@@ -141,9 +142,9 @@ class LibrarySearchTermRule implements ValidationRule
     private static function extractTypedRules(): array
     {
         return [
-            'line' => ['string', 'max:255'],
-            'text' => ['string'],
-            'url' => ['string', 'max:255'],
+            'line' => ['nullable', 'string', 'max:255'],
+            'text' => ['nullable', 'string'],
+            'url' => ['nullable', 'string', 'max:255'],
             'checkmark' => ['boolean'],
             'date' => ['date_format:Y-m-d'],
             'datetime' => ['date_format:Y-m-d H:i:s'],

@@ -120,6 +120,10 @@ class LibraryItemStructureRule implements ValidationRule
         ];
     }
 
+    /**
+     * Overridden messages for validation errors for every validation rule
+     * @return array
+     */
     private static function messages(): array
     {
         return [

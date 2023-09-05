@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\DTO\LibraryFilterDTO;
 use App\Http\Requests\V1\LibraryItemCreateRequest;
 use App\Http\Requests\V1\LibraryItemRequest;
 use App\Http\Requests\V1\LibraryItemUpdateRequest;
@@ -9,6 +10,7 @@ use App\Http\Requests\V1\LibraryIdRequest;
 use App\Http\Requests\V1\LibraryPaginatedRequest;
 use App\Http\Resources\LibraryItemResource;
 use App\Jobs\PosterUploadJob;
+use App\Models\LibrarySearch;
 use App\Models\SqliteLibraryMeta;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -414,12 +416,26 @@ class LibraryItemController extends ApiV1Controller
     )]
     /**
      * @param LibraryPaginatedRequest $request
+     * @param LibrarySearch $librarySearch
      * @return JsonResponse
-     * @todo: implement
      */
-    public function search(LibraryPaginatedRequest $request): JsonResponse
+    public function search(LibraryPaginatedRequest $request, LibrarySearch $librarySearch): JsonResponse
     {
-        return new JsonResponse(null, 200);
+        $filterDto = LibraryFilterDTO::fromRequest($request);
+        // todo: test it
+        $paginatedResource = $librarySearch->search($filterDto);
+
+        $pagination = [
+            'currentPage' => $paginatedResource->currentPage(),
+            'lastPage' => $paginatedResource->lastPage(),
+            'perPage' => $paginatedResource->perPage(),
+            'total' => $paginatedResource->total(),
+        ];
+
+        $resource = new JsonResource($paginatedResource->items());
+        $resource::wrap('items');
+        $resource->with['pagination'] = $pagination;
+        return $resource->response();
     }
 
     #[OA\Get(
