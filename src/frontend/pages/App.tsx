@@ -1,6 +1,6 @@
 import { AddCircleOutlined } from "@mui/icons-material";
 import { Box, Button, Container, Paper, styled, Typography } from "@mui/material";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
@@ -10,8 +10,6 @@ import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import { getFakeLibraryItems } from "../mock/libraryItemsResponse";
-import { librariesResponse } from "../mock/libraryResponse";
 import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
@@ -36,17 +34,21 @@ export const App = () => {
   const { fetch: getLibraries, status: useLibrariesGetStatus } = useLibrariesGetRequest();
   const { fetch: fetchItems, status: useLibraryItemsGetStatus } = useLibraryItemsGetRequest();
 
+  // @ts-ignore // todo: remove this
+  window.useLibraryListStore = useLibraryListStore((state) => state);
+
   const getItems = useCallback(() => {
     const selectedLibraryId = getSelectedLibrary()?.id;
+    console.log(selectedLibraryId);
     if (selectedLibraryId) {
-      void fetchItems(undefined, { id: selectedLibraryId }, { fakeResponse: getFakeLibraryItems() });
+      void fetchItems(undefined, { id: selectedLibraryId });
     }
   }, [fetchItems, getSelectedLibrary]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!dataFetchedRef.current) {
       dataFetchedRef.current = true;
-      getLibraries(undefined, {}, { fakeResponse: librariesResponse }).then(getItems);
+      getLibraries().then(getItems);
     }
 
     return useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], getItems, {

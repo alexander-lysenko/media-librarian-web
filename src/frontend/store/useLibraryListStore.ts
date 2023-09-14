@@ -36,7 +36,7 @@ export const useLibraryListStore = createWithEqualityFn<LibraryState>(
       const libraries = get().libraries;
       const storedId = useSelectedLibraryStore.getState().selectedLibraryId;
 
-      return libraries[storedId]?.id ?? libraries[0]?.id ?? 0;
+      return libraries.find((item: LibrarySchema): boolean => item.id === storedId)?.id ?? libraries[0]?.id ?? 0;
     },
     setSelectedLibraryId: (selectedLibraryId) => useSelectedLibraryStore.setState({ selectedLibraryId }),
   }),

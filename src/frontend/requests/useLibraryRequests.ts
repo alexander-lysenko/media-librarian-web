@@ -51,7 +51,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // uncomment this line and provide fakeResponse into fetch()
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };

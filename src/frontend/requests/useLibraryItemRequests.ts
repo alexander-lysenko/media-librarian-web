@@ -16,15 +16,13 @@ import type { AxiosResponse } from "axios";
  * todo: add sorting and pagination query params
  */
 export const useLibraryItemsGetRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
-  const { setRows, setTotal, setSort, setPage, setRowsPerPage } = useLibraryTableStore((state) => state);
+  const { setRows, setSort, setPagination } = useLibraryTableStore((state) => state);
 
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {
       const { items, pagination } = response.data;
       setSort(undefined); // todo: get that from response
-      setTotal(pagination.total);
-      setPage(pagination.currentPage);
-      setRowsPerPage(pagination.perPage);
+      setPagination(pagination.currentPage - 1, pagination.perPage, pagination.total);
       setRows(items);
     },
     onError: (reason) => {
@@ -41,7 +39,7 @@ export const useLibraryItemsGetRequest = (): UseRequestReturn<GetLibraryItemsReq
     endpoint: libraryItemsEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // uncomment this line and provide fakeResponse into fetch()
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };

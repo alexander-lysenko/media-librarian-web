@@ -1,5 +1,6 @@
-import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
+import { shallow } from "zustand/shallow";
+import { createWithEqualityFn } from "zustand/traditional";
 
 import { dataColumnPropsByType } from "../core";
 
@@ -30,9 +31,10 @@ type LibraryTableState = {
   setPage: (page: number) => void;
   setRowsPerPage: (rowsPerPage: number) => void;
   applyRowsPerPage: (rowsPerPage: number) => void;
+  setPagination: (page: number, rowsPerPage: number, total: number) => void;
 };
 
-export const useLibraryTableStore = create(
+export const useLibraryTableStore = createWithEqualityFn(
   subscribeWithSelector<LibraryTableState>((set) => ({
     columnOptions: dataColumnPropsByType,
     columns: [],
@@ -48,5 +50,7 @@ export const useLibraryTableStore = create(
     setPage: (page: number) => set({ page }),
     setRowsPerPage: (rowsPerPage: number) => set({ rowsPerPage }),
     applyRowsPerPage: (rowsPerPage: number) => set({ rowsPerPage, page: 0 }),
+    setPagination: (page: number, rowsPerPage: number, total: number) => set({ page, rowsPerPage, total }),
   })),
+  shallow,
 );

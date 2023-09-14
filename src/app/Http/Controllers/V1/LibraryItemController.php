@@ -13,6 +13,7 @@ use App\Jobs\PosterUploadJob;
 use App\Models\LibrarySearch;
 use App\Models\SqliteLibraryMeta;
 use Exception;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
@@ -162,8 +163,11 @@ class LibraryItemController extends ApiV1Controller
     public function index(LibraryIdRequest $request): JsonResponse
     {
         $paginatedResource = SqliteLibraryMeta::getLibraryTableQuery($request->id)
-            ->orderBy($request->get('sort')) // todo: implement
-            ->paginate(perPage: $request->get('perPage'), page: $request->get('page'));
+            ->when($request->get('sort'), static fn(Builder $query) => $query->orderBy(
+                $request->get('sort.attribute'),
+                $request->get('sort.direction', 'asc')
+            ))
+            ->paginate(perPage: $request->get('perPage', 15), page: $request->get('page'));
 
         $pagination = [
             'currentPage' => $paginatedResource->currentPage(),

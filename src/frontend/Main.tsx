@@ -33,7 +33,7 @@ const root = createRoot(rootElement);
 
 export const Main = () => {
   const colorMode = useThemeStore((state) => state.mode);
-  // @ts-ignore
+  // @ts-ignore // todo: remove this
   window.useCredentialsStore = useAuthCredentialsStore((state) => state);
 
   return (
