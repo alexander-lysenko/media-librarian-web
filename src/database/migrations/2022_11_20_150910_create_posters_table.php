@@ -15,8 +15,8 @@ return new class extends Migration {
         Schema::create($this->tableName, static function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->integer('collection_id');
-            $table->integer('entry_id');
+            $table->integer('library_id');
+            $table->integer('item_id');
             $table->string('uri');
             $table->timestamps();
         });

@@ -65,16 +65,16 @@ class SqliteLibraryMeta extends Model
     public static function createTableColumnByType(Blueprint $table, string $name, string $type): ColumnDefinition
     {
         return match ($type) {
-            InputDataTypeEnum::LINE_INPUT => $table->lineString($name)->nullable(),
+            InputDataTypeEnum::LINE_INPUT => $table->string($name, 255)->nullable(),
             InputDataTypeEnum::TEXT_INPUT => $table->text($name)->nullable(),
             InputDataTypeEnum::DATE_INPUT => $table->date($name)->nullable(),
             InputDataTypeEnum::DATETIME_INPUT => $table->timestamp($name)->nullable(),
             InputDataTypeEnum::URL_INPUT => $table->string($name)->nullable(),
             InputDataTypeEnum::CHECKBOX_INPUT => $table->boolean($name)->nullable(),
-            InputDataTypeEnum::RATING_5_INPUT => $table->unsignedTinyInteger($name)->nullable(),
-            InputDataTypeEnum::RATING_5_PRECISION_INPUT => $table->unsignedDecimal($name)->nullable(),
-            InputDataTypeEnum::RATING_10_INPUT => $table->unsignedSmallInteger($name)->nullable(),
-            InputDataTypeEnum::RATING_10_PRECISION_INPUT => $table->unsignedFloat($name)->nullable(),
+            InputDataTypeEnum::RATING_5_INPUT => $table->tinyInteger($name)->unsigned()->nullable(),
+            InputDataTypeEnum::RATING_5_PRECISION_INPUT => $table->unsignedDecimal($name, 2, 1)->nullable(),
+            InputDataTypeEnum::RATING_10_INPUT => $table->smallInteger($name)->unsigned()->nullable(),
+            InputDataTypeEnum::RATING_10_PRECISION_INPUT => $table->unsignedDecimal($name, 3, 1)->nullable(),
             InputDataTypeEnum::PRIORITY_INPUT => $table->tinyInteger($name)->nullable(),
         };
     }

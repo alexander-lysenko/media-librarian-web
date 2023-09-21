@@ -175,7 +175,7 @@ class LibraryController extends ApiV1Controller
                 $table->id();
                 foreach ($metadata as $name => $type) {
                     if ($name === array_key_first($metadata)) {
-                        $table->lineString($name)->unique();
+                        $table->string($name, 255)->unique();
                         continue;
                     }
                     $sqliteLibraryMeta->createTableColumnByType($table, $name, $type);
@@ -293,9 +293,9 @@ class LibraryController extends ApiV1Controller
         $connection = $sqliteLibraryMeta->getConnection();
 
         $connection->transaction(function () use ($connection, $sqliteLibraryMeta) {
-            // Remove posters (use a background job)
+            // todo: Remove posters (use a background job)
 
-            $connection->getSchemaBuilder()->drop($sqliteLibraryMeta->tbl_name);
+            $connection->getSchemaBuilder()->dropIfExists($sqliteLibraryMeta->tbl_name);
             $sqliteLibraryMeta->delete();
         });
 
@@ -344,7 +344,7 @@ class LibraryController extends ApiV1Controller
         $connection = $sqliteLibraryMeta->getConnection();
 
         $connection->transaction(function () use ($connection, $sqliteLibraryMeta, &$itemsAffected) {
-            // Remove posters (use a background job)
+            // todo: Remove posters (use a background job)
 
             $itemsAffected = $connection->query()
                 ->select($connection->raw('count(*) as count'))

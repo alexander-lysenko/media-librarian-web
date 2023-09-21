@@ -5,14 +5,14 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Media Librarian Internal API Documentation',
+                'title' => 'L5 Swagger UI',
             ],
 
             'routes' => [
                 /*
                  * Route for accessing api documentation interface
                 */
-                'api' => 'api/v1/documentation',
+                'api' => 'api/documentation',
             ],
             'paths' => [
                 /*
@@ -39,7 +39,7 @@ return [
                  * Absolute paths to directory containing the swagger annotations are stored.
                 */
                 'annotations' => [
-                    base_path('app/Http/Controllers/V1'),
+                    base_path('app'),
                 ],
 
             ],
@@ -50,7 +50,7 @@ return [
             /*
              * Route for accessing parsed swagger annotations.
             */
-            'docs' => 'storage',
+            'docs' => 'docs',
 
             /*
              * Route for Oauth2 authentication callback.
@@ -58,7 +58,7 @@ return [
             'oauth2_callback' => 'api/oauth2-callback',
 
             /*
-             * Middleware allows preventing unexpected access to API documentation
+             * Middleware allows to prevent unexpected access to API documentation
             */
             'middleware' => [
                 'api' => [],
@@ -85,9 +85,9 @@ return [
             'views' => base_path('resources/views/vendor/l5-swagger'),
 
             /*
-             * Edit to set the API base path
+             * Edit to set the api's base path
             */
-            'base' => env('L5_SWAGGER_BASE_PATH'),
+            'base' => env('L5_SWAGGER_BASE_PATH', null),
 
             /*
              * Edit to set path where swagger ui assets should be stored
@@ -95,7 +95,7 @@ return [
             'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'vendor/swagger-api/swagger-ui/dist/'),
 
             /*
-             * Absolute path to directories that should be excluded from scanning
+             * Absolute path to directories that should be exclude from scanning
              * @deprecated Please use `scanOptions.exclude`
              * `scanOptions.exclude` overwrites this
             */
@@ -140,6 +140,12 @@ return [
              * @see \OpenApi\scan
             */
             'exclude' => [],
+
+            /*
+             * Allows to generate specs either for OpenAPI 3.0.0 or OpenAPI 3.1.0.
+             * By default the spec will be in version 3.0.0
+             */
+            'open_api_spec_version' => env('L5_SWAGGER_OPEN_API_SPEC_VERSION', \L5Swagger\Generator::OPEN_API_DEFAULT_SPEC_VERSION),
         ],
 
         /*
@@ -219,7 +225,7 @@ return [
         /*
          * Set this to `true` to generate a copy of documentation in yaml format
         */
-        'generate_yaml_copy' => env('L5_SWAGGER_GENERATE_YAML_COPY', true),
+        'generate_yaml_copy' => env('L5_SWAGGER_GENERATE_YAML_COPY', false),
 
         /*
          * Edit to trust the proxy's ip address - needed for AWS Load Balancer
@@ -228,7 +234,7 @@ return [
         'proxy' => false,
 
         /*
-         * Configs plugin allows fetching external configs instead of passing them to SwaggerUIBundle.
+         * Configs plugin allows to fetch external configs instead of passing them to SwaggerUIBundle.
          * See more at: https://github.com/swagger-api/swagger-ui#configs-plugin
         */
         'additional_config_url' => null,
@@ -238,7 +244,7 @@ return [
          * 'method' (sort by HTTP method).
          * Default is the order returned by the server unchanged.
         */
-        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', 'alpha'),
+        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', null),
 
         /*
          * Pass the validatorUrl parameter to SwaggerUi init on the JS side.
@@ -257,7 +263,7 @@ return [
                  * 'full' (expands the tags and operations),
                  * 'none' (expands nothing).
                  */
-                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'list'),
+                'doc_expansion' => env('L5_SWAGGER_UI_DOC_EXPANSION', 'none'),
 
                 /**
                  * If set, enables filtering. The top bar will show an edit box that
@@ -274,14 +280,21 @@ return [
                 /*
                  * If set to true, it persists authorization data, and it would not be lost on browser close/refresh
                  */
-                'persist_authorization' => env('L5_SWAGGER_UI_PERSIST_AUTHORIZATION', true),
+                'persist_authorization' => env('L5_SWAGGER_UI_PERSIST_AUTHORIZATION', false),
+
+                'oauth2' => [
+                    /*
+                    * If set to true, adds PKCE to AuthorizationCodeGrant flow
+                    */
+                    'use_pkce_with_authorization_code_grant' => false,
+                ],
             ],
         ],
         /*
          * Constants which can be used in annotations
          */
         'constants' => [
-            // 'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
+            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
         ],
     ],
 ];

@@ -31,10 +31,10 @@ class CreateLibraryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'regex:/^(\p{L}+[ ]?)+$/mu', new UniqueLibraryNameRule()],
+            'title' => ['required', 'regex:/^([\p{L}\p{N}]+[ ]?)+$/mu', new UniqueLibraryNameRule()],
             'fields.*' => ['required', 'array:name,type', 'max:30'],
 
-            'fields.*.name' => ['required', 'distinct:ignore_case', 'regex:/^(\p{L}+[ ]?)+$/mu'],
+            'fields.*.name' => ['required', 'distinct:ignore_case', 'regex:/^([\p{L}\p{N}]+[ ]?)+$/mu'],
             'fields.*.type' => ['required', Rule::in(InputDataTypeEnum::TYPE_UI_NAME)],
             'fields.0.type' => [Rule::in(InputDataTypeEnum::LINE_INPUT)],
         ];
