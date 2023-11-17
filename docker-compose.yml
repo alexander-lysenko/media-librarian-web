@@ -13,7 +13,7 @@ services:
         depends_on:
             - pgsql
         networks:
-            - media_librarian_network
+            - bridge
         command: [ "webapp" ]
         logging:
             driver: json-file
@@ -32,9 +32,9 @@ services:
             POSTGRES_USER: "${DB_USERNAME:?}"
             POSTGRES_PASSWORD: "${DB_PASSWORD:?}"
         networks:
-            - media_librarian_network
+            - bridge
         healthcheck:
             test: [ "CMD", "pg_isready -q -d ${DB_DATABASE} -U ${DB_USERNAME}" ]
 networks:
-    media_librarian_network:
+    bridge:
         driver: bridge
