@@ -22,20 +22,17 @@ export const App = () => {
   const dataFetchedRef = useRef(false);
 
   const getSelectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary);
-  const { columns, rows, total, sort, setSort, columnOptions } = useLibraryTableStore((state) => state);
-  const { page, setPage, rowsPerPage, applyRowsPerPage } = useLibraryTableStore((state) => state);
+  const { columns, rows, total, sort, setSort, columnOptions } = useLibraryTableStore();
+  const { page, setPage, rowsPerPage, applyRowsPerPage } = useLibraryTableStore();
 
-  const { selectedItem, setSelectedItem } = usePreviewDrawerStore((state) => state);
+  const { selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
   const [itemDialogOpen, setItemDialogOpen] = useLibraryItemFormStore((state) => [state.open, state.setOpen]);
 
-  const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItem, setSelectedItem };
+  const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItemId, setSelectedItemId };
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage: applyRowsPerPage };
 
-  const { fetch: getLibraries, status: useLibrariesGetStatus } = useLibrariesGetRequest();
-  const { fetch: fetchItems, status: useLibraryItemsGetStatus } = useLibraryItemsGetRequest();
-
-  // @ts-ignore // todo: remove this
-  window.useLibraryListStore = useLibraryListStore((state) => state);
+  const { fetch: getLibraries, status: libraryListLoadingStatus } = useLibrariesGetRequest();
+  const { fetch: fetchItems, status: itemsLoadingStatus } = useLibraryItemsGetRequest();
 
   const getItems = useCallback(() => {
     const selectedLibraryId = getSelectedLibrary()?.id;
@@ -53,7 +50,7 @@ export const App = () => {
 
     return useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], getItems, {
       equalityFn: shallow,
-      fireImmediately: false,
+      // fireImmediately: false,
     });
   }, [getItems, getLibraries]);
 
@@ -72,7 +69,7 @@ export const App = () => {
           />
         </StyledHeaderBox>
         <Paper elevation={3} sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }}>
-          {useLibrariesGetStatus === "LOADING" || useLibraryItemsGetStatus === "LOADING" ? (
+          {libraryListLoadingStatus === "LOADING" || itemsLoadingStatus === "LOADING" ? (
             <LoadingOverlayInner />
           ) : (
             <StyledTableBox>
@@ -85,6 +82,7 @@ export const App = () => {
       <LibraryDrawer />
       <LibraryItemDialog
         open={itemDialogOpen}
+        selectedItemId={selectedItemId}
         handleClose={() => setItemDialogOpen(false)}
         handleSubmitted={() => false}
       />

@@ -1,7 +1,7 @@
 export { EmailInput } from "./inputs/EmailInput";
 export { PasswordInput } from "./inputs/PasswordInput";
 export { TextInput } from "./inputs/TextInput";
-export { BasicLibraryItemInput } from "./libraryItemInput/BasicLibraryItemInput";
+export { LibraryItemInputControl } from "./libraryItemInput/LibraryItemInputControl";
 export { AppNavbar } from "./nav/AppNavbar";
 export { NavbarProfiler } from "./nav/NavbarProfiler";
 export { NotificationsPopover } from "./nav/NotificationsPopover";

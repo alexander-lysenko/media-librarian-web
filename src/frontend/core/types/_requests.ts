@@ -1,7 +1,7 @@
 import type { FetchResponseEvents } from "../request/axiosFetch";
+import type { DataRow } from "./_dataTable";
 import type { LibraryElement, LibrarySchema } from "./_library";
 import type { Method } from "axios";
-import { DataRow } from "./_dataTable";
 
 type PathParams = Record<string, string | number>;
 

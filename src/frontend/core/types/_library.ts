@@ -10,4 +10,4 @@ export type LibrarySchema = {
   fields: LibraryFields;
 };
 
-export type FormDefaultValues = Record<string, string | number | boolean>;
+export type LibraryItemFormValues = Record<string, string | number | boolean>;

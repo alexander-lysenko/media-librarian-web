@@ -31,7 +31,7 @@ type LibraryInputProps = InputCustomProps & {
  *
  * WARNING: React Hook Form must control the default values of the libraryItemInputs (both initial and pre-filled)
  */
-export const BasicLibraryItemInput = forwardRef((props: LibraryInputProps, ref) => {
+export const LibraryItemInputControl = forwardRef((props: LibraryInputProps, ref) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { type, control, ...inputProps } = props;
 

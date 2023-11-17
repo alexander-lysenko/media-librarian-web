@@ -21,12 +21,12 @@ import type { TableComponents, VirtuosoHandle } from "react-virtuoso";
 
 type TableHeaderProps = Pick<DataTableVirtualizedProps, "columns" | "columnOptions" | "sort" | "setSort">;
 type SelectedItemContextValue = {
-  selectedItem: number | null;
+  selectedItemId: number | null;
   handleItemClick: (itemId: number) => (event: MouseEvent) => void;
 };
 
 const SelectedItemContext = createContext<SelectedItemContextValue>({
-  selectedItem: null,
+  selectedItemId: null,
   handleItemClick: () => () => false,
 });
 
@@ -37,7 +37,7 @@ const SelectedItemContext = createContext<SelectedItemContextValue>({
  * @see https://github.com/petyosi/react-virtuoso/issues/204
  */
 export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
-  const { componentProps, selectedItem, setSelectedItem } = props;
+  const { componentProps, selectedItemId, setSelectedItemId } = props;
   const { rows, columns, columnOptions, sort, setSort } = props;
 
   const ref = useRef<VirtuosoHandle>(null);
@@ -49,9 +49,9 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
         return true;
       }
       event.preventDefault();
-      setSelectedItem && setSelectedItem(selectedItem === itemId ? null : itemId);
+      setSelectedItemId && setSelectedItemId(selectedItemId === itemId ? null : itemId);
     },
-    [selectedItem, setSelectedItem],
+    [selectedItemId, setSelectedItemId],
   );
 
   const handleKeyDown = useCallback(
@@ -59,9 +59,9 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
       let nextIndex: number | null = null;
 
       if (event.code === "ArrowUp") {
-        nextIndex = Number(selectedItem) - 1;
+        nextIndex = Number(selectedItemId) - 1;
       } else if (event.code === "ArrowDown") {
-        nextIndex = Number(selectedItem) + 1;
+        nextIndex = Number(selectedItemId) + 1;
       }
 
       if (nextIndex !== null) {
@@ -69,13 +69,13 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
           index: nextIndex,
           behavior: "auto",
           done: () => {
-            setSelectedItem && setSelectedItem(Number(nextIndex));
+            setSelectedItemId && setSelectedItemId(Number(nextIndex));
           },
         });
         event.preventDefault();
       }
     },
-    [selectedItem, ref, setSelectedItem],
+    [selectedItemId, ref, setSelectedItemId],
   );
 
   const scroller = useCallback(
@@ -92,7 +92,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
 
   return (
     <StyledTableContainer>
-      <SelectedItemContext.Provider value={{ selectedItem: selectedItem as number | null, handleItemClick }}>
+      <SelectedItemContext.Provider value={{ selectedItemId: selectedItemId as number | null, handleItemClick }}>
         <TableVirtuoso
           ref={ref}
           scrollerRef={scroller}
@@ -131,8 +131,8 @@ const virtuosoTableComponents: TableComponents<DataRow, VirtuosoContextProps> = 
     return <TableBody ref={ref} {...context?.tableBody} children={children} />;
   }),
   TableRow: memo(({ item, context, ...props }) => {
-    const { selectedItem, handleItemClick } = useContext(SelectedItemContext);
-    const selected = selectedItem === item.id;
+    const { selectedItemId, handleItemClick } = useContext(SelectedItemContext);
+    const selected = selectedItemId === item.id;
 
     return <TableRow hover selected={selected} onClick={handleItemClick(item.id)} {...props} {...context?.tableRow} />;
   }),

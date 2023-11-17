@@ -14,6 +14,7 @@ import { PrintSwitch } from "./PrintSwitch";
 import type { LibraryElement } from "../../core/types";
 import type { SxProps, Theme } from "@mui/material";
 import type { MouseEventHandler, ReactElement } from "react";
+import { enqueueSnack } from "../../store/useSnackbarStore";
 
 /**
  * A right-side drawer displaying the entire item selected from a Library
@@ -22,9 +23,9 @@ import type { MouseEventHandler, ReactElement } from "react";
 export const LibraryDrawer = () => {
   const { t } = useTranslation();
 
-  const { open, setOpen, selectedItem } = usePreviewDrawerStore();
+  const { open, setOpen, selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
   const [item, columns] = useLibraryTableStore((state) => [
-    state.rows.find((dataRow) => dataRow.id === selectedItem),
+    state.rows.find((dataRow) => dataRow.id === selectedItemId),
     state.columns,
   ]);
 
@@ -39,14 +40,20 @@ export const LibraryDrawer = () => {
     }
 
     setOpen(false);
+    setSelectedItemId(null);
   };
 
   useEffect(() => {
-    const handleEscapeClose = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
+    const handleEscapeClose = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        setSelectedItemId(null);
+      }
+    };
     window.addEventListener("keydown", handleEscapeClose);
 
     return () => window.removeEventListener("keydown", handleEscapeClose);
-  }, [setOpen]);
+  }, [setOpen, setSelectedItemId]);
 
   return (
     <Drawer
@@ -81,8 +88,18 @@ export const LibraryDrawer = () => {
       </Box>
       <Divider sx={{ mt: "auto" }} />
       <Box component="footer" sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between", gap: 1 }}>
-        <IconButton type="button" color="info" children={<EditNoteOutlined />} />
-        <IconButton type="button" color="error" children={<DeleteOutlined />} />
+        <IconButton type="button" color="info" children={<EditNoteOutlined />} onClick={() => {}} />
+        <IconButton
+          type="button"
+          color="error"
+          children={<DeleteOutlined />}
+          onClick={() =>
+            enqueueSnack({
+              type: "warning",
+              message: "not implemented yet",
+            })
+          }
+        />
         <Box flex="1 0 auto" />
         <IconButton type="button" onClick={handleClose as unknown as MouseEventHandler}>
           <CloseOutlined color="disabled" />
@@ -105,20 +122,20 @@ const ItemCellContents = memo(({ type, value }: { type: LibraryElement; value: n
   switch (type) {
     case "line":
     case "text":
-      return value as ReactElement;
+      return (value ?? "...") as ReactElement;
     case "url":
-      return <a href={value} children={value} target="_blank" rel="noreferrer" />;
+      return value ? <a href={value} children={value} target="_blank" rel="noreferrer" /> : "...";
     case "date":
     case "datetime":
-      return <PrintDate format={type} value={value} />;
+      return value ? <PrintDate format={type} value={value} /> : "...";
     case "rating5":
     case "rating5precision":
-      return <PrintRating value={value} size={5} />;
+      return <PrintRating value={value ?? 0} size={5} />;
     case "rating10":
     case "rating10precision":
-      return <PrintRating value={value} size={10} />;
+      return <PrintRating value={value ?? 0} size={10} />;
     case "priority":
-      return <PrintPriority value={value as number} />;
+      return <PrintPriority value={(value ?? 0) as number} />;
     case "checkmark":
       return <PrintSwitch asText value={value as boolean} />;
   }

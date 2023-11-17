@@ -29,8 +29,8 @@ export type DataTableBaseProps = {
 };
 
 export type DataTableSelectedItemState = {
-  selectedItem?: number | null;
-  setSelectedItem?: (selectedItem: number | null) => void;
+  selectedItemId?: number | null;
+  setSelectedItemId?: (selectedItem: number | null) => void;
 };
 
 export type DataTableSortingState = {

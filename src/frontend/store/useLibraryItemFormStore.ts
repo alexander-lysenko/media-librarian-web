@@ -1,15 +1,11 @@
-import { shallow } from "zustand/shallow";
-import { createWithEqualityFn } from "zustand/traditional";
+import { create } from "zustand";
 
 type LibraryItemFormState = {
   open: boolean;
   setOpen: (open: boolean) => void;
 };
 
-export const useLibraryItemFormStore = createWithEqualityFn<LibraryItemFormState>(
-  (set) => ({
-    open: false,
-    setOpen: (open) => set({ open }),
-  }),
-  shallow,
-);
+export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
+  open: false,
+  setOpen: (open) => set({ open }),
+}));

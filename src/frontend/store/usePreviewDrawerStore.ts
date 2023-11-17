@@ -3,13 +3,13 @@ import { create } from "zustand";
 interface DrawerOpenState {
   open: boolean;
   setOpen: (open: boolean) => void;
-  selectedItem: number | null;
-  setSelectedItem: (selectedItem: number | null) => void;
+  selectedItemId: number | null;
+  setSelectedItemId: (selectedItem: number | null) => void;
 }
 
 export const usePreviewDrawerStore = create<DrawerOpenState>((set) => ({
   open: false,
   setOpen: (open: boolean) => set(() => ({ open })),
-  selectedItem: null,
-  setSelectedItem: (selectedItem: number | null) => set({ selectedItem, open: !!selectedItem }),
+  selectedItemId: null,
+  setSelectedItemId: (selectedItemId: number | null) => set({ selectedItemId, open: !!selectedItemId }),
 }));
