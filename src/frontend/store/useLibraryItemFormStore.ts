@@ -1,11 +1,13 @@
 import { create } from "zustand";
 
 type LibraryItemFormState = {
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  isOpen: boolean;
+  setOpen: (isOpen: boolean) => void;
+  close: () => void;
 };
 
 export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
-  open: false,
-  setOpen: (open) => set({ open }),
+  isOpen: false,
+  setOpen: (isOpen) => set({ isOpen }),
+  close: () => set({ isOpen: false }),
 }));

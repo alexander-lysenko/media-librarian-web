@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { useLanguageStore } from "../../store/useTranslationStore";
+import { useLanguageStore } from "../../store/system/useTranslationStore";
 
 import type { DateTimeInputProps } from "../../core/types";
 import type {

@@ -1,4 +1,4 @@
-import { useLibraryTableStore } from "../store/useLibraryTableStore";
+import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import movies from "./movies.json";
 
 import type { DataRow, GetLibraryItemsResponse } from "../core/types";

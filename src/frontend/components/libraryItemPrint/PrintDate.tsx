@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { memo } from "react";
 
-import { useLanguageStore } from "../../store/useTranslationStore";
+import { useLanguageStore } from "../../store/system/useTranslationStore";
 
 import type { ReactElement } from "react";
 

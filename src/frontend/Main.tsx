@@ -13,9 +13,9 @@ import { Landing } from "./pages/Landing";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
+import { useThemeStore } from "./store/system/useThemeStore";
+import { useLanguageStore, useTranslationStore } from "./store/system/useTranslationStore";
 import { useAuthCredentialsStore } from "./store/useAuthCredentialsStore";
-import { useThemeStore } from "./store/useThemeStore";
-import { useLanguageStore, useTranslationStore } from "./store/useTranslationStore";
 import { getDesignTokens } from "./theme";
 
 const debug = import.meta.env.VITE_APP_DEBUG;

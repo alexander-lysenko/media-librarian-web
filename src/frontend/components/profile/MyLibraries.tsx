@@ -25,9 +25,9 @@ import {
   useLibraryCleanupRequest,
   useLibraryDeleteRequest,
 } from "../../requests/useLibraryRequests";
-import { confirmDialog } from "../../store/useConfirmDialogStore";
+import { confirmDialog } from "../../store/app/useConfirmDialogStore";
+import { useLibraryListStore } from "../../store/library/useLibraryListStore";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
-import { useLibraryListStore } from "../../store/useLibraryListStore";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
 

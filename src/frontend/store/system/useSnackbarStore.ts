@@ -38,7 +38,3 @@ export const useSnackbarStore = create<SnackbarStore>((set, get) => ({
   clear: () => set({ snacks: [], open: false }),
 }));
 
-/**
- * A shortcut to push a snack notification from everywhere in the code
- */
-export const enqueueSnack = useSnackbarStore.getState().enqueueSnack;

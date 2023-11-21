@@ -3,8 +3,9 @@ import { Box, Container, Divider, Drawer, IconButton, List, ListItem, ListItemTe
 import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useLibraryTableStore } from "../../store/useLibraryTableStore";
-import { usePreviewDrawerStore } from "../../store/usePreviewDrawerStore";
+import { enqueueSnack } from "../../core/actions";
+import { usePreviewDrawerStore } from "../../store/app/usePreviewDrawerStore";
+import { useLibraryTableStore } from "../../store/library/useLibraryTableStore";
 import { PosterBox } from "./PosterBox";
 import { PrintDate } from "./PrintDate";
 import { PrintPriority } from "./PrintPriority";
@@ -14,7 +15,6 @@ import { PrintSwitch } from "./PrintSwitch";
 import type { LibraryElement } from "../../core/types";
 import type { SxProps, Theme } from "@mui/material";
 import type { MouseEventHandler, ReactElement } from "react";
-import { enqueueSnack } from "../../store/useSnackbarStore";
 
 /**
  * A right-side drawer displaying the entire item selected from a Library

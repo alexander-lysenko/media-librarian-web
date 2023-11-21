@@ -1,9 +1,9 @@
 import { useState } from "react";
 
+import { enqueueSnack } from "../core/actions";
 import { profileEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
 import { useProfileStore } from "../store/useProfileStore";
-import { enqueueSnack } from "../store/useSnackbarStore";
 
 import type { FetchResponseEvents } from "../core";
 import type { UseRequestReturn } from "../core/types";

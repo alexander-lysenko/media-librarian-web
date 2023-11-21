@@ -16,15 +16,15 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
+import { useThemeStore } from "../../store/system/useThemeStore";
+import { useLanguageStore, useTranslationStore } from "../../store/system/useTranslationStore";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
-import { useThemeStore } from "../../store/useThemeStore";
-import { useLanguageStore, useTranslationStore } from "../../store/useTranslationStore";
 import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 import { TextInput } from "../inputs/TextInput";
 
 import type { InputCustomProps } from "../../core/types";
-import type { Language } from "../../store/useTranslationStore";
+import type { Language } from "../../store/system/useTranslationStore";
 import type { PaletteMode } from "@mui/material";
 import type { ChangeEvent } from "react";
 import type { ChangeHandler, FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";

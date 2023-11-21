@@ -12,10 +12,10 @@ import { DataTableVirtualized } from "../components/tables/DataTableVirtualized"
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
+import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
+import { useLibraryListStore } from "../store/library/useLibraryListStore";
+import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
-import { useLibraryListStore } from "../store/useLibraryListStore";
-import { useLibraryTableStore } from "../store/useLibraryTableStore";
-import { usePreviewDrawerStore } from "../store/usePreviewDrawerStore";
 
 export const App = () => {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ export const App = () => {
   const { page, setPage, rowsPerPage, applyRowsPerPage } = useLibraryTableStore();
 
   const { selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
-  const [itemDialogOpen, setItemDialogOpen] = useLibraryItemFormStore((state) => [state.open, state.setOpen]);
+  const openItemDialog = useLibraryItemFormStore((state) => state.setOpen);
 
   const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItemId, setSelectedItemId };
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage: applyRowsPerPage };
@@ -64,7 +64,7 @@ export const App = () => {
             type="button"
             variant="contained"
             startIcon={<AddCircleOutlined />}
-            onClick={() => setItemDialogOpen(true)}
+            onClick={() => openItemDialog(true)}
             children={t("libraryItem.title.create")}
           />
         </StyledHeaderBox>
@@ -80,12 +80,7 @@ export const App = () => {
         </Paper>
       </Container>
       <LibraryDrawer />
-      <LibraryItemDialog
-        open={itemDialogOpen}
-        selectedItemId={selectedItemId}
-        handleClose={() => setItemDialogOpen(false)}
-        handleSubmitted={() => false}
-      />
+      <LibraryItemDialog selectedItemId={selectedItemId} />
     </>
   );
 };

@@ -3,13 +3,13 @@ import { initReactI18next } from "react-i18next";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import en from "../i18n/en.json";
-import ru from "../i18n/ru.json";
+import en from "../../i18n/en.json";
+import ru from "../../i18n/ru.json";
 
 import type { i18n } from "i18next";
 
 export type Language = "en" | "ru";
-export type LanguageDefinitions = { [lang in Language]: string };
+type LanguageDefinitions = { [lang in Language]: string };
 
 const languageDefinitions: LanguageDefinitions = {
   en: "English",
@@ -21,12 +21,12 @@ const resources = {
   ru: { translation: ru },
 };
 
-export interface TranslationState {
+interface TranslationState {
   i18nInstance: i18n;
   languages: LanguageDefinitions;
 }
 
-export interface LanguageState {
+interface LanguageState {
   language: Language;
   setLanguage: (language: Language) => void;
   getLanguage: () => Language;

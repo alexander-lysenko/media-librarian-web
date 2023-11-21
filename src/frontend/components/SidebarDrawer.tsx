@@ -12,7 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 
-import { usePreviewDrawerStore } from "../store/usePreviewDrawerStore";
+import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { SidebarProfiler } from "./SidebarProfiler";
 
 import type { KeyboardEvent, MouseEvent } from "react";

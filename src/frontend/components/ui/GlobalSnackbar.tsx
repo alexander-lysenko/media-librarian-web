@@ -1,6 +1,6 @@
 import { Alert, Slide, Snackbar } from "@mui/material";
 
-import { useSnackbarStore } from "../../store/useSnackbarStore";
+import { useSnackbarStore } from "../../store/system/useSnackbarStore";
 
 import type { SyntheticEvent } from "react";
 

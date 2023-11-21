@@ -1,9 +1,9 @@
 import { useState } from "react";
 
+import { enqueueSnack } from "../core/actions";
 import { libraryItemsEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
-import { useLibraryTableStore } from "../store/useLibraryTableStore";
-import { enqueueSnack } from "../store/useSnackbarStore";
+import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 
 import type { FetchResponseEvents } from "../core";
 import type { GetLibraryItemsRequest, GetLibraryItemsResponse, UseRequestReturn } from "../core/types";

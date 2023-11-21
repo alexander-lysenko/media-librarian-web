@@ -5,12 +5,12 @@ import type { PaletteMode } from "@mui/material";
 
 type ColorOptions = string;
 
-export interface ThemeState {
+type ThemeState = {
   mode: PaletteMode;
   color: ColorOptions;
   setMode: (mode: PaletteMode) => void;
   setColor: (color: ColorOptions) => void;
-}
+};
 
 export const useThemeStore = create<ThemeState>()(
   persist(

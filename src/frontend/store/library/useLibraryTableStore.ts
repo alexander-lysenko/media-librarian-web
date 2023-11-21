@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
-import { dataColumnPropsByType } from "../core";
+import { dataColumnPropsByType } from "../../core";
 
-import type { DataColumn, DataColumnPropsByType, DataRow } from "../core/types";
+import type { DataColumn, DataColumnPropsByType, DataRow } from "../../core/types";
 
 type SortDirection = "asc" | "desc";
 

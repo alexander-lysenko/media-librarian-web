@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { enqueueSnack } from "../core/actions";
 import { librariesEndpoint, libraryEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
-import { useLibraryListStore } from "../store/useLibraryListStore";
-import { useLibraryTableStore } from "../store/useLibraryTableStore";
-import { enqueueSnack } from "../store/useSnackbarStore";
+import { useLibraryListStore } from "../store/library/useLibraryListStore";
+import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 
 import type { FetchResponseEvents } from "../core";
 import type {

@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { MouseEventHandler, ReactNode } from "react";
 
-export type ConfirmDialogProps = {
+type ConfirmDialogProps = {
   message: ReactNode;
   onConfirm: MouseEventHandler | VoidFunction | undefined;
   onCancel?: MouseEventHandler | VoidFunction;

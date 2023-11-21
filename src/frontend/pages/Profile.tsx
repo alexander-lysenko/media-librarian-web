@@ -46,10 +46,10 @@ import {
 } from "../components/modals";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { stringAvatar } from "../core";
+import { enqueueSnack } from "../core/actions";
 import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
 import { useProfileStore } from "../store/useProfileStore";
-import { enqueueSnack } from "../store/useSnackbarStore";
 
 import type { ReactNode } from "react";
 

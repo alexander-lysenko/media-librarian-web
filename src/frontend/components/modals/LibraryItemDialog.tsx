@@ -17,7 +17,8 @@ import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
 import { useFormDefaultValues } from "../../hooks/useFormDefaultValues";
-import { useLibraryListStore } from "../../store/useLibraryListStore";
+import { useLibraryListStore } from "../../store/library/useLibraryListStore";
+import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
 import type { LibraryItemFormValues, LibrarySchema } from "../../core/types";
@@ -25,10 +26,8 @@ import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 type Props = {
-  open: boolean;
   selectedItemId: number | null;
-  handleSubmitted: (event: SyntheticEvent | Event) => void;
-  handleClose: (event: SyntheticEvent | Event, reason?: string) => void;
+  handleSubmitted?: (event: SyntheticEvent | Event) => void;
 };
 
 /**
@@ -36,9 +35,11 @@ type Props = {
  * TODO: WIP
  * @constructor
  */
-export const LibraryItemDialog = ({ open, selectedItemId, handleClose, handleSubmitted }: Props) => {
+export const LibraryItemDialog = ({ selectedItemId, handleSubmitted }: Props) => {
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
+
+  const [open, setOpen] = useLibraryItemFormStore((state) => [state.isOpen, state.setOpen]);
 
   const selectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary());
   const [loading, setLoading] = useState<boolean>(false);
@@ -63,7 +64,7 @@ export const LibraryItemDialog = ({ open, selectedItemId, handleClose, handleSub
 
     reset();
     setLoading(false);
-    handleClose(event, reason);
+    setOpen(false);
   };
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
@@ -74,7 +75,7 @@ export const LibraryItemDialog = ({ open, selectedItemId, handleClose, handleSub
     setTimeout(() => {
       // Submit request
       handleCloseWithReset(event as SyntheticEvent);
-      handleSubmitted(event as SyntheticEvent);
+      // handleSubmitted(event as SyntheticEvent);
     }, 2000);
   };
 

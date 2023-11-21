@@ -17,8 +17,8 @@ import { Link } from "react-router-dom";
 
 import { stringAvatar } from "../../core";
 import { AppRoutes } from "../../core/enums";
+import { useThemeStore } from "../../store/system/useThemeStore";
 import { useProfileStore } from "../../store/useProfileStore";
-import { useThemeStore } from "../../store/useThemeStore";
 
 import type { MouseEvent } from "react";
 
