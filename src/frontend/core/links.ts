@@ -8,3 +8,4 @@ export const profileEndpoint = "/api/v1/profile";
 export const librariesEndpoint = "/api/v1/libraries";
 export const libraryEndpoint = "/api/v1/libraries/{id}";
 export const libraryItemsEndpoint = "/api/v1/libraries/{id}/items";
+export const libraryItemEndpoint = "/api/v1/libraries/{id}/items";

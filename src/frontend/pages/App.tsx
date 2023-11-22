@@ -10,7 +10,7 @@ import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import { useLibraryItemsGetRequest } from "../requests/useLibraryItemRequests";
+import { useLibraryAllItemsGetRequest } from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useLibraryListStore } from "../store/library/useLibraryListStore";
@@ -32,7 +32,7 @@ export const App = () => {
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage: applyRowsPerPage };
 
   const { fetch: getLibraries, status: libraryListLoadingStatus } = useLibrariesGetRequest();
-  const { fetch: fetchItems, status: itemsLoadingStatus } = useLibraryItemsGetRequest();
+  const { fetch: fetchItems, status: itemsLoadingStatus } = useLibraryAllItemsGetRequest();
 
   const getItems = useCallback(() => {
     const selectedLibraryId = getSelectedLibrary()?.id;
