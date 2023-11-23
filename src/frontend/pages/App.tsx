@@ -80,17 +80,15 @@ export const App = () => {
       // subjectItem: item?.[columns[0].label] as string,
       onConfirm: async () => {
         deleteItemRequest.setResponseEvents({
-          onSuccess: () => {
-            enqueueSnack({
-              type: "success",
-              message: t("notifications.libraryItemDeleted", { title: "555" }),
-            });
-          },
+          onSuccess: () => getItems(),
         });
 
-        await deleteItemRequest
-          .fetch(undefined, { id: selectedLibraryId, item: selectedItemId })
-          .then(() => getItems());
+        await deleteItemRequest.fetch(undefined, { id: selectedLibraryId, item: selectedItemId }).then(() =>
+          enqueueSnack({
+            type: "success",
+            message: t("notifications.libraryItemDeleted", { title: "555" }),
+          }),
+        );
       },
     });
   };

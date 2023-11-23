@@ -45,7 +45,10 @@ export const useApiRequest = <Request, Response>(
       // eslint-disable-next-line no-console
       verbose && console.log("Failed", error);
     },
-    onComplete: () => customEvents.onComplete?.(),
+    onComplete: () => {
+      customEvents.onComplete?.();
+      verbose && console.log("Status: ", status);
+    },
   };
 
   const fetch: ApiRequestFetch<Request, Response> = async (
