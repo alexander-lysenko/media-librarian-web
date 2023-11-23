@@ -32,6 +32,7 @@
     "deleteItem": "Do you wish to delete this item?",
     "cleanupLibrary": "Do you wish to erase all items from this Library?",
     "deleteLibrary": "Do you wish to delete this Library completely, including all the items inside?",
+    "deleteLibraryItem": "Do you wish to delete this item from the Library?",
     "title": "Confirm Your Action"
   },
   "dataTable": {
@@ -97,7 +98,9 @@
     "title": {
       "create": "New Entry",
       "edit": "Update Entry"
-    }
+    },
+    "updateThisEntry": "Update this entry",
+    "deleteThisEntry": "Delete this entry"
   },
   "libraryTypes": {
     "date": "Date",
@@ -130,7 +133,10 @@
     "libraryCleaned_other": "Library \"{{title}}\" has been cleaned up. {{count}} items deleted",
     "libraryCleaned_zero": "Library \"{{title}}\" has been cleaned up. No items deleted",
     "libraryCreated": "New library created: {{title}}",
-    "libraryDeleted": "Library \"{{title}}\" has been deleted"
+    "libraryDeleted": "Library \"{{title}}\" has been deleted",
+    "libraryItemCreated": "New entry created: \"{{title}}\"",
+    "libraryItemDeleted": "Entry \"{{title}}\" has been deleted",
+    "libraryItemUpdated": "Entry \"{{title}}\" has been updated"
   },
   "passwordRecovery": {
     "emailSent": "We have sent an e-mail for you. Please check your inbox.",

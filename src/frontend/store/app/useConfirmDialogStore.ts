@@ -1,14 +1,6 @@
 import { create } from "zustand";
 
-import type { MouseEventHandler, ReactNode } from "react";
-
-type ConfirmDialogProps = {
-  message: ReactNode;
-  onConfirm: MouseEventHandler | VoidFunction | undefined;
-  onCancel?: MouseEventHandler | VoidFunction;
-  subjectItem?: string;
-  type?: "question" | "warning";
-};
+import type { ConfirmDialogProps } from "../../core/types";
 
 type DialogOpenState = {
   open: boolean;
@@ -32,5 +24,3 @@ export const useConfirmDialogStore = create<InitState & DialogOpenState & Confir
   },
   init: (state) => set({ ...state }),
 }));
-
-export const confirmDialog = (props: ConfirmDialogProps) => useConfirmDialogStore.setState({ ...props, open: true });

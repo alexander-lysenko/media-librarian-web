@@ -11,7 +11,7 @@ class LibraryItemResource extends JsonResource
      * The "data" wrapper that should be applied.
      * @var string|null
      */
-    public static $wrap = 'entry';
+    public static $wrap = 'item';
 
     /**
      * Transform the resource into an array.

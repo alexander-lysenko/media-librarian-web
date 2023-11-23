@@ -10,4 +10,8 @@ export type LibrarySchema = {
   fields: LibraryFields;
 };
 
-export type LibraryItemFormValues = Record<string, string | number | boolean>;
+export type LibraryItemFormValues = Record<keyof LibraryFields, string | number | boolean>;
+
+export type LibraryItem = {
+  id: number;
+} & LibraryItemFormValues;

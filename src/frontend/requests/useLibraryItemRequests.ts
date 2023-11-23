@@ -6,7 +6,12 @@ import { useApiRequest } from "../hooks";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 
 import type { FetchResponseEvents } from "../core";
-import type { GetLibraryItemsRequest, GetLibraryItemsResponse, UseRequestReturn } from "../core/types";
+import type {
+  GetLibraryItemsRequest,
+  GetLibraryItemsResponse,
+  LibraryItemResponse, PostLibraryItemRequest,
+  UseRequestReturn
+} from "../core/types";
 import type { AxiosResponse } from "axios";
 
 /**
@@ -77,9 +82,8 @@ export const useLibraryItemPostRequest = (): UseRequestReturn<GetLibraryItemsReq
  * [GET] /api/v1/libraries/{id}/items/{item}
  * WIP
  */
-export const useLibraryItemGetRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
+export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemResponse> => {
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
-    onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {},
     onError: (reason) => {
       enqueueSnack({
         message: `${reason.message}: ${reason.response?.data?.message}`,
@@ -88,7 +92,7 @@ export const useLibraryItemGetRequest = (): UseRequestReturn<GetLibraryItemsRequ
     },
   });
 
-  const { fetch, abort, status } = useApiRequest<GetLibraryItemsRequest, GetLibraryItemsResponse>({
+  const { fetch, abort, status } = useApiRequest<void, LibraryItemResponse>({
     method: "GET",
     endpoint: libraryItemEndpoint,
     customEvents: responseEvents,
@@ -104,9 +108,8 @@ export const useLibraryItemGetRequest = (): UseRequestReturn<GetLibraryItemsRequ
  * [PUT] /api/v1/libraries/{id}/items/{item}
  * WIP
  */
-export const useLibraryItemPutRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
+export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequest, LibraryItemResponse> => {
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
-    onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {},
     onError: (reason) => {
       enqueueSnack({
         message: `${reason.message}: ${reason.response?.data?.message}`,
@@ -115,7 +118,7 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<GetLibraryItemsRequ
     },
   });
 
-  const { fetch, abort, status } = useApiRequest<GetLibraryItemsRequest, GetLibraryItemsResponse>({
+  const { fetch, abort, status } = useApiRequest<PostLibraryItemRequest, LibraryItemResponse>({
     method: "PUT",
     endpoint: libraryItemEndpoint,
     customEvents: responseEvents,
@@ -131,9 +134,8 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<GetLibraryItemsRequ
  * [DELETE] /api/v1/libraries/{id}/items/{item}
  * WIP
  */
-export const useLibraryItemDeleteRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
+export const useLibraryItemDeleteRequest = (): UseRequestReturn<void, void> => {
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
-    onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {},
     onError: (reason) => {
       enqueueSnack({
         message: `${reason.message}: ${reason.response?.data?.message}`,
@@ -142,12 +144,12 @@ export const useLibraryItemDeleteRequest = (): UseRequestReturn<GetLibraryItemsR
     },
   });
 
-  const { fetch, abort, status } = useApiRequest<GetLibraryItemsRequest, GetLibraryItemsResponse>({
+  const { fetch, abort, status } = useApiRequest<void, void>({
     method: "DELETE",
     endpoint: libraryItemEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
+    simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };

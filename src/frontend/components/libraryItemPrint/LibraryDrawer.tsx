@@ -1,9 +1,8 @@
 import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from "@mui/icons-material";
-import { Box, Container, Divider, Drawer, IconButton, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Container, Divider, Drawer, IconButton, List, ListItem, ListItemText, Tooltip } from "@mui/material";
 import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { enqueueSnack } from "../../core/actions";
 import { usePreviewDrawerStore } from "../../store/app/usePreviewDrawerStore";
 import { useLibraryTableStore } from "../../store/library/useLibraryTableStore";
 import { PosterBox } from "./PosterBox";
@@ -16,11 +15,16 @@ import type { LibraryElement } from "../../core/types";
 import type { SxProps, Theme } from "@mui/material";
 import type { MouseEventHandler, ReactElement } from "react";
 
+type Props = {
+  handleItemEdit: MouseEventHandler;
+  handleItemDelete: MouseEventHandler;
+};
+
 /**
  * A right-side drawer displaying the entire item selected from a Library
  * @constructor
  */
-export const LibraryDrawer = () => {
+export const LibraryDrawer = ({ handleItemEdit, handleItemDelete }: Props) => {
   const { t } = useTranslation();
 
   const { open, setOpen, selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
@@ -88,22 +92,18 @@ export const LibraryDrawer = () => {
       </Box>
       <Divider sx={{ mt: "auto" }} />
       <Box component="footer" sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between", gap: 1 }}>
-        <IconButton type="button" color="info" children={<EditNoteOutlined />} onClick={() => {}} />
-        <IconButton
-          type="button"
-          color="error"
-          children={<DeleteOutlined />}
-          onClick={() =>
-            enqueueSnack({
-              type: "warning",
-              message: "not implemented yet",
-            })
-          }
-        />
+        <Tooltip arrow title={t("libraryItem.updateThisEntry")}>
+          <IconButton type="button" color="info" children={<EditNoteOutlined />} onClick={handleItemEdit} />
+        </Tooltip>
+        <Tooltip arrow title={t("libraryItem.deleteThisEntry")}>
+          <IconButton type="button" color="error" children={<DeleteOutlined />} onClick={handleItemDelete} />
+        </Tooltip>
         <Box flex="1 0 auto" />
-        <IconButton type="button" onClick={handleClose as unknown as MouseEventHandler}>
-          <CloseOutlined color="disabled" />
-        </IconButton>
+        <Tooltip arrow title={t("common.close")}>
+          <IconButton type="button" onClick={handleClose as unknown as MouseEventHandler}>
+            <CloseOutlined color="disabled" />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Drawer>
   );

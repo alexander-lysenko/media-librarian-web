@@ -234,9 +234,8 @@ class LibraryItemController extends ApiV1Controller
         $id = SqliteLibraryMeta::getLibraryTableQuery($request->id)->insertGetId($contents);
         // todo: implement file uploading
 
-        $response = array_merge(['id' => $id], $contents);
-        $resource = new JsonResource($response);
-        $resource::wrap('item');
+        $insertedItem = array_merge(['id' => $id], $contents);
+        $resource = new LibraryItemResource($insertedItem);
 
         // todo: upload poster and return its URL
         $resource->with['poster'] = null;
@@ -325,12 +324,14 @@ class LibraryItemController extends ApiV1Controller
      */
     public function update(LibraryItemUpdateRequest $request): JsonResponse
     {
-        SqliteLibraryMeta::getLibraryTableQuery($request->id)
-            ->where('id', $request->item)
-            ->update($request->validated('contents'));
+        $query = SqliteLibraryMeta::getLibraryTableQuery($request->id)
+            ->where('id', $request->item);
 
+        $updated = $query->update($request->validated('contents'));
+        // todo: handle error when item is not updated
+        $updatedItem = $query->get()->first();
 
-        $resource = new JsonResource($request->validated('contents'));
+        $resource = new LibraryItemResource($updatedItem);
         // todo: upload poster and return its URL
         PosterUploadJob::dispatch(
             userId: $request->user()->id,

@@ -20,12 +20,12 @@ import {
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
+import { confirmDialog } from "../../core/actions";
 import {
   useLibrariesGetRequest,
   useLibraryCleanupRequest,
   useLibraryDeleteRequest,
 } from "../../requests/useLibraryRequests";
-import { confirmDialog } from "../../store/app/useConfirmDialogStore";
 import { useLibraryListStore } from "../../store/library/useLibraryListStore";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";

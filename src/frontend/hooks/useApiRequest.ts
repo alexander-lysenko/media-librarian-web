@@ -53,8 +53,10 @@ export const useApiRequest = <Request, Response>(
     data: Request,
     pathParams?: Record<string, string | number>,
   ): Promise<Response | void> => {
-    const reducer = (_: unknown, [param, value]: [string, string | number]) =>
-      url.replace(`{${param}}`, value as string);
+    const reducer = (path: string, [param, value]: [string, string | number]) => {
+      return path.replace(`{${param}}`, value as string);
+    };
+
     const transformedUrl: string = !pathParams ? url : Object.entries(pathParams).reduce<string>(reducer, url);
 
     const config: FetchRequestConfig<Request> = {

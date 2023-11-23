@@ -1,6 +1,6 @@
 import type { FetchResponseEvents } from "../request/axiosFetch";
 import type { DataRow } from "./_dataTable";
-import type { LibraryElement, LibrarySchema } from "./_library";
+import type { LibraryElement, LibraryItem, LibraryItemFormValues, LibrarySchema } from "./_library";
 import type { Method } from "axios";
 
 type PathParams = Record<string, string | number>;
@@ -83,4 +83,14 @@ export type GetLibraryItemsResponse = {
     perPage: number;
     total: number;
   };
+};
+
+export type PostLibraryItemRequest = {
+  contents: LibraryItemFormValues;
+  poster: string;
+};
+
+export type LibraryItemResponse = {
+  item: LibraryItem;
+  poster: string;
 };

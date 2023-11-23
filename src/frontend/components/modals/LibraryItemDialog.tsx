@@ -25,31 +25,26 @@ import type { LibraryItemFormValues, LibrarySchema } from "../../core/types";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
-type Props = {
-  selectedItemId: number | null;
-  handleSubmitted?: (event: SyntheticEvent | Event) => void;
-};
-
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
  * TODO: WIP
  * @constructor
  */
-export const LibraryItemDialog = ({ selectedItemId, handleSubmitted }: Props) => {
+export const LibraryItemDialog = () => {
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
-  const [open, setOpen] = useLibraryItemFormStore((state) => [state.isOpen, state.setOpen]);
-
   const selectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary());
+
+  const { isOpen, isEditMode, handleClose } = useLibraryItemFormStore();
   const [loading, setLoading] = useState<boolean>(false);
 
   const formDefaultValues = useFormDefaultValues(selectedLibrary?.fields);
-  const itemValues = useSelectedItemValues(selectedLibrary, selectedItemId);
+  // const itemValues = useSelectedItemValues(selectedLibrary, libraryItem?.item?.id ?? null);
   const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
-    defaultValues: itemValues,
+    defaultValues: formDefaultValues,
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
@@ -64,7 +59,7 @@ export const LibraryItemDialog = ({ selectedItemId, handleSubmitted }: Props) =>
 
     reset();
     setLoading(false);
-    setOpen(false);
+    handleClose();
   };
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
@@ -82,7 +77,7 @@ export const LibraryItemDialog = ({ selectedItemId, handleSubmitted }: Props) =>
   useLayoutEffect(() => {}, []);
 
   return (
-    <Dialog open={open} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
+    <Dialog open={isOpen} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
       <Box
         component="form"
         noValidate
@@ -90,7 +85,7 @@ export const LibraryItemDialog = ({ selectedItemId, handleSubmitted }: Props) =>
         sx={{ display: "flex", flexDirection: "column", height: "100%" }}
       >
         <DialogTitle variant="h5">
-          {selectedItemId ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
+          {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           {Object.entries(selectedLibrary?.fields || {}).map(([label, type], index) => {
@@ -113,7 +108,7 @@ export const LibraryItemDialog = ({ selectedItemId, handleSubmitted }: Props) =>
             variant="contained"
             disabled={loading}
             endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
-            children={selectedItemId ? t("common.update") : t("common.create")}
+            children={isEditMode ? t("common.update") : t("common.create")}
           />
         </DialogActions>
       </Box>

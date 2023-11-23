@@ -10,12 +10,17 @@ import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import { useLibraryAllItemsGetRequest } from "../requests/useLibraryItemRequests";
+import {
+  useLibraryAllItemsGetRequest,
+  useLibraryItemDeleteRequest,
+  useLibraryItemGetRequest,
+} from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useLibraryListStore } from "../store/library/useLibraryListStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
+import { confirmDialog, enqueueSnack } from "../core/actions";
 
 export const App = () => {
   const { t } = useTranslation();
@@ -26,33 +31,69 @@ export const App = () => {
   const { page, setPage, rowsPerPage, applyRowsPerPage } = useLibraryTableStore();
 
   const { selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
-  const openItemDialog = useLibraryItemFormStore((state) => state.setOpen);
+  const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
 
   const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItemId, setSelectedItemId };
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage: applyRowsPerPage };
 
-  const { fetch: getLibraries, status: libraryListLoadingStatus } = useLibrariesGetRequest();
-  const { fetch: fetchItems, status: itemsLoadingStatus } = useLibraryAllItemsGetRequest();
+  const requestLibraries = useLibrariesGetRequest();
+  const requestItems = useLibraryAllItemsGetRequest();
+  const requestItem = useLibraryItemGetRequest();
+  const deleteItemRequest = useLibraryItemDeleteRequest();
 
   const getItems = useCallback(() => {
     const selectedLibraryId = getSelectedLibrary()?.id;
-    console.log(selectedLibraryId);
+
     if (selectedLibraryId) {
-      void fetchItems(undefined, { id: selectedLibraryId });
+      void requestItems.fetch(undefined, { id: selectedLibraryId });
     }
-  }, [fetchItems, getSelectedLibrary]);
+  }, [getSelectedLibrary, requestItems]);
 
   useLayoutEffect(() => {
     if (!dataFetchedRef.current) {
       dataFetchedRef.current = true;
-      getLibraries().then(getItems);
+      requestLibraries.fetch().then(getItems);
     }
 
     return useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], getItems, {
       equalityFn: shallow,
       // fireImmediately: false,
     });
-  }, [getItems, getLibraries]);
+  }, [getItems, requestLibraries]);
+
+  const handleItemEdit = () => {
+    if (!selectedItemId) {
+      return false;
+    }
+
+    openItemDialog(true);
+  };
+
+  const handleItemDelete = () => {
+    const selectedLibraryId = getSelectedLibrary()?.id;
+    if (!selectedLibraryId || !selectedItemId) {
+      return false;
+    }
+
+    confirmDialog({
+      message: t("confirm.deleteLibraryItem"),
+      // subjectItem: item?.[columns[0].label] as string,
+      onConfirm: async () => {
+        deleteItemRequest.setResponseEvents({
+          onSuccess: () => {
+            enqueueSnack({
+              type: "success",
+              message: t("notifications.libraryItemDeleted", { title: "555" }),
+            });
+          },
+        });
+
+        await deleteItemRequest
+          .fetch(undefined, { id: selectedLibraryId, item: selectedItemId })
+          .then(() => getItems());
+      },
+    });
+  };
 
   return (
     <>
@@ -64,12 +105,12 @@ export const App = () => {
             type="button"
             variant="contained"
             startIcon={<AddCircleOutlined />}
-            onClick={() => openItemDialog(true)}
+            onClick={() => openItemDialog()}
             children={t("libraryItem.title.create")}
           />
         </StyledHeaderBox>
         <Paper elevation={3} sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }}>
-          {libraryListLoadingStatus === "LOADING" || itemsLoadingStatus === "LOADING" ? (
+          {requestLibraries.status === "LOADING" || requestItems.status === "LOADING" ? (
             <LoadingOverlayInner />
           ) : (
             <StyledTableBox>
@@ -79,8 +120,8 @@ export const App = () => {
           )}
         </Paper>
       </Container>
-      <LibraryDrawer />
-      <LibraryItemDialog selectedItemId={selectedItemId} />
+      <LibraryDrawer handleItemEdit={handleItemEdit} handleItemDelete={handleItemDelete} />
+      <LibraryItemDialog />
     </>
   );
 };
