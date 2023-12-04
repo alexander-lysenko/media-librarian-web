@@ -8,20 +8,27 @@ import {
   DialogContent,
   DialogTitle,
   Grow,
+  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { defaults } from "lodash-es";
 import { useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
 import { useFormDefaultValues } from "../../hooks/useFormDefaultValues";
+import {
+  useLibraryItemGetRequest,
+  useLibraryItemPostRequest,
+  useLibraryItemPutRequest,
+} from "../../requests/useLibraryItemRequests";
 import { useLibraryListStore } from "../../store/library/useLibraryListStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
-import type { LibraryItemFormValues, LibrarySchema } from "../../core/types";
+import type { LibraryItemResponse } from "../../core/types";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
@@ -32,19 +39,24 @@ import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-
  */
 export const LibraryItemDialog = () => {
   const { t } = useTranslation();
-  const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
   const selectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary());
-
   const { isOpen, isEditMode, handleClose } = useLibraryItemFormStore();
+  const selectedItemId = useLibraryItemFormStore((state) => state.selectedItemId);
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [libraryItem, setLibraryItem] = useState<LibraryItemResponse>();
+  const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
+
+  const getLibraryItemRequest = useLibraryItemGetRequest();
+  const createLibraryItemRequest = useLibraryItemPostRequest();
+  const updateLibraryItemRequest = useLibraryItemPutRequest();
 
   const formDefaultValues = useFormDefaultValues(selectedLibrary?.fields);
-  // const itemValues = useSelectedItemValues(selectedLibrary, libraryItem?.item?.id ?? null);
   const useHookForm = useForm({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
-    defaultValues: formDefaultValues,
+    defaultValues: defaults(libraryItem?.item, formDefaultValues),
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
@@ -74,16 +86,18 @@ export const LibraryItemDialog = () => {
     }, 2000);
   };
 
-  useLayoutEffect(() => {}, []);
+  useLayoutEffect(() => {
+    if (selectedLibrary && selectedItemId) {
+      getLibraryItemRequest.fetch(undefined, { id: selectedLibrary.id, item: selectedItemId }).then((response) => {
+        setLibraryItem(response as LibraryItemResponse);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedItemId, selectedLibrary]);
 
   return (
     <Dialog open={isOpen} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
-      <Box
-        component="form"
-        noValidate
-        onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}
-        sx={{ display: "flex", flexDirection: "column", height: "100%" }}
-      >
+      <Form noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
         <DialogTitle variant="h5">
           {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
         </DialogTitle>
@@ -96,7 +110,7 @@ export const LibraryItemDialog = () => {
                 label={label}
                 control={control}
                 errorMessage={errors?.[label]?.message as string}
-                {...(index === 0 ? registerFieldDebounced(1000, label, "titleREMOVE") : registerField(label, type))}
+                {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label, type))}
               />
             );
           })}
@@ -111,20 +125,13 @@ export const LibraryItemDialog = () => {
             children={isEditMode ? t("common.update") : t("common.create")}
           />
         </DialogActions>
-      </Box>
+      </Form>
     </Dialog>
   );
 };
 
-const useSelectedItemValues = (
-  selectedLibrary: LibrarySchema | undefined,
-  itemId: number | null,
-): LibraryItemFormValues => {
-  const formDefaultValues = useFormDefaultValues(selectedLibrary?.fields);
-
-  if (!selectedLibrary || !itemId) {
-    return formDefaultValues;
-  }
-
-  return formDefaultValues;
-};
+const Form = styled("form")({
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+});

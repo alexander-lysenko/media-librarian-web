@@ -10,17 +10,13 @@ import { LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import {
-  useLibraryAllItemsGetRequest,
-  useLibraryItemDeleteRequest,
-  useLibraryItemGetRequest,
-} from "../requests/useLibraryItemRequests";
+import { confirmDialog, enqueueSnack } from "../core/actions";
+import { useLibraryAllItemsGetRequest, useLibraryItemDeleteRequest } from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useLibraryListStore } from "../store/library/useLibraryListStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
-import { confirmDialog, enqueueSnack } from "../core/actions";
 
 export const App = () => {
   const { t } = useTranslation();
@@ -38,7 +34,6 @@ export const App = () => {
 
   const requestLibraries = useLibrariesGetRequest();
   const requestItems = useLibraryAllItemsGetRequest();
-  const requestItem = useLibraryItemGetRequest();
   const deleteItemRequest = useLibraryItemDeleteRequest();
 
   const getItems = useCallback(() => {
@@ -66,7 +61,7 @@ export const App = () => {
       return false;
     }
 
-    openItemDialog(true);
+    openItemDialog(selectedItemId);
   };
 
   const handleItemDelete = () => {

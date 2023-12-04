@@ -22,30 +22,35 @@ export const useApiRequest = <Request, Response>(
 
   const events: FetchResponseEvents = {
     beforeSend: () => {
+      console.log("beforeSend");
       setStatus("LOADING");
       customEvents.beforeSend?.();
       // eslint-disable-next-line no-console
       verbose && console.log(`Requesting: ${method} ${url}`);
     },
     onSuccess: (response: Response | AxiosResponse<Response>) => {
+      console.log("onSuccess");
       setStatus("SUCCESS");
       customEvents.onSuccess?.(response as AxiosResponse<Response>);
       // eslint-disable-next-line no-console
-      verbose && console.log(response);
+      verbose && console.log("Response", response);
     },
     onReject: (reason) => {
+      console.log("onReject");
       setStatus("FAILED");
       customEvents.onReject?.(reason);
       // eslint-disable-next-line no-console
       verbose && console.log("Rejected", reason);
     },
     onError: (error) => {
+      console.log("onError");
       setStatus("FAILED");
       customEvents.onError?.(error);
       // eslint-disable-next-line no-console
       verbose && console.log("Failed", error);
     },
     onComplete: () => {
+      console.log("onComplete");
       customEvents.onComplete?.();
       verbose && console.log("Status: ", status);
     },
