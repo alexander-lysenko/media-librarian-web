@@ -1,6 +1,5 @@
 import { SaveAsOutlined } from "@mui/icons-material";
 import {
-  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -13,22 +12,19 @@ import {
   useTheme,
 } from "@mui/material";
 import { defaults } from "lodash-es";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { enqueueSnack } from "../../core/actions";
 import { useFormValidation } from "../../hooks";
 import { useFormDefaultValues } from "../../hooks/useFormDefaultValues";
-import {
-  useLibraryItemGetRequest,
-  useLibraryItemPostRequest,
-  useLibraryItemPutRequest,
-} from "../../requests/useLibraryItemRequests";
+import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/useLibraryItemRequests";
 import { useLibraryListStore } from "../../store/library/useLibraryListStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
-import type { LibraryItemResponse } from "../../core/types";
+import type { LibraryElement, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
@@ -41,22 +37,21 @@ export const LibraryItemDialog = () => {
   const { t } = useTranslation();
 
   const selectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary());
-  const { isOpen, isEditMode, handleClose } = useLibraryItemFormStore();
-  const selectedItemId = useLibraryItemFormStore((state) => state.selectedItemId);
+  const { isOpen, isEditMode, handleClose, selectedLibraryId, selectedItem } = useLibraryItemFormStore();
+  const { poster, setPoster } = useLibraryItemFormStore();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [libraryItem, setLibraryItem] = useState<LibraryItemResponse>();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
-  const getLibraryItemRequest = useLibraryItemGetRequest();
   const createLibraryItemRequest = useLibraryItemPostRequest();
   const updateLibraryItemRequest = useLibraryItemPutRequest();
 
   const formDefaultValues = useFormDefaultValues(selectedLibrary?.fields);
-  const useHookForm = useForm({
+  const formValues: LibraryItemFormValues = defaults(formDefaultValues, selectedItem);
+  const useHookForm = useForm<LibraryItemFormValues>({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
-    defaultValues: defaults(libraryItem?.item, formDefaultValues),
+    defaultValues: formValues,
   });
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
@@ -76,24 +71,27 @@ export const LibraryItemDialog = () => {
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
-    console.log("Form is valid", data);
     setLoading(true);
+    console.log("Form is valid", data);
+    const request: PostLibraryItemRequest = {
+      contents: data,
+      poster: poster ?? "",
+    };
 
-    setTimeout(() => {
-      // Submit request
-      handleCloseWithReset(event as SyntheticEvent);
-      // handleSubmitted(event as SyntheticEvent);
-    }, 2000);
+    if (isEditMode) {
+      updateLibraryItemRequest
+        .fetch(request, { id: selectedLibraryId as number, itemId: selectedItem?.id as number })
+        .then(() => handleCloseWithReset(event as SyntheticEvent));
+    } else {
+      createLibraryItemRequest
+        .fetch(request, { id: selectedLibraryId as number })
+        .then(() => handleCloseWithReset(event as SyntheticEvent));
+    }
   };
 
-  useLayoutEffect(() => {
-    if (selectedLibrary && selectedItemId) {
-      getLibraryItemRequest.fetch(undefined, { id: selectedLibrary.id, item: selectedItemId }).then((response) => {
-        setLibraryItem(response as LibraryItemResponse);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedItemId, selectedLibrary]);
+  // useEffect(() => {
+  //   reset(formValues);
+  // }, [formValues, reset]);
 
   return (
     <Dialog open={isOpen} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
@@ -102,8 +100,8 @@ export const LibraryItemDialog = () => {
           {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
         </DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
-          {Object.entries(selectedLibrary?.fields || {}).map(([label, type], index) => {
-            return (
+          {Object.entries(selectedLibrary?.fields || {}).map(
+            ([label, type]: [string, LibraryElement], index: number) => (
               <LibraryItemInputControl
                 key={label}
                 type={type}
@@ -112,8 +110,8 @@ export const LibraryItemDialog = () => {
                 errorMessage={errors?.[label]?.message as string}
                 {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label, type))}
               />
-            );
-          })}
+            ),
+          )}
         </DialogContent>
         <DialogActions>
           <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />

@@ -15,7 +15,7 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
   const [stateValue, setStateValue] = useState<string>(props.value as string);
 
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
-
+  const isValid = !!stateValue && !errorMessage;
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setStateValue(event.currentTarget.value);
     onChange && onChange(event);
@@ -25,10 +25,12 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
     <InputAdornment
       position="end"
       sx={{ cursor: "pointer" }}
-      disablePointerEvents={!!errorMessage}
-      onClick={() => !!stateValue && !errorMessage && window.open(stateValue, "_blank")}
+      disablePointerEvents={!isValid}
+      onClick={() => isValid && window.open(stateValue, "_blank")}
     >
-      <Tooltip title={t("common.openInNewTab")} placement="left" arrow children={<PublicOutlined />} />
+      <Tooltip title={t("common.openInNewTab")} placement="left" arrow>
+        <PublicOutlined color={isValid ? "inherit" : "disabled"} />
+      </Tooltip>
     </InputAdornment>
   );
 

@@ -11,7 +11,11 @@ import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { confirmDialog, enqueueSnack } from "../core/actions";
-import { useLibraryAllItemsGetRequest, useLibraryItemDeleteRequest } from "../requests/useLibraryItemRequests";
+import {
+  useLibraryAllItemsGetRequest,
+  useLibraryItemDeleteRequest,
+  useLibraryItemGetRequest,
+} from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useLibraryListStore } from "../store/library/useLibraryListStore";
@@ -28,12 +32,14 @@ export const App = () => {
 
   const { selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
   const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
+  const setPoster = useLibraryItemFormStore((state) => state.setPoster);
 
   const dataTableProps = { rows, columns, columnOptions, sort, setSort, selectedItemId, setSelectedItemId };
   const paginationProps = { total, page, rowsPerPage, setPage, setRowsPerPage: applyRowsPerPage };
 
   const requestLibraries = useLibrariesGetRequest();
   const requestItems = useLibraryAllItemsGetRequest();
+  const requestItem = useLibraryItemGetRequest();
   const deleteItemRequest = useLibraryItemDeleteRequest();
 
   const getItems = useCallback(() => {
@@ -56,12 +62,30 @@ export const App = () => {
     });
   }, [getItems, requestLibraries]);
 
-  const handleItemEdit = () => {
-    if (!selectedItemId) {
+  const handleItemCreate = () => {
+    const selectedLibraryId = getSelectedLibrary()?.id;
+    if (!selectedLibraryId) {
       return false;
     }
 
-    openItemDialog(selectedItemId);
+    openItemDialog(selectedLibraryId);
+  };
+
+  const handleItemEdit = () => {
+    const selectedLibraryId = getSelectedLibrary()?.id;
+    if (!selectedLibraryId || !selectedItemId) {
+      return false;
+    }
+
+    requestItem.setResponseEvents({
+      onSuccess: (libraryItem) => {
+        console.log("libraryItem", libraryItem.data.item);
+        setPoster(libraryItem.data.poster);
+        openItemDialog(selectedLibraryId, libraryItem.data.item);
+      },
+    });
+
+    void requestItem.fetch(undefined, { id: selectedLibraryId, item: selectedItemId });
   };
 
   const handleItemDelete = () => {
@@ -98,7 +122,7 @@ export const App = () => {
             type="button"
             variant="contained"
             startIcon={<AddCircleOutlined />}
-            onClick={() => openItemDialog()}
+            onClick={handleItemCreate}
             children={t("libraryItem.title.create")}
           />
         </StyledHeaderBox>
