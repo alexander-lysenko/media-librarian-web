@@ -6,7 +6,7 @@ import { shallow } from "zustand/shallow";
 
 import { AppNavbar } from "../components";
 import { LibraryDrawer } from "../components/libraryItemPrint";
-import { LibraryItemDialog } from "../components/modals";
+import { LibraryCreateDialog, LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
@@ -21,16 +21,18 @@ import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useLibraryListStore } from "../store/library/useLibraryListStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
+import { LibrariesEmptyState } from "../components/ui/LibrariesEmptyState";
 
 export const App = () => {
   const { t } = useTranslation();
   const dataFetchedRef = useRef(false);
 
-  const getSelectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary);
+  const { libraries, getSelectedLibrary } = useLibraryListStore((state) => state);
+  const { selectedItemId, setSelectedItemId } = usePreviewDrawerStore((state) => state);
+
   const { columns, rows, total, sort, setSort, columnOptions } = useLibraryTableStore();
   const { page, setPage, rowsPerPage, applyRowsPerPage } = useLibraryTableStore();
 
-  const { selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
   const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
   const setPoster = useLibraryItemFormStore((state) => state.setPoster);
 
@@ -123,12 +125,15 @@ export const App = () => {
             variant="contained"
             startIcon={<AddCircleOutlined />}
             onClick={handleItemCreate}
+            disabled={!getSelectedLibrary()?.id}
             children={t("libraryItem.title.create")}
           />
         </StyledHeaderBox>
         <Paper elevation={3} sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }}>
           {requestLibraries.status === "LOADING" || requestItems.status === "LOADING" ? (
             <LoadingOverlayInner />
+          ) : requestLibraries.status === "FAILED" || (requestLibraries.status === "SUCCESS" && !libraries.length) ? (
+            <LibrariesEmptyState />
           ) : (
             <StyledTableBox>
               <DataTableVirtualized {...dataTableProps} />
@@ -138,6 +143,7 @@ export const App = () => {
         </Paper>
       </Container>
       <LibraryDrawer handleItemEdit={handleItemEdit} handleItemDelete={handleItemDelete} />
+      <LibraryCreateDialog />
       <LibraryItemDialog />
     </>
   );

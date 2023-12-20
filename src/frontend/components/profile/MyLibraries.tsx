@@ -32,6 +32,7 @@ import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
 
 import type { MouseEventHandler } from "react";
+import { LibrariesEmptyState } from "../ui/LibrariesEmptyState";
 
 export const MyLibraries = () => {
   const { t } = useTranslation();
@@ -81,7 +82,7 @@ export const MyLibraries = () => {
     return <LoadingOverlayInner sx={{ height: 180 }} />;
   }
   if (libraries.length === 0) {
-    return <EmptyState />;
+    return <LibrariesEmptyState />;
   }
   return (
     <List dense disablePadding component="div">
@@ -122,21 +123,5 @@ export const MyLibraries = () => {
         );
       })}
     </List>
-  );
-};
-
-const EmptyState = () => {
-  const { t } = useTranslation();
-  const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
-  const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
-
-  return (
-    <Box p={2} height={240} display="flex" alignItems="center" justifyContent="center" flexDirection="column">
-      <InboxOutlined sx={{ fontSize: 96 }} />
-      <Typography paragraph variant="body2" textAlign="center">
-        {t("myLibraries.noLibraries")}
-      </Typography>
-      <Button variant="outlined" children={t("myLibraries.createLibrary")} onClick={handleOpenLibraryDialog} />
-    </Box>
   );
 };

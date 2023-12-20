@@ -50,7 +50,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
     method: "GET",
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
-    verbose: true,
+    // verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
@@ -77,7 +77,7 @@ export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryRespons
     method: "GET",
     endpoint: libraryEndpoint,
     customEvents: responseEvents,
-    verbose: true,
+    // verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
@@ -125,7 +125,7 @@ export const useLibraryCreateRequest = ({
     method: "POST",
     endpoint: librariesEndpoint,
     customEvents: responseEvents,
-    verbose: true,
+    // verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
@@ -151,7 +151,7 @@ export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
     method: "DELETE",
     endpoint: libraryEndpoint,
     customEvents: responseEvents,
-    verbose: true,
+    // verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
@@ -186,7 +186,7 @@ export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryR
     method: "PATCH",
     endpoint: libraryEndpoint,
     customEvents: responseEvents,
-    verbose: true,
+    // verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 

@@ -6,7 +6,7 @@ services:
         build: ./docker/local
         env_file: ./src/.env
         ports:
-            - "192.168.240.9:80:80"
+            - "${APP_IP_ADDR:?}:80:80"
         volumes:
             - ./src:/app
             - ./logs:/logs
@@ -24,7 +24,7 @@ services:
         container_name: media_librarian_db
         image: postgres:14-alpine
         ports:
-            - "192.168.240.9:5432:5432"
+            - "${APP_IP_ADDR:?}:5432:5432"
         volumes:
             - ./pgsql_data:/var/lib/postgresql/data
         environment:

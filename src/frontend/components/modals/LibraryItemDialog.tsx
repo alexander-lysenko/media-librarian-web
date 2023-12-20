@@ -12,7 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { defaults } from "lodash-es";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -33,7 +33,7 @@ import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-
  * TODO: WIP
  * @constructor
  */
-export const LibraryItemDialog = () => {
+export const LibraryItemDialog = memo(() => {
   const { t } = useTranslation();
 
   const selectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary());
@@ -53,7 +53,7 @@ export const LibraryItemDialog = () => {
     reValidateMode: "onChange",
     defaultValues: formValues,
   });
-
+  window.form = useHookForm;
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
   const { formState, reset, handleSubmit, control } = useHookForm;
   const { errors } = formState;
@@ -126,7 +126,7 @@ export const LibraryItemDialog = () => {
       </Form>
     </Dialog>
   );
-};
+});
 
 const Form = styled("form")({
   display: "flex",

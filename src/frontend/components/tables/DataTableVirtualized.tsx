@@ -1,4 +1,5 @@
 import {
+  Box,
   styled,
   Table,
   TableBody,
@@ -7,7 +8,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography,
+  Typography
 } from "@mui/material";
 import { createContext, forwardRef, memo, useCallback, useContext, useRef } from "react";
 import { TableVirtuoso } from "react-virtuoso";

@@ -17,7 +17,9 @@ export const useApiRequest = <Request, Response>(
 ): ApiRequestHookReturn<Request, Response> => {
   const { endpoint: url, method, customEvents, verbose = false, simulate = false } = config;
 
-  const [status, setStatus] = useState<RequestStatus>("IDLE");
+  let status: RequestStatus = "IDLE";
+  const setStatus = (s: RequestStatus) => (status = s);
+
   const [abortController] = useState<AbortController>(new AbortController());
 
   const events: FetchResponseEvents = {
