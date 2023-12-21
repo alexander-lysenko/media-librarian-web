@@ -11,20 +11,19 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import dayjs from "dayjs";
 import { defaults } from "lodash-es";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { enqueueSnack } from "../../core/actions";
 import { useFormValidation } from "../../hooks";
-import { useFormDefaultValues } from "../../hooks/useFormDefaultValues";
 import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/useLibraryItemRequests";
 import { useLibraryListStore } from "../../store/library/useLibraryListStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
-import type { LibraryElement, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
+import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
@@ -33,27 +32,33 @@ import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-
  * TODO: WIP
  * @constructor
  */
-export const LibraryItemDialog = memo(() => {
+export const LibraryItemDialog = () => {
   const { t } = useTranslation();
+  const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
   const selectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary());
   const { isOpen, isEditMode, handleClose, selectedLibraryId, selectedItem } = useLibraryItemFormStore();
   const { poster, setPoster } = useLibraryItemFormStore();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
+
+  const formValues = useMemo<LibraryItemFormValues>(() => {
+    const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
+
+    return defaults(formDefaultValues, selectedItem);
+  }, [selectedItem, selectedLibrary]);
 
   const createLibraryItemRequest = useLibraryItemPostRequest();
   const updateLibraryItemRequest = useLibraryItemPutRequest();
 
-  const formDefaultValues = useFormDefaultValues(selectedLibrary?.fields);
-  const formValues: LibraryItemFormValues = defaults(formDefaultValues, selectedItem);
   const useHookForm = useForm<LibraryItemFormValues>({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
     defaultValues: formValues,
   });
-  window.form = useHookForm;
+
+  console.log(formValues);
+
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
   const { formState, reset, handleSubmit, control } = useHookForm;
   const { errors } = formState;
@@ -89,9 +94,9 @@ export const LibraryItemDialog = memo(() => {
     }
   };
 
-  // useEffect(() => {
-  //   reset(formValues);
-  // }, [formValues, reset]);
+  useEffect(() => {
+    reset(formValues);
+  }, [formValues, reset]);
 
   return (
     <Dialog open={isOpen} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
@@ -126,10 +131,34 @@ export const LibraryItemDialog = memo(() => {
       </Form>
     </Dialog>
   );
-});
+};
 
 const Form = styled("form")({
   display: "flex",
   flexDirection: "column",
   height: "100%",
 });
+
+const initFormDefaultValues = (fields?: LibraryFields) => {
+  const defaultValues: Record<LibraryElement, () => string | number | boolean> = {
+    line: () => "",
+    text: () => "",
+    date: () => dayjs().format("YYYY-MM-DD"),
+    datetime: () => dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    url: () => "",
+    checkmark: () => false,
+    rating5: () => 0,
+    rating5precision: () => 0,
+    rating10: () => 0,
+    rating10precision: () => 0,
+    priority: () => 0,
+  };
+
+  const reducer = (acc: LibraryItemFormValues, [column, type]: [string, LibraryElement]) => {
+    acc[column] = defaultValues[type]();
+
+    return acc;
+  };
+
+  return Object.entries(fields || {}).reduce(reducer, {});
+};
