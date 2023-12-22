@@ -81,7 +81,7 @@ abstract class ApiV1Controller extends BaseController
     #[OA\Parameter(
         parameter: 'libraryId',
         name: 'id',
-        description: 'The ID of an existing Library',
+        description: 'ID of an existing Library',
         in: 'path',
         required: true,
         schema: new OA\Schema(type: 'integer', example: 1),
@@ -91,7 +91,7 @@ abstract class ApiV1Controller extends BaseController
     #[OA\Parameter(
         parameter: 'itemId',
         name: 'item',
-        description: 'The ID of an existing Item in the Library',
+        description: 'ID of an existing Item in the Library',
         in: 'path',
         required: true,
         schema: new OA\Schema(type: 'integer', example: 1),

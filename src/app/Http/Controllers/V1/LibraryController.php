@@ -57,8 +57,7 @@ class LibraryController extends ApiV1Controller
     #[OA\Get(
         path: '/api/v1/libraries',
         operationId: 'libraries-index',
-        description: 'The response contains the list of ID and name of all Libraries already created ' .
-        'and the columns that included in each Library.',
+        description: 'The response contains a list of IDs and schemas of all Libraries already created.',
         summary: 'Get All Libraries',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['libraries'],
@@ -107,7 +106,8 @@ class LibraryController extends ApiV1Controller
     #[OA\Post(
         path: '/api/v1/libraries',
         operationId: 'libraries-create',
-        description: 'The structure of the new Library is created from the parameters passed in request body.',
+        description: "A new Library is created from the parameters passed into the request body.\n\n" .
+        '*Important:* Fields order matters! Actions with items from the Library may require strict order of fields.',
         summary: 'Create a New Library',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
@@ -210,7 +210,7 @@ class LibraryController extends ApiV1Controller
     #[OA\Get(
         path: '/api/v1/libraries/{id}',
         operationId: 'libraries-view',
-        description: 'View the structure of the already existing Library.',
+        description: 'The response contains structure (schema) of the specified Library.',
         summary: 'Get the Metadata of a Library',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['libraries'],

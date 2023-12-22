@@ -60,6 +60,13 @@ export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
         },
       },
     },
+    // MuiDialog: {
+    //   styleOverrides: {
+    //     container: {
+    //       minWidth: 360,
+    //     },
+    //   },
+    // },
     MuiDialogActions: {
       styleOverrides: {
         spacing: {

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { defaults } from "lodash-es";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -42,22 +42,13 @@ export const LibraryItemDialog = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const formValues = useMemo<LibraryItemFormValues>(() => {
-    const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
-
-    return defaults(formDefaultValues, selectedItem);
-  }, [selectedItem, selectedLibrary]);
-
   const createLibraryItemRequest = useLibraryItemPostRequest();
   const updateLibraryItemRequest = useLibraryItemPutRequest();
 
   const useHookForm = useForm<LibraryItemFormValues>({
     mode: "onBlur" || "onTouched",
     reValidateMode: "onChange",
-    defaultValues: formValues,
   });
-
-  console.log(formValues);
 
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
   const { formState, reset, handleSubmit, control } = useHookForm;
@@ -95,8 +86,12 @@ export const LibraryItemDialog = () => {
   };
 
   useEffect(() => {
-    reset(formValues);
-  }, [formValues, reset]);
+    if (isOpen) {
+      const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
+      const values = defaults(formDefaultValues, selectedItem);
+      reset(values);
+    }
+  }, [isOpen, reset, selectedItem, selectedLibrary]);
 
   return (
     <Dialog open={isOpen} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>

@@ -25,7 +25,7 @@ class UserController extends ApiV1Controller
         path: '/api/v1/user/signup',
         operationId: 'user-signup',
         description: 'Sign up a new User',
-        summary: 'Register a new User',
+        summary: 'Register a new User [WIP]',
         // requestBody: new OA\RequestBody(
         //     required: true,
         //     content: new OA\JsonContent(

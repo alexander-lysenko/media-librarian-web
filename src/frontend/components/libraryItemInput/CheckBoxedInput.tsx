@@ -14,6 +14,9 @@ export const CheckBoxedInput = (props: CheckBoxedInputProps) => {
     <FormControl fullWidth margin="dense" error={!!errorMessage}>
       <FormControlLabel
         label={label}
+        slotProps={{
+          typography: { noWrap: true },
+        }}
         control={
           <Controller
             name={name}

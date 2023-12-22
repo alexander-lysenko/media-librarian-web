@@ -44,6 +44,9 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
         label={label}
         labelPlacement="start"
         sx={{ justifyContent: "space-between", ml: 0 }}
+        slotProps={{
+          typography: { noWrap: true },
+        }}
         control={
           <Controller
             name={name}
