@@ -1,4 +1,3 @@
-import { MenuOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Box,
@@ -21,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { AppRoutes } from "../../core/enums";
+import { MenuOutlined } from "../icons";
 import { NavbarProfiler } from "./NavbarProfiler";
 import { NotificationsPopover } from "./NotificationsPopover";
 

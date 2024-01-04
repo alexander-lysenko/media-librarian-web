@@ -1,4 +1,3 @@
-import { PersonAddAltRounded } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
@@ -6,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import { BackgroundContainer, StickyFooter } from "../components";
 import { Copyright } from "../components";
 import { SignupForm } from "../components/forms/SignupForm";
+import { PersonAddAltRounded } from "../components/icons";
 
 import type { ReactNode } from "react";
 

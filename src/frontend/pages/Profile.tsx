@@ -1,4 +1,23 @@
 import {
+  Avatar,
+  Box,
+  Container,
+  Divider,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  Paper,
+  Typography,
+} from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+import { AppNavbar, MyLibraries, PaperCardHeader } from "../components";
+import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
   BadgeOutlined,
@@ -18,26 +37,7 @@ import {
   PowerSettingsNewOutlined,
   RemoveCircleOutlined,
   TranslateOutlined,
-} from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  Container,
-  Divider,
-  Grid,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-  Paper,
-  Typography,
-} from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-
-import { AppNavbar, MyLibraries, PaperCardHeader } from "../components";
+} from "../components/icons";
 import {
   ChangeEmailDialog,
   ChangePasswordDialog,

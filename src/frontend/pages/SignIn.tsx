@@ -1,4 +1,3 @@
-import { LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,6 +5,7 @@ import { NavLink } from "react-router-dom";
 
 import { BackgroundContainer, Copyright, StickyFooter } from "../components";
 import { LoginForm } from "../components/forms/LoginForm";
+import { LockOutlined } from "../components/icons";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
 

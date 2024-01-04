@@ -1,13 +1,4 @@
 import {
-  CleaningServicesOutlined,
-  CollectionsOutlined,
-  CreateNewFolderOutlined,
-  DeleteForeverOutlined,
-  InboxOutlined,
-} from "@mui/icons-material";
-import {
-  Box,
-  Button,
   IconButton,
   List,
   ListItem,
@@ -15,7 +6,6 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  Typography,
 } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,11 +18,17 @@ import {
 } from "../../requests/useLibraryRequests";
 import { useLibraryListStore } from "../../store/library/useLibraryListStore";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
+import {
+  CleaningServicesOutlined,
+  CollectionsOutlined,
+  CreateNewFolderOutlined,
+  DeleteForeverOutlined,
+} from "../icons";
+import { LibrariesEmptyState } from "../ui/LibrariesEmptyState";
 import { LoadingOverlayInner } from "../ui/LoadingOverlayInner";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
 
 import type { MouseEventHandler } from "react";
-import { LibrariesEmptyState } from "../ui/LibrariesEmptyState";
 
 export const MyLibraries = () => {
   const { t } = useTranslation();

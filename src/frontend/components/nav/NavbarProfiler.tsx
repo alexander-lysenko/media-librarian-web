@@ -1,4 +1,3 @@
-import { BadgeOutlined, LightModeOutlined, LogoutOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Divider,
@@ -19,6 +18,7 @@ import { stringAvatar } from "../../core";
 import { AppRoutes } from "../../core/enums";
 import { useThemeStore } from "../../store/system/useThemeStore";
 import { useProfileStore } from "../../store/useProfileStore";
+import { BadgeOutlined, LightModeOutlined, LogoutOutlined } from "../icons";
 
 import type { MouseEvent } from "react";
 

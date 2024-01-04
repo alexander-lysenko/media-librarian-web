@@ -1,6 +1,5 @@
 import "dayjs/locale/en";
 import "dayjs/locale/ru";
-import { CalendarMonthOutlined } from "@mui/icons-material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -8,6 +7,7 @@ import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useLanguageStore } from "../../store/system/useTranslationStore";
+import { CalendarMonthOutlined } from "../icons";
 
 import type { DateTimeInputProps } from "../../core/types";
 import type {

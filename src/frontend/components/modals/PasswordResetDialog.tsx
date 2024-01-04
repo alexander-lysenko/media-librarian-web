@@ -1,4 +1,3 @@
-import { AlternateEmailOutlined, LockOutlined, LockReset } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -20,6 +19,7 @@ import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../core/actions";
 import { useFormValidation } from "../../hooks";
+import { AlternateEmailOutlined, LockOutlined, LockReset } from "../icons";
 
 import type { InputCustomProps } from "../../core/types";
 import type { SyntheticEvent } from "react";

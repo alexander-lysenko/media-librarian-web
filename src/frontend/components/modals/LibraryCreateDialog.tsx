@@ -1,11 +1,4 @@
 import {
-  AddCircleOutlined,
-  DriveFileRenameOutlineOutlined,
-  HourglassBottomOutlined,
-  RemoveCircleOutlineOutlined,
-  SaveAsOutlined,
-} from "@mui/icons-material";
-import {
   Box,
   Button,
   CircularProgress,
@@ -33,6 +26,13 @@ import { LibraryElementEnum } from "../../core/enums";
 import { useFormValidation } from "../../hooks";
 import { useLibrariesGetRequest, useLibraryCreateRequest } from "../../requests/useLibraryRequests";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
+import {
+  AddCircleOutlined,
+  DriveFileRenameOutlineOutlined,
+  HourglassBottomOutlined,
+  RemoveCircleOutlineOutlined,
+  SaveAsOutlined,
+} from "../icons";
 import { TextInput } from "../inputs/TextInput";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
 

@@ -37,4 +37,3 @@ export const useSnackbarStore = create<SnackbarStore>((set, get) => ({
   },
   clear: () => set({ snacks: [], open: false }),
 }));
-

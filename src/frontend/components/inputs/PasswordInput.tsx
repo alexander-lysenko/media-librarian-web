@@ -1,7 +1,8 @@
-import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+import { VisibilityOffOutlined, VisibilityOutlined } from "../icons";
 
 import type { InputCustomProps } from "../../core/types";
 

@@ -1,7 +1,8 @@
-import { PublicOutlined } from "@mui/icons-material";
 import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import { forwardRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+import { PublicOutlined } from "../icons";
 
 import type { UrlInputProps } from "../../core/types";
 import type { ChangeEvent } from "react";

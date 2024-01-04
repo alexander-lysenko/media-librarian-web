@@ -1,4 +1,3 @@
-import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Collapse,
@@ -14,6 +13,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
+import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from "../components/icons";
 import { stringAvatar } from "../core";
 
 import type { SxProps } from "@mui/system";

@@ -1,4 +1,3 @@
-import { DoneOutlined } from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -12,6 +11,7 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { DoneOutlined } from "../../icons";
 import { EmailInput } from "../../inputs/EmailInput";
 
 import type { SimpleDialogProps } from "../../../core/types";

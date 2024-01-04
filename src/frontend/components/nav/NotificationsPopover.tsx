@@ -1,7 +1,8 @@
-import { NotificationImportantOutlined, NotificationsOutlined } from "@mui/icons-material";
 import { Badge, Box, IconButton, Popover, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+
+import { NotificationImportantOutlined, NotificationsOutlined } from "../icons";
 
 import type { MouseEvent } from "react";
 

@@ -1,14 +1,15 @@
-import { AddCircleOutlined } from "@mui/icons-material";
 import { Box, Button, Container, Paper, styled, Typography } from "@mui/material";
 import { useCallback, useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
 import { AppNavbar } from "../components";
+import { AddCircleOutlined } from "../components/icons";
 import { LibraryDrawer } from "../components/libraryItemPrint";
 import { LibraryCreateDialog, LibraryItemDialog } from "../components/modals";
 import { DataTablePagination } from "../components/tables/DataTablePagination";
 import { DataTableVirtualized } from "../components/tables/DataTableVirtualized";
+import { LibrariesEmptyState } from "../components/ui/LibrariesEmptyState";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { confirmDialog, enqueueSnack } from "../core/actions";
 import {
@@ -21,7 +22,6 @@ import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useLibraryListStore } from "../store/library/useLibraryListStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
-import { LibrariesEmptyState } from "../components/ui/LibrariesEmptyState";
 
 export const App = () => {
   const { t } = useTranslation();

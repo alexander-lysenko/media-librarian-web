@@ -1,4 +1,3 @@
-import { AddCircleOutlined } from "@mui/icons-material";
 import {
   Box,
   Drawer,
@@ -12,6 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 
+import { AddCircleOutlined } from "../components/icons";
 import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { SidebarProfiler } from "./SidebarProfiler";
 

@@ -1,4 +1,3 @@
-import { BadgeOutlined, PersonAddAltOutlined } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -19,6 +18,7 @@ import { useFormValidation } from "../../hooks";
 import { useThemeStore } from "../../store/system/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "../../store/system/useTranslationStore";
 import { useSignupFormStore } from "../../store/useSignupFormStore";
+import { BadgeOutlined, PersonAddAltOutlined } from "../icons";
 import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 import { TextInput } from "../inputs/TextInput";

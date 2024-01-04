@@ -1,10 +1,10 @@
-import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from "@mui/icons-material";
 import { Box, Container, Divider, Drawer, IconButton, List, ListItem, ListItemText, Tooltip } from "@mui/material";
 import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { usePreviewDrawerStore } from "../../store/app/usePreviewDrawerStore";
 import { useLibraryTableStore } from "../../store/library/useLibraryTableStore";
+import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from "../icons";
 import { PosterBox } from "./PosterBox";
 import { PrintDate } from "./PrintDate";
 import { PrintPriority } from "./PrintPriority";

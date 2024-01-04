@@ -1,4 +1,3 @@
-import { DoneOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -13,6 +12,7 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { DoneOutlined } from "../../icons";
 import { PasswordInput } from "../../inputs/PasswordInput";
 
 import type { SimpleDialogProps } from "../../../core/types";

@@ -1,4 +1,3 @@
-import { BadgeOutlined, DoneOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -16,6 +15,7 @@ import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
+import { BadgeOutlined, DoneOutlined } from "../../icons";
 import { TextInput } from "../../inputs/TextInput";
 
 import type { SimpleDialogProps } from "../../../core/types";

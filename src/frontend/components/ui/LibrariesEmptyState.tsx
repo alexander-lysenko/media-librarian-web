@@ -1,8 +1,8 @@
-import { InboxOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
+import { InboxOutlined } from "../icons";
 
 export const LibrariesEmptyState = () => {
   const { t } = useTranslation();

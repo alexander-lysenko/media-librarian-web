@@ -1,6 +1,7 @@
-import { DriveFileRenameOutlineOutlined, HourglassBottomOutlined } from "@mui/icons-material";
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
+
+import { DriveFileRenameOutlineOutlined, HourglassBottomOutlined } from "../icons";
 
 import type { TextInputSingleLineProps } from "../../core/types";
 

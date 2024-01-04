@@ -1,10 +1,10 @@
-import { LoginOutlined } from "@mui/icons-material";
 import { Alert, Box, Button, Checkbox, CircularProgress, Collapse, FormControlLabel } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
 import { useUserLoginRequest } from "../../requests/useAuthRequests";
+import { LoginOutlined } from "../icons";
 import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 

@@ -1,6 +1,7 @@
-import { AlternateEmailOutlined, HourglassBottomOutlined } from "@mui/icons-material";
 import { InputAdornment, TextField } from "@mui/material";
 import { forwardRef } from "react";
+
+import { AlternateEmailOutlined, HourglassBottomOutlined } from "../icons";
 
 import type { InputCustomProps } from "../../core/types";
 

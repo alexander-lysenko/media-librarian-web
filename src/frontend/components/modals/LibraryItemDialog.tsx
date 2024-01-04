@@ -1,4 +1,3 @@
-import { SaveAsOutlined } from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -21,8 +20,10 @@ import { useFormValidation } from "../../hooks";
 import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/useLibraryItemRequests";
 import { useLibraryListStore } from "../../store/library/useLibraryListStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
+import { SaveAsOutlined } from "../icons";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
+import type { FetchResponseEvents } from "../../core";
 import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
@@ -108,7 +109,9 @@ export const LibraryItemDialog = () => {
                 label={label}
                 control={control}
                 errorMessage={errors?.[label]?.message as string}
-                {...(index === 0 ? registerFieldDebounced(1000, label, "title") : registerField(label, type))}
+                {...(index === 0 // prettier ignore
+                  ? registerFieldDebounced(1000, label, "title")
+                  : registerField(label, type))}
               />
             ),
           )}
