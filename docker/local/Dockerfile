@@ -1,4 +1,4 @@
-FROM alpine:3.16
+FROM alpine:3.18
 
 # Install packages
 RUN apk add --update bash shadow supervisor git curl mc nginx
@@ -8,7 +8,7 @@ RUN apk add php81-mbstring php81-xml php81-json php81-zip php81-gd php81-phar ph
     php81-pdo php81-pdo_pgsql php81-sqlite3 php81-pdo_sqlite php81-redis
 RUN apk add php81-pecl-xdebug
 
-RUN cd /root && wget https://getcomposer.org/download/2.5.1/composer.phar && \
+RUN cd /root && wget https://getcomposer.org/download/2.6.6/composer.phar && \
     chmod +x composer.phar && ln -s /root/composer.phar /usr/bin/composer
 
 # Copy configurations
@@ -25,7 +25,7 @@ COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Prepare things to execute
 
-RUN ln -s /usr/bin/php81 /usr/bin/php
+RUN unlink /usr/bin/php && ln -s /usr/bin/php81 /usr/bin/php
 RUN chmod +x /root/docker-entrypoint.sh
 RUN usermod -u 1000 nginx
 

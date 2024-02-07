@@ -22,7 +22,7 @@ services:
                 max-file: "1"
     pgsql:
         container_name: media_librarian_db
-        image: postgres:14-alpine
+        image: postgres:16.1-alpine3.18
         ports:
             - "${APP_IP_ADDR:?}:5432:5432"
         volumes:
