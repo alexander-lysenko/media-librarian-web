@@ -18,12 +18,11 @@ import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
 import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/useLibraryItemRequests";
-import { useLibraryListStore } from "../../store/library/useLibraryListStore";
+import { useSelectedLibraryStore } from "../../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { SaveAsOutlined } from "../icons";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
-import type { FetchResponseEvents } from "../../core";
 import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
@@ -37,7 +36,7 @@ export const LibraryItemDialog = () => {
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
-  const selectedLibrary = useLibraryListStore((state) => state.getSelectedLibrary());
+  const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
   const { isOpen, isEditMode, handleClose, selectedLibraryId, selectedItem } = useLibraryItemFormStore();
   const { poster, setPoster } = useLibraryItemFormStore();
 

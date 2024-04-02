@@ -16,7 +16,7 @@ import {
   useLibraryCleanupRequest,
   useLibraryDeleteRequest,
 } from "../../requests/useLibraryRequests";
-import { useLibraryListStore } from "../../store/library/useLibraryListStore";
+import { useLibrariesStore } from "../../store/library/useLibrariesStore";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 import {
   CleaningServicesOutlined,
@@ -33,7 +33,7 @@ import type { MouseEventHandler } from "react";
 export const MyLibraries = () => {
   const { t } = useTranslation();
   const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
-  const libraries = useLibraryListStore((state) => state.libraries);
+  const libraries = useLibrariesStore((state) => state.libraries);
 
   const dataFetchedRef = useRef(false);
 

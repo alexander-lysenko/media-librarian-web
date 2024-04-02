@@ -23,7 +23,7 @@ import type { AxiosResponse } from "axios";
  * todo: add sorting and pagination query params
  */
 export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
-  const { setRows } = useLibraryTableStore((state) => state);
+  const setRows = useLibraryTableStore((state) => state.setRows);
 
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { enqueueSnack } from "../core/actions";
 import { librariesEndpoint, libraryEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
-import { useLibraryListStore } from "../store/library/useLibraryListStore";
+import { useLibrariesStore, useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 
 import type { FetchResponseEvents } from "../core";
@@ -32,8 +32,9 @@ type LibraryCreateRequestProps = {
  * [GET] /api/v1/libraries
  */
 export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesResponse> => {
-  const { setLibraries, getSelectedLibrary } = useLibraryListStore((state) => state);
-  const { setColumns } = useLibraryTableStore((state) => state);
+  const setLibraries = useLibrariesStore((state) => state.setLibraries);
+  const setColumns = useLibraryTableStore((state) => state.setColumns);
+  const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
 
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<GetLibrariesResponse>) => {
