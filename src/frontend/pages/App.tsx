@@ -22,7 +22,6 @@ export const App = () => {
 
   const libraries = useLibrariesStore((state) => state.libraries);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
-
   const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
 
   const requestLibraries = useLibrariesGetRequest();
@@ -36,6 +35,15 @@ export const App = () => {
     }
   }, [getSelectedLibrary, requestItems]);
 
+  const handleItemCreate = useCallback(() => {
+    const selectedLibraryId = getSelectedLibrary()?.id;
+    if (!selectedLibraryId) {
+      return false;
+    }
+
+    openItemDialog(selectedLibraryId);
+  }, [getSelectedLibrary, openItemDialog]);
+
   useLayoutEffect(() => {
     if (!dataFetchedRef.current) {
       dataFetchedRef.current = true;
@@ -47,15 +55,6 @@ export const App = () => {
       // fireImmediately: false,
     });
   }, [getItems, requestLibraries]);
-
-  const handleItemCreate = () => {
-    const selectedLibraryId = getSelectedLibrary()?.id;
-    if (!selectedLibraryId) {
-      return false;
-    }
-
-    openItemDialog(selectedLibraryId);
-  };
 
   return (
     <>

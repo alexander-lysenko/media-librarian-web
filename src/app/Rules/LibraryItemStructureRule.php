@@ -90,10 +90,17 @@ class LibraryItemStructureRule implements ValidationRule
             $rules[$key] = $rulesDefaultSet[$type];
         }
 
-        // Add the "unique" validation rule for the title of a Library's entry (first field of an entry)
+        // Update validation rules for the title of a Library's entry (first field of an entry)
+        // - Replace "present" with "required"
+        // - Replace "nullable" with "unique"
         $tableWithConnection = implode('.', [DatabaseSwitch::CONNECTION_PATH, $libraryModel->tbl_name]);
-        $rules[$firstAttribute][] = Rule::unique($tableWithConnection, $firstAttribute)
-            ->ignore($this->libraryItemId);
+        $uniqueRule = Rule::unique($tableWithConnection, $firstAttribute)->ignore($this->libraryItemId);
+
+        $presentRuleKey = array_search('present', $rules[$firstAttribute], true);
+        $nullableRuleKey = array_search('nullable', $rules[$firstAttribute], true);
+        $rules[$firstAttribute][$presentRuleKey] = 'required';
+        $rules[$firstAttribute][] = $uniqueRule;
+        unset($rules[$firstAttribute][$nullableRuleKey]);
 
         // Perform all the validations
         Validator::make($value, $rules, static::messages(), array_combine($libraryFields, $libraryFields))->validate();
@@ -106,9 +113,11 @@ class LibraryItemStructureRule implements ValidationRule
     private static function extractRules(): array
     {
         return [
-            'line' => ['present', 'string', 'max:255'],
-            'text' => ['present', 'string'],
-            'url' => ['present', 'url', 'max:255'],
+            // nullable
+            'line' => ['present', 'nullable', 'string', 'max:255'],
+            'text' => ['present', 'nullable', 'string'],
+            'url' => ['present', 'nullable', 'url', 'max:255'],
+            // not-nullable
             'checkmark' => ['present', 'boolean'],
             'date' => ['present', 'date_format:Y-m-d'],
             'datetime' => ['present', 'date_format:Y-m-d H:i:s'],

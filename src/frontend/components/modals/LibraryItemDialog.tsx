@@ -24,8 +24,8 @@ import { SaveAsOutlined } from "../icons";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
 import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
-import type { SyntheticEvent } from "react";
-import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import type { KeyboardEvent, SyntheticEvent } from "react";
+import type { FieldErrors, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
@@ -65,13 +65,15 @@ export const LibraryItemDialog = () => {
     handleClose();
   };
 
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
-  const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
+  const onInvalidSubmit: SubmitErrorHandler<LibraryItemFormValues> = (data: FieldErrors) => {
+    console.log("Errors", data);
+  };
+  const onValidSubmit: SubmitHandler<LibraryItemFormValues> = (data, event) => {
     setLoading(true);
-    console.log("Form is valid", data);
+    // console.log("Form is valid", data);
     const request: PostLibraryItemRequest = {
       contents: data,
-      poster: poster ?? "",
+      // poster: poster ?? "",
     };
 
     if (isEditMode) {
@@ -85,6 +87,16 @@ export const LibraryItemDialog = () => {
     }
   };
 
+  const handleSubmitByCtrlEnter = (e: KeyboardEvent) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+    if (e.code === "Enter" && !["TEXTAREA"].includes(target.tagName)) {
+      e.preventDefault();
+    }
+    if (e.code === "Enter" && e.ctrlKey) {
+      handleSubmit(onValidSubmit, onInvalidSubmit)();
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
@@ -95,7 +107,7 @@ export const LibraryItemDialog = () => {
 
   return (
     <Dialog open={isOpen} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
-      <Form noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
+      <Form noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} onKeyDown={handleSubmitByCtrlEnter}>
         <DialogTitle variant="h5">
           {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
         </DialogTitle>

@@ -22,6 +22,6 @@ class LibraryItemResource extends JsonResource
     {
         $resource = $this->resource;
 
-        return get_object_vars($resource);
+        return is_object($resource) ? get_object_vars($resource) : $resource;
     }
 }

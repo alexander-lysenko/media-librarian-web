@@ -101,7 +101,7 @@ export const LibraryCreateDialog = () => {
 
   return (
     <Dialog open={open} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
-      <StyledFormBox noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
+      <Form noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
         <DialogTitle variant={"h5"}>{t("libraryCreate.title")}</DialogTitle>
         <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
           <TextInput
@@ -142,7 +142,7 @@ export const LibraryCreateDialog = () => {
             children={t("common.create")}
           />
         </DialogActions>
-      </StyledFormBox>
+      </Form>
     </Dialog>
   );
 };
@@ -194,7 +194,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
   );
 };
 
-const StyledFormBox = styled("form")({
+const Form = styled("form")({
   height: "100%",
   display: "flex",
   flexDirection: "column",

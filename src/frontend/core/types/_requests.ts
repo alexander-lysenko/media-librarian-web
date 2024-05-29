@@ -87,7 +87,7 @@ export type GetLibraryItemsResponse = {
 
 export type PostLibraryItemRequest = {
   contents: LibraryItemFormValues;
-  poster: string;
+  poster?: string;
 };
 
 export type LibraryItemResponse = {

@@ -238,6 +238,7 @@ class LibraryItemController extends ApiV1Controller
 
         // todo: upload poster and return its URL
         $resource->with['poster'] = null;
+
         return $resource->response()->setStatusCode(201);
     }
 
@@ -280,6 +281,7 @@ class LibraryItemController extends ApiV1Controller
         $resource = new LibraryItemResource($item);
         // todo: add poster
         $resource->with['poster'] = '';
+
         return $resource->response();
     }
 
@@ -339,6 +341,7 @@ class LibraryItemController extends ApiV1Controller
             poster: $request->get('poster'),
         );
         $resource->with['poster'] = '';
+
         return $resource->response();
     }
 
@@ -368,6 +371,7 @@ class LibraryItemController extends ApiV1Controller
     public function delete(LibraryItemRequest $request): JsonResponse
     {
         SqliteLibraryMeta::getLibraryTableQuery($request->id)->delete($request->item);
+
         return new JsonResponse(null, 204);
     }
 
@@ -440,6 +444,7 @@ class LibraryItemController extends ApiV1Controller
         $resource = new JsonResource($paginatedResource->items());
         $resource::wrap('items');
         $resource->with['pagination'] = $pagination;
+
         return $resource->response();
     }
 
@@ -493,6 +498,7 @@ class LibraryItemController extends ApiV1Controller
         $resource = new LibraryItemResource($item);
         // todo: add poster
         $resource->with['poster'] = '';
+
         return $resource->response();
     }
 }

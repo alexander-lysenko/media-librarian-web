@@ -60,7 +60,8 @@ export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemReq
 
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<LibraryItemResponse>) => {
-      enqueueSnack({ message: t("notifications.libraryItemCreated", { title: "response.title" }), type: "success" });
+      const title = Object.values(response.data.item)[1];
+      enqueueSnack({ message: t("notifications.libraryItemCreated", { title }), type: "success" });
     },
     onError: (reason) => {
       enqueueSnack({
@@ -75,7 +76,7 @@ export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemReq
     endpoint: libraryItemsEndpoint,
     customEvents: responseEvents,
     verbose: true,
-    simulate: true, // uncomment this line and provide fakeResponse into fetch()
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   });
 
   return { status, fetch, abort, setResponseEvents };
@@ -117,7 +118,8 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequ
 
   const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
     onSuccess: (response: AxiosResponse<LibraryItemResponse>) => {
-      enqueueSnack({ message: t("notifications.libraryItemUpdated", { title: "response.title" }), type: "success" });
+      const title = Object.values(response.data.item)[1];
+      enqueueSnack({ message: t("notifications.libraryItemUpdated", { title }), type: "success" });
     },
     onError: (reason) => {
       enqueueSnack({
