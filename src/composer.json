@@ -6,24 +6,24 @@
   "keywords": [],
   "license": "none",
   "require": {
-    "php": "^8.1",
+    "php": "^8.2",
     "ext-gd": "*",
     "ext-pdo": "*",
     "ext-sqlite3": "*",
-    "darkaonline/l5-swagger": "^8.5",
+    "darkaonline/l5-swagger": "^8.6",
     "guzzlehttp/guzzle": "^7.8",
     "laravel/framework": "^10.30",
     "laravel/sanctum": "^3.3",
-    "laravel/tinker": "^2.8",
-    "league/flysystem-aws-s3-v3": "^3.15.0"
+    "laravel/tinker": "^2.9",
+    "league/flysystem-aws-s3-v3": "^3.28"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "fakerphp/faker": "^1.20",
-    "mockery/mockery": "^1.5",
-    "nunomaduro/collision": "^7.0",
+    "fakerphp/faker": "^1.23",
+    "mockery/mockery": "^1.6",
+    "nunomaduro/collision": "^7.10",
     "phpunit/phpunit": "^10.0",
-    "spatie/laravel-ignition": "^2.0"
+    "spatie/laravel-ignition": "^2.3"
   },
   "autoload": {
     "psr-4": {
