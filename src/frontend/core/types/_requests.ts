@@ -10,7 +10,7 @@ export type RequestStatus = "IDLE" | "LOADING" | "SUCCESS" | "FAILED";
 export type ApiRequestHookConfig = {
   endpoint: string;
   method: Method;
-  customEvents: FetchResponseEvents;
+  customEvents?: FetchResponseEvents;
   verbose?: boolean;
   simulate?: boolean;
 };

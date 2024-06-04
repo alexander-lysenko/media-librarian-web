@@ -14,7 +14,7 @@ import { PrintSwitch } from "./PrintSwitch";
 
 import type { LibraryElement } from "../../core/types";
 import type { SxProps, Theme } from "@mui/material";
-import type { MouseEventHandler, ReactElement } from "react";
+import type { MouseEventHandler, ReactElement, ReactNode } from "react";
 
 /**
  * A right-side drawer displaying the entire item selected from a Library
@@ -30,11 +30,6 @@ export const LibraryDrawer = () => {
   ]);
 
   const { handleItemEdit, handleItemDelete } = useLibraryItemActions();
-
-  const responsiveSx: SxProps<Theme> = {
-    width: { xs: "100%", sm: 480, md: 480, xl: 480 },
-    background: (theme) => theme.palette.background.paper,
-  };
 
   const handleClose = (event: KeyboardEvent | MouseEvent) => {
     if (event.type === "keydown" && ["Tab", "Shift"].includes((event as KeyboardEvent).key)) {
@@ -58,15 +53,7 @@ export const LibraryDrawer = () => {
   }, [setOpen, setSelectedItemId]);
 
   return (
-    <Drawer
-      open={open}
-      variant="persistent"
-      anchor="right"
-      hideBackdrop
-      sx={{ width: 0 }}
-      PaperProps={{ sx: responsiveSx }}
-      onClose={handleClose}
-    >
+    <DrawerWrapper open={open} onClose={handleClose}>
       <CloseButton onClose={handleClose as unknown as MouseEventHandler} />
       <Box sx={{ overflowY: "auto" }}>
         <PosterBox
@@ -107,6 +94,35 @@ export const LibraryDrawer = () => {
           </IconButton>
         </Tooltip>
       </Box>
+    </DrawerWrapper>
+  );
+};
+
+const DrawerWrapper = ({
+  open,
+  children,
+  onClose,
+}: {
+  open: boolean;
+  children: ReactNode;
+  onClose: (event: KeyboardEvent | MouseEvent) => void;
+}) => {
+  const responsiveSx: SxProps<Theme> = {
+    width: { xs: "100%", sm: 480, md: 480, xl: 480 },
+    background: (theme) => theme.palette.background.paper,
+  };
+
+  return (
+    <Drawer
+      open={open}
+      variant="persistent"
+      anchor="right"
+      hideBackdrop
+      sx={{ width: 0 }}
+      PaperProps={{ sx: responsiveSx }}
+      onClose={onClose}
+    >
+      {children}
     </Drawer>
   );
 };

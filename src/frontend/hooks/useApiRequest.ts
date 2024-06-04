@@ -11,6 +11,7 @@ import type { AxiosResponse } from "axios";
  *
  * Added simulation mode (for development purposes only, make sure you're not using that in production)
  * which replaces the real API request with fake promise and fake response
+ * @deprecated use createRequestHook instead
  */
 export const useApiRequest = <Request, Response>(
   config: ApiRequestHookConfig,
@@ -25,30 +26,30 @@ export const useApiRequest = <Request, Response>(
   const events: FetchResponseEvents = {
     beforeSend: () => {
       setStatus("LOADING");
-      customEvents.beforeSend?.();
+      customEvents?.beforeSend?.();
       // eslint-disable-next-line no-console
       verbose && console.log(`Requesting: ${method} ${url}`);
     },
     onSuccess: (response: Response | AxiosResponse<Response>) => {
       setStatus("SUCCESS");
-      customEvents.onSuccess?.(response as AxiosResponse<Response>);
+      customEvents?.onSuccess?.(response as AxiosResponse<Response>);
       // eslint-disable-next-line no-console
       verbose && console.log("Response", response);
     },
     onReject: (reason) => {
       setStatus("FAILED");
-      customEvents.onReject?.(reason);
+      customEvents?.onReject?.(reason);
       // eslint-disable-next-line no-console
       verbose && console.log("Rejected", reason);
     },
     onError: (error) => {
       setStatus("FAILED");
-      customEvents.onError?.(error);
+      customEvents?.onError?.(error);
       // eslint-disable-next-line no-console
       verbose && console.log("Failed", error);
     },
     onComplete: () => {
-      customEvents.onComplete?.();
+      customEvents?.onComplete?.();
       verbose && console.log("Status: ", status);
     },
   };

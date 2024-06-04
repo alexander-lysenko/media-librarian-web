@@ -135,3 +135,16 @@ export const slugify = (string: string, separator = "-") => {
     .replace(/[^a-zА-я0-9 ]/g, "") // remove all chars not letters, numbers and spaces (to be replaced)
     .replace(/\s+/g, separator);
 };
+
+/**
+ * Bind a collection of params to a parametrized string
+ * @param source
+ * @param params
+ */
+export const bindPathParams = (source: string, params?: Record<string, string | number>): string => {
+  const reducer = (path: string, [param, value]: [string, string | number]) => {
+    return path.replace(`{${param}}`, value.toString());
+  };
+
+  return !params ? source : Object.entries(params).reduce<string>(reducer, source);
+};
