@@ -78,7 +78,7 @@ export const LibraryItemDialog = () => {
 
     if (isEditMode) {
       updateLibraryItemRequest
-        .fetch(request, { id: selectedLibraryId as number, itemId: selectedItem?.id as number })
+        .fetch(request, { id: selectedLibraryId as number, item: selectedItem?.id as number })
         .then(() => handleCloseWithReset(event as SyntheticEvent));
     } else {
       createLibraryItemRequest
@@ -100,7 +100,8 @@ export const LibraryItemDialog = () => {
   useEffect(() => {
     if (isOpen) {
       const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
-      const values = defaults(formDefaultValues, selectedItem);
+      // const values = defaults(formDefaultValues, selectedItem);
+      const values = defaults(selectedItem, formDefaultValues);
       reset(values);
     }
   }, [isOpen, reset, selectedItem, selectedLibrary]);

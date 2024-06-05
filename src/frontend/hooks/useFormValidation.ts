@@ -183,7 +183,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
     },
     libraryItem: {
       title: {
-        setValueAs: (value: string) => value.trim(),
+        setValueAs: (value: string) => value?.trim(),
         required: t("formValidation.entryTitleRequired") as Message,
         validate: {
           uniqueValidation: async (value: string) => {
@@ -204,7 +204,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
       },
       url: {
-        setValueAs: (value: string) => value.trim(),
+        setValueAs: (value: string) => value?.trim(),
         pattern: {
           value: urlPattern,
           message: t("formValidation.urlInvalid"),
@@ -213,7 +213,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
     },
     profile: {
       username: {
-        setValueAs: (value: string) => value.trim(),
+        setValueAs: (value: string) => value?.trim(),
         required: t("formValidation.usernameRequired") as Message,
         minLength: { value: 3, message: t("formValidation.usernameMinLength", { n: 3 }) },
       },

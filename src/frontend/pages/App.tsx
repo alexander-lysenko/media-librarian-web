@@ -10,11 +10,11 @@ import { LibraryCreateDialog, LibraryItemDialog } from "../components/modals";
 import { LibraryTable } from "../components/tables/LibraryTable";
 import { LibrariesEmptyState } from "../components/ui/LibrariesEmptyState";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import { useLibraryAllItemsGetRequest } from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { useLibrariesStore, useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
+import { useLibraryAllItemsGetRequest } from "../requests/useLibraryItemRequests";
 
 export const App = () => {
   const { t } = useTranslation();
@@ -62,6 +62,7 @@ export const App = () => {
       <Container maxWidth="xl">
         <StyledHeaderBox>
           <Typography variant="h4" noWrap children={getSelectedLibrary()?.title} />
+          {"STATUS:" + requestItems.status}
           <Button
             type="button"
             variant="contained"

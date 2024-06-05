@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { createRequestHook } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { libraryItemEndpoint, libraryItemsEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
@@ -25,7 +26,7 @@ import type { AxiosResponse } from "axios";
 export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
   const setRows = useLibraryTableStore((state) => state.setRows);
 
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {
       const { items } = response.data;
       setRows(items);
@@ -37,17 +38,15 @@ export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItems
         type: "error",
       });
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<GetLibraryItemsRequest, GetLibraryItemsResponse>({
+  return createRequestHook<GetLibraryItemsRequest, GetLibraryItemsResponse>({
     method: "GET",
     endpoint: libraryItemsEndpoint,
-    customEvents: responseEvents,
+    customEvents,
     verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+  })();
 };
 
 /**
@@ -88,24 +87,22 @@ export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemReq
  * WIP
  */
 export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemResponse> => {
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     onError: (reason) => {
       enqueueSnack({
         message: `${reason.message}: ${reason.response?.data?.message}`,
         type: "error",
       });
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<void, LibraryItemResponse>({
+  return createRequestHook<void, LibraryItemResponse>({
     method: "GET",
     endpoint: libraryItemEndpoint,
-    customEvents: responseEvents,
+    customEvents,
     verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+  })();
 };
 
 /**
@@ -116,7 +113,7 @@ export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemRe
 export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequest, LibraryItemResponse> => {
   const { t } = useTranslation();
 
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     onSuccess: (response: AxiosResponse<LibraryItemResponse>) => {
       const title = Object.values(response.data.item)[1];
       enqueueSnack({ message: t("notifications.libraryItemUpdated", { title }), type: "success" });
@@ -127,17 +124,15 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequ
         type: "error",
       });
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<PostLibraryItemRequest, LibraryItemResponse>({
+  return createRequestHook<PostLibraryItemRequest, LibraryItemResponse>({
     method: "PUT",
     endpoint: libraryItemEndpoint,
-    customEvents: responseEvents,
+    customEvents,
     verbose: true,
-    simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
+  })();
 };
 
 /**

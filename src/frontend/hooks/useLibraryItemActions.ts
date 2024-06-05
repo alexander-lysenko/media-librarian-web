@@ -53,9 +53,9 @@ export const useLibraryItemActions = () => {
     }
 
     requestItem.setResponseEvents({
-      onSuccess: (libraryItem) => {
-        console.log("libraryItem", libraryItem.data.item);
-        openItemDialog(selectedLibraryId, libraryItem.data.item);
+      onSuccess: (response) => {
+        console.log("libraryItem", response.data.item);
+        openItemDialog(selectedLibraryId, response.data.item);
       },
     });
 

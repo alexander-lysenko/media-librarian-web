@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { createRequestHook } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { librariesEndpoint, libraryEndpoint } from "../core/links";
 import { useApiRequest } from "../hooks";
@@ -36,7 +37,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
   const setColumns = useLibraryTableStore((state) => state.setColumns);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
 
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     onSuccess: (response: AxiosResponse<GetLibrariesResponse>) => {
       setLibraries(response.data.data);
       const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(getSelectedLibrary()?.fields || {}).map(
@@ -45,17 +46,15 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
 
       setColumns(fieldsOfSelectedLibrary);
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<void, GetLibrariesResponse>({
+  return createRequestHook<void, GetLibrariesResponse>({
     method: "GET",
     endpoint: librariesEndpoint,
-    customEvents: responseEvents,
-    // verbose: true,
+    customEvents,
+    verbose: true,
     // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+  })();
 };
 
 /**

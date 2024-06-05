@@ -13,6 +13,7 @@ export type ApiRequestHookConfig = {
   customEvents?: FetchResponseEvents;
   verbose?: boolean;
   simulate?: boolean;
+  withCredentials?: boolean;
 };
 
 export type ApiRequestFetch<Request, Response> = (
