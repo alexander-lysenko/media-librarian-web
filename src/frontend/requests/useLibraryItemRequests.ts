@@ -92,7 +92,7 @@ export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemReq
 
   return createRequestHook<PostLibraryItemRequest, LibraryItemResponse>({
     method: "POST",
-    endpoint: libraryItemEndpoint,
+    endpoint: libraryItemsEndpoint,
     customEvents,
     verbose: true,
   })();

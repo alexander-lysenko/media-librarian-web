@@ -1,13 +1,14 @@
 import react from "@vitejs/plugin-react-swc";
-import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
+import { defineConfig, loadEnv } from "vite";
 
 import type { ManualChunksOption } from "rollup";
 
 const combineManualChunks: ManualChunksOption = (id) => {
-  if (id.includes("node_modules/@mui") || id.includes("node_modules/@emotion")) {
+  if (id.includes("node_modules/@mui")) {
     return "mui";
   } else if (id.includes("node_modules")) {
-    return "vendor";
+    // return "vendor";
+    return id.toString().split("node_modules/")[1].split("/")[0].toString();
   }
 };
 
@@ -21,7 +22,7 @@ export default defineConfig(({ command, mode }) => {
     root: command === "serve" ? "./frontend" : "",
     publicDir: "fake_dir_so_nothing_gets_copied",
     envDir: "../",
-    plugins: [react(), splitVendorChunkPlugin()],
+    plugins: [react()],
     build: {
       manifest: true,
       minify: "esbuild",
