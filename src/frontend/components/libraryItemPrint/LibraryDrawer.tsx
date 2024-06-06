@@ -121,9 +121,8 @@ const DrawerWrapper = ({
       sx={{ width: 0 }}
       PaperProps={{ sx: responsiveSx }}
       onClose={onClose}
-    >
-      {children}
-    </Drawer>
+      children={children}
+    />
   );
 };
 

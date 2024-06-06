@@ -334,12 +334,12 @@ class LibraryItemController extends ApiV1Controller
 
         $resource = new LibraryItemResource($updatedItem);
         // todo: upload poster and return its URL
-        PosterUploadJob::dispatch(
-            userId: $request->user()->id,
-            libraryId: $request->id,
-            itemId: $request->item,
-            poster: $request->get('poster'),
-        );
+        // PosterUploadJob::dispatch(
+        //     userId: $request->user()->id,
+        //     libraryId: $request->id,
+        //     itemId: $request->item,
+        //     poster: $request->get('poster'),
+        // );
         $resource->with['poster'] = '';
 
         return $resource->response();
@@ -370,7 +370,7 @@ class LibraryItemController extends ApiV1Controller
      */
     public function delete(LibraryItemRequest $request): JsonResponse
     {
-        SqliteLibraryMeta::getLibraryTableQuery($request->id)->delete($request->item);
+        // SqliteLibraryMeta::getLibraryTableQuery($request->id)->delete($request->item);
 
         return new JsonResponse(null, 204);
     }

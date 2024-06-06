@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { defaults } from "lodash-es";
+import { defaults, pick } from "lodash-es";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -25,7 +25,7 @@ import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputCon
 
 import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
 import type { KeyboardEvent, SyntheticEvent } from "react";
-import type { FieldErrors, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } from "react-hook-form";
 
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
@@ -37,13 +37,9 @@ export const LibraryItemDialog = () => {
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
-  const { isOpen, isEditMode, handleClose, selectedLibraryId, selectedItem } = useLibraryItemFormStore();
-  const { poster, setPoster } = useLibraryItemFormStore();
+  const { isOpen, isEditMode, selectedItem } = useLibraryItemFormStore();
 
   const [loading, setLoading] = useState<boolean>(false);
-
-  const createLibraryItemRequest = useLibraryItemPostRequest();
-  const updateLibraryItemRequest = useLibraryItemPutRequest();
 
   const useHookForm = useForm<LibraryItemFormValues>({
     mode: "onBlur" || "onTouched",
@@ -54,55 +50,17 @@ export const LibraryItemDialog = () => {
   const { formState, reset, handleSubmit, control } = useHookForm;
   const { errors } = formState;
 
-  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
-    if (reason === "backdropClick" || reason === "escapeKeyDown") {
-      event.preventDefault();
-      return false;
-    }
-
-    reset();
-    setLoading(false);
-    handleClose();
-  };
-
-  const onInvalidSubmit: SubmitErrorHandler<LibraryItemFormValues> = (data: FieldErrors) => {
-    console.log("Errors", data);
-  };
-  const onValidSubmit: SubmitHandler<LibraryItemFormValues> = (data, event) => {
-    setLoading(true);
-    // console.log("Form is valid", data);
-    const request: PostLibraryItemRequest = {
-      contents: data,
-      // poster: poster ?? "",
-    };
-
-    if (isEditMode) {
-      updateLibraryItemRequest
-        .fetch(request, { id: selectedLibraryId as number, item: selectedItem?.id as number })
-        .then(() => handleCloseWithReset(event as SyntheticEvent));
-    } else {
-      createLibraryItemRequest
-        .fetch(request, { id: selectedLibraryId as number })
-        .then(() => handleCloseWithReset(event as SyntheticEvent));
-    }
-  };
-
-  const handleSubmitByCtrlEnter = (e: KeyboardEvent) => {
-    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-    if (e.code === "Enter" && !["TEXTAREA"].includes(target.tagName)) {
-      e.preventDefault();
-    }
-    if (e.code === "Enter" && e.ctrlKey) {
-      handleSubmit(onValidSubmit, onInvalidSubmit)();
-    }
-  };
+  const { onValidSubmit, onInvalidSubmit, handleCloseWithReset, handleSubmitByCtrlEnter } = useDialogFormEvents(
+    useHookForm,
+    setLoading,
+  );
 
   useEffect(() => {
     if (isOpen) {
       const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
-      // const values = defaults(formDefaultValues, selectedItem);
-      const values = defaults(selectedItem, formDefaultValues);
-      reset(values);
+      const dataValues = pick(selectedItem, Object.keys(selectedLibrary?.fields ?? {}));
+      const formValues = defaults(dataValues, formDefaultValues);
+      reset(formValues);
     }
   }, [isOpen, reset, selectedItem, selectedLibrary]);
 
@@ -171,4 +129,61 @@ const initFormDefaultValues = (fields?: LibraryFields) => {
   };
 
   return Object.entries(fields || {}).reduce(reducer, {});
+};
+
+const useDialogFormEvents = (
+  formHook: UseFormReturn<LibraryItemFormValues>,
+  setLoading: (loading: boolean) => void,
+) => {
+  const { reset, handleSubmit } = formHook;
+  const { isEditMode, handleClose, selectedLibraryId, selectedItem } = useLibraryItemFormStore();
+
+  const createLibraryItemRequest = useLibraryItemPostRequest();
+  const updateLibraryItemRequest = useLibraryItemPutRequest();
+
+  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
+    if (reason === "backdropClick" || reason === "escapeKeyDown") {
+      event.preventDefault();
+      return false;
+    }
+
+    reset();
+    setLoading(false);
+    handleClose();
+  };
+
+  const onValidSubmit: SubmitHandler<LibraryItemFormValues> = (data, event) => {
+    setLoading(true);
+    // console.log("Form is valid", data);
+    const request: PostLibraryItemRequest = {
+      contents: data,
+      // poster: poster ?? "",
+    };
+
+    if (isEditMode) {
+      updateLibraryItemRequest
+        .fetch(request, { id: selectedLibraryId as number, item: selectedItem?.id as number })
+        .then(() => handleCloseWithReset(event as SyntheticEvent));
+    } else {
+      createLibraryItemRequest
+        .fetch(request, { id: selectedLibraryId as number })
+        .then(() => handleCloseWithReset(event as SyntheticEvent));
+    }
+  };
+
+  const onInvalidSubmit: SubmitErrorHandler<LibraryItemFormValues> = (data: FieldErrors) => {
+    console.log("Errors", data);
+  };
+
+  const handleSubmitByCtrlEnter = (e: KeyboardEvent) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+    if (e.code === "Enter" && !["TEXTAREA"].includes(target.tagName)) {
+      e.preventDefault();
+    }
+    if (e.code === "Enter" && e.ctrlKey) {
+      handleSubmit(onValidSubmit, onInvalidSubmit)();
+    }
+  };
+
+  return { onValidSubmit, onInvalidSubmit, handleCloseWithReset, handleSubmitByCtrlEnter };
 };
