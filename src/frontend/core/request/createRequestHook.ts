@@ -15,7 +15,7 @@ import type { AxiosResponse } from "axios";
 export const createRequestHook = <Request = void, Response = void>(config: ApiRequestHookConfig) => {
   return function useHook(): UseRequestReturn<Request, Response> {
     const { endpoint: url, method, customEvents } = config;
-    const { verbose = false, simulate = false, withCredentials = true } = config;
+    const { verbose = false, withCredentials = true } = config;
 
     const [abortController] = useState<AbortController>(new AbortController());
     const [status, setStatus] = useState<RequestStatus>("IDLE");
@@ -80,40 +80,8 @@ export const createRequestHook = <Request = void, Response = void>(config: ApiRe
       return await axiosFetch<Request, Response>(config, eventHandlers);
     };
 
-    /**
-     * Simulation of AxiosFetch
-     */
-    const fakeFetch: ApiRequestFetch<Request, Response> = async (
-      data: Request,
-      pathParams?: Record<string, string | number>,
-      options?: { fakeResponse?: Response },
-    ): Promise<Response | void> => {
-      eventHandlers.beforeSend?.();
-      return await new Promise<AxiosResponse<Response>>((resolve) => {
-        setTimeout(() => {
-          const fakeResponse = options?.fakeResponse;
-          if (!fakeResponse) {
-            // eslint-disable-next-line no-console
-            console.warn("WARNING: options.fakeResponse was not provided, request is simulated with empty response");
-          }
+    const abort = () => abortController.abort();
 
-          resolve({ data: fakeResponse as Response } as AxiosResponse<Response>);
-        }, 1000);
-      })
-        .then(eventHandlers.onSuccess, eventHandlers.onReject)
-        .catch(eventHandlers.onError)
-        .finally(eventHandlers.onComplete);
-    };
-
-    const fakeAbort = () => {
-      return;
-    };
-
-    return {
-      status,
-      fetch: !simulate ? fetch : fakeFetch,
-      abort: !simulate ? () => abortController.abort() : fakeAbort,
-      setResponseEvents,
-    };
+    return { status, fetch, abort, setResponseEvents };
   };
 };

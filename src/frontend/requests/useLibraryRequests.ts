@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { createRequestHook } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { librariesEndpoint, libraryEndpoint } from "../core/links";
-import { useApiRequest } from "../hooks";
 import { useLibrariesStore, useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 
@@ -46,6 +44,12 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
 
       setColumns(fieldsOfSelectedLibrary);
     },
+    onReject: (reason) => {
+      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
+    },
+    onError: (reason) => {
+      enqueueSnack({ type: "error", message: `${reason.message}: ${reason.response?.data?.message}` });
+    },
   };
 
   return createRequestHook<void, GetLibrariesResponse>({
@@ -53,7 +57,6 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
     endpoint: librariesEndpoint,
     customEvents,
     verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   })();
 };
 
@@ -62,7 +65,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
  * [GET] /api/v1/libraries/{id}
  */
 export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryResponse> => {
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     onSuccess: (response: AxiosResponse<GetLibraryResponse>) => {
       void response;
       // const { id, title, fields } = response.data.data;
@@ -71,17 +74,14 @@ export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryRespons
       //   message: "loaded",
       // });
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<void, GetLibraryResponse>({
+  return createRequestHook<void, GetLibraryResponse>({
     method: "GET",
     endpoint: libraryEndpoint,
-    customEvents: responseEvents,
-    // verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+    customEvents,
+    verbose: true,
+  })();
 };
 
 /**
@@ -96,7 +96,7 @@ export const useLibraryCreateRequest = ({
 }: LibraryCreateRequestProps): UseRequestReturn<CreateLibraryRequest, CreateLibraryResponse> => {
   const { t } = useTranslation();
 
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     beforeSend: () => {
       setLoading(true);
     },
@@ -119,17 +119,14 @@ export const useLibraryCreateRequest = ({
     onError: () => {
       setLoading(false);
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<CreateLibraryRequest, CreateLibraryResponse>({
+  return createRequestHook<CreateLibraryRequest, CreateLibraryResponse>({
     method: "POST",
     endpoint: librariesEndpoint,
-    customEvents: responseEvents,
-    // verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+    customEvents,
+    verbose: true,
+  })();
 };
 
 /**
@@ -137,25 +134,19 @@ export const useLibraryCreateRequest = ({
  * [DELETE] /api/v1/libraries/{id}
  */
 export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     // onSuccess & onError should be filled from the place of request call
     onReject: (reason) => {
-      enqueueSnack({
-        type: "error",
-        message: `${reason.code} ${reason.message}`,
-      });
+      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<void, void>({
+  return createRequestHook<void, void>({
     method: "DELETE",
     endpoint: libraryEndpoint,
-    customEvents: responseEvents,
-    // verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+    customEvents,
+    verbose: true,
+  })();
 };
 
 /**
@@ -165,7 +156,7 @@ export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
 export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryResponse> => {
   const { t } = useTranslation();
 
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     onSuccess: (response: AxiosResponse<PatchLibraryResponse>) => {
       const { title } = response.data.data;
       const { items_affected: itemsAffected } = response.data.meta;
@@ -175,20 +166,17 @@ export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryR
       });
     },
     onReject: (reason) => {
-      enqueueSnack({
-        type: "error",
-        message: `${reason.code} ${reason.message}`,
-      });
+      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
     },
-  });
+    onError: (reason) => {
+      enqueueSnack({ type: "error", message: `${reason.message}: ${reason.response?.data?.message}` });
+    },
+  };
 
-  const { fetch, abort, status } = useApiRequest<void, PatchLibraryResponse>({
+  return createRequestHook<void, PatchLibraryResponse>({
     method: "PATCH",
     endpoint: libraryEndpoint,
-    customEvents: responseEvents,
-    // verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+    customEvents,
+    verbose: true,
+  })();
 };

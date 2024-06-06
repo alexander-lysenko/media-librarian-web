@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { createRequestHook } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { libraryItemEndpoint, libraryItemsEndpoint } from "../core/links";
-import { useApiRequest } from "../hooks";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 
 import type { FetchResponseEvents } from "../core";
@@ -45,40 +43,7 @@ export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItems
     endpoint: libraryItemsEndpoint,
     customEvents,
     verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   })();
-};
-
-/**
- * Request to create a specific item into a specific library
- * [POST] /api/v1/libraries/{id}/items
- * WIP
- */
-export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemRequest, LibraryItemResponse> => {
-  const { t } = useTranslation();
-
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
-    onSuccess: (response: AxiosResponse<LibraryItemResponse>) => {
-      const title = Object.values(response.data.item)[1];
-      enqueueSnack({ message: t("notifications.libraryItemCreated", { title }), type: "success" });
-    },
-    onError: (reason) => {
-      enqueueSnack({
-        message: `${reason.message}: ${reason.response?.data?.message}`,
-        type: "error",
-      });
-    },
-  });
-
-  const { fetch, abort, status } = useApiRequest<PostLibraryItemRequest, LibraryItemResponse>({
-    method: "POST",
-    endpoint: libraryItemsEndpoint,
-    customEvents: responseEvents,
-    verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
 };
 
 /**
@@ -101,7 +66,35 @@ export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemRe
     endpoint: libraryItemEndpoint,
     customEvents,
     verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
+  })();
+};
+
+/**
+ * Request to create a specific item into a specific library
+ * [POST] /api/v1/libraries/{id}/items
+ * WIP
+ */
+export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemRequest, LibraryItemResponse> => {
+  const { t } = useTranslation();
+
+  const customEvents: FetchResponseEvents = {
+    onSuccess: (response: AxiosResponse<LibraryItemResponse>) => {
+      const title = Object.values(response.data.item)[1];
+      enqueueSnack({ message: t("notifications.libraryItemCreated", { title }), type: "success" });
+    },
+    onError: (reason) => {
+      enqueueSnack({
+        message: `${reason.message}: ${reason.response?.data?.message}`,
+        type: "error",
+      });
+    },
+  };
+
+  return createRequestHook<PostLibraryItemRequest, LibraryItemResponse>({
+    method: "POST",
+    endpoint: libraryItemEndpoint,
+    customEvents,
+    verbose: true,
   })();
 };
 
@@ -131,7 +124,6 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequ
     endpoint: libraryItemEndpoint,
     customEvents,
     verbose: true,
-    // simulate: true, // uncomment this line and provide fakeResponse into fetch()
   })();
 };
 
@@ -141,22 +133,19 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequ
  * WIP
  */
 export const useLibraryItemDeleteRequest = (): UseRequestReturn<void, void> => {
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const customEvents: FetchResponseEvents = {
     onError: (reason) => {
       enqueueSnack({
         message: `${reason.message}: ${reason.response?.data?.message}`,
         type: "error",
       });
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<void, void>({
+  return createRequestHook<void, void>({
     method: "DELETE",
     endpoint: libraryItemEndpoint,
-    customEvents: responseEvents,
+    customEvents,
     verbose: true,
-    simulate: true, // uncomment this line and provide fakeResponse into fetch()
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+  })();
 };

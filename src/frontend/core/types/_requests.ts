@@ -11,9 +11,8 @@ export type ApiRequestHookConfig = {
   endpoint: string;
   method: Method;
   customEvents?: FetchResponseEvents;
-  verbose?: boolean;
-  simulate?: boolean;
-  withCredentials?: boolean;
+  verbose?: boolean; // default: false
+  withCredentials?: boolean; // default: true
 };
 
 export type ApiRequestFetch<Request, Response> = (
