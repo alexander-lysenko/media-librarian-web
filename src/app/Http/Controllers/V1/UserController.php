@@ -36,45 +36,46 @@ class UserController extends ApiV1Controller
         // ),
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
-                    new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
-                    new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
-                    new OA\Property(property: 'passwordRepeat', type: 'string', example: 'PasSw0rd'),
-                    new OA\Property(property: 'locale', type: 'string', example: 'en'),
-                    new OA\Property(property: 'theme', type: 'string', example: 'dark'),
-                ]
-            )
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
+                new OA\Property(property: 'passwordRepeat', type: 'string', example: 'PasSw0rd'),
+                new OA\Property(property: 'locale', type: 'string', example: 'en'),
+                new OA\Property(property: 'theme', type: 'string', example: 'dark'),
+            ])
         ),
         tags: ['guest'],
         responses: [
             new OA\Response(
                 response: 201,
                 description: 'Created',
-            //     @OA\JsonContent(type:"object",
-            //         @OA\Property(property:"message",
-            //             type:"string",
-            //             example:"Your account has been created. You have to verify your e-mail to activate the account"
-            //         ),
-            //         @OA\Property(type:"object", property:"user",
-            //             @OA\Property(property:"id", type:"integer", example:1),
-            //             @OA\Property(property:"name", type:"string", example:"John Doe"),
-            //             @OA\Property(property:"email", type:"string", example:"john.doe@example.com"),
-            //         ),
-            //     ),
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(
+                        property: 'message',
+                        type: 'string',
+                        example: 'Your account has been created. Please verify your e-mail to activate your account'
+                    ),
+                    new OA\Property(property: 'user', properties: [
+                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                        new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                        new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                    ]),
+                ])
             ),
-
-            // @OA\Response(response:"422",
-            //     description:"Unprocessable Entity",
-            //     @OA\JsonContent(type:"object",
-            //         @OA\Property(property:"errors", type:"object",
-            //             @OA\Property(property:"email", type:"array",
-            //                 @OA\Items(type:"string", example:"Email is required"),
-            //             ),
-            //         ),
-            //     ),
-            // ),
+            new OA\Response(
+                response: 422,
+                description: 'Unprocessable Entity',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'errors', properties: [
+                        new OA\Property(
+                            property: 'email',
+                            type: 'array',
+                            items: new OA\Items(type: 'string', example: 'Email is required'),
+                        ),
+                    ]),
+                ]),
+            ),
         ]
     )]
     /**
@@ -91,7 +92,7 @@ class UserController extends ApiV1Controller
 
         // Event::dispatch(new Registered($user));
 
-        return Response::json([
+        return new JsonResponse([
             'message' => 'Your account has been created. You have to verify your e-mail to activate the account',
             'user' => $user,
         ], 201);
@@ -104,31 +105,30 @@ class UserController extends ApiV1Controller
         summary: 'Login (obtain an API token)',
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
-                    new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
-                    new OA\Property(property: 'rememberMe', type: 'boolean', example: true),
-                ]
-            )
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
+                new OA\Property(property: 'rememberMe', type: 'boolean', example: true),
+            ])
         ),
         tags: ['guest'],
         responses: [
             new OA\Response(
                 response: 302,
                 description: 'Moved Temporarily',
-            //     @OA\JsonContent(type:"object",
-            //         @OA\Property(property:"redirectTo", type:"string", example:"/app"),
-            //         @OA\Property(property:"message", type:"string", example:"Successfully logged in"),
-            //         @OA\Property(property:"token", type:"string", example:"token"),
-            //     ),
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'message', type: 'string', example: 'Successfully logged in'),
+                    new OA\Property(property: 'token', type: 'string', example: '00000000000000000000000000000000000'),
+                    new OA\Property(property: 'redirectTo', type: 'string', example: '/app'),
+                ])
             ),
-            //
-            // @OA\Response(response:"default", description:"Unauthorized",
-            //     @OA\JsonContent(type:"object",
-            //         @OA\Property(property:"message", type:"string", example:"Incorrect email and/or password")
-            //     ),
-            // ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthorized',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'message', type: 'string', example: 'Incorrect email and/or password'),
+                ])
+            ),
         ]
     )]
     /**
@@ -146,16 +146,14 @@ class UserController extends ApiV1Controller
             $redirectTo = $request->user()->status === UserStatusEnum::STATUS_ACTIVE ? '/app' : '/profile';
             $token = $request->user()->createToken('apiToken')->plainTextToken;
 
-            return Response::json([
+            return new JsonResponse([
                 'message' => 'Successfully logged in',
                 'token' => explode('|', $token)[1],
                 'redirectTo' => $redirectTo,
             ], 302);
         }
 
-        return Response::json([
-            'message' => 'Incorrect email and/or password',
-        ], 401);
+        return new JsonResponse(['message' => 'Incorrect email and/or password'], 401);
     }
 
     /*

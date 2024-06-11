@@ -41,7 +41,7 @@ export default defineConfig(({ command, mode }) => {
       open: false,
       host: true,
       port: 3000,
-      cors: false,
+      cors: true,
       proxy: {
         "/api/v1": {
           target: env.VITE_APP_URL,

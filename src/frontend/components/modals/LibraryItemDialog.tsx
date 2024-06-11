@@ -60,7 +60,7 @@ export const LibraryItemDialog = () => {
       const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
       const dataValues = pick(selectedItem, Object.keys(selectedLibrary?.fields ?? {}));
       const formValues = defaults(dataValues, formDefaultValues);
-      reset(formValues);
+      reset(formValues, { keepDirtyValues: true });
     }
   }, [isOpen, reset, selectedItem, selectedLibrary]);
 

@@ -197,6 +197,7 @@
     "cleanupThisLibrary": "Cleanup This Library",
     "createLibrary": "Create New Library",
     "deleteThisLibrary": "Delete This Library",
+    "errorOccurred": "An error occurred while your content was being loaded.",
     "noLibraries": "You have no libraries to view. You either haven't created a library yet or have deleted them all.",
     "title": "My Libraries",
     "useLibraryWizard": "using Library Creation Wizard"

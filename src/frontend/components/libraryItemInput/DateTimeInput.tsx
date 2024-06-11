@@ -10,11 +10,7 @@ import { useLanguageStore } from "../../store/system/useTranslationStore";
 import { CalendarMonthOutlined } from "../icons";
 
 import type { DateTimeInputProps } from "../../core/types";
-import type {
-  DateOrTimeView,
-  DateTimePickerSlotsComponentsProps,
-  PickersInputComponentLocaleText,
-} from "@mui/x-date-pickers";
+import type { DateOrTimeView, DateTimePickerSlotProps, PickersInputComponentLocaleText } from "@mui/x-date-pickers";
 import type { Dayjs } from "dayjs";
 import type { UseControllerReturn } from "react-hook-form";
 
@@ -28,7 +24,7 @@ export const DateTimeInput = (props: DateTimeInputProps) => {
   const { t } = useTranslation();
   const locale = useLanguageStore((state) => state.getLanguage());
 
-  const slotProps: DateTimePickerSlotsComponentsProps<Dayjs> = {
+  const slotProps: DateTimePickerSlotProps<Dayjs, false> = {
     textField: {
       helperText: errorMessage || helperText,
       fullWidth: true,

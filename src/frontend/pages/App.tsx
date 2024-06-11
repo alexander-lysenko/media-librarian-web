@@ -9,12 +9,13 @@ import { LibraryDrawer } from "../components/libraryItemPrint";
 import { LibraryCreateDialog, LibraryItemDialog } from "../components/modals";
 import { LibraryTable } from "../components/tables/LibraryTable";
 import { LibrariesEmptyState } from "../components/ui/LibrariesEmptyState";
+import { LibrariesErrorState } from "../components/ui/LibrariesErrorState";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
+import { useLibraryAllItemsGetRequest } from "../requests/useLibraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/useLibraryRequests";
 import { useLibrariesStore, useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
-import { useLibraryAllItemsGetRequest } from "../requests/useLibraryItemRequests";
 
 export const App = () => {
   const { t } = useTranslation();
@@ -75,7 +76,9 @@ export const App = () => {
         <Paper elevation={3} sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }}>
           {requestLibraries.status === "LOADING" || requestItems.status === "LOADING" ? (
             <LoadingOverlayInner />
-          ) : requestLibraries.status === "FAILED" || (requestLibraries.status === "SUCCESS" && !libraries.length) ? (
+          ) : requestLibraries.status === "FAILED" || requestItems.status === "FAILED" ? (
+            <LibrariesErrorState />
+          ) : requestLibraries.status === "SUCCESS" && requestLibraries.status === "SUCCESS" && !libraries.length ? (
             <LibrariesEmptyState />
           ) : (
             <LibraryTable />

@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { createRequestHook } from "../core";
 import { userLoginEndpoint } from "../core/links";
-import { useApiRequest } from "../hooks";
 import { useAuthCredentialsStore } from "../store/useAuthCredentialsStore";
 
 import type { FetchResponseEvents } from "../core";
@@ -31,7 +30,7 @@ export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormRetur
   const navigate = useNavigate();
   const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
 
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
+  const responseEvents: FetchResponseEvents = {
     onSuccess: (response: AxiosResponse<LoginResponse>) => {
       const { email } = getValues();
       const { token, redirectTo } = response.data;
@@ -43,13 +42,17 @@ export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormRetur
       reset({ password: "" });
       setError("root.serverError", { message: reason.response?.data.message || reason.message });
     },
-  });
+    onError: (reason) => {
+      reset({ password: "" });
+      setError("root.serverError", { message: reason.response?.data.message || reason.message });
+    },
+  };
 
-  const { fetch, abort, status } = useApiRequest<LoginRequest, LoginResponse>({
+  return createRequestHook<LoginRequest, LoginResponse>({
     method: "POST",
     endpoint: userLoginEndpoint,
     customEvents: responseEvents,
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+    withCredentials: false,
+    verbose: true,
+  })();
 };

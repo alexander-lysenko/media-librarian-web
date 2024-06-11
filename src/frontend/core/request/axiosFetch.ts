@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuthCredentialsStore } from "../../store/useAuthCredentialsStore";
 
 import type { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axios";
+import { update } from "lodash-es";
 
 /**
  * Axios Request configuration options (slightly overridden AxiosRequestConfig)
@@ -85,12 +86,11 @@ export const axiosFetch = async <Request, Response>(
   events: FetchResponseEvents,
 ): Promise<Response | void> => {
   const instance = axiosInstance();
-
+  const bearerToken = useAuthCredentialsStore.getState().token;
   const { beforeSend, onSuccess, onReject, onError, onComplete } = events;
 
-  const bearerToken = useAuthCredentialsStore.getState().token;
-  if (!config?.headers?.["Authorization"]) {
-    config = { ...config, headers: { ...config.headers, Authorization: `Bearer ${bearerToken}` } };
+  if (config.withCredentials) {
+    config = update(config, "headers.Authorization", (): string => `Bearer ${bearerToken}`);
   }
 
   beforeSend && beforeSend();

@@ -45,7 +45,7 @@ export const SignupForm = () => {
     reValidateMode: "onChange",
   });
   const { registerField, registerFieldDebounced } = useFormValidation("signup", useHookForm);
-  const { formState, handleSubmit, reset } = useHookForm;
+  const { formState, handleSubmit, reset, setError } = useHookForm;
   const { errors } = formState;
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
@@ -57,6 +57,7 @@ export const SignupForm = () => {
       // Submit request
       setLoading(false);
       reset();
+      setError("root.serverError", { message: "Sign up through this form is temporary unavailable" });
     }, 2000);
   };
 
@@ -75,7 +76,7 @@ export const SignupForm = () => {
   return (
     <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
       <Collapse in={!!errors.root?.serverError} unmountOnExit>
-        <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ mt: 2 }}>
+        <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ my: 2 }}>
           {errors.root?.serverError.message as string}
         </Alert>
       </Collapse>
