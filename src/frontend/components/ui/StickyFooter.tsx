@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 
 import type { Theme } from "@mui/material";
 import type { ReactNode } from "react";
@@ -7,6 +7,7 @@ type Props = {
   children: ReactNode;
 };
 
+// noinspection GrazieInspection
 /**
  * To get this component worked properly (i.e., real sticky footer experience), you must set the height
  * (actual or minimal) of a parent component as "100vh" using the 'sx' prop.

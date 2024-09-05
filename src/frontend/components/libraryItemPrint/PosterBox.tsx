@@ -1,4 +1,4 @@
-import { Box, Container, styled, Typography } from "@mui/material";
+import { Container, styled, Typography } from "@mui/material";
 
 import type { Theme } from "@mui/material";
 import type { SystemProps } from "@mui/system";
@@ -12,8 +12,8 @@ type Props = {
 export const PosterBox = ({ src, height, title }: Props) => {
   const emptySrc = "https://source.unsplash.com/oqStl2L5oxI";
   return (
-    <Wrapper height={height || 240}>
-      <BlurredBackground height={height || 240} sx={{ backgroundImage: `url(${src})` }} />
+    <Wrapper sx={{ height: height || 240 }}>
+      <BlurredBackground sx={{ height: height || 240, backgroundImage: `url(${src})` }} />
       <BackgroundContainer>
         <Image src={src || emptySrc} alt={title} />
         <TitleContainer sx={{ py: 2, px: { xs: 2, sm: 3 } }}>
@@ -24,9 +24,9 @@ export const PosterBox = ({ src, height, title }: Props) => {
   );
 };
 
-const Wrapper = styled(Box)({ position: "relative", overflow: "hidden", flex: "1 0 auto" });
+const Wrapper = styled("div")({ position: "relative", overflow: "hidden", flex: "1 0 auto" });
 
-const BlurredBackground = styled(Box)({
+const BlurredBackground = styled("div")({
   width: "100%",
   backgroundSize: "cover",
   backgroundPosition: "center",
@@ -35,7 +35,7 @@ const BlurredBackground = styled(Box)({
   boxShadow: "inset rgba(0,0,0,0.7) 1px 1px 1px 1000px",
 });
 
-const BackgroundContainer = styled(Box)({
+const BackgroundContainer = styled("div")({
   position: "relative",
   height: "100%",
   display: "flex",

@@ -22,7 +22,7 @@ export const LibraryTable = () => {
   );
 };
 
-const StyledTableBox = styled(Box)({
+const StyledTableBox = styled('div')({
   display: "flex",
   flexDirection: "column",
   height: "100%",

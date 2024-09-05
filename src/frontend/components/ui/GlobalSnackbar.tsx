@@ -47,7 +47,7 @@ export const GlobalSnackbar = () => {
           variant="filled"
           severity={snack?.type}
           sx={{ width: "100%" }}
-          onClose={snack?.enableCloseButton ?? true ? handleClose : undefined}
+          onClose={(snack?.enableCloseButton ?? true) ? handleClose : undefined}
           children={snack?.message}
         />
       }

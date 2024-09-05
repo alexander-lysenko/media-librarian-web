@@ -1,4 +1,4 @@
-import { Box, Button, Container, Paper, styled, Typography } from "@mui/material";
+import { Button, Container, Paper, styled, Typography } from "@mui/material";
 import { useCallback, useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
@@ -92,7 +92,7 @@ export const App = () => {
   );
 };
 
-const StyledHeaderBox = styled(Box)({
+const StyledHeaderBox = styled("div")({
   display: "flex",
   alignItems: "baseline",
   justifyContent: "space-between",

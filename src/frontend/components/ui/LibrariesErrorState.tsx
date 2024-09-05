@@ -9,7 +9,7 @@ export const LibrariesErrorState = () => {
   return (
     <Box p={2} height="100%" display="flex" alignItems="center" justifyContent="center" flexDirection="column">
       <ErrorOutlined sx={{ fontSize: 96 }} />
-      <Typography paragraph variant="body2" textAlign="center">
+      <Typography component="p" variant="body2" textAlign="center">
         {t("myLibraries.errorOccurred")}
       </Typography>
     </Box>

@@ -1,4 +1,4 @@
-import { Grid, Icon, IconButton, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import { Grid2 as Grid, Icon, IconButton, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material";
 
 import type { SvgIconComponent } from "@mui/icons-material";
 import type { IconButtonProps, SxProps } from "@mui/material";
@@ -20,12 +20,7 @@ type Props = {
  * - An icon - to the left edge
  * - A button (action) - to the right edge. The action may control a state externally
  * - A secondary text - next to the primary text (aligned right)
- * @param {string | ReactNode } title
- * @param {string | ReactNode | null} secondaryText
- * @param {SvgIconComponent | null} itemIcon
- * @param {SvgIconComponent | null} actionIcon
- * @param {IconButtonProps | null} actionEvents
- * @param {SxProps | null} sx
+ * @param { Props } props
  * @constructor
  */
 export const PaperCardHeader = ({ title, secondaryText, itemIcon, actionIcon, actionEvents }: Props) => {
@@ -34,19 +29,19 @@ export const PaperCardHeader = ({ title, secondaryText, itemIcon, actionIcon, ac
       {itemIcon && <ListItemIcon children={<Icon component={itemIcon} />} />}
       <ListItemText>
         <Grid container columnSpacing={2} alignItems="center">
-          <Grid item xs={12} sm>
-            <Typography variant="button" noWrap paragraph sx={{ mb: 0 }}>
+          <Grid size={{ xs: 12, sm: "auto" }}>
+            <Typography variant="button" noWrap component="p" sx={{ mb: 0 }}>
               {title}
             </Typography>
           </Grid>
           {secondaryText && (
-            <Grid item zeroMinWidth xs={12} sm>
+            <Grid size={{ xs: 12, sm: "grow" }}>
               <Typography
                 variant="caption"
+                component="p"
                 noWrap
-                paragraph
                 sx={{ mb: 0, textAlign: { xs: "left", sm: "right" } }}
-                color={(theme) => theme.palette.text.secondary}
+                color="textSecondary"
                 children={secondaryText}
               />
             </Grid>
