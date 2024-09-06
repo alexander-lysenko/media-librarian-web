@@ -18,7 +18,6 @@ import type { MouseEventHandler, ReactElement, ReactNode } from "react";
 
 /**
  * A right-side drawer displaying the entire item selected from a Library
- * @constructor
  */
 export const LibraryDrawer = () => {
   const { t } = useTranslation();

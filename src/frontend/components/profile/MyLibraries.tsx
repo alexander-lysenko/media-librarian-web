@@ -51,28 +51,28 @@ export const MyLibraries = () => {
   const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
   const handleClearLibrary =
     (id: number, name: string): MouseEventHandler<HTMLButtonElement> =>
-    (event) => {
-      event.preventDefault();
-      confirmDialog({
-        message: t("confirm.cleanupLibrary"),
-        subjectItem: name,
-        onConfirm: async () => {
-          await cleanupLibrary(undefined, { id }).then(() => getLibraries());
-        },
-      });
-    };
+      (event) => {
+        event.preventDefault();
+        confirmDialog({
+          message: t("confirm.cleanupLibrary"),
+          subjectItem: name,
+          onConfirm: async () => {
+            await cleanupLibrary(undefined, { id }).then(() => getLibraries());
+          },
+        });
+      };
   const handleDeleteLibrary =
     (id: number, name: string): MouseEventHandler<HTMLButtonElement> =>
-    (event) => {
-      event.preventDefault();
-      confirmDialog({
-        message: t("confirm.deleteLibrary"),
-        subjectItem: name,
-        onConfirm: async () => {
-          await deleteLibrary(undefined, { id }).then(() => getLibraries());
-        },
-      });
-    };
+      (event) => {
+        event.preventDefault();
+        confirmDialog({
+          message: t("confirm.deleteLibrary"),
+          subjectItem: name,
+          onConfirm: async () => {
+            await deleteLibrary(undefined, { id }).then(() => getLibraries());
+          },
+        });
+      };
 
   if (status === "LOADING") {
     return <LoadingOverlayInner sx={{ height: 180 }} />;
@@ -93,9 +93,23 @@ export const MyLibraries = () => {
       </ListItemButton>
       {libraries.map((library) => {
         const columnsToDisplay = Object.keys(library.fields).join(", ");
+        const listItemSecondaryActions = (
+          <>
+            <TooltipWrapper title={t("myLibraries.cleanupThisLibrary")} placement={"top"}>
+              <IconButton size="small" aria-label="clear" onClick={handleClearLibrary(library.id, library.title)}>
+                <CleaningServicesOutlined />
+              </IconButton>
+            </TooltipWrapper>
+            <TooltipWrapper title={t("myLibraries.deleteThisLibrary")} placement={"top"}>
+              <IconButton size="small" aria-label="delete" onClick={handleDeleteLibrary(library.id, library.title)}>
+                <DeleteForeverOutlined />
+              </IconButton>
+            </TooltipWrapper>
+          </>
+        );
 
         return (
-          <ListItem key={library.id} divider sx={{ pr: 12 }}>
+          <ListItem key={library.id} divider sx={{ pr: 12 }} secondaryAction={listItemSecondaryActions}>
             <ListItemIcon children={<CollectionsOutlined />} />
             <ListItemText
               primary={library.title}
@@ -103,18 +117,6 @@ export const MyLibraries = () => {
               primaryTypographyProps={{ noWrap: true }}
               secondaryTypographyProps={{ noWrap: true, title: columnsToDisplay }}
             />
-            <ListItemSecondaryAction>
-              <TooltipWrapper title={t("myLibraries.cleanupThisLibrary")} placement={"top"}>
-                <IconButton size="small" aria-label="clear" onClick={handleClearLibrary(library.id, library.title)}>
-                  <CleaningServicesOutlined />
-                </IconButton>
-              </TooltipWrapper>
-              <TooltipWrapper title={t("myLibraries.deleteThisLibrary")} placement={"top"}>
-                <IconButton size="small" aria-label="delete" onClick={handleDeleteLibrary(library.id, library.title)}>
-                  <DeleteForeverOutlined />
-                </IconButton>
-              </TooltipWrapper>
-            </ListItemSecondaryAction>
           </ListItem>
         );
       })}

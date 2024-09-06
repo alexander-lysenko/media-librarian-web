@@ -1,4 +1,4 @@
-import { Box, styled } from "@mui/material";
+import { styled } from "@mui/material";
 
 import { usePreviewDrawerStore } from "../../store/app/usePreviewDrawerStore";
 import { useLibraryTableStore } from "../../store/library/useLibraryTableStore";
@@ -22,7 +22,7 @@ export const LibraryTable = () => {
   );
 };
 
-const StyledTableBox = styled('div')({
+const StyledTableBox = styled("div")({
   display: "flex",
   flexDirection: "column",
   height: "100%",

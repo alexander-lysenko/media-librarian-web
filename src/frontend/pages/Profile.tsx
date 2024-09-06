@@ -3,7 +3,7 @@ import {
   Box,
   Container,
   Divider,
-  Grid,
+  Grid2 as Grid,
   List,
   ListItem,
   ListItemButton,
@@ -86,13 +86,13 @@ export const Profile = () => {
             actionEvents={{ onClick: () => setProfileSectionOpen(!profileSectionOpen) }}
           />
           <Grid container display={profileSectionOpen ? "flex" : "none"}>
-            <Grid item id="profiler" xs={12} md={4} sx={{ maxWidth: { md: 320 } }}>
+            <Grid id="profiler" size={{ xs: 12, md: 4 }} sx={{ maxWidth: { md: 320 } }}>
               <Profiler username={profile.name} email={profile.email} avatar={profile.avatar} />
             </Grid>
-            <Grid item id="preferences" xs={12} sm={6} md={4} lg={4}>
+            <Grid id="preferences" size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
               <ProfileActions />
             </Grid>
-            <Grid item id="account-info" xs={12} sm={6} md>
+            <Grid id="account-info" size={{ xs: 12, sm: 6, md: "grow" }}>
               <AccountInfo />
             </Grid>
           </Grid>
@@ -122,10 +122,10 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
 
   return (
     <Grid container>
-      <Grid item xs="auto" md={12} display="flex" justifyContent="center" alignItems="center" p={2}>
+      <Grid size={{ xs: "auto", md: 12 }} display="flex" justifyContent="center" alignItems="center" p={2}>
         <Avatar sx={{ ...sx, ...avatarSizes }} src={avatar} children={children} />
       </Grid>
-      <Grid item zeroMinWidth xs md={12} p={2} ml={{ xs: -2, sm: 0 }}>
+      <Grid size={{ xs: "grow", md: 12 }} p={2} ml={{ xs: -2, sm: 0 }}>
         <Typography variant="h5" noWrap title={username} width="100%" textAlign={{ md: "center" }}>
           {username}
         </Typography>

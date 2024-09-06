@@ -19,7 +19,7 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
   const isValid = !!stateValue && !errorMessage;
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setStateValue(event.currentTarget.value);
-    onChange && onChange(event);
+    onChange?.(event);
   };
 
   const endAdornment = (
@@ -49,7 +49,7 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
       helperText={errorMessage || helperText}
       onChange={handleChange}
       onBlur={onBlur}
-      InputProps={{ endAdornment }}
+      slotProps={{ input: { endAdornment } }}
     />
   );
 });

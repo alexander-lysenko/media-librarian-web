@@ -146,6 +146,7 @@ const LanguageSelect = forwardRef((props: InputCustomProps, ref) => {
         labelId="language"
         id="language"
         name="language"
+        variant="outlined"
         value={props.value}
         label={props.label}
         onChange={props.onChange}
@@ -172,6 +173,7 @@ const ThemeSelect = forwardRef((props: InputCustomProps, ref) => {
         labelId="theme"
         id="theme"
         name="theme"
+        variant="outlined"
         value={props.value}
         label={props.label}
         onChange={props.onChange}

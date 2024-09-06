@@ -49,7 +49,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
         return true;
       }
       event.preventDefault();
-      setSelectedItemId && setSelectedItemId(selectedItemId === itemId ? null : itemId);
+      setSelectedItemId?.(selectedItemId === itemId ? null : itemId);
     },
     [selectedItemId, setSelectedItemId],
   );
@@ -69,7 +69,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
           index: nextIndex,
           behavior: "auto",
           done: () => {
-            setSelectedItemId && setSelectedItemId(Number(nextIndex));
+            setSelectedItemId?.(Number(nextIndex));
           },
         });
         event.preventDefault();
@@ -145,9 +145,9 @@ const FixedHeaderContent = memo(({ columns, columnOptions, sort, setSort }: Tabl
         event.preventDefault();
         if (columnId === sort?.column) {
           const direction = sort?.direction;
-          setSort && setSort({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
+          setSort?.({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
         } else {
-          setSort && setSort({ column: columnId, direction: "asc" });
+          setSort?.({ column: columnId, direction: "asc" });
         }
       },
     [setSort, sort?.column, sort?.direction],

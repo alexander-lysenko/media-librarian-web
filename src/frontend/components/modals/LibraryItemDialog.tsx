@@ -30,7 +30,6 @@ import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } fr
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
  * TODO: WIP
- * @constructor
  */
 export const LibraryItemDialog = () => {
   const { t } = useTranslation();

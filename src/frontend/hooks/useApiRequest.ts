@@ -16,7 +16,7 @@ import type { AxiosResponse } from "axios";
 export const useApiRequest = <Request, Response>(
   config: ApiRequestHookConfig,
 ): ApiRequestHookReturn<Request, Response> => {
-  const { endpoint: url, method, customEvents, verbose = false, simulate = false } = config;
+  const { endpoint: url, method, customEvents, verbose = false } = config;
 
   let status: RequestStatus = "IDLE";
   const setStatus = (s: RequestStatus) => (status = s);
@@ -27,29 +27,30 @@ export const useApiRequest = <Request, Response>(
     beforeSend: () => {
       setStatus("LOADING");
       customEvents?.beforeSend?.();
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console,@typescript-eslint/no-unused-expressions
       verbose && console.log(`Requesting: ${method} ${url}`);
     },
     onSuccess: (response: Response | AxiosResponse<Response>) => {
       setStatus("SUCCESS");
       customEvents?.onSuccess?.(response as AxiosResponse<Response>);
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console,@typescript-eslint/no-unused-expressions
       verbose && console.log("Response", response);
     },
     onReject: (reason) => {
       setStatus("FAILED");
       customEvents?.onReject?.(reason);
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console,@typescript-eslint/no-unused-expressions
       verbose && console.log("Rejected", reason);
     },
     onError: (error) => {
       setStatus("FAILED");
       customEvents?.onError?.(error);
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console,@typescript-eslint/no-unused-expressions
       verbose && console.log("Failed", error);
     },
     onComplete: () => {
       customEvents?.onComplete?.();
+      // eslint-disable-next-line no-console,@typescript-eslint/no-unused-expressions
       verbose && console.log("Status: ", status);
     },
   };
@@ -76,36 +77,9 @@ export const useApiRequest = <Request, Response>(
     return await axiosFetch<Request, Response>(config, events);
   };
 
-  const fakeFetch: ApiRequestFetch<Request, Response> = async (
-    // prettier ignore
-    data: Request,
-    pathParams?: Record<string, string | number>,
-    options?: { fakeResponse?: Response },
-  ): Promise<Response | void> => {
-    events.beforeSend?.();
-    return await new Promise<AxiosResponse<Response>>((resolve) => {
-      setTimeout(() => {
-        const fakeResponse = options?.fakeResponse;
-        if (!fakeResponse) {
-          // eslint-disable-next-line no-console
-          console.warn("WARNING: options.fakeResponse was not provided, request is simulated with empty response");
-        }
-
-        resolve({ data: fakeResponse as Response } as AxiosResponse<Response>);
-      }, 1000);
-    })
-      .then(events.onSuccess, events.onReject)
-      .catch(events.onError)
-      .finally(events.onComplete);
-  };
-
-  const fakeAbort = () => {
-    return;
-  };
-
   return {
     status,
-    fetch: !simulate ? fetch : fakeFetch,
-    abort: !simulate ? () => abortController.abort() : fakeAbort,
+    fetch,
+    abort: () => abortController.abort(),
   };
 };

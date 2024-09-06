@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -115,10 +115,12 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   );
 };
 
-const EmailTextField = forwardRef((props: Partial<InputCustomProps>, ref) => {
+const EmailTextField = (props: Partial<InputCustomProps>) => {
+  const endAdornment = <InputAdornment position="end" children={<AlternateEmailOutlined />} />;
+
   return (
     <TextField
-      inputRef={ref}
+      inputRef={props.ref}
       size="small"
       margin="normal"
       fullWidth
@@ -126,17 +128,17 @@ const EmailTextField = forwardRef((props: Partial<InputCustomProps>, ref) => {
       id="passwordReset-email"
       name="email"
       value={props.value}
-      InputProps={{
-        endAdornment: <InputAdornment position="end" children={<AlternateEmailOutlined />} />,
-      }}
+      slotProps={{ input: { endAdornment } }}
     />
   );
-});
+};
 
-const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
+const PasswordTextField = (props: InputCustomProps) => {
+  const endAdornment = <InputAdornment position="end" children={<LockOutlined />} />;
+
   return (
     <TextField
-      inputRef={ref}
+      inputRef={props.ref}
       size="small"
       margin="normal"
       fullWidth
@@ -149,9 +151,7 @@ const PasswordTextField = forwardRef((props: InputCustomProps, ref) => {
       autoComplete="off"
       onChange={props.onChange}
       onBlur={props.onBlur}
-      InputProps={{
-        endAdornment: <InputAdornment position="end" children={<LockOutlined />} />,
-      }}
+      slotProps={{ input: { endAdornment } }}
     />
   );
-});
+};

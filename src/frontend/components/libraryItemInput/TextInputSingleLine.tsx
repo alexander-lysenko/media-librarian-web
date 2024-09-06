@@ -13,6 +13,12 @@ export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, 
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
   const { loadingState = false } = props;
 
+  const endAdornment = (
+    <InputAdornment position="end">
+      {loadingState ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
+    </InputAdornment>
+  );
+
   return (
     <TextField
       inputRef={ref}
@@ -26,13 +32,7 @@ export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, 
       helperText={errorMessage || helperText}
       onBlur={onBlur}
       onChange={onChange}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            {loadingState ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
-          </InputAdornment>
-        ),
-      }}
+      slotProps={{ input: { endAdornment } }}
     />
   );
 });

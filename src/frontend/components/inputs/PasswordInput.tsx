@@ -49,7 +49,7 @@ export const PasswordInput = forwardRef((props: InputCustomProps, ref) => {
       autoFocus={autoFocus}
       onChange={onChange}
       onBlur={onBlur}
-      InputProps={{ endAdornment }}
+      slotProps={{ input: { endAdornment } }}
     />
   );
 });

@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Grid2 as Grid, Link, Paper, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
@@ -47,13 +47,14 @@ export const SignIn = () => {
           <Typography variant="body2">{t("loginPage.subtitle")}</Typography>
           <LoginForm />
 
-          <Grid container>
-            <Grid item xs>
+          <Grid container size={12}>
+            <Grid size={{ xs: "auto" }}>
               <Link variant="body2" onClick={handleRecoveryDialogOpen} sx={{ cursor: "pointer" }}>
                 {t("loginPage.forgotPassword")}
               </Link>
             </Grid>
-            <Grid item>
+            <Grid size={{ xs: "grow" }} />
+            <Grid size={{ xs: "auto" }}>
               <Link component={NavLink} to={"/signup"} variant="body2">
                 {t("loginPage.needSignUp")}
               </Link>
@@ -75,7 +76,7 @@ type PageContainerProps = {
 };
 
 const PageContainer = ({ children }: PageContainerProps) => (
-  <Grid item xs={12} sm={8} md={5} xl={4} container direction="column" component={Paper} elevation={6} square>
+  <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} direction="column" component={Paper} elevation={6} square>
     {children}
   </Grid>
 );

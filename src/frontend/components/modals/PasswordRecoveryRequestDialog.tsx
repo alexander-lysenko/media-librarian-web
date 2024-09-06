@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -108,10 +108,16 @@ export const PasswordRecoveryRequestDialog = ({ open, onClose }: Props) => {
   );
 };
 
-const EmailTextField = forwardRef((props: InputCustomProps & TextFieldProps, ref) => {
+const EmailTextField = (props: InputCustomProps & TextFieldProps) => {
+  const endAdornment = (
+    <InputAdornment position="end">
+      <AlternateEmailOutlined />
+    </InputAdornment>
+  );
+
   return (
     <TextField
-      inputRef={ref}
+      inputRef={props.ref}
       autoFocus
       fullWidth
       size="small"
@@ -124,13 +130,7 @@ const EmailTextField = forwardRef((props: InputCustomProps & TextFieldProps, ref
       autoComplete="email"
       onChange={props.onChange}
       onBlur={props.onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <AlternateEmailOutlined />
-          </InputAdornment>
-        ),
-      }}
+      slotProps={{ input: { endAdornment } }}
     />
   );
-});
+};

@@ -18,6 +18,12 @@ export const EmailInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
   const { loadingState, disableAutoComplete, autoFocus } = props;
 
+  const endAdornment = (
+    <InputAdornment position="end">
+      {loadingState ? <HourglassBottomOutlined /> : <AlternateEmailOutlined />}
+    </InputAdornment>
+  );
+
   return (
     <TextField
       inputRef={ref}
@@ -32,13 +38,7 @@ export const EmailInput = forwardRef((props: Props, ref) => {
       autoFocus={autoFocus}
       onChange={onChange}
       onBlur={onBlur}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            {loadingState ? <HourglassBottomOutlined /> : <AlternateEmailOutlined />}
-          </InputAdornment>
-        ),
-      }}
+      slotProps={{ input: { endAdornment } }}
     />
   );
 });

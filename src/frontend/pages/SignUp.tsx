@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Link, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Grid2 as Grid, Link, Paper, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
@@ -26,11 +26,12 @@ export const SignUp = () => {
           <Typography variant="h5">{t("signupPage.title")}</Typography>
           <Typography variant="body2">{t("signupPage.subtitle")}</Typography>
           <SignupForm />
-          <Grid container>
-            <Grid item xs>
+
+          <Grid container size={12}>
+            <Grid size={{ xs: "grow" }}>
               <Link href="#" variant="body2" />
             </Grid>
-            <Grid item>
+            <Grid size={{ xs: "auto" }}>
               <Link component={NavLink} to={"/login"} variant="body2">
                 {t("signupPage.signIn")}
               </Link>
@@ -50,7 +51,7 @@ type PageContainerProps = {
 };
 
 const PageContainer = ({ children }: PageContainerProps) => (
-  <Grid item xs={12} sm={8} md={5} xl={4} container direction="column" component={Paper} elevation={6} square>
+  <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} direction="column" component={Paper} elevation={6} square>
     {children}
   </Grid>
 );

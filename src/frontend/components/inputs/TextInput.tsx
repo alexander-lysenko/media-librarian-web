@@ -20,6 +20,8 @@ export const TextInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
   const { margin, autoFocus, autoComplete, icon } = props;
 
+  const endAdornment = icon ? <InputAdornment position="end" children={icon} /> : undefined;
+
   return (
     <TextField
       inputRef={ref}
@@ -34,9 +36,9 @@ export const TextInput = forwardRef((props: Props, ref) => {
       autoFocus={autoFocus}
       onChange={onChange}
       onBlur={onBlur}
-      InputLabelProps={{ shrink: true }}
-      InputProps={{
-        endAdornment: icon ? <InputAdornment position="end" children={icon} /> : undefined,
+      slotProps={{
+        input: { endAdornment },
+        inputLabel: { shrink: true },
       }}
     />
   );

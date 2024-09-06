@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Divider,
   FormControl,
-  Grid,
+  Grid2 as Grid,
   Grow,
   IconButton,
   MenuItem,
@@ -56,7 +56,6 @@ type InlineTemplateProps = {
 
 /**
  * Modal dialog containing the form to create a Library
- * @constructor
  */
 export const LibraryCreateDialog = () => {
   const { t } = useTranslation();
@@ -163,14 +162,14 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
 
   return (
     <Grid container spacing={1} alignItems="stretch">
-      <Grid item xs={12} sm={7}>
+      <Grid size={{ xs: 12, sm: 7 }}>
         <TextInput
           {...registerField(`fields.${index}.name`, "name")}
           label={t("libraryCreate.fieldName")}
           errorMessage={(errors as FieldErrors<{ fields: FieldValues[] }>)?.fields?.[index]?.name?.message as string}
         />
       </Grid>
-      <Grid item xs={10} sm={4}>
+      <Grid size={{ xs: 10, sm: 4 }}>
         <TextField
           {...registerField(`fields.${index}.type`, "type")}
           {...customSelectProps}
@@ -181,7 +180,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
           ))}
         />
       </Grid>
-      <Grid item xs={2} sm={1} textAlign={"right"}>
+      <Grid size={{ xs: 2, sm: 1 }} textAlign={"right"}>
         <FormControl size="small" margin="dense">
           <TooltipWrapper title={tooltipTitle} placement="left" arrow wrap>
             <IconButton aria-label="delete" disabled={leading} onClick={onRemove}>

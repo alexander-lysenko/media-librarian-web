@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import { memo } from "react";
 
 import { ratingColorByValue } from "../../core";
@@ -30,9 +29,4 @@ export const PrintRating = memo(({ size, value }: RatingProps) => {
   });
 
   return stars.concat() as unknown as ReactElement;
-  return (
-    <Typography variant="body2" lineHeight={0} noWrap color={color}>
-      {stars.concat()}
-    </Typography>
-  );
 });
