@@ -1,5 +1,6 @@
 {
   "app": {
+    "errorOccurred": "An error occurred while your content was being loaded.",
     "logout": "Log Out",
     "noNewNotifications": "You've all caught up!",
     "openProfileMenu": "Open Profile Menu",
@@ -29,8 +30,8 @@
   },
   "confirm": {
     "cannotBeUndone": "Please keep in mind that the action cannot be undone!",
-    "deleteItem": "Do you wish to delete this item?",
     "cleanupLibrary": "Do you wish to erase all items from this Library?",
+    "deleteItem": "Do you wish to delete this item?",
     "deleteLibrary": "Do you wish to delete this Library completely, including all the items inside?",
     "deleteLibraryItem": "Do you wish to delete this item from the Library?",
     "title": "Confirm Your Action"
@@ -95,6 +96,7 @@
     "title": "Create New Library"
   },
   "libraryItem": {
+    "addPoster": "Poster",
     "title": {
       "create": "New Entry",
       "edit": "Update Entry"
@@ -103,8 +105,8 @@
     "deleteThisEntry": "Delete this entry"
   },
   "libraryTypes": {
-    "date": "Date",
     "checkmark": "Switch",
+    "date": "Date",
     "datetime": "Date+Time",
     "line": "Text Line",
     "priority": "Priority",
@@ -197,7 +199,6 @@
     "cleanupThisLibrary": "Cleanup This Library",
     "createLibrary": "Create New Library",
     "deleteThisLibrary": "Delete This Library",
-    "errorOccurred": "An error occurred while your content was being loaded.",
     "noLibraries": "You have no libraries to view. You either haven't created a library yet or have deleted them all.",
     "title": "My Libraries",
     "useLibraryWizard": "using Library Creation Wizard"
