@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -7,6 +8,7 @@ import {
   DialogTitle,
   Grow,
   styled,
+  TextField,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -20,7 +22,7 @@ import { useFormValidation } from "../../hooks";
 import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/useLibraryItemRequests";
 import { useSelectedLibraryStore } from "../../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
-import { SaveAsOutlined } from "../icons";
+import { AddCircleOutlined, ArrowDropUpOutlined, SaveAsOutlined } from "../icons";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
 import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
@@ -39,6 +41,7 @@ export const LibraryItemDialog = () => {
   const { isOpen, isEditMode, selectedItem } = useLibraryItemFormStore();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPoster, setShowPoster] = useState<boolean>(false);
 
   const useHookForm = useForm<LibraryItemFormValues>({
     mode: "onBlur" || "onTouched",
@@ -84,8 +87,19 @@ export const LibraryItemDialog = () => {
               />
             ),
           )}
+          <Box sx={{ display: showPoster ? "flex" : "none" }}>
+            <TextField type="text" label="File" />
+          </Box>
         </DialogContent>
         <DialogActions>
+          <Button
+            variant="outlined"
+            onClick={() => setShowPoster(!showPoster)}
+            startIcon={<AddCircleOutlined />}
+            endIcon={<ArrowDropUpOutlined />}
+            children={t("libraryItem.addPoster")}
+          />
+          <Box flex="1 0 auto" />
           <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
           <Button
             type="submit"

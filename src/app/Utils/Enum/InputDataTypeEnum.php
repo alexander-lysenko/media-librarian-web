@@ -3,9 +3,9 @@
 namespace App\Utils\Enum;
 
 /**
- * Class InputDataTypeEnum
+ * Enumerate data types of all available inputs for Library items
  */
-class InputDataTypeEnum
+enum InputDataTypeEnum
 {
     public const LINE_INPUT = 'line';
     public const TEXT_INPUT = 'text';

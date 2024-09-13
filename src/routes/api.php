@@ -4,6 +4,7 @@ use App\Http\Controllers\V1\LibraryController;
 use App\Http\Controllers\V1\LibraryItemController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\UserController;
+use App\Http\Controllers\V1\ValidationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +41,23 @@ Route::middleware(['auth.bearer:sanctum'])
         Route::put('/change-password', [ProfileController::class, 'changePassword'])->name('changePassword');
 
         Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');
+    });
+
+// Routes for validation stuff
+Route::middleware(['guest'])
+    ->prefix('v1/validation/')->name('v1.validation.')
+    ->controller(ValidationController::class)
+    ->group(function () {
+        Route::post('/email', [ValidationController::class, 'validateUserEmail'])->name('email');
+    });
+Route::middleware(['auth.bearer:sanctum'])
+    ->prefix('v1/validation/')->name('v1.validation.')
+    ->controller(ValidationController::class)
+    ->group(function () {
+        Route::post('/libraries', [ValidationController::class, 'validateLibraryName'])
+            ->name('libraries');
+        Route::post('/libraries/{id}/items', [ValidationController::class, 'validateLibraryItemName'])
+            ->name('libraries.items');
     });
 
 // Routes for Collections (CRUD)

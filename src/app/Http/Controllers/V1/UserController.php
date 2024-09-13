@@ -143,7 +143,7 @@ class UserController extends ApiV1Controller
         ]);
 
         if (Auth::guard('web')->attempt($credentials, $request->post('rememberMe', false))) {
-            $redirectTo = $request->user()->status === UserStatusEnum::STATUS_ACTIVE ? '/app' : '/profile';
+            $redirectTo = $request->user()->status === UserStatusEnum::STATUS_ACTIVE->value ? '/app' : '/profile';
             $token = $request->user()->createToken('apiToken')->plainTextToken;
 
             return new JsonResponse([

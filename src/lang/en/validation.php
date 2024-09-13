@@ -152,11 +152,29 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
-        'id' => [
-            'exists' => 'The collection with provided ID does not exist.',
+        'email' => [
+            'required' => 'ERR-001: The email field is required.',
+            'unique' => 'ERR-002: This email has already been taken.',
+            'exists' => 'ERR-002: Account with this email was not found.',
+            'email' => 'ERR-004: The email must be a valid email address.',
+            'regex' => 'ERR-004: The email must be a valid email address.',
+            'max' => 'ERR-005: The email must not exceed :max characters.',
         ],
-        'entry' => [
-            'exists' => 'The entry with provided ID does not exist.',
+        'id' => [
+            'required' => 'ERR-010: The ID of a Library is required.',
+            'exists' => 'ERR-011: The Library with provided ID does not exist.',
+            'integer' => 'ERR-012: The :attribute must be an integer value.',
+            'min' => 'ERR-013: The :attribute must be at least :min.',
+        ],
+        'item' => [
+            'required' => 'ERR-020: The ID of an Item is required',
+            'exists' => 'ERR-021: The Item with provided ID does not exist.',
+            'integer' => 'ERR-022: The :attribute must be an integer value.',
+            'min' => 'ERR-023: The :attribute must be at least :min.',
+        ],
+        'title' => [
+            'required' => 'ERR-030: ',
+            'regex' => 'ERR-031: ',
         ],
         'term' => [
             'array' => 'The :attribute must contain some of the following keys: [:values]',
@@ -164,7 +182,7 @@ return [
         'field_unrecognized' => "The field ':attribute' is unrecognized.",
 
         /* === Overridden default rules start from here === */
-        'boolean' => "The field ':attribute' field must be true or false.",
+        'boolean' => "The field ':attribute' must be true or false.",
         'between' => [
             'array' => "The field ':attribute' must have between :min and :max items.",
             'file' => "The field ':attribute' must be between :min and :max kilobytes.",
