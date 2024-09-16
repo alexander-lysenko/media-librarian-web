@@ -3,33 +3,19 @@
 namespace App\Utils\Enum;
 
 /**
- * Enumerate data types of all available inputs for Library items
+ * Enumerates data types of all available inputs for Library Items
  */
-enum InputDataTypeEnum
+enum InputDataTypeEnum: string
 {
-    public const LINE_INPUT = 'line';
-    public const TEXT_INPUT = 'text';
-    public const DATE_INPUT = 'date';
-    public const DATETIME_INPUT = 'datetime';
-    public const URL_INPUT = 'url';
-    public const CHECKBOX_INPUT = 'checkmark';
-    public const RATING_5_INPUT = 'rating5';
-    public const RATING_5_PRECISION_INPUT = 'rating5precision';
-    public const RATING_10_INPUT = 'rating10';
-    public const RATING_10_PRECISION_INPUT = 'rating10precision';
-    public const PRIORITY_INPUT = 'priority';
-
-    public const TYPE_UI_NAME = [
-        self::LINE_INPUT => self::LINE_INPUT,
-        self::TEXT_INPUT => self::TEXT_INPUT,
-        self::DATE_INPUT => self::DATE_INPUT,
-        self::DATETIME_INPUT => self::DATETIME_INPUT,
-        self::URL_INPUT => self::URL_INPUT,
-        self::CHECKBOX_INPUT => self::CHECKBOX_INPUT,
-        self::RATING_5_INPUT => self::RATING_5_INPUT,
-        self::RATING_5_PRECISION_INPUT => self::RATING_5_PRECISION_INPUT,
-        self::RATING_10_INPUT => self::RATING_10_INPUT,
-        self::RATING_10_PRECISION_INPUT => self::RATING_10_PRECISION_INPUT,
-        self::PRIORITY_INPUT => self::PRIORITY_INPUT,
-    ];
+    case LINE = 'line';
+    case TEXT = 'text';
+    case DATE = 'date';
+    case DATETIME = 'datetime';
+    case URL = 'url';
+    case CHECKBOX = 'checkmark';
+    case RATING_5 = 'rating5';
+    case RATING_5_PRECISION = 'rating5precision';
+    case RATING_10 = 'rating10';
+    case RATING_10_PRECISION = 'rating10precision';
+    case PRIORITY = 'priority';
 }

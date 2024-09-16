@@ -4,6 +4,7 @@ namespace App\Http\Requests\V1;
 
 use App\Rules\UniqueLibraryNameRule;
 use App\Utils\Enum\InputDataTypeEnum;
+use App\Utils\Enum\RegexPatternsEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,13 +31,16 @@ class CreateLibraryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $libraryTitlePattern = RegexPatternsEnum::LIBRARY_TITLE->value;
+        $libraryFieldPattern = RegexPatternsEnum::LIBRARY_FIELD->value;
+
         return [
-            'title' => ['required', 'regex:/^([\p{L}\p{N}]+[ ]?)+$/mu', new UniqueLibraryNameRule()],
+            'title' => ['required', "regex:$libraryTitlePattern", new UniqueLibraryNameRule()],
             'fields.*' => ['required', 'array:name,type', 'max:30'],
 
-            'fields.*.name' => ['required', 'distinct:ignore_case', 'regex:/^([\p{L}\p{N}]+[ ]?)+$/mu'],
-            'fields.*.type' => ['required', Rule::in(InputDataTypeEnum::TYPE_UI_NAME)],
-            'fields.0.type' => [Rule::in(InputDataTypeEnum::LINE_INPUT)],
+            'fields.*.name' => ['required', 'distinct:ignore_case', "regex:$libraryFieldPattern"],
+            'fields.*.type' => ['required', Rule::enum(InputDataTypeEnum::class)],
+            'fields.0.type' => [Rule::enum(InputDataTypeEnum::class)->only(InputDataTypeEnum::LINE)],
         ];
     }
 }

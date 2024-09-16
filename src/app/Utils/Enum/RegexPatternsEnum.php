@@ -3,9 +3,10 @@
 namespace App\Utils\Enum;
 
 /**
- * The collection of common Regex (Regular Expressions) patterns used all around the project
+ * Enumerates common Regex (Regular Expressions) patterns used all around the project
  */
-enum RegexPatternsEnum
+enum RegexPatternsEnum: string
 {
-
+    case LIBRARY_TITLE = '/^([\p{L}\p{N} ]+[-_]?)+$/usD';
+    case LIBRARY_FIELD = '/^([\p{L}\p{N}]+[-_ ]?)+$/iusD';
 }

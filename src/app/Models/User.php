@@ -77,7 +77,7 @@ class User extends AuthUser implements MustVerifyEmail
     public function markEmailAsVerified(): bool
     {
         return $this->forceFill([
-            'status' => UserStatusEnum::STATUS_ACTIVE->value,
+            'status' => UserStatusEnum::ACTIVE->value,
             'email_verified_at' => $this->freshTimestamp(),
         ])->save();
     }

@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Requests\V1\ValidateLibraryItemNameRequest;
-use App\Models\SqliteLibraryMeta;
 use App\Rules\UniqueLibraryNameRule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Validation\Rule;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'validation', description: 'Auxiliary validation endpoints for front-end forms')]
@@ -51,7 +47,7 @@ class ValidationController extends ApiV1Controller
         path: '/api/v1/validation/libraries',
         operationId: 'validate-library-name',
         description: '',
-        summary: 'Validate uniqueness for Library name (within an user\'s Libraries)',
+        summary: 'Validate uniqueness for Library name when a new Library is created',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['validation'],
         parameters: [
@@ -86,14 +82,14 @@ class ValidationController extends ApiV1Controller
         path: '/api/v1/validation/libraries/{id}/items',
         operationId: 'validate-library-item-name',
         description: '',
-        summary: 'Validate uniqueness for Library Item name (within a Library)',
+        summary: 'Validate uniqueness for Item name when the Item is created or updated',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['validation'],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
             new OA\Parameter(
                 name: 'item',
-                description: 'Include ID of an existing Item if the validation should ignore it (in case of updating)',
+                description: 'Include ID of the Item that is updated to skip its self-checking for uniqueness',
                 in: 'query',
                 required: false,
                 schema: new OA\Schema(type: 'integer')

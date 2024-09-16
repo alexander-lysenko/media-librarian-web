@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Http\Middleware\DatabaseSwitch;
-use App\Utils\Enum\InputDataTypeEnum;
+use App\Utils\Enum\InputDataTypeEnum as InputType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -65,17 +65,17 @@ class SqliteLibraryMeta extends Model
     public static function createTableColumnByType(Blueprint $table, string $name, string $type): ColumnDefinition
     {
         return match ($type) {
-            InputDataTypeEnum::LINE_INPUT => $table->string($name, 255)->nullable(),
-            InputDataTypeEnum::TEXT_INPUT => $table->text($name)->nullable(),
-            InputDataTypeEnum::DATE_INPUT => $table->date($name)->nullable(),
-            InputDataTypeEnum::DATETIME_INPUT => $table->timestamp($name)->nullable(),
-            InputDataTypeEnum::URL_INPUT => $table->string($name)->nullable(),
-            InputDataTypeEnum::CHECKBOX_INPUT => $table->boolean($name)->nullable(),
-            InputDataTypeEnum::RATING_5_INPUT => $table->tinyInteger($name)->unsigned()->nullable(),
-            InputDataTypeEnum::RATING_5_PRECISION_INPUT => $table->unsignedDecimal($name, 2, 1)->nullable(),
-            InputDataTypeEnum::RATING_10_INPUT => $table->smallInteger($name)->unsigned()->nullable(),
-            InputDataTypeEnum::RATING_10_PRECISION_INPUT => $table->unsignedDecimal($name, 3, 1)->nullable(),
-            InputDataTypeEnum::PRIORITY_INPUT => $table->tinyInteger($name)->nullable(),
+            InputType::LINE->value => $table->string($name, 255)->nullable(),
+            InputType::TEXT->value => $table->text($name)->nullable(),
+            InputType::DATE->value => $table->date($name)->nullable(),
+            InputType::DATETIME->value => $table->timestamp($name)->nullable(),
+            InputType::URL->value => $table->string($name)->nullable(),
+            InputType::CHECKBOX->value => $table->boolean($name)->nullable(),
+            InputType::RATING_5->value => $table->tinyInteger($name)->unsigned()->nullable(),
+            InputType::RATING_5_PRECISION->value => $table->unsignedDecimal($name, 2, 1)->nullable(),
+            InputType::RATING_10->value => $table->smallInteger($name)->unsigned()->nullable(),
+            InputType::RATING_10_PRECISION->value => $table->unsignedDecimal($name, 3, 1)->nullable(),
+            InputType::PRIORITY->value => $table->tinyInteger($name)->nullable(),
         };
     }
 
