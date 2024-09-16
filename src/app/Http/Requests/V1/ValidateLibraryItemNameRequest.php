@@ -13,6 +13,12 @@ use Illuminate\Validation\Rule;
 class ValidateLibraryItemNameRequest extends FormRequest
 {
     /**
+     * Indicates whether validation should stop after the first rule failure.
+     * @var bool
+     */
+    protected $stopOnFirstFailure = true;
+
+    /**
      * Determine if the user is authorized to make this request.
      * @return bool
      */
@@ -47,12 +53,15 @@ class ValidateLibraryItemNameRequest extends FormRequest
             'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
         ]);
 
+        // Get the metadata of a Library
         /** @var SqliteLibraryMeta $libraryTable */
         $libraryTable = SqliteLibraryMeta::query()->find($idValidated['id'])?->firstOrFail();
-        $libraryTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $libraryTable->tbl_name]);
+
+        // Prepare the name of the first field
         $libraryTableMeta = json_decode($libraryTable->meta, true);
         $libraryNameColumn = array_keys($libraryTableMeta)[0];
 
+        $libraryTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $libraryTable->tbl_name]);
         $itemValidated = $this->validate([
             'item' => ['integer', 'min:1', Rule::exists($libraryTablePath, 'id')],
         ]);

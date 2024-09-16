@@ -51,7 +51,7 @@ class LibraryPaginatedRequest extends FormRequest
 
         // Get the metadata of a Library
         /** @var SqliteLibraryMeta $libraryModel */
-        $libraryModel = SqliteLibraryMeta::query()->where('id', $idValidated['id'])->get()->first();
+        $libraryModel = SqliteLibraryMeta::query()->where('id', $idValidated['id'])->get()->firstOrFail();
 
         // Prepare rules, fields, and attributes
         $libraryMeta = json_decode($libraryModel->meta, true);

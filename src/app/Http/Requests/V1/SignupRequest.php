@@ -34,7 +34,7 @@ class SignupRequest extends FormRequest
         return [
             // for user's account
             'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:128', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'passwordRepeat' => ['required', 'same:password'],
 

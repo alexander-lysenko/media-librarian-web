@@ -35,7 +35,7 @@ class CreateLibraryRequest extends FormRequest
         $libraryFieldPattern = RegexPatternsEnum::LIBRARY_FIELD->value;
 
         return [
-            'title' => ['required', "regex:$libraryTitlePattern", new UniqueLibraryNameRule()],
+            'title' => ['required', 'string', 'max:128', "regex:$libraryTitlePattern", new UniqueLibraryNameRule()],
             'fields.*' => ['required', 'array:name,type', 'max:30'],
 
             'fields.*.name' => ['required', 'distinct:ignore_case', "regex:$libraryFieldPattern"],

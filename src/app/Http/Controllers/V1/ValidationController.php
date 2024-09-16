@@ -4,13 +4,14 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Requests\V1\ValidateLibraryItemNameRequest;
 use App\Rules\UniqueLibraryNameRule;
+use App\Utils\Enum\RegexPatternsEnum;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'validation', description: 'Auxiliary validation endpoints for front-end forms')]
 /**
- *
+ * Validation Controller - performs various independent asynchronous validations
  */
 class ValidationController extends ApiV1Controller
 {
@@ -36,8 +37,7 @@ class ValidationController extends ApiV1Controller
     public function validateUserEmail(Request $request): JsonResponse
     {
         $request->validate([
-            // rules
-            'email' => ['required', 'string', 'email', 'max:128', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:128', 'unique:users,email'],
         ]);
 
         return new JsonResponse(status: 204);
@@ -66,13 +66,10 @@ class ValidationController extends ApiV1Controller
      */
     public function validateLibraryName(Request $request): JsonResponse
     {
+        $libraryTitlePattern = RegexPatternsEnum::LIBRARY_TITLE->value;
+
         $request->validate([
-            // rules
-            'title' => ['required',
-                'string',
-                'max:255',
-                'regex:/^([\p{L}\p{N}]+[ ]?)+$/mu',
-                new UniqueLibraryNameRule()],
+            'title' => ['required', 'string', 'max:255', "regex:$libraryTitlePattern", new UniqueLibraryNameRule()],
         ]);
 
         return new JsonResponse(status: 204);
