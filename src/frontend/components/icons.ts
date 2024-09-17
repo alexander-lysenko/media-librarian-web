@@ -2,6 +2,7 @@ import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
 import ArrowDropDownOutlinedIcon from "@mui/icons-material/ArrowDropDownOutlined";
 import ArrowDropUpOutlinedIcon from "@mui/icons-material/ArrowDropUpOutlined";
+import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import BadgeIcon from "@mui/icons-material/Badge";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -56,6 +57,7 @@ export {
   AlternateEmailOutlinedIcon as AlternateEmailOutlined,
   ArrowDropDownOutlinedIcon as ArrowDropDownOutlined,
   ArrowDropUpOutlinedIcon as ArrowDropUpOutlined,
+  AttachFileOutlinedIcon as AttachFileOutlined,
   BadgeIcon as Badge,
   BadgeOutlinedIcon as BadgeOutlined,
   CalendarMonthOutlinedIcon as CalendarMonthOutlined,

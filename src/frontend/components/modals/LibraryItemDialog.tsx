@@ -8,13 +8,14 @@ import {
   DialogTitle,
   Grow,
   styled,
-  TextField,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { defaults, pick } from "lodash-es";
+import type { KeyboardEvent, SyntheticEvent } from "react";
 import { useEffect, useState } from "react";
+import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -22,12 +23,11 @@ import { useFormValidation } from "../../hooks";
 import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/useLibraryItemRequests";
 import { useSelectedLibraryStore } from "../../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
-import { AddCircleOutlined, ArrowDropUpOutlined, SaveAsOutlined } from "../icons";
+import { AddCircleOutlined, ArrowDropDownOutlined, ArrowDropUpOutlined, SaveAsOutlined } from "../icons";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 
 import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
-import type { KeyboardEvent, SyntheticEvent } from "react";
-import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } from "react-hook-form";
+import { PosterUploadInputBox } from "../ui/PosterUploadInputBox";
 
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
@@ -42,6 +42,7 @@ export const LibraryItemDialog = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [showPoster, setShowPoster] = useState<boolean>(false);
+  const dialogContentHeight = showPoster ? 640 - 116 : 640;
 
   const useHookForm = useForm<LibraryItemFormValues>({
     mode: "onBlur" || "onTouched",
@@ -72,7 +73,7 @@ export const LibraryItemDialog = () => {
         <DialogTitle variant="h5">
           {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
         </DialogTitle>
-        <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
+        <DialogContent dividers sx={{ maxHeight: { sm: dialogContentHeight } }}>
           {Object.entries(selectedLibrary?.fields || {}).map(
             ([label, type]: [string, LibraryElement], index: number) => (
               <LibraryItemInputControl
@@ -87,16 +88,16 @@ export const LibraryItemDialog = () => {
               />
             ),
           )}
-          <Box sx={{ display: showPoster ? "flex" : "none" }}>
-            <TextField type="text" label="File" />
-          </Box>
         </DialogContent>
+        <DialogActions sx={{ display: showPoster ? "flex" : "none", py: 0 }}>
+          <PosterUploadInputBox />
+        </DialogActions>
         <DialogActions>
           <Button
             variant="outlined"
             onClick={() => setShowPoster(!showPoster)}
             startIcon={<AddCircleOutlined />}
-            endIcon={<ArrowDropUpOutlined />}
+            endIcon={showPoster ? <ArrowDropDownOutlined /> : <ArrowDropUpOutlined />}
             children={t("libraryItem.addPoster")}
           />
           <Box flex="1 0 auto" />
