@@ -12,7 +12,6 @@ import {
   Grow,
   IconButton,
   MenuItem,
-  styled,
   TextField,
   Typography,
   useMediaQuery,
@@ -37,7 +36,7 @@ import { TextInput } from "../inputs/TextInput";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
 
 import type { CreateLibraryRequest } from "../../core/types";
-import type { TextFieldProps } from "@mui/material";
+import type { DialogProps, TextFieldProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type {
   FieldErrors,
@@ -98,50 +97,61 @@ export const LibraryCreateDialog = () => {
     await submit(data as CreateLibraryRequest).then(() => getLibraries());
   };
 
+  const dialogProps: DialogProps = {
+    PaperProps: {
+      sx: { minHeight: { sm: "calc(100% - 128px)" } },
+    },
+    TransitionComponent: Grow,
+    component: "form",
+    fullScreen: fullScreen,
+    fullWidth: true,
+    open: open,
+    scroll: "paper",
+    transitionDuration: 120,
+  };
+
   return (
-    <Dialog open={open} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
-      <Form noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
-        <DialogTitle variant={"h5"}>{t("libraryCreate.title")}</DialogTitle>
-        <DialogContent dividers sx={{ minHeight: 640, maxHeight: { sm: 640 } }}>
-          <TextInput
-            {...registerFieldDebounced(1000, "title")}
-            label={t("libraryCreate.libraryTitle")}
-            errorMessage={formState.errors.title?.message as string}
-            margin="none"
-            icon={titleUniqueProcessing ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
-          />
-          <Typography variant="subtitle1" children={t("libraryCreate.fieldsSet")} mt={1} />
-          <Divider sx={{ mb: 0.5 }} />
-          {watchingFields.map((field, index) => {
-            return (
-              <InputLineTemplate
-                key={index}
-                index={index}
-                registerField={registerField}
-                errors={formState.errors}
-                onRemove={() => remove(index)}
-              />
-            );
-          })}
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="outlined"
-            onClick={handleAddNewField}
-            startIcon={<AddCircleOutlined />}
-            children={fullScreen ? t("libraryCreate.field") : t("libraryCreate.addNewField")}
-          />
-          <Box flex="1 0 auto" />
-          <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading || titleUniqueProcessing}
-            endIcon={loading || titleUniqueProcessing ? <CircularProgress size={14} /> : <SaveAsOutlined />}
-            children={t("common.create")}
-          />
-        </DialogActions>
-      </Form>
+    <Dialog {...dialogProps} onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
+      <DialogTitle variant={"h5"}>{t("libraryCreate.title")}</DialogTitle>
+      <DialogContent dividers>
+        <TextInput
+          {...registerFieldDebounced(1000, "title")}
+          label={t("libraryCreate.libraryTitle")}
+          errorMessage={formState.errors.title?.message as string}
+          margin="none"
+          icon={titleUniqueProcessing ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
+        />
+        <Typography variant="subtitle1" children={t("libraryCreate.fieldsSet")} mt={1} />
+        <Divider sx={{ mb: 0.5 }} />
+        {watchingFields.map((_field, index) => {
+          return (
+            <InputLineTemplate
+              key={index}
+              index={index}
+              registerField={registerField}
+              errors={formState.errors}
+              onRemove={() => remove(index)}
+            />
+          );
+        })}
+      </DialogContent>
+      <DialogActions>
+        <Button
+          variant="outlined"
+          onClick={handleAddNewField}
+          startIcon={<AddCircleOutlined />}
+          children={fullScreen ? t("libraryCreate.field") : t("libraryCreate.addNewField")}
+        />
+        <Box flex="1 0 auto" />
+        <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading || titleUniqueProcessing}
+          endIcon={loading || titleUniqueProcessing ? <CircularProgress size={14} /> : <SaveAsOutlined />}
+          children={t("common.create")}
+        />
+      </DialogActions>
     </Dialog>
   );
 };
@@ -192,9 +202,3 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
     </Grid>
   );
 };
-
-const Form = styled("form")({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-});

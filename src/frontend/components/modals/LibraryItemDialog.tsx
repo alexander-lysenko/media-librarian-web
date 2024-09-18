@@ -7,15 +7,12 @@ import {
   DialogContent,
   DialogTitle,
   Grow,
-  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { defaults, pick } from "lodash-es";
-import type { KeyboardEvent, SyntheticEvent } from "react";
 import { useEffect, useState } from "react";
-import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -25,9 +22,12 @@ import { useSelectedLibraryStore } from "../../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { AddCircleOutlined, ArrowDropDownOutlined, ArrowDropUpOutlined, SaveAsOutlined } from "../icons";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
+import { PosterUploadInputBox } from "../ui/PosterUploadInputBox";
 
 import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
-import { PosterUploadInputBox } from "../ui/PosterUploadInputBox";
+import type { DialogProps } from "@mui/material";
+import type { KeyboardEvent, SyntheticEvent } from "react";
+import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } from "react-hook-form";
 
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
@@ -42,7 +42,6 @@ export const LibraryItemDialog = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [showPoster, setShowPoster] = useState<boolean>(false);
-  const dialogContentHeight = showPoster ? 640 - 116 : 640;
 
   const useHookForm = useForm<LibraryItemFormValues>({
     mode: "onBlur" || "onTouched",
@@ -67,59 +66,63 @@ export const LibraryItemDialog = () => {
     }
   }, [isOpen, reset, selectedItem, selectedLibrary]);
 
+  const dialogProps: DialogProps = {
+    PaperProps: {
+      sx: { minHeight: { sm: "calc(100% - 128px)" } },
+    },
+    TransitionComponent: Grow,
+    component: "form",
+    fullScreen: fullScreen,
+    fullWidth: true,
+    onKeyDown: handleSubmitByCtrlEnter,
+    open: isOpen,
+    scroll: "paper",
+    transitionDuration: 120,
+  };
+
   return (
-    <Dialog open={isOpen} fullWidth fullScreen={fullScreen} TransitionComponent={Grow} transitionDuration={120}>
-      <Form noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} onKeyDown={handleSubmitByCtrlEnter}>
-        <DialogTitle variant="h5">
-          {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
-        </DialogTitle>
-        <DialogContent dividers sx={{ maxHeight: { sm: dialogContentHeight } }}>
-          {Object.entries(selectedLibrary?.fields || {}).map(
-            ([label, type]: [string, LibraryElement], index: number) => (
-              <LibraryItemInputControl
-                key={label}
-                type={type}
-                label={label}
-                control={control}
-                errorMessage={errors?.[label]?.message as string}
-                {...(index === 0 // prettier ignore
-                  ? registerFieldDebounced(1000, label, "title")
-                  : registerField(label, type))}
-              />
-            ),
-          )}
-        </DialogContent>
-        <DialogActions sx={{ display: showPoster ? "flex" : "none", py: 0 }}>
-          <PosterUploadInputBox />
-        </DialogActions>
-        <DialogActions>
-          <Button
-            variant="outlined"
-            onClick={() => setShowPoster(!showPoster)}
-            startIcon={<AddCircleOutlined />}
-            endIcon={showPoster ? <ArrowDropDownOutlined /> : <ArrowDropUpOutlined />}
-            children={t("libraryItem.addPoster")}
+    <Dialog {...dialogProps} onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
+      <DialogTitle variant="h5" noWrap>
+        {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
+      </DialogTitle>
+      <DialogContent dividers>
+        {Object.entries(selectedLibrary?.fields || {}).map(([label, type]: [string, LibraryElement], index: number) => (
+          <LibraryItemInputControl
+            key={label}
+            type={type}
+            label={label}
+            control={control}
+            errorMessage={errors?.[label]?.message as string}
+            {...(index === 0 // prettier ignore
+              ? registerFieldDebounced(1000, label, "title")
+              : registerField(label, type))}
           />
-          <Box flex="1 0 auto" />
-          <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
-            children={isEditMode ? t("common.update") : t("common.create")}
-          />
-        </DialogActions>
-      </Form>
+        ))}
+      </DialogContent>
+      <DialogActions sx={{ display: showPoster ? "flex" : "none", py: 0 }}>
+        <PosterUploadInputBox />
+      </DialogActions>
+      <DialogActions>
+        <Button
+          variant="outlined"
+          onClick={() => setShowPoster(!showPoster)}
+          startIcon={<AddCircleOutlined />}
+          endIcon={showPoster ? <ArrowDropDownOutlined /> : <ArrowDropUpOutlined />}
+          children={t("libraryItem.addPoster")}
+        />
+        <Box flex="1 0 auto" />
+        <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading}
+          endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
+          children={isEditMode ? t("common.update") : t("common.create")}
+        />
+      </DialogActions>
     </Dialog>
   );
 };
-
-const Form = styled("form")({
-  display: "flex",
-  flexDirection: "column",
-  height: "100%",
-});
 
 const initFormDefaultValues = (fields?: LibraryFields) => {
   const defaultValues: Record<LibraryElement, () => string | number | boolean> = {

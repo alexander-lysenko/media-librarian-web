@@ -4,19 +4,19 @@ import {
   Grid2 as Grid,
   IconButton,
   InputAdornment,
+  LinearProgress,
   Paper,
   Tab,
   Tabs,
   TextField,
   Tooltip,
 } from "@mui/material";
-import type { ReactNode, SyntheticEvent } from "react";
 import { useState } from "react";
 
 import { AttachFileOutlined } from "../icons";
 
-import type { BoxProps } from "@mui/material/Box";
-import { SxProps } from "@mui/system";
+import type { SxProps } from "@mui/system";
+import type { ReactNode, SyntheticEvent } from "react";
 
 type TabPanelProps = {
   children?: ReactNode;
@@ -46,6 +46,7 @@ export const PosterUploadInputBox = () => {
     height: 100,
     width: 100,
     backgroundSize: "contain",
+    filter: "blur(2px)",
   };
 
   const posterUrl = [
@@ -57,6 +58,7 @@ export const PosterUploadInputBox = () => {
     <Grid container spacing={1} flexGrow={1} height={120}>
       <Grid size={"auto"} component={Paper} square={false} elevation={24} sx={{ mt: 2, height: 100 }}>
         <CardMedia sx={cardMediaSx} image={posterUrl} />
+        <LinearProgress variant="determinate" value={67} />
       </Grid>
 
       <Grid size={"grow"}>
