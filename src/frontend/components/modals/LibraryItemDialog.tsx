@@ -99,7 +99,7 @@ export const LibraryItemDialog = () => {
           />
         ))}
       </DialogContent>
-      <DialogActions sx={{ display: showPoster ? "flex" : "none", py: 0 }}>
+      <DialogActions sx={{ display: showPoster ? "flex" : "none", pb: 0 }}>
         <PosterUploadInputBox />
       </DialogActions>
       <DialogActions>

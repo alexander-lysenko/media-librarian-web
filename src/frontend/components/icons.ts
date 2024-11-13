@@ -9,7 +9,9 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import CleaningServicesOutlinedIcon from "@mui/icons-material/CleaningServicesOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
+import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import CreateNewFolderOutlinedIcon from "@mui/icons-material/CreateNewFolderOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -64,7 +66,9 @@ export {
   CheckCircleOutlinedIcon as CheckCircleOutlined,
   CleaningServicesOutlinedIcon as CleaningServicesOutlined,
   CloseOutlinedIcon as CloseOutlined,
+  CloudUploadOutlinedIcon as CloudUploadOutlined,
   CollectionsOutlinedIcon as CollectionsOutlined,
+  ContentPasteOutlinedIcon as ContentPasteOutlined,
   CreateNewFolderOutlinedIcon as CreateNewFolderOutlined,
   DeleteForeverOutlinedIcon as DeleteForeverOutlined,
   DeleteOutlinedIcon as DeleteOutlined,

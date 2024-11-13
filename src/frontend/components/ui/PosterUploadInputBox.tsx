@@ -1,19 +1,22 @@
 import {
   Box,
+  Button,
   CardMedia,
   Grid2 as Grid,
   IconButton,
   InputAdornment,
   LinearProgress,
   Paper,
+  styled,
   Tab,
   Tabs,
   TextField,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import { useState } from "react";
 
-import { AttachFileOutlined } from "../icons";
+import { AttachFileOutlined, CloudUploadOutlined, ContentPasteOutlined } from "../icons";
 
 import type { SxProps } from "@mui/system";
 import type { ReactNode, SyntheticEvent } from "react";
@@ -26,6 +29,7 @@ type TabPanelProps = {
 };
 
 export const PosterUploadInputBox = () => {
+  const theme = useTheme();
   const [tab, setTab] = useState(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -44,7 +48,7 @@ export const PosterUploadInputBox = () => {
 
   const cardMediaSx: SxProps = {
     height: 100,
-    width: 100,
+    width: 200,
     backgroundSize: "contain",
     filter: "blur(2px)",
   };
@@ -55,47 +59,52 @@ export const PosterUploadInputBox = () => {
   ][1];
 
   return (
-    <Grid container spacing={1} flexGrow={1} height={120}>
-      <Grid size={"auto"} component={Paper} square={false} elevation={24} sx={{ mt: 2, height: 100 }}>
+    <Grid container spacing={1} flexGrow={1} height={180}>
+      <Grid size={"auto"} component={StyledPosterPreviewPaper} square={false} variant="outlined">
         <CardMedia sx={cardMediaSx} image={posterUrl} />
         <LinearProgress variant="determinate" value={67} />
       </Grid>
 
-      <Grid size={"grow"}>
-        <Tabs value={tab} variant="fullWidth" onChange={handleChange}>
-          <Tab label="From URL" value={0} />
-          <Tab label="Local File" value={1} />
-        </Tabs>
-        <TabPanel value={tab} index={0}>
-          <TextField
-            type="text"
-            label="URL"
-            size="small"
-            margin="dense"
-            fullWidth
-            error
-            helperText={
-              "Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused "
-            }
-            slotProps={{
-              inputLabel: { shrink: true },
-              formHelperText: { sx: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } },
-            }}
-          />
-        </TabPanel>
-        <TabPanel value={tab} index={1}>
-          <TextField
-            type="file"
-            label="File"
-            size="small"
-            margin="dense"
-            fullWidth
-            slotProps={{
-              input: { startAdornment },
-              inputLabel: { shrink: true },
-            }}
-          />
-        </TabPanel>
+      <Grid size={"grow"} component={StyledDropzone} square={false} elevation={2} variant="outlined">
+        <AttachFileOutlined />
+        <div>Drop file here</div>
+        <Button variant="outlined" children={"Browse"} startIcon={<CloudUploadOutlined />} />
+        <Button variant="outlined" children={"Paste"} endIcon={<ContentPasteOutlined />} />
+        <TextField size="small" margin="dense" />
+        {/*<Tabs value={tab} variant="fullWidth" onChange={handleChange}>*/}
+        {/*  <Tab label="From URL" value={0} />*/}
+        {/*  <Tab label="Local File" value={1} />*/}
+        {/*</Tabs>*/}
+        {/*<TabPanel value={tab} index={0}>*/}
+        {/*  <TextField*/}
+        {/*    type="text"*/}
+        {/*    label="URL"*/}
+        {/*    size="small"*/}
+        {/*    margin="dense"*/}
+        {/*    fullWidth*/}
+        {/*    error*/}
+        {/*    helperText={*/}
+        {/*      "Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused "*/}
+        {/*    }*/}
+        {/*    slotProps={{*/}
+        {/*      inputLabel: { shrink: true },*/}
+        {/*      formHelperText: { title: "asdasdfsdfghdfgjkgfdsafhg", sx: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } },*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*</TabPanel>*/}
+        {/*<TabPanel value={tab} index={1}>*/}
+        {/*  <TextField*/}
+        {/*    type="file"*/}
+        {/*    label="File"*/}
+        {/*    size="small"*/}
+        {/*    margin="dense"*/}
+        {/*    fullWidth*/}
+        {/*    slotProps={{*/}
+        {/*      input: { startAdornment },*/}
+        {/*      inputLabel: { shrink: true },*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*</TabPanel>*/}
       </Grid>
     </Grid>
   );
@@ -116,3 +125,15 @@ const TabPanel = (props: TabPanelProps) => {
     </div>
   );
 };
+
+const StyledPosterPreviewPaper = styled(Paper)(() => ({
+  backgroundColor: "transparent",
+  backgroundImage: "radial-gradient(transparent, transparent, rgba(0, 0, 0, .05))",
+}));
+
+const StyledDropzone = styled(Paper)(() => ({
+  backgroundColor: "transparent",
+  backgroundImage: "none",
+  // backgroundImage: "radial-gradient(transparent, transparent, rgba(0, 0, 0, .05))",
+  padding: 16,
+}));
