@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\V1\LibraryController;
 use App\Http\Controllers\V1\LibraryItemController;
+use App\Http\Controllers\V1\PosterController;
 use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\ValidationController;
@@ -85,4 +86,13 @@ Route::middleware(['auth.bearer:sanctum'])
 
         Route::post('/search', [LibraryItemController::class, 'search'])->name('search');
         Route::get('/random', [LibraryItemController::class, 'random'])->name('random');
+    });
+
+// Routes for Poster management
+Route::middleware(['auth.bearer:sanctum'])
+    ->prefix('v1/posters/')->name('v1.posters.')
+    ->controller(PosterController::class)
+    ->group(function () {
+        Route::get('/', 'find')->name('find');
+        Route::post('/', 'upload')->name('upload');
     });

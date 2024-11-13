@@ -33,6 +33,12 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'message', type: 'string', example: '401 Authentication Required'),
     ])
 ), OA\Response(
+    response: 'Code404',
+    description: 'Not Found',
+    content: new OA\JsonContent(properties: [
+        new OA\Property(property: 'message', type: 'string', example: '404 Not Found'),
+    ])
+), OA\Response(
     response: 'Code422',
     description: 'Unprocessable Entity',
     content: new OA\JsonContent(properties: [
@@ -64,7 +70,7 @@ abstract class ApiV1Controller extends BaseController
     public const RESPONSE_204_REF = '#/components/responses/Code204';
     // public const RESPONSE_400_REF = '#/components/responses/Code400';
     public const RESPONSE_401_REF = '#/components/responses/Code401';
-    // public const RESPONSE_404_REF = '#/components/responses/Code404';
+    public const RESPONSE_404_REF = '#/components/responses/Code404';
     public const RESPONSE_422_REF = '#/components/responses/Code422';
     public const RESPONSE_500_REF = '#/components/responses/Code500';
 
