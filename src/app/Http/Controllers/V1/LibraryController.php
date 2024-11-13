@@ -46,7 +46,7 @@ use Throwable;
         'My Rating' => 'rating5precision',
         'Watched' => 'checkmark',
         'Watched At' => 'datetime',
-        'Chance to Advice' => 'priority',
+        'Chance To Recommend' => 'priority',
     ],
 )]
 /**
@@ -133,7 +133,7 @@ class LibraryController extends ApiV1Controller
                             ['name' => 'My Rating', 'type' => 'rating5precision'],
                             ['name' => 'Watched', 'type' => 'checkmark'],
                             ['name' => 'Watched At', 'type' => 'datetime'],
-                            ['name' => 'Chance to Advice', 'type' => 'priority'],
+                            ['name' => 'Chance To Recommend', 'type' => 'priority'],
                         ],
                     ),
                 ]

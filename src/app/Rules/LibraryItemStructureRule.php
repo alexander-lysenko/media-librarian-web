@@ -52,7 +52,7 @@ class LibraryItemStructureRule implements ValidationRule
      *   'My Rating' => 5,
      *   'Watched' => true,
      *   'Watched At' => "2020-01-01 00:00:01",
-     *   'Chance to Advice' => 5
+     *   'Chance To Recommend' => 5
      * ]
      *
      * @param string $attribute

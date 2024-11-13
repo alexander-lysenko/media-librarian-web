@@ -14,7 +14,7 @@ export const libraryResponse: GetLibraryResponse = {
       "My Rating": "rating5precision",
       Watched: "checkmark",
       "Watched At": "datetime",
-      "Chance to Advice": "priority",
+      "Chance To Recommend": "priority",
     },
   },
   meta: {
@@ -38,7 +38,7 @@ export const librariesResponse: GetLibrariesResponse = {
         "My Rating": "rating5precision",
         Watched: "checkmark",
         "Watched At": "datetime",
-        "Chance to Advice": "priority",
+        "Chance To Recommend": "priority",
       },
     },
     {

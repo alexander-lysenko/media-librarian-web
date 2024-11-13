@@ -31,15 +31,15 @@ class FileHelper
 
         $tempFileObject = new File($tempFilePath);
         $file = new UploadedFile(
-            $tempFileObject->getPathname(),
-            $tempFileObject->getFilename(),
-            $tempFileObject->getMimeType(),
-            0,
-            true // Mark it as test, since the file isn't from real HTTP POST.
+            path: $tempFileObject->getPathname(),
+            originalName: $tempFileObject->getFilename(),
+            mimeType: $tempFileObject->getMimeType(),
+            error: 0,
+            test: false // Mark it as test when the file isn't from real HTTP POST.
         );
 
         // Close this file after response is sent.
-        // Closing the file will cause to remove it from temp director!
+        // Closing the file will cause to remove it from temp directory!
         app()->terminating(function () use ($tempFile) {
             fclose($tempFile);
         });

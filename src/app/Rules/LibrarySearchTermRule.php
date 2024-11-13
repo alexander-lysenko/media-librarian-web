@@ -54,7 +54,7 @@ class LibrarySearchTermRule implements ValidationRule
      *   "My Rating" => "rating5precision",
      *   "Watched" => "checkmark",
      *   "Watched At" => "datetime",
-     *   "Chance to Advice" => "priority"
+     *   "Chance To Recommend" => "priority"
      * ]
      * @var array
      * @noinspection GrazieInspection
@@ -84,7 +84,7 @@ class LibrarySearchTermRule implements ValidationRule
      *   'My Rating' => ['lessThan', 5],
      *   'Watched' => ['notEqualTo', false],
      *   'Watched At' => ['lessThan', '2023-01-01 00:00:00'],
-     *   'Chance to Advice' => ['equalTo', '0'],
+     *   'Chance To Recommend' => ['equalTo', '0'],
      * ]
      *
      * @param string $attribute

@@ -9,7 +9,7 @@
         "My Rating": 5,
         "Watched": true,
         "Watched At": "2016-08-07 00:00:01",
-        "Chance to Advice": 5
+        "Chance To Recommend": 5
     },
     {
         "Movie Title": "Враг государства (1998)",
@@ -21,7 +21,7 @@
         "My Rating": 4,
         "Watched": true,
         "Watched At": "2021-05-16 00:00:01",
-        "Chance to Advice": 4
+        "Chance To Recommend": 4
     },
     {
         "Movie Title": "Матрица (1999)",
@@ -33,7 +33,7 @@
         "My Rating": 3,
         "Watched": false,
         "Watched At": "2010-01-01 00:00:01",
-        "Chance to Advice": 2
+        "Chance To Recommend": 2
     },
     {
         "Movie Title": "Ворон (1994)",
@@ -45,7 +45,7 @@
         "My Rating": 2,
         "Watched": true,
         "Watched At": "2021-04-16 00:00:01",
-        "Chance to Advice": 0
+        "Chance To Recommend": 0
     },
     {
         "Movie Title": "Хоттабыч (2006)",
@@ -57,6 +57,6 @@
         "My Rating": 0,
         "Watched": true,
         "Watched At": "2020-03-31 00:00:01",
-        "Chance to Advice": -5
+        "Chance To Recommend": -5
     }
 ]
