@@ -55,6 +55,7 @@ export const LibraryItemDialog = () => {
   const { onValidSubmit, onInvalidSubmit, handleCloseWithReset, handleSubmitByCtrlEnter } = useDialogFormEvents(
     useHookForm,
     setLoading,
+    setShowPoster,
   );
 
   useEffect(() => {
@@ -151,6 +152,7 @@ const initFormDefaultValues = (fields?: LibraryFields) => {
 const useDialogFormEvents = (
   formHook: UseFormReturn<LibraryItemFormValues>,
   setLoading: (loading: boolean) => void,
+  setShowPoster: (state: boolean) => void,
 ) => {
   const { reset, handleSubmit } = formHook;
   const { isEditMode, handleClose, selectedLibraryId, selectedItem } = useLibraryItemFormStore();
@@ -166,6 +168,7 @@ const useDialogFormEvents = (
 
     reset();
     setLoading(false);
+    setShowPoster(false);
     handleClose();
   };
 

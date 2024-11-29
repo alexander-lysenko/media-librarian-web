@@ -51,6 +51,7 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
+import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 
@@ -108,6 +109,7 @@ export {
   StarBorderIcon as StarBorder,
   StarHalfIcon as StarHalf,
   TranslateOutlinedIcon as TranslateOutlined,
+  UploadFileOutlinedIcon as UploadFileOutlined,
   VisibilityOffOutlinedIcon as VisibilityOffOutlined,
   VisibilityOutlinedIcon as VisibilityOutlined,
 };

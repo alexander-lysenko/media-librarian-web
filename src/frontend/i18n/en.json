@@ -28,6 +28,9 @@
     "update": "Update",
     "yes": "Yes"
   },
+  "commonEmbed": {
+    "or": "or"
+  },
   "confirm": {
     "cannotBeUndone": "Please keep in mind that the action cannot be undone!",
     "cleanupLibrary": "Do you wish to erase all items from this Library?",
@@ -64,6 +67,14 @@
       "subtitle": "Do you want to be presented with a different name? No Problem!",
       "whatIsYourName": "What is your name?"
     }
+  },
+  "fileUpload": {
+    "dropFileHere": "Drop file here",
+    "dragDropFileHere": "Drag & drop file here",
+    "browse": "From Device",
+    "paste": "From clipboard",
+    "unsupportedFormat": "File format is not supported",
+    "fileSizeExceed": "File size exceeds {{n}} MB"
   },
   "formValidation": {
     "emailInvalid": "Please provide a valid e-mail address",
@@ -127,6 +138,14 @@
     "signInBtn": "Sign In",
     "subtitle": "Log into your account to access your libraries.",
     "title": "Sign In"
+  },
+  "myLibraries": {
+    "cleanupThisLibrary": "Cleanup This Library",
+    "createLibrary": "Create New Library",
+    "deleteThisLibrary": "Delete This Library",
+    "noLibraries": "You have no libraries to view. You either haven't created a library yet or have deleted them all.",
+    "title": "My Libraries",
+    "useLibraryWizard": "using Library Creation Wizard"
   },
   "notifications": {
     "libraryCleaned_few": "",
@@ -194,14 +213,6 @@
       "theme": "Interface theme",
       "username": "Change your name"
     }
-  },
-  "myLibraries": {
-    "cleanupThisLibrary": "Cleanup This Library",
-    "createLibrary": "Create New Library",
-    "deleteThisLibrary": "Delete This Library",
-    "noLibraries": "You have no libraries to view. You either haven't created a library yet or have deleted them all.",
-    "title": "My Libraries",
-    "useLibraryWizard": "using Library Creation Wizard"
   },
   "signupPage": {
     "email": "Email Address",

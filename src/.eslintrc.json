@@ -43,6 +43,12 @@
         "varsIgnorePattern": "^_"
       }
     ],
+    "@typescript-eslint/no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true
+      }
+    ],
     "no-console": "warn",
     "react-refresh/only-export-components": "warn",
     "react/display-name": "off",
