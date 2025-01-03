@@ -1,7 +1,10 @@
 import { blue, red, yellow } from "@mui/material/colors";
 
-import type { PaletteMode, PaletteOptions, ThemeOptions } from "@mui/material";
+import type { CssVarsThemeOptions, PaletteMode, PaletteOptions, ThemeOptions } from "@mui/material";
 import type { TypographyOptions } from "@mui/material/styles/createTypography";
+
+type DesignTokensOptions = Omit<ThemeOptions, "components"> &
+  Pick<CssVarsThemeOptions, "defaultColorScheme" | "colorSchemes" | "components">;
 
 const lightPalette: PaletteOptions = {
   primary: {
@@ -36,7 +39,11 @@ const darkPalette: PaletteOptions = {
 const typography: TypographyOptions = {};
 
 // Compose a theme instance.
-export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
+export const getDesignTokens = (mode: PaletteMode): DesignTokensOptions => ({
+  colorSchemes: {
+    dark: true,
+    light: true,
+  },
   palette: {
     mode,
     ...(mode === "light" ? lightPalette : darkPalette),

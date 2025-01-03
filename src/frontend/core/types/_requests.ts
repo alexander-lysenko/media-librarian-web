@@ -1,18 +1,51 @@
-import type { FetchResponseEvents } from "../request/axiosFetch";
 import type { DataRow } from "./_dataTable";
 import type { LibraryElement, LibraryItem, LibraryItemFormValues, LibrarySchema } from "./_library";
-import type { Method } from "axios";
 
 type PathParams = Record<string, string | number>;
 
+// == core request types == //
+
+/**
+ * List of customizable response event handlers
+ */
+export type HttpResponseEvents = {
+  /** The payload to be executed before the request is run */
+  beforeSend?: () => void;
+
+  /** The payload to be executed when the request is successfully fulfilled */
+  onSuccess?: (response: never) => Promise<never> | void;
+
+  /** The payload to be executed when the request is rejected or unsuccessfully fulfilled */
+  onReject?: (reason: ErrorResponse | never) => PromiseLike<ErrorResponse> | never | void;
+
+  /** The payload to be executed when the request is failed */
+  onError?: (reason: ErrorResponse | never) => void;
+
+  /** The payload to be executed when the request is completed regardless of its status */
+  onComplete?: () => void;
+};
+
 export type RequestStatus = "IDLE" | "LOADING" | "SUCCESS" | "FAILED";
 
-export type ApiRequestHookConfig = {
+export type HttpRequestHookConfig = {
   endpoint: string;
-  method: Method;
-  customEvents?: FetchResponseEvents;
+  method: "GET" | "DELETE" | "HEAD" | "OPTIONS" | "POST" | "PUT" | "PATCH" | "PURGE" | "LINK" | "UNLINK";
+  customEvents?: HttpResponseEvents;
   verbose?: boolean; // default: false
   withCredentials?: boolean; // default: true
+};
+
+/** The unified error response interface */
+export type ErrorResponse = {
+  message: string;
+  // validation errors (if present)
+  errors?: Record<string, string[]>;
+
+  // dev environment only
+  exception?: string;
+  file?: string;
+  line?: string;
+  trace?: never[];
 };
 
 export type ApiRequestFetch<Request, Response> = (
@@ -33,7 +66,7 @@ export type UseRequestReturn<Request, Response> = {
   status: RequestStatus;
   fetch: ApiRequestFetch<Request, Response>;
   abort: () => void;
-  setResponseEvents: (events: FetchResponseEvents) => void;
+  setResponseEvents: (events: HttpResponseEvents) => void;
 };
 
 // == useLibraryRequests == //

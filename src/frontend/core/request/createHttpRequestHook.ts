@@ -3,17 +3,24 @@ import { useState } from "react";
 import { bindPathParams } from "../helpers";
 import { axiosFetch } from "./axiosFetch";
 
-import type { ApiRequestFetch, ApiRequestHookConfig, RequestStatus, UseRequestReturn } from "../types";
-import type { FetchRequestConfig, FetchResponseEvents } from "./axiosFetch";
-import type { AxiosResponse } from "axios";
+import type {
+  ApiRequestFetch,
+  HttpRequestHookConfig,
+  HttpResponseEvents,
+  RequestStatus,
+  UseRequestReturn,
+} from "../types";
+import type { FetchRequestConfig } from "./axiosFetch";
 
 /**
  * Factory to create Axios API requests
  * @param config
  * @see https://dev.to/pietmichal/react-hooks-factories-48bi
  */
-export const createRequestHook = <Request = void, Response = void>(config: ApiRequestHookConfig) => {
-  return function useHook(): UseRequestReturn<Request, Response> {
+export const createHttpRequestHook = <RequestType = never, ResponseType = never>(
+  config: HttpRequestHookConfig,
+): (() => UseRequestReturn<RequestType, ResponseType>) => {
+  return function useHook(): UseRequestReturn<RequestType, ResponseType> {
     const { endpoint: url, method, customEvents } = config;
     const { verbose = false, withCredentials = true } = config;
 
@@ -21,43 +28,43 @@ export const createRequestHook = <Request = void, Response = void>(config: ApiRe
     const [status, setStatus] = useState<RequestStatus>("IDLE");
 
     // Response events will be intentionally getting mutated to apply changes immediately without awaiting re-render
-    let responseEvents: FetchResponseEvents = customEvents ?? {};
-    const setResponseEvents = (events: FetchResponseEvents) => {
+    let responseEvents: HttpResponseEvents = customEvents ?? {};
+    const setResponseEvents = (events: HttpResponseEvents) => {
       responseEvents = { ...responseEvents, ...events };
     };
 
     let debugStatus: RequestStatus = "IDLE";
-    const eventHandlers: FetchResponseEvents = {
+    const eventHandlers: HttpResponseEvents = {
       beforeSend: () => {
         setStatus("LOADING");
         responseEvents?.beforeSend?.();
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
         verbose && console.log(`Requesting: ${method} ${url}`);
       },
-      onSuccess: (response: Response | AxiosResponse<Response>) => {
+      onSuccess: (response) => {
         setStatus("SUCCESS");
-        responseEvents?.onSuccess?.(response as AxiosResponse<Response>);
-        // eslint-disable-next-line no-console
+        responseEvents?.onSuccess?.(response);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
         verbose && console.log("Response", response);
         debugStatus = "SUCCESS";
       },
       onReject: (reason) => {
         setStatus("FAILED");
         responseEvents?.onReject?.(reason);
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
         verbose && console.log("Rejected", reason);
         debugStatus = "FAILED";
       },
       onError: (error) => {
         setStatus("FAILED");
         responseEvents?.onError?.(error);
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
         verbose && console.log("Failed", error);
         debugStatus = "FAILED";
       },
       onComplete: () => {
         responseEvents?.onComplete?.();
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
         verbose && console.log("Status: ", debugStatus);
       },
     };
@@ -65,11 +72,11 @@ export const createRequestHook = <Request = void, Response = void>(config: ApiRe
     /**
      * Regular Axios fetch
      */
-    const fetch: ApiRequestFetch<Request, Response> = async (
-      data: Request,
+    const fetch: ApiRequestFetch<RequestType, ResponseType> = async (
+      data: RequestType,
       pathParams?: Record<string, string | number>,
-    ): Promise<Response | void> => {
-      const config: FetchRequestConfig<Request> = {
+    ): Promise<ResponseType | void> => {
+      const config: FetchRequestConfig<RequestType> = {
         url: bindPathParams(url, pathParams),
         method,
         data,
@@ -77,7 +84,7 @@ export const createRequestHook = <Request = void, Response = void>(config: ApiRe
         signal: abortController.signal,
       };
 
-      return await axiosFetch<Request, Response>(config, eventHandlers);
+      return await axiosFetch<RequestType, ResponseType & never>(config, eventHandlers);
     };
 
     const abort = () => abortController.abort();

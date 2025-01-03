@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { axiosFetch } from "../core";
 
-import type { FetchRequestConfig, FetchResponseEvents } from "../core";
-import type { ApiRequestFetch, ApiRequestHookConfig, ApiRequestHookReturn, RequestStatus } from "../core/types";
+import type { FetchRequestConfig, HttpResponseEvents } from "../core";
+import type { ApiRequestFetch, HttpRequestHookConfig, ApiRequestHookReturn, RequestStatus } from "../core/types";
 import type { AxiosResponse } from "axios";
 
 /**
@@ -14,7 +14,7 @@ import type { AxiosResponse } from "axios";
  * @deprecated use createRequestHook instead
  */
 export const useApiRequest = <Request, Response>(
-  config: ApiRequestHookConfig,
+  config: HttpRequestHookConfig,
 ): ApiRequestHookReturn<Request, Response> => {
   const { endpoint: url, method, customEvents, verbose = false } = config;
 
@@ -23,7 +23,7 @@ export const useApiRequest = <Request, Response>(
 
   const [abortController] = useState<AbortController>(new AbortController());
 
-  const events: FetchResponseEvents = {
+  const events: HttpResponseEvents = {
     beforeSend: () => {
       setStatus("LOADING");
       customEvents?.beforeSend?.();
