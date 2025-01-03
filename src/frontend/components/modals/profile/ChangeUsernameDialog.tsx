@@ -34,7 +34,7 @@ export const ChangeUsernameDialog = ({ open, onClose, onSubmit }: SimpleDialogPr
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const useHookForm = useForm({ mode: "onBlur" || "onTouched", reValidateMode: "onChange" });
+  const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("profile", useHookForm);
   const { formState, reset, handleSubmit } = useHookForm;
 

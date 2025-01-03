@@ -16,10 +16,7 @@ import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-
 export const LoginForm = () => {
   const { t } = useTranslation();
 
-  const useHookForm = useForm({
-    mode: "onBlur" || "onTouched",
-    reValidateMode: "onChange",
-  });
+  const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("login", useHookForm);
   const { formState, handleSubmit, reset } = useHookForm;
   const { errors } = formState;

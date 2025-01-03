@@ -43,10 +43,7 @@ export const PasswordRecoveryRequestDialog = ({ open, onClose }: Props) => {
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState<boolean>(false);
 
-  const usePasswordRecoveryRequestForm = useForm({
-    mode: "onBlur" || "onTouched",
-    reValidateMode: "onChange",
-  });
+  const usePasswordRecoveryRequestForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("passwordRecoveryRequest", usePasswordRecoveryRequestForm);
   const { formState, reset, handleSubmit } = usePasswordRecoveryRequestForm;
   const { errors } = formState;

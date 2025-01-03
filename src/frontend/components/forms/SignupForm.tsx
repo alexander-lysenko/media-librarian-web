@@ -41,10 +41,7 @@ export const SignupForm = () => {
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
-  const useHookForm = useForm({
-    mode: "onBlur",
-    reValidateMode: "onChange",
-  });
+  const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField, registerFieldDebounced } = useFormValidation("signup", useHookForm);
   const { formState, handleSubmit, reset, setError } = useHookForm;
   const { errors } = formState;

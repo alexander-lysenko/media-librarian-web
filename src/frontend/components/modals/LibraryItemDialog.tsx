@@ -43,11 +43,7 @@ export const LibraryItemDialog = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showPoster, setShowPoster] = useState<boolean>(false);
 
-  const useHookForm = useForm<LibraryItemFormValues>({
-    mode: "onBlur" || "onTouched",
-    reValidateMode: "onChange",
-  });
-
+  const useHookForm = useForm<LibraryItemFormValues>({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField, registerFieldDebounced } = useFormValidation("libraryItem", useHookForm);
   const { formState, reset, handleSubmit, control } = useHookForm;
   const { errors } = formState;

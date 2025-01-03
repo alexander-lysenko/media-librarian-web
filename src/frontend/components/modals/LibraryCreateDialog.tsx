@@ -66,7 +66,7 @@ export const LibraryCreateDialog = () => {
 
   // HOOK FORM
   const useHookForm = useForm({
-    mode: "onBlur" || "onTouched",
+    mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: { title: "", fields: [{ name: "", type: "line" }] },
   });
