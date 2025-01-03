@@ -1,4 +1,5 @@
 import { MenuItem, TextField } from "@mui/material";
+import { kebabCase } from "lodash-es";
 import { useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -11,9 +12,10 @@ import type { UseControllerReturn } from "react-hook-form";
  * Has 11 levels valued as range [-5, 5]. Default value is 0
  */
 export const PriorityInput = (props: PriorityInputProps) => {
-  const { label, errorMessage, helperText } = props;
-  const { name, control } = props;
   const { t } = useTranslation();
+
+  const { name, control, label, errorMessage, helperText } = props;
+  const inputId = kebabCase(name);
 
   const menuItems = useMemo(() => {
     const options: Record<number, string> = {
@@ -51,6 +53,10 @@ export const PriorityInput = (props: PriorityInputProps) => {
           error={!!errorMessage}
           helperText={errorMessage || helperText}
           children={menuItems}
+          slotProps={{
+            inputLabel: { htmlFor: inputId },
+            input: { id: inputId },
+          }}
         />
       )}
     />

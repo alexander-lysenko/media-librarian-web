@@ -23,10 +23,10 @@ export const LibraryDrawer = () => {
   const { t } = useTranslation();
 
   const { open, setOpen, selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
-  const [item, columns] = useLibraryTableStore((state) => [
-    state.rows.find((dataRow) => dataRow.id === selectedItemId),
-    state.columns,
-  ]);
+  const columns = useLibraryTableStore((state) => state.columns);
+  const item = useLibraryTableStore((state) => {
+    return state.rows.find((dataRow) => dataRow.id === selectedItemId);
+  });
 
   const { handleItemEdit, handleItemDelete } = useLibraryItemActions();
 

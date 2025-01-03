@@ -38,10 +38,11 @@ export const SignupForm = () => {
 
   const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
-  const [language, setLanguage] = useLanguageStore((state) => [state.language, state.setLanguage]);
+  const language = useLanguageStore((state) => state.language);
+  const setLanguage = useLanguageStore((state) => state.setLanguage);
 
   const useHookForm = useForm({
-    mode: "onBlur" || "onTouched",
+    mode: "onBlur",
     reValidateMode: "onChange",
   });
   const { registerField, registerFieldDebounced } = useFormValidation("signup", useHookForm);

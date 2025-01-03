@@ -1,14 +1,10 @@
-import { useState } from "react";
-
+import { createHttpRequestHook } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { profileEndpoint } from "../core/links";
-import { useApiRequest } from "../hooks";
 import { useProfileStore } from "../store/useProfileStore";
 
-import type { FetchResponseEvents } from "../core";
-import type { UseRequestReturn } from "../core/types";
+import type { HttpResponseEvents, UseRequestReturn } from "../core/types";
 import type { ProfileData } from "../store/useProfileStore";
-import type { AxiosResponse } from "axios";
 
 type GetProfileResponse = {
   user: ProfileData;
@@ -21,24 +17,22 @@ type GetProfileResponse = {
 export const useProfileGetRequest = (): UseRequestReturn<void, GetProfileResponse> => {
   const setProfile = useProfileStore((state) => state.setProfile);
 
-  const [responseEvents, setResponseEvents] = useState<FetchResponseEvents>({
-    onSuccess: (response: AxiosResponse<GetProfileResponse>) => {
-      setProfile(response.data.user);
+  const responseEvents: HttpResponseEvents = {
+    onSuccess: (response: GetProfileResponse) => {
+      setProfile(response.user);
       enqueueSnack({
         type: "success",
         message: "Profile loaded",
       });
     },
-  });
+  };
 
-  const { fetch, abort, status } = useApiRequest<void, GetProfileResponse>({
+  return createHttpRequestHook<void, GetProfileResponse>({
     method: "GET",
     endpoint: profileEndpoint,
     customEvents: responseEvents,
     verbose: true,
-  });
-
-  return { status, fetch, abort, setResponseEvents };
+  })();
 };
 
 /**

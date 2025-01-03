@@ -1,4 +1,5 @@
 import { TextField } from "@mui/material";
+import { kebabCase } from "lodash-es";
 import { forwardRef } from "react";
 
 import type { TextInputMultiLineProps } from "../../core/types";
@@ -9,6 +10,7 @@ import type { TextInputMultiLineProps } from "../../core/types";
  */
 export const TextInputMultiLine = forwardRef((props: TextInputMultiLineProps, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
+  const inputId = kebabCase(name);
 
   return (
     <TextField
@@ -26,6 +28,10 @@ export const TextInputMultiLine = forwardRef((props: TextInputMultiLineProps, re
       helperText={errorMessage || helperText}
       onBlur={onBlur}
       onChange={onChange}
+      slotProps={{
+        inputLabel: { htmlFor: inputId },
+        input: { id: inputId },
+      }}
     />
   );
 });
