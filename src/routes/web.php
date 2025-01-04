@@ -14,20 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', static function () {
-    return view('index');
-});
-Route::get('/app', static function () {
-    return view('index');
-});
-Route::get('/login', static function () {
-    return view('index');
-});
-Route::get('/signup', static function () {
-    return view('index');
-});
-Route::get('/profile', static function () {
-    return view('index');
-});
+Route::middleware(['throttle:web'])
+    ->group(function () {
+        Route::get('/', static function () {
+            return view('index');
+        });
+        Route::get('/app', static function () {
+            return view('index');
+        });
+        Route::get('/login', static function () {
+            return view('index');
+        });
+        Route::get('/signup', static function () {
+            return view('index');
+        });
+        Route::get('/profile', static function () {
+            return view('index');
+        });
+    });
 
 Route::get('/email-confirmation', [WebController::class, 'emailVerify'])->name('verification.verify');

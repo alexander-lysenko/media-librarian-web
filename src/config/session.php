@@ -3,7 +3,6 @@
 use Illuminate\Support\Str;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Session Driver
@@ -17,7 +16,6 @@ return [
     |            "memcached", "redis", "dynamodb", "array"
     |
     */
-
     'driver' => env('SESSION_DRIVER', 'file'),
 
     /*
@@ -30,9 +28,7 @@ return [
     | to immediately expire on the browser closing, set that option.
     |
     */
-
     'lifetime' => env('SESSION_LIFETIME', 120),
-
     'expire_on_close' => false,
 
     /*
@@ -45,7 +41,6 @@ return [
     | automatically by Laravel and you can use the Session like normal.
     |
     */
-
     'encrypt' => false,
 
     /*
@@ -58,7 +53,6 @@ return [
     | location may be specified. This is only needed for file sessions.
     |
     */
-
     'files' => storage_path('framework/sessions'),
 
     /*
@@ -71,7 +65,6 @@ return [
     | correspond to a connection in your database configuration options.
     |
     */
-
     'connection' => env('SESSION_CONNECTION'),
 
     /*
@@ -84,7 +77,6 @@ return [
     | provided for you; however, you are free to change this as needed.
     |
     */
-
     'table' => 'sessions',
 
     /*
@@ -99,7 +91,6 @@ return [
     | Affects: "apc", "dynamodb", "memcached", "redis"
     |
     */
-
     'store' => env('SESSION_STORE'),
 
     /*
@@ -112,7 +103,6 @@ return [
     | happen on a given request. By default, the odds are 2 out of 100.
     |
     */
-
     'lottery' => [2, 100],
 
     /*
@@ -125,10 +115,9 @@ return [
     | new session cookie is created by the framework for every driver.
     |
     */
-
     'cookie' => env(
-        'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        key: 'SESSION_COOKIE',
+        default: Str::slug(env('APP_NAME', 'laravel'), '_') . '_session'
     ),
 
     /*
@@ -141,7 +130,6 @@ return [
     | your application but you are free to change this when necessary.
     |
     */
-
     'path' => '/',
 
     /*
@@ -154,7 +142,6 @@ return [
     | available to in your application. A sensible default has been set.
     |
     */
-
     'domain' => env('SESSION_DOMAIN'),
 
     /*
@@ -167,7 +154,6 @@ return [
     | the cookie from being sent to you when it can't be done securely.
     |
     */
-
     'secure' => env('SESSION_SECURE_COOKIE'),
 
     /*
@@ -180,7 +166,6 @@ return [
     | the HTTP protocol. You are free to modify this option if needed.
     |
     */
-
     'http_only' => true,
 
     /*
@@ -195,7 +180,5 @@ return [
     | Supported: "lax", "strict", "none", null
     |
     */
-
     'same_site' => 'lax',
-
 ];

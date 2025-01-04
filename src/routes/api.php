@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // User authentication, guest routes (unauthenticated user)
-Route::middleware(['guest'])
+Route::middleware(['guest', 'throttle:api.auth'])
     ->prefix('v1/user/')->name('v1.user.')
     ->controller(UserController::class)
     ->group(function () {
@@ -34,7 +34,7 @@ Route::middleware(['guest'])
     });
 
 // Routes for profile (as authenticated user)
-Route::middleware(['auth.bearer:sanctum'])
+Route::middleware(['auth.bearer:sanctum', 'throttle:api.basic'])
     ->prefix('v1/profile/')->name('v1.profile.')
     ->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
@@ -45,13 +45,13 @@ Route::middleware(['auth.bearer:sanctum'])
     });
 
 // Routes for validation stuff
-Route::middleware(['guest'])
+Route::middleware(['guest', 'throttle:api.validation'])
     ->prefix('v1/validation/')->name('v1.validation.')
     ->controller(ValidationController::class)
     ->group(function () {
         Route::post('/email', [ValidationController::class, 'validateUserEmail'])->name('email');
     });
-Route::middleware(['auth.bearer:sanctum'])
+Route::middleware(['auth.bearer:sanctum', 'throttle:api.validation'])
     ->prefix('v1/validation/')->name('v1.validation.')
     ->controller(ValidationController::class)
     ->group(function () {
@@ -62,7 +62,7 @@ Route::middleware(['auth.bearer:sanctum'])
     });
 
 // Routes for Collections (CRUD)
-Route::middleware(['auth.bearer:sanctum'])
+Route::middleware(['auth.bearer:sanctum', 'throttle:api.basic'])
     ->prefix('v1/libraries/')->name('v1.libraries.')
     ->group(function () {
         Route::get('/', [LibraryController::class, 'index'])->name('index');
@@ -74,7 +74,7 @@ Route::middleware(['auth.bearer:sanctum'])
     });
 
 // Routes for Collection entries (CRUD)
-Route::middleware(['auth.bearer:sanctum'])
+Route::middleware(['auth.bearer:sanctum', 'throttle:api.basic'])
     ->prefix('v1/libraries/{id}/items/')->name('v1.libraries.items.')
     ->group(function () {
         Route::get('/', [LibraryItemController::class, 'index'])->name('index');
@@ -89,7 +89,7 @@ Route::middleware(['auth.bearer:sanctum'])
     });
 
 // Routes for Poster management
-Route::middleware(['auth.bearer:sanctum'])
+Route::middleware(['auth.bearer:sanctum', 'throttle:api.posters'])
     ->prefix('v1/posters/')->name('v1.posters.')
     ->controller(PosterController::class)
     ->group(function () {

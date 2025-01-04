@@ -3,7 +3,6 @@
 use Laravel\Sanctum\Sanctum;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Stateful Domains
@@ -11,10 +10,9 @@ return [
     |
     | Requests from the following domains / hosts will receive stateful API
     | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
+    | and production domains, which access your API via a frontend SPA.
     |
     */
-
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
         '%s%s',
         'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
@@ -32,7 +30,6 @@ return [
     | token that's present on an incoming request for authentication.
     |
     */
-
     'guard' => ['web'],
 
     /*
@@ -45,7 +42,6 @@ return [
     | "expires_at" attribute, but first-party sessions are not affected.
     |
     */
-
     'expiration' => null,
 
     /*
@@ -53,14 +49,13 @@ return [
     | Token Prefix
     |--------------------------------------------------------------------------
     |
-    | Sanctum can prefix new tokens in order to take advantage of various
-    | security scanning initiaives maintained by open source platforms
+    | Sanctum can prefix new tokens to take advantage of various
+    | security scanning initiatives maintained by open source platforms
     | that alert developers if they commit tokens into repositories.
     |
     | See: https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning
     |
     */
-
     'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
 
     /*
@@ -73,7 +68,6 @@ return [
     | request. You may change the middleware listed below as required.
     |
     */
-
     'middleware' => [
         'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
         'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
