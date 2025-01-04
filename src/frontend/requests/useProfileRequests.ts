@@ -17,8 +17,8 @@ type GetProfileResponse = {
 export const useProfileGetRequest = (): UseRequestReturn<void, GetProfileResponse> => {
   const setProfile = useProfileStore((state) => state.setProfile);
 
-  const responseEvents: HttpResponseEvents = {
-    onSuccess: (response: GetProfileResponse) => {
+  const responseEvents: HttpResponseEvents<GetProfileResponse> = {
+    onSuccess: (response) => {
       setProfile(response.user);
       enqueueSnack({
         type: "success",

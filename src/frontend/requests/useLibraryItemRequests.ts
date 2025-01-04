@@ -1,19 +1,18 @@
 import { useTranslation } from "react-i18next";
 
-import { createRequestHook } from "../core";
+import { createHttpRequestHook } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { libraryItemEndpoint, libraryItemsEndpoint } from "../core/links";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 
-import type { FetchResponseEvents } from "../core";
 import type {
   GetLibraryItemsRequest,
   GetLibraryItemsResponse,
+  HttpResponseEvents,
   LibraryItemResponse,
   PostLibraryItemRequest,
   UseRequestReturn,
 } from "../core/types";
-import type { AxiosResponse } from "axios";
 
 /**
  * Request to get items from a specific library
@@ -24,21 +23,17 @@ import type { AxiosResponse } from "axios";
 export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItemsRequest, GetLibraryItemsResponse> => {
   const setRows = useLibraryTableStore((state) => state.setRows);
 
-  const customEvents: FetchResponseEvents = {
-    onSuccess: (response: AxiosResponse<GetLibraryItemsResponse>) => {
-      const { items } = response.data;
-      setRows(items);
+  const customEvents: HttpResponseEvents<GetLibraryItemsResponse> = {
+    onSuccess: (response) => {
+      setRows(response.items);
     },
     onError: (reason) => {
       setRows([]);
-      enqueueSnack({
-        message: `${reason.message}: ${reason.response?.data?.message}`,
-        type: "error",
-      });
+      enqueueSnack({ message: reason.message, type: "error" });
     },
   };
 
-  return createRequestHook<GetLibraryItemsRequest, GetLibraryItemsResponse>({
+  return createHttpRequestHook<GetLibraryItemsRequest, GetLibraryItemsResponse>({
     method: "GET",
     endpoint: libraryItemsEndpoint,
     customEvents,
@@ -52,16 +47,13 @@ export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItems
  * WIP
  */
 export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemResponse> => {
-  const customEvents: FetchResponseEvents = {
+  const customEvents: HttpResponseEvents<LibraryItemResponse> = {
     onError: (reason) => {
-      enqueueSnack({
-        message: `${reason.message}: ${reason.response?.data?.message}`,
-        type: "error",
-      });
+      enqueueSnack({ message: reason.message, type: "error" });
     },
   };
 
-  return createRequestHook<void, LibraryItemResponse>({
+  return createHttpRequestHook<void, LibraryItemResponse>({
     method: "GET",
     endpoint: libraryItemEndpoint,
     customEvents,
@@ -77,20 +69,17 @@ export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemRe
 export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemRequest, LibraryItemResponse> => {
   const { t } = useTranslation();
 
-  const customEvents: FetchResponseEvents = {
-    onSuccess: (response: AxiosResponse<LibraryItemResponse>) => {
-      const title = Object.values(response.data.item)[1];
+  const customEvents: HttpResponseEvents<LibraryItemResponse> = {
+    onSuccess: (response) => {
+      const title = Object.values(response.item)[1];
       enqueueSnack({ message: t("notifications.libraryItemCreated", { title }), type: "success" });
     },
     onError: (reason) => {
-      enqueueSnack({
-        message: `${reason.message}: ${reason.response?.data?.message}`,
-        type: "error",
-      });
+      enqueueSnack({ message: reason.message, type: "error" });
     },
   };
 
-  return createRequestHook<PostLibraryItemRequest, LibraryItemResponse>({
+  return createHttpRequestHook<PostLibraryItemRequest, LibraryItemResponse>({
     method: "POST",
     endpoint: libraryItemsEndpoint,
     customEvents,
@@ -106,20 +95,17 @@ export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemReq
 export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequest, LibraryItemResponse> => {
   const { t } = useTranslation();
 
-  const customEvents: FetchResponseEvents = {
-    onSuccess: (response: AxiosResponse<LibraryItemResponse>) => {
-      const title = Object.values(response.data.item)[1];
+  const customEvents: HttpResponseEvents<LibraryItemResponse> = {
+    onSuccess: (response) => {
+      const title = Object.values(response.item)[1];
       enqueueSnack({ message: t("notifications.libraryItemUpdated", { title }), type: "success" });
     },
     onError: (reason) => {
-      enqueueSnack({
-        message: `${reason.message}: ${reason.response?.data?.message}`,
-        type: "error",
-      });
+      enqueueSnack({ message: reason.message, type: "error" });
     },
   };
 
-  return createRequestHook<PostLibraryItemRequest, LibraryItemResponse>({
+  return createHttpRequestHook<PostLibraryItemRequest, LibraryItemResponse>({
     method: "PUT",
     endpoint: libraryItemEndpoint,
     customEvents,
@@ -133,16 +119,13 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequ
  * WIP
  */
 export const useLibraryItemDeleteRequest = (): UseRequestReturn<void, void> => {
-  const customEvents: FetchResponseEvents = {
+  const customEvents: HttpResponseEvents<void> = {
     onError: (reason) => {
-      enqueueSnack({
-        message: `${reason.message}: ${reason.response?.data?.message}`,
-        type: "error",
-      });
+      enqueueSnack({ message: reason.message, type: "error" });
     },
   };
 
-  return createRequestHook<void, void>({
+  return createHttpRequestHook<void, void>({
     method: "DELETE",
     endpoint: libraryItemEndpoint,
     customEvents,

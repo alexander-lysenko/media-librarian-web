@@ -3,7 +3,7 @@ import { update } from "lodash-es";
 
 import { useAuthCredentialsStore } from "../../store/useAuthCredentialsStore";
 
-import type { HttpResponseEvents } from "../types";
+import type { ErrorResponse, HttpResponseEvents } from "../types";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axios";
 
 /**
@@ -43,7 +43,7 @@ const axiosInstance = () => {
 
 export const axiosFetch = async <RequestType, ResponseType>(
   config: FetchRequestConfig<RequestType>,
-  events: HttpResponseEvents,
+  events: HttpResponseEvents<ResponseType>,
 ): Promise<ResponseType | void> => {
   const instance = axiosInstance();
   const bearerToken = useAuthCredentialsStore.getState().token;
@@ -60,13 +60,15 @@ export const axiosFetch = async <RequestType, ResponseType>(
     if (response && [4, 5].includes(response.status / 100)) {
       console.log(response);
       onReject?.(response as never);
+
       return Promise.reject(response as never);
     }
     onSuccess?.(response.data as never);
+
     return Promise.resolve(response.data);
   } catch (error) {
-    console.log(error);
-    onError?.(error as never);
+    console.error(error);
+    onError?.((error as AxiosError<ErrorResponse>).response?.data ?? (error as never));
   } finally {
     onComplete?.();
   }

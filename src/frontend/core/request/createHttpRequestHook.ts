@@ -13,12 +13,12 @@ import type {
 import type { FetchRequestConfig } from "./axiosFetch";
 
 /**
- * Factory to create Axios API requests
+ * Factory to create API requests with Axios
  * @param config
  * @see https://dev.to/pietmichal/react-hooks-factories-48bi
  */
 export const createHttpRequestHook = <RequestType = never, ResponseType = never>(
-  config: HttpRequestHookConfig,
+  config: HttpRequestHookConfig<ResponseType>,
 ): (() => UseRequestReturn<RequestType, ResponseType>) => {
   return function useHook(): UseRequestReturn<RequestType, ResponseType> {
     const { endpoint: url, method, customEvents } = config;
@@ -28,13 +28,13 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
     const [status, setStatus] = useState<RequestStatus>("IDLE");
 
     // Response events will be intentionally getting mutated to apply changes immediately without awaiting re-render
-    let responseEvents: HttpResponseEvents = customEvents ?? {};
-    const setResponseEvents = (events: HttpResponseEvents) => {
+    let responseEvents: HttpResponseEvents<ResponseType> = customEvents ?? {};
+    const setResponseEvents = (events: HttpResponseEvents<ResponseType>) => {
       responseEvents = { ...responseEvents, ...events };
     };
 
     let debugStatus: RequestStatus = "IDLE";
-    const eventHandlers: HttpResponseEvents = {
+    const eventHandlers: HttpResponseEvents<ResponseType> = {
       beforeSend: () => {
         setStatus("LOADING");
         responseEvents?.beforeSend?.();
@@ -70,7 +70,7 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
     };
 
     /**
-     * Regular Axios fetch
+     * Implemented `fetch` using Axios
      */
     const fetch: ApiRequestFetch<RequestType, ResponseType> = async (
       data: RequestType,
@@ -84,7 +84,7 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
         signal: abortController.signal,
       };
 
-      return await axiosFetch<RequestType, ResponseType & never>(config, eventHandlers);
+      return await axiosFetch<RequestType, ResponseType>(config, eventHandlers);
     };
 
     const abort = () => abortController.abort();

@@ -4,8 +4,7 @@ import { createHttpRequestHook } from "../core";
 import { userLoginEndpoint } from "../core/links";
 import { useAuthCredentialsStore } from "../store/useAuthCredentialsStore";
 
-import type { ErrorResponse, HttpResponseEvents, UseRequestReturn } from "../core/types";
-import type { AxiosError } from "axios";
+import type { HttpResponseEvents, UseRequestReturn } from "../core/types";
 import type { UseFormReturn } from "react-hook-form";
 
 type LoginRequest = {
@@ -29,8 +28,8 @@ export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormRetur
   const navigate = useNavigate();
   const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
 
-  const responseEvents: HttpResponseEvents = {
-    onSuccess: (response: LoginResponse) => {
+  const responseEvents: HttpResponseEvents<LoginResponse> = {
+    onSuccess: (response) => {
       const { email } = getValues();
       const { token, redirectTo } = response;
       setCredentials(email, token);
@@ -39,15 +38,11 @@ export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormRetur
     },
     onReject: (reason) => {
       reset({ password: "" });
-      setError("root.serverError", {
-        message: (reason as AxiosError<ErrorResponse>).response?.data.message || reason.message,
-      });
+      setError("root.serverError", { message: reason.message });
     },
     onError: (reason) => {
       reset({ password: "" });
-      setError("root.serverError", {
-        message: (reason as AxiosError<ErrorResponse>).response?.data.message || reason.message,
-      });
+      setError("root.serverError", { message: reason.message });
     },
   };
 

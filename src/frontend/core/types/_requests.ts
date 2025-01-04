@@ -8,12 +8,12 @@ type PathParams = Record<string, string | number>;
 /**
  * List of customizable response event handlers
  */
-export type HttpResponseEvents = {
+export type HttpResponseEvents<ResponseType = never> = {
   /** The payload to be executed before the request is run */
   beforeSend?: () => void;
 
   /** The payload to be executed when the request is successfully fulfilled */
-  onSuccess?: (response: never) => Promise<never> | void;
+  onSuccess?: (response: ResponseType) => ResponseType | void;
 
   /** The payload to be executed when the request is rejected or unsuccessfully fulfilled */
   onReject?: (reason: ErrorResponse | never) => PromiseLike<ErrorResponse> | never | void;
@@ -27,10 +27,10 @@ export type HttpResponseEvents = {
 
 export type RequestStatus = "IDLE" | "LOADING" | "SUCCESS" | "FAILED";
 
-export type HttpRequestHookConfig = {
+export type HttpRequestHookConfig<ResponseType = never> = {
   endpoint: string;
   method: "GET" | "DELETE" | "HEAD" | "OPTIONS" | "POST" | "PUT" | "PATCH" | "PURGE" | "LINK" | "UNLINK";
-  customEvents?: HttpResponseEvents;
+  customEvents?: HttpResponseEvents<ResponseType>;
   verbose?: boolean; // default: false
   withCredentials?: boolean; // default: true
 };
@@ -66,7 +66,7 @@ export type UseRequestReturn<Request, Response> = {
   status: RequestStatus;
   fetch: ApiRequestFetch<Request, Response>;
   abort: () => void;
-  setResponseEvents: (events: HttpResponseEvents) => void;
+  setResponseEvents: (events: HttpResponseEvents<Response>) => void;
 };
 
 // == useLibraryRequests == //

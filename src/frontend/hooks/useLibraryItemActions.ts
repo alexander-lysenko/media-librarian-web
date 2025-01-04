@@ -63,8 +63,7 @@ export const useLibraryItemActions = () => {
 
     requestItem.setResponseEvents({
       onSuccess: (response) => {
-        console.log("libraryItem", response.data.item);
-        useLibraryItemFormStore.getState().handleOpen(selectedLibraryId, response.data.item);
+        useLibraryItemFormStore.getState().handleOpen(selectedLibraryId, response.item);
       },
     });
 
