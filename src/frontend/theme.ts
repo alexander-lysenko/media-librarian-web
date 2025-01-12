@@ -40,10 +40,10 @@ const typography: TypographyOptions = {};
 
 // Compose a theme instance.
 export const getDesignTokens = (mode: PaletteMode): DesignTokensOptions => ({
-  colorSchemes: {
-    dark: true,
-    light: true,
-  },
+  // colorSchemes: {
+  //   dark: true,
+  //   light: true,
+  // },
   palette: {
     mode,
     ...(mode === "light" ? lightPalette : darkPalette),

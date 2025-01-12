@@ -38,6 +38,7 @@ export type HttpRequestHookConfig<ResponseType = never> = {
 /** The unified error response interface */
 export type ErrorResponse = {
   message: string;
+  code?: string;
   // validation errors (if present)
   errors?: Record<string, string[]>;
 

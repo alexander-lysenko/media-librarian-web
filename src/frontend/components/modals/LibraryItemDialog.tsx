@@ -68,6 +68,7 @@ export const LibraryItemDialog = () => {
       sx: { minHeight: { sm: "calc(100% - 128px)" } },
     },
     TransitionComponent: Grow,
+    closeAfterTransition: true,
     component: "form",
     fullScreen: fullScreen,
     fullWidth: true,

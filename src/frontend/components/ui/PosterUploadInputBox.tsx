@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { axiosFetch } from "../../core";
 import { enqueueSnack } from "../../core/actions";
 import { CloudUploadOutlined, ContentPasteOutlined, UploadFileOutlined } from "../icons";
+import { SimpleDropzone } from "./SimpleDropzone";
 
 import type { FetchRequestConfig } from "../../core";
 import type { SxProps } from "@mui/system";
@@ -27,35 +28,10 @@ export const PosterUploadInputBox = () => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const urlTextInput = useRef<HTMLInputElement>(null);
 
-  const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.currentTarget.querySelector("#dropzone-overlay")?.classList.remove("d-none");
-  };
-
-  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    event.dataTransfer.dropEffect = "copy";
-    if ((event.target as HTMLDivElement).closest("#dropzone-overlay") === null) {
-      return;
-    }
-  };
-
-  const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    if ((event.target as HTMLDivElement).closest("#dropzone-overlay") === null) {
-      return;
-    }
-    event.currentTarget.querySelector("#dropzone-overlay")?.classList.add("d-none");
-  };
-
   const handleDropEvent = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.currentTarget.querySelector("#dropzone-overlay")?.classList.add("d-none");
-
     const file = event.dataTransfer.files[0] || event.nativeEvent.dataTransfer?.files[0];
-    console.log(event.dataTransfer, file);
-    console.log(event.target);
+    // console.log(event.dataTransfer, file);
+    // console.log(event.target);
     uploadFile(file);
   };
 
@@ -122,17 +98,24 @@ export const PosterUploadInputBox = () => {
     setBlobImage(file);
   };
 
+  // todo: rework that and fix CORS issue
   const downloadByUrl = async (url: string) => {
     const config: FetchRequestConfig<void> = { url, method: "GET", responseType: "blob", withCredentials: false };
-    const file = await axiosFetch(config, {
+    const file = await axiosFetch<void, Blob>(config, {
       onSuccess: (response) => {
-        console.log(response.data);
-        setBlobImage(response.data);
+        console.log(response);
+        return response;
       },
       onError: (error) => {
         console.log(error);
       },
     });
+
+    if (file) {
+      console.log("File Downloaded");
+      console.log(file);
+      setBlobImage(file as Blob);
+    }
   };
 
   // const handleFromClipboard = async (event: SyntheticEvent) => {
@@ -200,123 +183,56 @@ export const PosterUploadInputBox = () => {
         <CardMedia sx={cardMediaSx} image={blobImage ? URL.createObjectURL(blobImage) : posterUrl} />
         <StyledLinearProgress variant="determinate" value={67} />
       </Grid>
-      <Grid
-        size={"grow"}
-        component={StyledDropzone}
-        square={false}
-        variant="outlined"
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDropEvent}
-      >
-        <DropzoneOverlay elevation={12} square={false} id="dropzone-overlay" className="d-none">
-          <CloudUploadOutlined sx={{ fontSize: 48 }} />
-          <Typography variant="h5" textAlign="center">
-            {t("fileUpload.dropFileHere")}
-          </Typography>
-        </DropzoneOverlay>
-        <DropzoneArea id="dropzone-area">
-          <DropFileBanner>
-            <CloudUploadOutlined sx={{ fontSize: 48, mr: 2 }} />
-            <Box display="flex" flexDirection="column">
-              <Typography variant="body1" fontSize="1.25rem" lineHeight={1.3}>
-                {t("fileUpload.dragDropFileHere")}
-              </Typography>
-              <Typography variant="subtitle2" textAlign="center">
-                {t("commonEmbed.or")}
-              </Typography>
-            </Box>
-          </DropFileBanner>
-          <Box display="flex" justifyContent="space-between">
-            <Button
-              variant="outlined"
-              children={t("fileUpload.browse")}
-              startIcon={<UploadFileOutlined />}
-              onClick={handleBrowseClick}
-            />
-            <HiddenFileInput type="file" ref={hiddenFileInput} onChange={handleFileBrowse} />
-            <Button
-              variant="outlined"
-              children={t("fileUpload.paste")}
-              endIcon={<ContentPasteOutlined />}
-              onClick={handlePasteBtnClick}
-            />
+      <Grid size={"grow"} component={SimpleDropzone} square={false} variant="outlined" onDrop={handleDropEvent}>
+        <DropFileBanner>
+          <CloudUploadOutlined sx={{ fontSize: 48, mr: 2 }} />
+          <Box display="flex" flexDirection="column">
+            <Typography variant="body1" fontSize="1.25rem" lineHeight={1.3}>
+              {t("fileUpload.dragDropFileHere")}
+            </Typography>
+            <Typography variant="subtitle2" textAlign="center">
+              {t("commonEmbed.or")}
+            </Typography>
           </Box>
-          <TextField
-            inputRef={urlTextInput}
-            size="small"
-            margin="dense"
-            fullWidth
-            placeholder={"Paste URL or image content"}
-            error
-            helperText={
-              "Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused "
-            }
-            slotProps={{
-              inputLabel: { shrink: true },
-              formHelperText: {
-                title: "asdasdfsdfghdfgjkgfdsafhg",
-                sx: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
-              },
-            }}
-            onPaste={handleFromClipboard}
+        </DropFileBanner>
+        <Box display="flex" justifyContent="space-between">
+          <Button
+            variant="outlined"
+            children={t("fileUpload.browse")}
+            startIcon={<UploadFileOutlined />}
+            onClick={handleBrowseClick}
           />
-        </DropzoneArea>
-        {/*<Tabs value={tab} variant="fullWidth" onChange={handleChange}>*/}
-        {/*  <Tab label="From URL" value={0} />*/}
-        {/*  <Tab label="Local File" value={1} />*/}
-        {/*</Tabs>*/}
-        {/*<TabPanel value={tab} index={0}>*/}
-        {/*  <TextField*/}
-        {/*    type="text"*/}
-        {/*    label="URL"*/}
-        {/*    size="small"*/}
-        {/*    margin="dense"*/}
-        {/*    fullWidth*/}
-        {/*    error*/}
-        {/*    helperText={*/}
-        {/*      "Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused "*/}
-        {/*    }*/}
-        {/*    slotProps={{*/}
-        {/*      inputLabel: { shrink: true },*/}
-        {/*      formHelperText: { title: "asdasdfsdfghdfgjkgfdsafhg", sx: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } },*/}
-        {/*    }}*/}
-        {/*  />*/}
-        {/*</TabPanel>*/}
-        {/*<TabPanel value={tab} index={1}>*/}
-        {/*  <TextField*/}
-        {/*    type="file"*/}
-        {/*    label="File"*/}
-        {/*    size="small"*/}
-        {/*    margin="dense"*/}
-        {/*    fullWidth*/}
-        {/*    slotProps={{*/}
-        {/*      input: { startAdornment },*/}
-        {/*      inputLabel: { shrink: true },*/}
-        {/*    }}*/}
-        {/*  />*/}
-        {/*</TabPanel>*/}
+          <HiddenFileInput type="file" ref={hiddenFileInput} onChange={handleFileBrowse} />
+          <Button
+            variant="outlined"
+            children={t("fileUpload.paste")}
+            endIcon={<ContentPasteOutlined />}
+            onClick={handlePasteBtnClick}
+          />
+        </Box>
+        <TextField
+          inputRef={urlTextInput}
+          size="small"
+          margin="dense"
+          fullWidth
+          placeholder={"Paste URL or image content"}
+          error
+          helperText={
+            "Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused "
+          }
+          slotProps={{
+            inputLabel: { shrink: true },
+            formHelperText: {
+              title: "asdasdfsdfghdfgjkgfdsafhg",
+              sx: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+            },
+          }}
+          onPaste={handleFromClipboard}
+        />
       </Grid>
     </Grid>
   );
 };
-
-// const TabPanel = (props: TabPanelProps) => {
-//   const { children, value, index, ...other } = props;
-//
-//   const factoryProps = {
-//     role: "tabpanel",
-//     id: `full-width-tabpanel-${index}`,
-//     "aria-labelledby": `full-width-tab-${index}`,
-//   };
-//
-//   return (
-//     <div hidden={value !== index} {...factoryProps} {...other}>
-//       {value === index && <Box sx={{ display: "flex" }}>{children}</Box>}
-//     </div>
-//   );
-// };
 
 const StyledPosterPreviewPaper = styled(Paper)({
   backgroundColor: "transparent",
@@ -331,40 +247,6 @@ const StyledLinearProgress = styled(LinearProgress)({
   height: 8,
   borderBottomLeftRadius: 4,
   borderBottomRightRadius: 4,
-});
-
-const StyledDropzone = styled(Paper)({
-  position: "relative",
-  backgroundColor: "transparent",
-  backgroundImage: "none",
-  padding: "8px 16px",
-});
-
-const DropzoneOverlay = styled(Paper)({
-  position: "absolute",
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
-  zIndex: 10,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  border: "2px dashed",
-  "& *": {
-    pointerEvents: "none",
-  },
-  "&.d-none": {
-    display: "none",
-  },
-});
-
-const DropzoneArea = styled(Box)({
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-start",
-  maxHeight: 162,
 });
 
 const DropFileBanner = styled(Box)(({ theme }) => ({
