@@ -13,6 +13,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -49,6 +50,7 @@ import { stringAvatar } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
+import { useLanguageStore } from "../store/system/useTranslationStore";
 import { useProfileStore } from "../store/useProfileStore";
 
 import type { ReactNode } from "react";
@@ -85,9 +87,9 @@ export const Profile = () => {
             actionIcon={profileSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
             actionEvents={{ onClick: () => setProfileSectionOpen(!profileSectionOpen) }}
           />
-          <Grid container display={profileSectionOpen ? "flex" : "none"}>
+          <Grid container columnSpacing={2} display={profileSectionOpen ? "flex" : "none"}>
             <Grid id="profiler" size={{ xs: 12, md: 4 }} sx={{ maxWidth: { md: 320 } }}>
-              <Profiler username={profile.name} email={profile.email} avatar={profile.avatar} />
+              <Profiler username={profile.user.name} email={profile.user.email} avatar={profile.user.avatar} />
             </Grid>
             <Grid id="preferences" size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
               <ProfileActions />
@@ -139,7 +141,7 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
 
 const ProfileActions = () => {
   const { t } = useTranslation();
-  const { name: username, email } = useProfileStore((state) => state.profile);
+  const { name: username, email } = useProfileStore((state) => state.profile.user);
 
   const [usernameDialogOpen, setUsernameDialogOpen] = useState<boolean>(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState<boolean>(false);
@@ -153,18 +155,22 @@ const ProfileActions = () => {
         <ListItemIcon children={<BadgeOutlined />} />
         <ListItemText
           primary={t("profile.preferencesEnum.username")}
-          secondary={username}
-          secondaryTypographyProps={{ noWrap: true }}
           title={username}
+          secondary={username}
+          slotProps={{
+            secondary: { noWrap: true },
+          }}
         />
       </ListItemButton>
       <ListItemButton divider onClick={() => setEmailDialogOpen(true)}>
         <ListItemIcon children={<EmailOutlined />} />
         <ListItemText
           primary={t("profile.preferencesEnum.email")}
-          secondary={email}
-          secondaryTypographyProps={{ noWrap: true }}
           title={email}
+          secondary={email}
+          slotProps={{
+            secondary: { noWrap: true },
+          }}
         />
       </ListItemButton>
       <ListItemButton divider onClick={() => setPasswordDialogOpen(true)}>
@@ -200,7 +206,9 @@ const ProfileActions = () => {
 
 const AccountInfo = () => {
   const { t } = useTranslation();
-  const { created_at, email_verified_at, status } = useProfileStore((state) => state.profile);
+  const { status, emailVerifiedAt, createdAt } = useProfileStore((state) => state.profile.stats);
+  const { librariesTotal, itemsTotal } = useProfileStore((state) => state.profile.stats);
+  const locale = useLanguageStore((state) => state.getLanguage());
 
   const accountStatusIcon: Record<AccountStatusEnum, ReactNode> = {
     [AccountStatusEnum.CREATED]: <ErrorOutlined />,
@@ -215,7 +223,10 @@ const AccountInfo = () => {
       <Divider />
       <ListItem>
         <ListItemIcon children={<CalendarMonthOutlined />} />
-        <ListItemText primary={t("profile.detailsEnum.registrationDate")} secondary={created_at} />
+        <ListItemText
+          primary={t("profile.detailsEnum.registrationDate")}
+          secondary={dayjs(createdAt).locale(locale).format("LL")}
+        />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
@@ -227,23 +238,23 @@ const AccountInfo = () => {
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
-        <ListItemIcon>{email_verified_at ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
+        <ListItemIcon>{emailVerifiedAt ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
         <ListItemText
           primary={t("profile.detailsEnum.emailStatus")}
           secondary={
-            email_verified_at ? t("profile.emailVerifiedEnum.verified") : t("profile.emailVerifiedEnum.unverified")
+            emailVerifiedAt ? t("profile.emailVerifiedEnum.verified") : t("profile.emailVerifiedEnum.unverified")
           }
         />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
         <ListItemIcon>{<LibraryBooksOutlined />}</ListItemIcon>
-        <ListItemText primary={t("profile.detailsEnum.librariesCount")} secondary={"0" /*todo replace with value*/} />
+        <ListItemText primary={t("profile.detailsEnum.librariesCount")} secondary={librariesTotal} />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
       <ListItem>
         <ListItemIcon>{<GridViewOutlined />}</ListItemIcon>
-        <ListItemText primary={t("profile.detailsEnum.itemsTotalCount")} secondary={"0" /*todo replace with value*/} />
+        <ListItemText primary={t("profile.detailsEnum.itemsTotalCount")} secondary={itemsTotal} />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />
     </List>

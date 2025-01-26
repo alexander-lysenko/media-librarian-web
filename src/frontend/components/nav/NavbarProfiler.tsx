@@ -28,7 +28,7 @@ import type { MouseEvent } from "react";
  */
 export const NavbarProfiler = () => {
   const { t } = useTranslation();
-  const { name: username, email, avatar } = useProfileStore((state) => state.profile);
+  const { name: username, email, avatar } = useProfileStore((state) => state.profile.user);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);

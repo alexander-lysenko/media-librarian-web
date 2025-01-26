@@ -6,9 +6,7 @@ import { useProfileStore } from "../store/useProfileStore";
 import type { HttpResponseEvents, UseRequestReturn } from "../core/types";
 import type { ProfileData } from "../store/useProfileStore";
 
-type GetProfileResponse = {
-  user: ProfileData;
-};
+type GetProfileResponse = ProfileData;
 
 /**
  * Request to get profile data
@@ -19,7 +17,7 @@ export const useProfileGetRequest = (): UseRequestReturn<void, GetProfileRespons
 
   const responseEvents: HttpResponseEvents<GetProfileResponse> = {
     onSuccess: (response) => {
-      setProfile(response.user);
+      setProfile(response);
       enqueueSnack({
         type: "success",
         message: "Profile loaded",

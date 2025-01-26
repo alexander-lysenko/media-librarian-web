@@ -2,38 +2,53 @@ import { create } from "zustand";
 
 import type { AccountStatusEnum } from "../core/enums";
 
-export type ProfileData = {
+type UserData = {
   id: number;
   name: string;
   email: string;
-  email_verified_at: string | null;
-  status: keyof typeof AccountStatusEnum;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
   avatar: string;
+};
+
+type StatsData = {
+  status: keyof typeof AccountStatusEnum;
+  emailVerifiedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  librariesTotal: number;
+  itemsTotal: number;
+};
+
+export type ProfileData = {
+  user: UserData;
+  stats: StatsData;
 };
 
 interface ProfileState {
   profile: ProfileData;
-  setProfile: (user: ProfileData) => void;
+  setProfile: (profile: ProfileData) => void;
 }
 
 /**
- * Store for profile info
- * Currently stores account info only. TODO: add profile stats
+ * Store for the data about profile
  */
-export const useProfileStore = create<ProfileState>((set, get) => ({
+export const useProfileStore = create<ProfileState>((set) => ({
   profile: {
-    id: 1,
-    name: "Vasiliy Pupkin",
-    email: "vasyapupkinverylongemailaddress@example.com",
-    avatar: "https://source.unsplash.com/dFnoV-mpiGY/240x240",
-    created_at: "2020-01-01",
-    updated_at: "2022-12-31",
-    email_verified_at: "2020-01-01",
-    deleted_at: null,
-    status: "BANNED",
+    user: {
+      id: 1,
+      name: "Vasiliy Pupkin",
+      email: "vasyapupkinverylongemailaddress@example.com",
+      avatar: "https://source.unsplash.com/dFnoV-mpiGY/240x240",
+    },
+    stats: {
+      status: "BANNED",
+      emailVerifiedAt: null,
+      createdAt: "2020-01-01 00:00:00",
+      updatedAt: "2022-12-31 00:00:00",
+      deletedAt: null,
+      librariesTotal: 0,
+      itemsTotal: 0,
+    },
   },
-  setProfile: (user: ProfileData) => set({ profile: user }),
+  setProfile: (profile: ProfileData) => set({ profile }),
 }));
