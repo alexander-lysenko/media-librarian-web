@@ -8,6 +8,7 @@ CONFIG="$DIRNAME"/docker-compose.yml
 DONE_STDOUT="\e[1;32m DONE \e[0m"
 
 function setup_env_file() {
+  echo "Preparing environment variables..."
   # Check if .env file exists. If not, create a new one from .env.example
   if [ ! -f "$DIRNAME"/src/.env ]; then
     CURRENT_USER=$(whoami)
@@ -22,7 +23,7 @@ function setup_env_file() {
 }
 
 function create_domain_name_mapping() {
-  echo "Mapping virtual host names"
+  echo "Mapping virtual host name..."
 
   # update /etc/hosts
   echo -n "Updating /etc/hosts... "
@@ -32,16 +33,18 @@ function create_domain_name_mapping() {
   echo -e "$DONE_STDOUT"
 
   # Check interface for nginx exists
-  VIRTUAL_NET_EXISTS=$(ifconfig -a | grep $NGINX_IP)
+  # https://habr.com/ru/articles/320278/
+  echo -n "Setting up virtual network interface... "
 
-  if [[ "$VIRTUAL_NET_EXISTS" = "" ]]; then
-    echo -n "Setting up virtual network interface... "
+  if [[ $(ip route list dev docker0 | grep $NGINX_IP) = "" ]]; then
     CN=$(echo $NGINX_IP | cut -d . -f 4)
-    sudo sh -c "ifconfig docker0:ng_$CN $NGINX_IP"
-    echo -e "$DONE_STDOUT"
+    sudo sh -c "ip addr add $NGINX_IP/8 dev docker0 label docker0:sub$CN"
+    # ip addr del $NGINX_IP/8 dev docker0
   else
-    echo "Virtual network interface is up."
+    echo -e "Network interface already exists. "
   fi
+
+  echo -e "$DONE_STDOUT"
 }
 
 opts=""
