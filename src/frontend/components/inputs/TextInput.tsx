@@ -29,7 +29,7 @@ export const TextInput = forwardRef((props: Props, ref) => {
       label={label}
       error={!!errorMessage}
       helperText={errorMessage || helperText}
-      fullWidth
+      fullWidth={props.fullWidth ?? false}
       size="small"
       margin={margin || "dense"}
       autoComplete={autoComplete || "off"}

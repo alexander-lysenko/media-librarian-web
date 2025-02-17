@@ -44,7 +44,7 @@ export const PasswordInput = forwardRef((props: InputCustomProps, ref) => {
       type={passVisible ? "text" : "password"}
       size="small"
       margin="normal"
-      fullWidth
+      fullWidth={props.fullWidth ?? false}
       autoComplete="off"
       autoFocus={autoFocus}
       onChange={onChange}

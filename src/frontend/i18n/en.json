@@ -20,10 +20,12 @@
     "delete": "Delete",
     "edit": "Edit",
     "holdToSeePass": "Long tap to make password visible",
+    "loading": "Loading...",
     "no": "No",
     "ok": "OK",
     "openInNewTab": "Open in a new tab",
     "save": "Save",
+    "sending": "Saving...",
     "submit": "Submit",
     "update": "Update",
     "yes": "Yes"
@@ -62,10 +64,15 @@
       "title": "Change Account's Password",
       "subtitle": "To get your password changed, please provide your current password first."
     },
-    "changeUsernameDialog": {
-      "title": "Change Account's Name",
-      "subtitle": "Do you want to be presented with a different name? No Problem!",
-      "whatIsYourName": "What is your name?"
+    "updateProfileDialog": {
+      "title": "Update Profile Info",
+      "subtitle": "Do you want to change your name or photo? No Problem!",
+      "usernameLabel": "What is your name?",
+      "usernameHint": "This change will take effect immediately",
+      "emailLabel": "E-mail address",
+      "emailHint": "You'll receive a confirmation e-mail to complete the change",
+      "uploadPhoto": "Upload Photo",
+      "removePhoto": "Remove Photo"
     }
   },
   "fileUpload": {
@@ -207,11 +214,10 @@
     },
     "preferences": "Preferences",
     "preferencesEnum": {
-      "email": "Change e-mail address",
       "locale": "Language",
       "password": "Update password",
       "theme": "Interface theme",
-      "username": "Change your name"
+      "profile": "Update your profile"
     }
   },
   "signupPage": {

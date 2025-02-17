@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Collapse,
   Divider,
   Grid,
@@ -14,12 +13,11 @@ import {
 import { useState } from "react";
 
 import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from "../components/icons";
-import { stringAvatar } from "../core";
+import { ProfileAvatar } from "./ui/ProfileAvatar";
 
 import type { SxProps } from "@mui/system";
 import type { MouseEventHandler } from "react";
 
-const { sx, children } = stringAvatar("User Name");
 const profileSx: SxProps = { p: 2, backgroundImage: "url(https://source.unsplash.com/7OCUyev2M9E/256x155)" };
 
 /**
@@ -38,7 +36,7 @@ export const SidebarProfiler = () => {
     <List sx={{ py: 0 }}>
       <ListItem key="profile" sx={profileSx}>
         <Grid container>
-          <Avatar children={children} sx={{ ...sx, width: 60, height: 60 }} />
+          <ProfileAvatar username="User Name" sx={{ width: 60, height: 60 }} />
           <Grid container alignItems="flex-end" sx={{ mt: 2 }} wrap="nowrap" onClick={toggleCollapse}>
             <Grid item xs zeroMinWidth>
               <Typography variant="subtitle1" sx={{ fontWeight: "bold", lineHeight: 1.5 }} noWrap>

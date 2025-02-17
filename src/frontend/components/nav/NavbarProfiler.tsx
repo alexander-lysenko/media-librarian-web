@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Divider,
   IconButton,
   ListItem,
@@ -14,11 +13,11 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import { stringAvatar } from "../../core";
 import { AppRoutes } from "../../core/enums";
 import { useThemeStore } from "../../store/system/useThemeStore";
 import { useProfileStore } from "../../store/useProfileStore";
 import { BadgeOutlined, LightModeOutlined, LogoutOutlined } from "../icons";
+import { ProfileAvatar } from "../ui/ProfileAvatar";
 
 import type { MouseEvent } from "react";
 
@@ -53,7 +52,7 @@ export const NavbarProfiler = () => {
     <>
       <Tooltip arrow title={t("app.openProfileMenu")}>
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, ml: 1 }}>
-          <Avatar alt={username} src={avatar} {...stringAvatar(username)} />
+          <ProfileAvatar username={username} alt={username} src={avatar} />
         </IconButton>
       </Tooltip>
       <Menu

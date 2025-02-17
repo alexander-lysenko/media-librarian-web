@@ -89,7 +89,7 @@ export const ratingColorByValue = (value: number | null, size: number) => {
  * Calculates background color for avatar by a string representing username
  * @param string
  */
-function stringToColor(string: string) {
+export const stringToColor = (string: string) => {
   let hash = 0;
   let i;
 
@@ -107,7 +107,7 @@ function stringToColor(string: string) {
   /* eslint-enable no-bitwise */
 
   return color;
-}
+};
 
 /**
  * When a user's avatar is empty, fill it with its initials and a color calculated from its username

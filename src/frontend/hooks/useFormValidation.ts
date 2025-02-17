@@ -217,6 +217,31 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         required: t("formValidation.usernameRequired") as Message,
         minLength: { value: 3, message: t("formValidation.usernameMinLength", { n: 3 }) },
       },
+      email: {
+        setValueAs: (value: string) => value.trim().toLowerCase(),
+        required: t("formValidation.emailRequired") as Message,
+        pattern: {
+          message: t("formValidation.emailInvalid"),
+          value: emailPattern,
+        },
+        validate: {
+          uniqueValidation: async (value: string) => {
+            const setEmailCheckingState = useSignupFormStore.getState().setEmailUniqueProcessing;
+            const message = t("formValidation.emailNotUnique");
+            setEmailCheckingState(true);
+
+            // todo: replace with a real API request
+            const hasEmailTaken = await new Promise<boolean>((resolve) => {
+              setTimeout(() => {
+                resolve(value === "admin@example.com");
+              }, 1000);
+            });
+
+            setEmailCheckingState(false);
+            return !hasEmailTaken || message;
+          },
+        },
+      },
     },
   };
 

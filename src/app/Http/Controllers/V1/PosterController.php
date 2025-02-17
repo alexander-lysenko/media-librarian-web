@@ -27,7 +27,12 @@ class PosterController extends ApiV1Controller
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['posters'],
         parameters: [
-            new OA\Parameter(name: 'id', in: 'query', required: true, schema: new OA\Schema(type: 'string', format: 'uuid')),
+            new OA\Parameter(
+                name: 'id',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string', format: 'uuid')
+            ),
         ],
         responses: [
             new OA\Response(
@@ -35,7 +40,7 @@ class PosterController extends ApiV1Controller
                 description: 'OK',
                 content: [
                     new OA\MediaType(
-                        mediaType: 'image/jpeg,application/json',
+                        mediaType: 'image/jpeg',
                         schema: new OA\Schema(type: 'string', format: 'binary'),
                     ),
                     new OA\MediaType(

@@ -7,6 +7,7 @@ export type InputCustomProps = Omit<UseFormRegisterReturn, "ref"> & {
   helperText?: string;
   errorMessage?: string;
   autoFocus?: boolean;
+  fullWidth?: boolean;
 };
 
 type FormControlProps = {

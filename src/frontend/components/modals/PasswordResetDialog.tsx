@@ -43,7 +43,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const usePasswordResetForm = useForm({
-    mode: "onBlur" || "onTouched",
+    mode: "onBlur",
     reValidateMode: "onChange",
   });
   const { registerField } = useFormValidation("passwordRecovery", usePasswordResetForm);

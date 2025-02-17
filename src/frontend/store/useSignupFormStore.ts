@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
-interface LoginFormState {
+interface FormState {
   emailUniqueProcessing: boolean;
   setEmailUniqueProcessing: (state: boolean) => void;
 }
 
-export const useSignupFormStore = create<LoginFormState>((set, get) => ({
+export const useSignupFormStore = create<FormState>((set) => ({
   emailUniqueProcessing: false,
   setEmailUniqueProcessing: (state) => set({ emailUniqueProcessing: state }),
 }));

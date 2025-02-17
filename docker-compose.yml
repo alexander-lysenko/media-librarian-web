@@ -4,6 +4,7 @@ services:
         hostname: webapp
         build: ./docker/local
         env_file: ./src/.env
+        # noinspection ComposeUnknownValues
         ports:
             - "${APP_IP_ADDR:?}:80:80"
         volumes:
@@ -22,6 +23,7 @@ services:
     pgsql:
         container_name: media_librarian_db
         image: postgres:16.1-alpine3.18
+        # noinspection ComposeUnknownValues
         ports:
             - "${APP_IP_ADDR:?}:5432:5432"
         volumes:
