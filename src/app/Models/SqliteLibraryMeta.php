@@ -23,9 +23,7 @@ class SqliteLibraryMeta extends Model
 {
     use HasFactory;
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     public $fillable = [
         'tbl_name',
         'schema',

@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    private string $tableName = 'personal_access_tokens';
+    private string $tableName = 'email_confirmations';
 
     /**
      * Run the migrations.
@@ -14,13 +14,10 @@ return new class extends Migration {
     {
         Schema::create($this->tableName, static function (Blueprint $table) {
             $table->id();
-            $table->morphs('tokenable');
-            $table->string('name');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('email');
             $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         });
     }
 
@@ -29,6 +26,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists($this->tableName);
+        Schema::table($this->tableName, static function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropIfExists();
+        });
     }
 };

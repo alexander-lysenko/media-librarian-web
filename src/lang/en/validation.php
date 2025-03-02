@@ -160,17 +160,20 @@ return [
             'regex' => 'ERR-004: The email must be a valid email address.',
             'max' => 'ERR-005: The email must not exceed :max characters.',
         ],
+        'password' => [
+            'required' => 'ERR-010: The password field is required.',
+        ],
         'id' => [
-            'required' => 'ERR-010: The ID of a Library is required.',
-            'exists' => 'ERR-011: The Library with provided ID does not exist.',
-            'integer' => 'ERR-012: The :attribute must be an integer value.',
-            'min' => 'ERR-013: The :attribute must be at least :min.',
+            'required' => 'ERR-110: The ID of a Library is required.',
+            'exists' => 'ERR-111: The Library with provided ID does not exist.',
+            'integer' => 'ERR-112: The :attribute must be an integer value.',
+            'min' => 'ERR-113: The :attribute must be at least :min.',
         ],
         'item' => [
-            'required' => 'ERR-020: The ID of an Item is required',
-            'exists' => 'ERR-021: The Item with provided ID does not exist.',
-            'integer' => 'ERR-022: The :attribute must be an integer value.',
-            'min' => 'ERR-023: The :attribute must be at least :min.',
+            'required' => 'ERR-120: The ID of an Item is required',
+            'exists' => 'ERR-121: The Item with provided ID does not exist.',
+            'integer' => 'ERR-122: The :attribute must be an integer value.',
+            'min' => 'ERR-123: The :attribute must be at least :min.',
         ],
         'title' => [
             'required' => 'ERR-030: ',

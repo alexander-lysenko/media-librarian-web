@@ -7,6 +7,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -19,6 +20,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string $password
  * @property string $email_verified_at
+ *
+ * @property PersonalSetting $settings
+ *
  * @method static create(array $attributes = [])
  * @method Builder update(array $values)
  */
@@ -96,12 +100,12 @@ class User extends AuthUser implements MustVerifyEmail
     }
 
     /**
-     * Get the email address that should be used for verification.
+     * Get the personal settings associated with the user.
      *
-     * @return string
+     * @return HasOne
      */
-    public function getEmailForVerification(): string
+    public function settings(): HasOne
     {
-        return $this->email;
+        return $this->hasOne(PersonalSetting::class, 'user_id', 'id');
     }
 }

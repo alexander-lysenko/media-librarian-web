@@ -23,7 +23,6 @@ return new class extends Migration {
             $table->rememberToken();
             $table->enum('status', ['CREATED', 'ACTIVE', 'BANNED', 'DELETED'])->default('CREATED');
             $table->string('password');
-            $table->longText('avatar')->nullable();
         });
     }
 

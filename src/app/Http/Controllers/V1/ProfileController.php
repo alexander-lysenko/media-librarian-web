@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Http\Requests\V1\PasswordChangeRequest;
+use App\Http\Requests\V1\ProfileRequest;
+use App\Models\PersonalSetting;
 use App\Models\SqliteLibraryMeta;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Response;
 use OpenApi\Attributes as OA;
@@ -18,6 +23,8 @@ use OpenApi\Attributes as OA;
             new OA\Property(property: 'id', type: 'integer', example: 1),
             new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
             new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+            new OA\Property(property: 'theme', type: 'string', example: 'light'),
+            new OA\Property(property: 'locale', type: 'string', example: 'en'),
             new OA\Property(property: 'avatar', type: 'string', example: 'data:image/svg+xml;base64,PD9...PC9zdmc+'),
         ]),
         new OA\Property(property: 'stats', properties: [
@@ -57,46 +64,107 @@ class ProfileController extends ApiV1Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $libraries = SqliteLibraryMeta::query()->pluck('id');
-        $itemsTotal = 0;
+        return $this->getProfileInfo($request->user());
+    }
 
-        foreach ($libraries as $libraryId) {
-            $itemsTotal += SqliteLibraryMeta::getLibraryTableQuery(libraryId: $libraryId)->count();
+    #[OA\Put(
+        path: '/api/v1/profile',
+        operationId: 'profile-update',
+        description: "Details of profile can be updated using this endpoint. \n\n" .
+        "Every property of the request is optional so you may skip a property if you don't need to update it. \n" .
+        "An avatar must be provided in base64 format. To remove avatar, set the `avatar` property to `null`. \n\n" .
+        'For security reasons, e-mail address won\'t be updated until user confirms it via confirmation email. ' .
+        'Instead, it triggers sending the confirmation email. In the meantime, current e-mail address will be used ' .
+        'for authentication and status of the address remains confirmed.',
+        summary: 'Update Profile Info',
+        security: self::SECURITY_SCHEME_BEARER,
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                new OA\Property(property: 'avatar', type: 'string', example: 'data:image/jpeg;base64,PD9...PC9zdmc+'),
+                new OA\Property(property: 'locale', type: 'string', enum: ['en', 'ru']),
+                new OA\Property(property: 'theme', type: 'string', enum: ['dark', 'light']),
+            ])
+        ),
+        tags: ['profile'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OK',
+                content: new OA\JsonContent(ref: self::SCHEMA_PROFILE_REF),
+            ),
+            new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
+            new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
+            new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
+        ]
+    )]
+    /**
+     * @param ProfileRequest $request
+     * @return JsonResponse
+     */
+    public function update(ProfileRequest $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $userSettings = $user->settings ?: new PersonalSetting(['user_id' => $user->id]);
+
+        if ($request->theme) {
+            $userSettings->theme = $request->theme;
+        }
+        if ($request->locale) {
+            $userSettings->locale = $request->locale;
+        }
+        if ($request->avatar) {
+            $userSettings->avatar = $request->avatar;
+        }
+        if ($request->name) {
+            $user->name = $request->name;
         }
 
-        return Response::json([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'avatar' => $user->avatar,
-            ],
-            'stats' => [
-                'status' => $user->status,
-                'createdAt' => Date::parse($user->created_at)->format('Y-m-d H:i:s'),
-                'updatedAt' => Date::parse($user->updated_at)->format('Y-m-d H:i:s'),
-                'emailVerifiedAt' => $user->email_verified_at
-                    ? Date::parse($user->email_verified_at)->format('Y-m-d H:i:s')
-                    : null,
-                'librariesTotal' => $libraries->count(),
-                'itemsTotal' => $itemsTotal,
-            ],
-        ]);
+        $user->settings()->save($userSettings);
+        $user->save();
+
+        // todo; implement sending of verification email
+        // if ($request->email) {
+        //     $userToUpdate['email'] = $request->email;
+        // }
+
+        return $this->getProfileInfo($user);
     }
 
+    #[OA\Put(
+        path: '/api/v1/profile/password',
+        operationId: 'profile-change-password',
+        description: "Changes password of the authenticated User. Current password is required. \n\n" .
+        'WARNING! This action invalidates all active sessions except current (technically - the last used one).',
+        summary: 'Change User\'s Password',
+        security: self::SECURITY_SCHEME_BEARER,
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
+                new OA\Property(property: 'newPassword', type: 'string', example: 'NewPassword1234'),
+                new OA\Property(property: 'repeatPassword', type: 'string', example: 'NewPassword1234'),
+            ])
+        ),
+        tags: ['profile'],
+        responses: [
+            new OA\Response(ref: self::RESPONSE_204_REF, response: 204),
+            new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
+            new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
+            new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
+        ]
+    )]
     /**
-     *
+     * @param PasswordChangeRequest $request
+     * @return JsonResponse
      */
-    public function update(): void
+    public function changePassword(PasswordChangeRequest $request): JsonResponse
     {
-    }
-
-    /**
-     *
-     */
-    public function changePassword(): void
-    {
+        // todo: implement payload
+        return new JsonResponse(null, 204);
     }
 
     #[OA\Post(
@@ -132,5 +200,45 @@ class ProfileController extends ApiV1Controller
             'message' => 'Successfully logged out',
             'redirectTo' => '/login',
         ], 302);
+    }
+
+    /**
+     * @param mixed $user
+     * @return JsonResponse
+     */
+    private function getProfileInfo(User $user): JsonResponse
+    {
+        $libraries = SqliteLibraryMeta::query()->pluck('id');
+
+        $cacheKey = implode(':', ['totalItems', 'user', $user->id]);
+        $itemsTotal = Cache::remember($cacheKey, 360, static function () use ($libraries) {
+            $total = 0;
+            foreach ($libraries as $libraryId) {
+                $total += SqliteLibraryMeta::getLibraryTableQuery(libraryId: $libraryId)->count();
+            }
+
+            return $total;
+        });
+
+        return Response::json([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'theme' => $user->settings->theme ?: 'light',
+                'locale' => $user->settings->locale ?: 'en',
+                'avatar' => $user->settings->avatar ?: null,
+            ],
+            'stats' => [
+                'status' => $user->status,
+                'createdAt' => Date::parse($user->created_at)->format('Y-m-d H:i:s'),
+                'updatedAt' => Date::parse($user->updated_at)->format('Y-m-d H:i:s'),
+                'emailVerifiedAt' => $user->email_verified_at
+                    ? Date::parse($user->email_verified_at)->format('Y-m-d H:i:s')
+                    : null,
+                'librariesTotal' => $libraries->count(),
+                'itemsTotal' => $itemsTotal,
+            ],
+        ]);
     }
 }

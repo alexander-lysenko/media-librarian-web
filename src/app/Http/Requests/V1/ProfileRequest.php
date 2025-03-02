@@ -6,20 +6,16 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * Signup Form Request (API v1)
- *
  * @property string $name
  * @property string $email
- * @property string $password
- * @property string $passwordRepeat
+ * @property string $avatar
  * @property string $locale
  * @property string $theme
  */
-class SignupRequest extends FormRequest
+class ProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -28,20 +24,19 @@ class SignupRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
     {
         return [
-            // for user's account
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'max:128', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
-            'passwordRepeat' => ['required', 'same:password'],
+            'name' => ['string'],
+            'email' => ['email', 'max:128', 'unique:users,email'],
+            'avatar' => ['nullable', 'starts_with:data:image/jpeg;base64,data:image/png;base64'],
 
             // for user's personal settings
-            'locale' => ['string', 'max:5'],
-            'theme' => [Rule::in(['light', 'dark'])],
+            'locale' => ['string', 'max:5', Rule::in(['en', 'ru'])],
+            'theme' => ['string', Rule::in(['light', 'dark'])],
         ];
     }
 }
