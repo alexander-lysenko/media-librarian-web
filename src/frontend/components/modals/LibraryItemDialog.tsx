@@ -32,13 +32,14 @@ import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } fr
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
  * TODO: WIP
+ * Todo: fix rating fields in edit mode
  */
 export const LibraryItemDialog = () => {
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
-  const { isOpen, isEditMode, selectedItem } = useLibraryItemFormStore();
+  const { open, isEditMode, selectedItem } = useLibraryItemFormStore();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [showPoster, setShowPoster] = useState<boolean>(false);
@@ -55,27 +56,31 @@ export const LibraryItemDialog = () => {
   );
 
   useEffect(() => {
-    if (isOpen) {
+    if (open) {
       const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
       const dataValues = pick(selectedItem, Object.keys(selectedLibrary?.fields ?? {}));
       const formValues = defaults(dataValues, formDefaultValues);
       reset(formValues, { keepDirtyValues: true });
     }
-  }, [isOpen, reset, selectedItem, selectedLibrary]);
+  }, [open, reset, selectedItem, selectedLibrary]);
 
   const dialogProps: DialogProps = {
-    PaperProps: {
-      sx: { minHeight: { sm: "calc(100% - 128px)" } },
-    },
-    TransitionComponent: Grow,
-    closeAfterTransition: true,
-    component: "form",
+    open: open,
     fullScreen: fullScreen,
     fullWidth: true,
-    onKeyDown: handleSubmitByCtrlEnter,
-    open: isOpen,
     scroll: "paper",
-    transitionDuration: 120,
+    disableRestoreFocus: true,
+    closeAfterTransition: true,
+    slots: { transition: Grow },
+    slotProps: {
+      transition: { timeout: 120 },
+      paper: {
+        component: "form",
+        sx: { minHeight: { sm: "calc(100% - 128px)" } },
+        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+        onKeyDown: handleSubmitByCtrlEnter,
+      },
+    },
   };
 
   return (

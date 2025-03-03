@@ -8,7 +8,7 @@ export const ProfileAvatar = ({ username, ...props }: AvatarProps & { username: 
   const nameTokens = username?.split(" ");
   const firstNameToken = nameTokens[0][0];
   const lastNameToken = nameTokens.length > 1 ? nameTokens[nameTokens.length - 1][0] : "";
-  const initials = `${firstNameToken}${lastNameToken}`;
+  const initials = `${firstNameToken.toUpperCase()}${lastNameToken.toUpperCase()}`;
 
   const backgroundColor = stringToColor(username);
 

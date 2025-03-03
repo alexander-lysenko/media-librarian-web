@@ -16,6 +16,7 @@ import { DoneOutlined } from "../../icons";
 import { PasswordInput } from "../../inputs/PasswordInput";
 
 import type { SimpleDialogProps } from "../../../core/types";
+import type { DialogProps } from "@mui/material";
 
 /**
  * TODO: WIP
@@ -28,27 +29,39 @@ export const ChangePasswordDialog = ({ open, onClose, onSubmit }: SimpleDialogPr
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const dialogProps: DialogProps = {
+    open: open,
+    fullWidth: true,
+    disableRestoreFocus: true,
+    slots: { transition: Grow },
+    slotProps: {
+      transition: { timeout: 120 },
+      paper: {
+        component: "form",
+        // onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+      },
+    },
+  };
+
   return (
-    <Dialog open={open} fullWidth TransitionComponent={Grow} transitionDuration={120} onClose={onClose}>
-      <Box component="form" noValidate onSubmit={() => false}>
-        <DialogTitle variant={"h5"}>{t("dialogs.changePasswordDialog.title")}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{t("dialogs.changePasswordDialog.subtitle")}</DialogContentText>
-          <PasswordInput onChange={async () => false} onBlur={async () => false} name={""} label={"Current Password"} />
-          <PasswordInput onChange={async () => false} onBlur={async () => false} name={""} label={"New Password"} />
-          <PasswordInput onChange={async () => false} onBlur={async () => false} name={""} label={"Repeat Password"} />
-        </DialogContent>
-        <DialogActions>
-          <Button variant="text" onClick={onClose} children={t("common.cancel")} />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
-            children={t("common.save")}
-          />
-        </DialogActions>
-      </Box>
+    <Dialog {...dialogProps} onClose={onClose}>
+      <DialogTitle variant={"h5"}>{t("dialogs.changePasswordDialog.title")}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{t("dialogs.changePasswordDialog.subtitle")}</DialogContentText>
+        <PasswordInput onChange={async () => false} onBlur={async () => false} name={""} label={"Current Password"} />
+        <PasswordInput onChange={async () => false} onBlur={async () => false} name={""} label={"New Password"} />
+        <PasswordInput onChange={async () => false} onBlur={async () => false} name={""} label={"Repeat Password"} />
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" onClick={onClose} children={t("common.cancel")} />
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading}
+          endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
+          children={t("common.save")}
+        />
+      </DialogActions>
     </Dialog>
   );
 };

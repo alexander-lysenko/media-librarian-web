@@ -3,7 +3,7 @@ import { create } from "zustand";
 import type { LibraryItem } from "../core/types";
 
 type LibraryItemFormState = {
-  isOpen: boolean;
+  open: boolean;
   isEditMode: boolean;
   selectedLibraryId: number | null;
   selectedItem: LibraryItem | null;
@@ -14,7 +14,7 @@ type LibraryItemFormState = {
 };
 
 export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
-  isOpen: false,
+  open: false,
   isEditMode: false,
   selectedLibraryId: null,
   selectedItem: null,
@@ -22,14 +22,14 @@ export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
   setPoster: (poster) => set({ poster }),
   handleOpen: (selectedLibraryId, selectedItem = undefined) =>
     set({
-      isOpen: true,
+      open: true,
       selectedLibraryId,
       selectedItem: selectedItem ?? null,
       isEditMode: !!selectedItem,
     }),
   handleClose: () =>
     set({
-      isOpen: false,
+      open: false,
       selectedLibraryId: null,
       poster: null,
       selectedItem: null,

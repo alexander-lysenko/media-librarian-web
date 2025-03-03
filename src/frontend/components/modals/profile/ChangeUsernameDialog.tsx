@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -15,78 +14,108 @@ import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
+import { useProfilePutRequest } from "../../../requests/useProfileRequests";
+import { useProfileStore } from "../../../store/useProfileStore";
 import { BadgeOutlined, DoneOutlined } from "../../icons";
 import { TextInput } from "../../inputs/TextInput";
 
 import type { SimpleDialogProps } from "../../../core/types";
+import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
- * TODO: WIP
  * Profile - Dialog - Change Account's Username
- * @param {boolean} open
- * @param {SyntheticEvent} onClose
- * @param {SyntheticEvent} onSubmit
- * @constructor
+ *
+ * @param open
+ * @param onClose
  */
-export const ChangeUsernameDialog = ({ open, onClose, onSubmit }: SimpleDialogProps) => {
+export const ChangeUsernameDialog = ({ open, onClose }: SimpleDialogProps) => {
   const { t } = useTranslation();
+
+  const profile = useProfileStore((state) => state.profile);
+  const setProfile = useProfileStore((state) => state.setProfile);
+
+  const profileUpdateRequest = useProfilePutRequest();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
+  const useHookForm = useForm({
+    mode: "onBlur",
+    reValidateMode: "onChange",
+    values: { username: profile.user.name },
+  });
   const { registerField } = useFormValidation("profile", useHookForm);
   const { formState, reset, handleSubmit } = useHookForm;
 
-  const handleClose = (event: SyntheticEvent | Event) => {
+  const handleClose = (event: SyntheticEvent) => {
     reset();
     setLoading(false);
     onClose(event);
   };
 
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
+  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {};
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
-    console.log("Form is valid", data);
     setLoading(true);
 
-    setTimeout(() => {
-      // Submit request
-      setLoading(false);
-      handleClose(event as SyntheticEvent);
-      enqueueSnack({
-        message: "Alright. Your name is " + data.username,
-        type: "success",
-        enableCloseButton: true,
-      });
-    }, 2000);
+    profileUpdateRequest.setResponseEvents({
+      onSuccess: (response) => {
+        setProfile(response);
+        enqueueSnack({
+          message: t("dialogs.changeUsernameDialog.success", { username: response.user.name }),
+          type: "success",
+        });
+      },
+      onError: (reason) => {
+        enqueueSnack({ message: reason.message, type: "error" });
+      },
+      onComplete: () => {
+        handleClose(event as SyntheticEvent);
+      },
+    });
+
+    void profileUpdateRequest.fetch({ name: data.username });
+  };
+
+  const dialogProps: DialogProps = {
+    open: open,
+    fullWidth: true,
+    maxWidth: "xs",
+    disableRestoreFocus: true,
+    closeAfterTransition: true,
+    slots: { transition: Grow },
+    slotProps: {
+      transition: { timeout: 120 },
+      paper: {
+        component: "form",
+        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+      },
+    },
   };
 
   return (
-    <Dialog open={open} disableRestoreFocus fullWidth TransitionComponent={Grow} onClose={handleClose}>
-      <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
-        <DialogTitle variant={"h5"}>{t("dialogs.changeUsernameDialog.title")}</DialogTitle>
-        <DialogContent>
-          <DialogContentText mb={1}>{t("dialogs.changeUsernameDialog.subtitle")}</DialogContentText>
-          <TextInput
-            {...registerField("username")}
-            autoFocus
-            autoComplete={"name"}
-            label={t("dialogs.changeUsernameDialog.whatIsYourName")}
-            errorMessage={formState.errors?.username?.message as string}
-            icon={<BadgeOutlined />}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
-            children={t("common.save")}
-          />
-        </DialogActions>
-      </Box>
+    <Dialog {...dialogProps} onClose={handleClose}>
+      <DialogTitle variant={"h5"}>{t("dialogs.changeUsernameDialog.title")}</DialogTitle>
+      <DialogContent>
+        <DialogContentText mb={1}>{t("dialogs.changeUsernameDialog.subtitle")}</DialogContentText>
+        <TextInput
+          {...registerField("username")}
+          autoFocus
+          autoComplete="name"
+          label={t("dialogs.changeUsernameDialog.label")}
+          errorMessage={formState.errors?.username?.message as string}
+          icon={<BadgeOutlined />}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading}
+          endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
+          children={t("common.save")}
+        />
+      </DialogActions>
     </Dialog>
   );
 };

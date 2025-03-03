@@ -59,7 +59,9 @@
   "dialogs": {
     "changeEmailDialog": {
       "title": "Change Account's E-mail Address",
-      "subtitle": "You will have to confirm your new e-mail address. We will send you the instructions to your new address."
+      "subtitle": "You will have to confirm your new e-mail address. We will send you the instructions to your new address.",
+      "label": "Your new e-mail address",
+      "success": "A confirmation email has been sent. Please check your inbox in a while."
     },
     "changeLocaleDialog": {
       "title": "Select language"
@@ -74,7 +76,8 @@
     "changeUsernameDialog": {
       "title": "Change Account's Name",
       "subtitle": "Do you want to be presented with a different name? No Problem!",
-      "whatIsYourName": "What is your name?"
+      "label": "What is your name?",
+      "success": "Welcome back, {{username}}!"
     },
     "updateProfileDialog": {
       "title": "Update Profile Info",

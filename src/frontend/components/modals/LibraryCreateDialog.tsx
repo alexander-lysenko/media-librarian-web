@@ -98,16 +98,21 @@ export const LibraryCreateDialog = () => {
   };
 
   const dialogProps: DialogProps = {
-    PaperProps: {
-      sx: { minHeight: { sm: "calc(100% - 128px)" } },
-    },
-    TransitionComponent: Grow,
-    component: "form",
+    open: open,
     fullScreen: fullScreen,
     fullWidth: true,
-    open: open,
     scroll: "paper",
-    transitionDuration: 120,
+    disableRestoreFocus: true,
+    closeAfterTransition: true,
+    slots: { transition: Grow },
+    slotProps: {
+      transition: { timeout: 120 },
+      paper: {
+        component: "form",
+        sx: { minHeight: { sm: "calc(100% - 128px)" } },
+        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+      },
+    },
   };
 
   return (

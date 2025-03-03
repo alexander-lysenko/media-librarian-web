@@ -1,6 +1,8 @@
 import {
+  Alert,
   Button,
   CircularProgress,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,34 +11,106 @@ import {
   Grow,
 } from "@mui/material";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { enqueueSnack } from "../../../core/actions";
+import { useFormValidation } from "../../../hooks";
+import { useProfilePutRequest } from "../../../requests/useProfileRequests";
+import { useProfileStore } from "../../../store/useProfileStore";
 import { DoneOutlined } from "../../icons";
 import { EmailInput } from "../../inputs/EmailInput";
 
 import type { SimpleDialogProps } from "../../../core/types";
+import type { DialogProps } from "@mui/material";
+import type { SyntheticEvent } from "react";
+import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
- * TODO: WIP
+ * Profile - Dialog - Change Account's Username
+ *
  * @param open
  * @param onClose
- * @param onSubmit
- * @constructor
  */
-export const ChangeEmailDialog = ({ open, onClose, onSubmit }: SimpleDialogProps) => {
+export const ChangeEmailDialog = ({ open, onClose }: SimpleDialogProps) => {
   const { t } = useTranslation();
 
+  const profile = useProfileStore((state) => state.profile);
+  const setProfile = useProfileStore((state) => state.setProfile);
+
+  const profileUpdateRequest = useProfilePutRequest();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const useHookForm = useForm<FieldValues>({
+    mode: "onBlur",
+    reValidateMode: "onChange",
+    values: { email: profile.user.email },
+  });
+  const { registerField } = useFormValidation("profile", useHookForm);
+  const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
+
+  const handleClose = (event: SyntheticEvent) => {
+    reset();
+    setLoading(false);
+    onClose(event);
+  };
+
+  console.log(formState);
+
+  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {};
+  const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
+    setLoading(true);
+
+    profileUpdateRequest.setResponseEvents({
+      onSuccess: (response) => {
+        setProfile(response);
+        handleClose(event as SyntheticEvent);
+        enqueueSnack({ message: t("dialogs.changeEmailDialog.success"), type: "success" });
+      },
+      onError: (reason) => {
+        setLoading(false);
+        setError("root.serverError", { message: reason.message });
+      },
+    });
+
+    void profileUpdateRequest.fetch({ email: data.email });
+  };
+
+  const dialogProps: DialogProps = {
+    open: open,
+    fullWidth: true,
+    maxWidth: "xs",
+    disableRestoreFocus: true,
+    closeAfterTransition: true,
+    slots: { transition: Grow },
+    slotProps: {
+      transition: { timeout: 120 },
+      paper: {
+        component: "form",
+        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+      },
+    },
+  };
+
   return (
-    <Dialog open={open} fullWidth TransitionComponent={Grow} transitionDuration={120} onClose={onClose}>
+    <Dialog {...dialogProps} onClose={handleClose}>
       <DialogTitle variant={"h5"}>{t("dialogs.changeEmailDialog.title")}</DialogTitle>
       <DialogContent>
         <DialogContentText mb={1}>{t("dialogs.changeEmailDialog.subtitle")}</DialogContentText>
-        <EmailInput onBlur={async () => false} name={""} label={""} onChange={async () => false} />
+        <Collapse in={!!formState.errors.root?.serverError} unmountOnExit>
+          <Alert variant="filled" severity="error" onClose={() => clearErrors("root")} sx={{ my: 2 }}>
+            {formState.errors.root?.serverError.message as string}
+          </Alert>
+        </Collapse>
+        <EmailInput
+          {...registerField("email")}
+          autoFocus
+          label={t("dialogs.changeEmailDialog.label")}
+          errorMessage={formState.errors?.email?.message as string}
+        />
       </DialogContent>
       <DialogActions>
-        <Button variant="text" onClick={onClose} children={t("common.cancel")} />
+        <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
         <Button
           type="submit"
           variant="contained"

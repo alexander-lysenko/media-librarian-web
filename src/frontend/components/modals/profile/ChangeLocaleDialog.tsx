@@ -44,7 +44,7 @@ export const ChangeLocaleDialog = ({ open, onClose }: SimpleDialogProps) => {
       },
     });
 
-    return profileUpdateRequest.fetch({ locale });
+    void profileUpdateRequest.fetch({ locale });
   };
 
   const dialogProps: DialogProps = {

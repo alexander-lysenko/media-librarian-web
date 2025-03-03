@@ -40,12 +40,12 @@ import {
 } from "../components/icons";
 import {
   ChangeEmailDialog,
+  ChangeLocaleDialog,
   ChangePasswordDialog,
+  ChangeThemeDialog,
+  ChangeUsernameDialog,
   LibraryCreateDialog,
 } from "../components/modals";
-import { ChangeLocaleDialog } from "../components/modals/profile/ChangeLocaleDialog";
-import { ChangeThemeDialog } from "../components/modals/profile/ChangeThemeDialog";
-import { ChangeUsernameDialog } from "../components/modals/profile/ChangeUsernameDialog";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
 import { ProfileAvatar } from "../components/ui/ProfileAvatar";
 import { enqueueSnack } from "../core/actions";
