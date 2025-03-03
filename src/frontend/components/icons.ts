@@ -23,6 +23,7 @@ import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
 import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -81,6 +82,7 @@ export {
   GridViewOutlinedIcon as GridViewOutlined,
   HighlightOffOutlinedIcon as HighlightOffOutlined,
   HourglassBottomOutlinedIcon as HourglassBottomOutlined,
+  ImageOutlinedIcon as ImageOutlined,
   InboxOutlinedIcon as InboxOutlined,
   LibraryBooksOutlinedIcon as LibraryBooksOutlined,
   LightModeOutlinedIcon as LightModeOutlined,

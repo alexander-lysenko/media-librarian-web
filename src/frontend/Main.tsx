@@ -37,7 +37,7 @@ export const Main = () => {
   window.useCredentialsStore = useAuthCredentialsStore((state) => state);
 
   return (
-    <ThemeProvider theme={createTheme(getDesignTokens(colorMode))}>
+    <ThemeProvider noSsr theme={createTheme(getDesignTokens(colorMode))}>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline enableColorScheme />
       <Router>

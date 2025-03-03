@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Container,
   Divider,
@@ -42,15 +41,17 @@ import {
 import {
   ChangeEmailDialog,
   ChangePasswordDialog,
-  ChangeUsernameDialog,
   LibraryCreateDialog,
 } from "../components/modals";
+import { ChangeLocaleDialog } from "../components/modals/profile/ChangeLocaleDialog";
+import { ChangeThemeDialog } from "../components/modals/profile/ChangeThemeDialog";
+import { ChangeUsernameDialog } from "../components/modals/profile/ChangeUsernameDialog";
 import { SimpleDialog } from "../components/modals/SimpleDialog";
-import { stringAvatar } from "../core";
+import { ProfileAvatar } from "../components/ui/ProfileAvatar";
 import { enqueueSnack } from "../core/actions";
 import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
-import { useLanguageStore } from "../store/system/useTranslationStore";
+import { useLanguageStore, useTranslationStore } from "../store/system/useTranslationStore";
 import { useProfileStore } from "../store/useProfileStore";
 
 import type { ReactNode } from "react";
@@ -119,13 +120,12 @@ export const Profile = () => {
 };
 
 const Profiler = ({ username, email, avatar }: { username: string; email: string; avatar: string }) => {
-  const { sx, children } = stringAvatar(username);
   const avatarSizes = { height: { xs: 64, sm: 128, md: 192 }, width: { xs: 64, sm: 128, md: 192 } };
 
   return (
     <Grid container>
       <Grid size={{ xs: "auto", md: 12 }} display="flex" justifyContent="center" alignItems="center" p={2}>
-        <Avatar sx={{ ...sx, ...avatarSizes }} src={avatar} children={children} />
+        <ProfileAvatar sx={{ ...avatarSizes }} src={avatar} username={username} />
       </Grid>
       <Grid size={{ xs: "grow", md: 12 }} p={2} ml={{ xs: -2, sm: 0 }}>
         <Typography variant="h5" noWrap title={username} width="100%" textAlign={{ md: "center" }}>
@@ -141,11 +141,14 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
 
 const ProfileActions = () => {
   const { t } = useTranslation();
-  const { name: username, email } = useProfileStore((state) => state.profile.user);
+  const { name: username, email, locale, theme } = useProfileStore((state) => state.profile.user);
+  const language = useTranslationStore().languages[locale];
 
   const [usernameDialogOpen, setUsernameDialogOpen] = useState<boolean>(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState<boolean>(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false);
+  const [localeDialogOpen, setLocaleDialogOpen] = useState<boolean>(false);
+  const [themeDialogOpen, setThemeDialogOpen] = useState<boolean>(false);
 
   return (
     <List dense disablePadding component="div">
@@ -157,9 +160,7 @@ const ProfileActions = () => {
           primary={t("profile.preferencesEnum.username")}
           title={username}
           secondary={username}
-          slotProps={{
-            secondary: { noWrap: true },
-          }}
+          slotProps={{ secondary: { noWrap: true } }}
         />
       </ListItemButton>
       <ListItemButton divider onClick={() => setEmailDialogOpen(true)}>
@@ -168,22 +169,20 @@ const ProfileActions = () => {
           primary={t("profile.preferencesEnum.email")}
           title={email}
           secondary={email}
-          slotProps={{
-            secondary: { noWrap: true },
-          }}
+          slotProps={{ secondary: { noWrap: true } }}
         />
       </ListItemButton>
       <ListItemButton divider onClick={() => setPasswordDialogOpen(true)}>
         <ListItemIcon children={<PasswordOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.password")} secondary={"********"} />
       </ListItemButton>
-      <ListItemButton divider>
+      <ListItemButton divider onClick={() => setThemeDialogOpen(true)}>
         <ListItemIcon children={<LightModeOutlined />} />
-        <ListItemText primary={t("profile.preferencesEnum.theme")} secondary={"Dark"} />
+        <ListItemText primary={t("profile.preferencesEnum.theme")} secondary={t(`theme.${theme}`)} />
       </ListItemButton>
-      <ListItemButton divider>
+      <ListItemButton divider onClick={() => setLocaleDialogOpen(true)}>
         <ListItemIcon children={<TranslateOutlined />} />
-        <ListItemText primary={t("profile.preferencesEnum.locale")} secondary={"English"} />
+        <ListItemText primary={t("profile.preferencesEnum.locale")} secondary={language} />
       </ListItemButton>
       <ListItemButton
         onClick={() => {
@@ -200,6 +199,8 @@ const ProfileActions = () => {
       <ChangeUsernameDialog open={usernameDialogOpen} onClose={() => setUsernameDialogOpen(false)} />
       <ChangeEmailDialog open={emailDialogOpen} onClose={() => setEmailDialogOpen(false)} />
       <ChangePasswordDialog open={passwordDialogOpen} onClose={() => setPasswordDialogOpen(false)} />
+      <ChangeThemeDialog open={themeDialogOpen} onClose={() => setThemeDialogOpen(false)} />
+      <ChangeLocaleDialog open={localeDialogOpen} onClose={() => setLocaleDialogOpen(false)} />
     </List>
   );
 };
@@ -222,14 +223,6 @@ const AccountInfo = () => {
       <ListSubheader disableSticky component="div" children={t("profile.aboutThisProfile")} />
       <Divider />
       <ListItem>
-        <ListItemIcon children={<CalendarMonthOutlined />} />
-        <ListItemText
-          primary={t("profile.detailsEnum.registrationDate")}
-          secondary={dayjs(createdAt).locale(locale).format("LL")}
-        />
-      </ListItem>
-      <Divider sx={{ borderColor: "transparent" }} />
-      <ListItem>
         <ListItemIcon>{accountStatusIcon[status]}</ListItemIcon>
         <ListItemText
           primary={t("profile.detailsEnum.accountStatus")}
@@ -241,9 +234,15 @@ const AccountInfo = () => {
         <ListItemIcon>{emailVerifiedAt ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
         <ListItemText
           primary={t("profile.detailsEnum.emailStatus")}
-          secondary={
-            emailVerifiedAt ? t("profile.emailVerifiedEnum.verified") : t("profile.emailVerifiedEnum.unverified")
-          }
+          secondary={t(`profile.emailVerifiedEnum.${emailVerifiedAt ? "verified" : "unverified"}`)}
+        />
+      </ListItem>
+      <Divider sx={{ borderColor: "transparent" }} />
+      <ListItem>
+        <ListItemIcon children={<CalendarMonthOutlined />} />
+        <ListItemText
+          primary={t("profile.detailsEnum.registrationDate")}
+          secondary={dayjs(createdAt).locale(locale).format("LL")}
         />
       </ListItem>
       <Divider sx={{ borderColor: "transparent" }} />

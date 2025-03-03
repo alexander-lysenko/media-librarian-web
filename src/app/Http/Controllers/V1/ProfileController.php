@@ -23,8 +23,8 @@ use OpenApi\Attributes as OA;
             new OA\Property(property: 'id', type: 'integer', example: 1),
             new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
             new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
-            new OA\Property(property: 'theme', type: 'string', example: 'light'),
             new OA\Property(property: 'locale', type: 'string', example: 'en'),
+            new OA\Property(property: 'theme', type: 'string', example: 'light'),
             new OA\Property(property: 'avatar', type: 'string', example: 'data:image/svg+xml;base64,PD9...PC9zdmc+'),
         ]),
         new OA\Property(property: 'stats', properties: [
@@ -83,9 +83,9 @@ class ProfileController extends ApiV1Controller
             content: new OA\JsonContent(properties: [
                 new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
                 new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
-                new OA\Property(property: 'avatar', type: 'string', example: 'data:image/jpeg;base64,PD9...PC9zdmc+'),
                 new OA\Property(property: 'locale', type: 'string', enum: ['en', 'ru']),
                 new OA\Property(property: 'theme', type: 'string', enum: ['dark', 'light']),
+                new OA\Property(property: 'avatar', type: 'string', example: 'data:image/jpeg;base64,PD9...PC9zdmc+'),
             ])
         ),
         tags: ['profile'],
@@ -225,8 +225,8 @@ class ProfileController extends ApiV1Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'theme' => $user->settings->theme ?: 'light',
                 'locale' => $user->settings->locale ?: 'en',
+                'theme' => $user->settings->theme ?: 'light',
                 'avatar' => $user->settings->avatar ?: null,
             ],
             'stats' => [

@@ -15,6 +15,7 @@
   "common": {
     "all": "All",
     "cancel": "Cancel",
+    "changesSaved": "Changes have been saved",
     "close": "Close",
     "create": "Create",
     "delete": "Delete",
@@ -60,9 +61,20 @@
       "title": "Change Account's E-mail Address",
       "subtitle": "You will have to confirm your new e-mail address. We will send you the instructions to your new address."
     },
+    "changeLocaleDialog": {
+      "title": "Select language"
+    },
     "changePasswordDialog": {
       "title": "Change Account's Password",
       "subtitle": "To get your password changed, please provide your current password first."
+    },
+    "changeThemeDialog": {
+      "title": "Select interface theme"
+    },
+    "changeUsernameDialog": {
+      "title": "Change Account's Name",
+      "subtitle": "Do you want to be presented with a different name? No Problem!",
+      "whatIsYourName": "What is your name?"
     },
     "updateProfileDialog": {
       "title": "Update Profile Info",
@@ -214,10 +226,12 @@
     },
     "preferences": "Preferences",
     "preferencesEnum": {
+      "email": "Change e-mail address",
       "locale": "Language",
       "password": "Update password",
+      "profile": "Update your profile",
       "theme": "Interface theme",
-      "profile": "Update your profile"
+      "username": "Change user name"
     }
   },
   "signupPage": {

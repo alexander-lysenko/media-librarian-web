@@ -1,11 +1,15 @@
 import { create } from "zustand";
 
 import type { AccountStatusEnum } from "../core/enums";
+import type { Language } from "./system/useTranslationStore";
+import type { PaletteMode } from "@mui/material";
 
 type UserData = {
   id: number;
   name: string;
   email: string;
+  locale: Language;
+  theme: PaletteMode | string;
   avatar: string;
 };
 
@@ -38,6 +42,8 @@ export const useProfileStore = create<ProfileState>((set) => ({
       id: 1,
       name: "Vasiliy Pupkin",
       email: "vasyapupkinverylongemailaddress@example.com",
+      locale: "en",
+      theme: "light",
       avatar: "https://source.unsplash.com/dFnoV-mpiGY/240x240",
     },
     stats: {

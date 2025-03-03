@@ -31,7 +31,7 @@ export const EmailInput = forwardRef((props: Props, ref) => {
       label={label}
       helperText={errorMessage || helperText}
       error={!!errorMessage}
-      fullWidth={props.fullWidth ?? false}
+      fullWidth={props.fullWidth ?? true}
       size="small"
       margin="dense"
       autoComplete={disableAutoComplete ? "off" : "email"}
