@@ -22,6 +22,7 @@ import { useFormValidation } from "../../hooks";
 import { AlternateEmailOutlined, LockOutlined, LockReset } from "../icons";
 
 import type { InputCustomProps } from "../../core/types";
+import type { TextFieldProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
 
@@ -115,7 +116,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   );
 };
 
-const EmailTextField = (props: Partial<InputCustomProps>) => {
+const EmailTextField = (props: Partial<InputCustomProps & TextFieldProps>) => {
   const endAdornment = <InputAdornment position="end" children={<AlternateEmailOutlined />} />;
 
   return (
@@ -133,7 +134,7 @@ const EmailTextField = (props: Partial<InputCustomProps>) => {
   );
 };
 
-const PasswordTextField = (props: InputCustomProps) => {
+const PasswordTextField = (props: Partial<InputCustomProps & TextFieldProps>) => {
   const endAdornment = <InputAdornment position="end" children={<LockOutlined />} />;
 
   return (

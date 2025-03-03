@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -25,7 +24,7 @@ import type { DialogProps } from "@mui/material";
  * @param onSubmit
  * @constructor
  */
-export const ChangePasswordDialog = ({ open, onClose, onSubmit }: SimpleDialogProps) => {
+export const ChangePasswordDialog = ({ open, onClose }: SimpleDialogProps) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
 

@@ -38,33 +38,33 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
       beforeSend: () => {
         setStatus("LOADING");
         responseEvents?.beforeSend?.();
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
+        // eslint-disable-next-line no-console
         verbose && console.log(`Requesting: ${method} ${url}`);
       },
       onSuccess: (response) => {
         setStatus("SUCCESS");
         responseEvents?.onSuccess?.(response);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
+        // eslint-disable-next-line no-console
         verbose && console.log("Response", response);
         debugStatus = "SUCCESS";
       },
       onReject: (reason) => {
         setStatus("FAILED");
         responseEvents?.onReject?.(reason);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
+        // eslint-disable-next-line no-console
         verbose && console.log("Rejected", reason);
         debugStatus = "FAILED";
       },
       onError: (error) => {
         setStatus("FAILED");
         responseEvents?.onError?.(error);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
+        // eslint-disable-next-line no-console
         verbose && console.log("Failed", error);
         debugStatus = "FAILED";
       },
       onComplete: () => {
         responseEvents?.onComplete?.();
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-console
+        // eslint-disable-next-line no-console
         verbose && console.log("Status: ", debugStatus);
       },
     };

@@ -5,12 +5,17 @@ import { useTranslation } from "react-i18next";
 import { VisibilityOffOutlined, VisibilityOutlined } from "../icons";
 
 import type { InputCustomProps } from "../../core/types";
+import type { TextFieldProps } from "@mui/material";
+
+type Props = InputCustomProps & {
+  margin?: TextFieldProps["margin"];
+};
 
 /**
  * Common Input for Password.
  * Supports interactive "Hold to see the password" action on click and hold by endAdornment icon
  */
-export const PasswordInput = forwardRef((props: InputCustomProps, ref) => {
+export const PasswordInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
   const { autoFocus } = props;
 

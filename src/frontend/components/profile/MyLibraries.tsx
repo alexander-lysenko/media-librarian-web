@@ -51,28 +51,28 @@ export const MyLibraries = () => {
   const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
   const handleClearLibrary =
     (id: number, name: string): MouseEventHandler<HTMLButtonElement> =>
-      (event) => {
-        event.preventDefault();
-        confirmDialog({
-          message: t("confirm.cleanupLibrary"),
-          subjectItem: name,
-          onConfirm: async () => {
-            await cleanupLibrary(undefined, { id }).then(() => getLibraries());
-          },
-        });
-      };
+    (event) => {
+      event.preventDefault();
+      confirmDialog({
+        message: t("confirm.cleanupLibrary"),
+        subjectItem: name,
+        onConfirm: async () => {
+          await cleanupLibrary(undefined, { id }).then(() => getLibraries());
+        },
+      });
+    };
   const handleDeleteLibrary =
     (id: number, name: string): MouseEventHandler<HTMLButtonElement> =>
-      (event) => {
-        event.preventDefault();
-        confirmDialog({
-          message: t("confirm.deleteLibrary"),
-          subjectItem: name,
-          onConfirm: async () => {
-            await deleteLibrary(undefined, { id }).then(() => getLibraries());
-          },
-        });
-      };
+    (event) => {
+      event.preventDefault();
+      confirmDialog({
+        message: t("confirm.deleteLibrary"),
+        subjectItem: name,
+        onConfirm: async () => {
+          await deleteLibrary(undefined, { id }).then(() => getLibraries());
+        },
+      });
+    };
 
   if (status === "LOADING") {
     return <LoadingOverlayInner sx={{ height: 180 }} />;

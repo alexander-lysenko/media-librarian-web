@@ -1,8 +1,9 @@
+@use "sass:meta";
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
 
 // Variables
-@import 'variables';
+@include meta.load-css('variables');
 
 #root {
     min-width: 360px;
