@@ -1,4 +1,4 @@
-import { InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField, type TextFieldProps } from "@mui/material";
 import { forwardRef } from "react";
 
 import { AlternateEmailOutlined, HourglassBottomOutlined } from "../icons";
@@ -6,6 +6,7 @@ import { AlternateEmailOutlined, HourglassBottomOutlined } from "../icons";
 import type { InputCustomProps } from "../../core/types";
 
 type Props = InputCustomProps & {
+  margin?: TextFieldProps["margin"];
   loadingState?: boolean;
   disableAutoComplete?: boolean;
 };
@@ -16,7 +17,7 @@ type Props = InputCustomProps & {
  */
 export const EmailInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
-  const { loadingState, disableAutoComplete, autoFocus } = props;
+  const { margin, loadingState, disableAutoComplete, autoFocus, fullWidth } = props;
 
   const endAdornment = (
     <InputAdornment position="end">
@@ -31,9 +32,9 @@ export const EmailInput = forwardRef((props: Props, ref) => {
       label={label}
       helperText={errorMessage || helperText}
       error={!!errorMessage}
-      fullWidth={props.fullWidth ?? true}
+      fullWidth={fullWidth ?? true}
       size="small"
-      margin="dense"
+      margin={margin || "dense"}
       autoComplete={disableAutoComplete ? "off" : "email"}
       autoFocus={autoFocus}
       onChange={onChange}

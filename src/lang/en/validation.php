@@ -153,15 +153,19 @@ return [
             'rule-name' => 'custom-message',
         ],
         'email' => [
-            'required' => 'ERR-001: The email field is required.',
-            'unique' => 'ERR-002: This email has already been taken.',
-            'exists' => 'ERR-002: Account with this email was not found.',
-            'email' => 'ERR-004: The email must be a valid email address.',
-            'regex' => 'ERR-004: The email must be a valid email address.',
-            'max' => 'ERR-005: The email must not exceed :max characters.',
+            'required' => 'ERR-010: The email field is required.',
+            'unique' => 'ERR-011: This email has already been taken.',
+            'exists' => 'ERR-012: Account with this email was not found.',
+            'email' => 'ERR-013: The email must be a valid email address.',
+            'regex' => 'ERR-013: The email must be a valid email address.',
+            'max' => 'ERR-014: The email must not exceed :max characters.',
         ],
         'password' => [
-            'required' => 'ERR-010: The password field is required.',
+            'required' => 'ERR-020: The password field is required.',
+        ],
+        'newPassword' => [
+            'required' => 'ERR-030: The new password field is required.',
+            'different' => 'ERR-031: New password must not be the same as old password.',
         ],
         'id' => [
             'required' => 'ERR-110: The ID of a Library is required.',

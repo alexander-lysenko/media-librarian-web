@@ -1,4 +1,16 @@
-import { Avatar, Dialog, DialogTitle, Grow, List, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Avatar,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grow,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  styled,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -58,7 +70,7 @@ export const ChangeLocaleDialog = ({ open, onClose }: SimpleDialogProps) => {
 
   return (
     <Dialog {...dialogProps} onClose={onClose}>
-      <DialogTitle>{t("dialogs.changeLocaleDialog.title")}</DialogTitle>
+      <StyledDialogTitle>{t("dialogs.changeLocaleDialog.title")}</StyledDialogTitle>
       <List>
         {Object.entries(languages).map(([key, label]) => {
           const onClick = (event: SyntheticEvent) => {
@@ -75,6 +87,17 @@ export const ChangeLocaleDialog = ({ open, onClose }: SimpleDialogProps) => {
           );
         })}
       </List>
+      <StyledDialogContent>
+        <Typography variant="body2">{"More languages coming soon"}</Typography>
+      </StyledDialogContent>
     </Dialog>
   );
 };
+
+const StyledDialogTitle = styled(DialogTitle)({
+  paddingBottom: 0,
+});
+
+const StyledDialogContent = styled(DialogContent)({
+  paddingTop: 8,
+});

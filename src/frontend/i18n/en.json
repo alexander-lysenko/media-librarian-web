@@ -68,7 +68,14 @@
     },
     "changePasswordDialog": {
       "title": "Change Account's Password",
-      "subtitle": "To get your password changed, please provide your current password first."
+      "subtitle": "To get your password changed, please provide your current password first.",
+      "success": "Your password has been updated. All others active sessions were terminated.",
+      "passwordLabel": "Current Password",
+      "newPasswordLabel": "New Password",
+      "repeatPasswordLabel": "Repeat Password",
+      "passwordHint": "This is the password you use for authentication in this application.",
+      "newPasswordHint": "At least 8 characters, mixed alpha-numeric set.",
+      "repeatPasswordHint": "Should match the password entry from the prior field."
     },
     "changeThemeDialog": {
       "title": "Select interface theme"
@@ -78,16 +85,6 @@
       "subtitle": "Do you want to be presented with a different name? No Problem!",
       "label": "What is your name?",
       "success": "Welcome back, {{username}}!"
-    },
-    "updateProfileDialog": {
-      "title": "Update Profile Info",
-      "subtitle": "Do you want to change your name or photo? No Problem!",
-      "usernameLabel": "What is your name?",
-      "usernameHint": "This change will take effect immediately",
-      "emailLabel": "E-mail address",
-      "emailHint": "You'll receive a confirmation e-mail to complete the change",
-      "uploadPhoto": "Upload Photo",
-      "removePhoto": "Remove Photo"
     }
   },
   "fileUpload": {
@@ -234,7 +231,7 @@
       "password": "Update password",
       "profile": "Update your profile",
       "theme": "Interface theme",
-      "username": "Change user name"
+      "username": "Change display name"
     }
   },
   "signupPage": {

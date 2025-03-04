@@ -242,6 +242,36 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
           },
         },
       },
+      password: {
+        required: t("formValidation.passwordRequired") as Message,
+      },
+      newPassword: {
+        required: t("formValidation.passwordRequired") as Message,
+        minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
+        validate: {
+          matchesPasswords: () => {
+            const { getFieldState, trigger } = useFormReturn;
+            const prevField = "repeatPassword";
+            const { isDirty, invalid } = getFieldState(prevField);
+            if (isDirty || invalid) {
+              void trigger(prevField);
+            }
+
+            return true;
+          },
+        },
+      },
+      repeatPassword: {
+        required: t("formValidation.passwordRepeatRequired") as Message,
+        validate: {
+          matchesPasswords: (value: string, formValues: FieldValues) => {
+            const message = t("formValidation.passwordRepeatNotMatch");
+            const { newPassword } = formValues;
+
+            return newPassword === value || message;
+          },
+        },
+      },
     },
   };
 

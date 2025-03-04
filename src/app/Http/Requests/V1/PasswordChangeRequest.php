@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Rules\PasswordValidationRule;
+use App\Utils\Enum\UserStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class PasswordChangeRequest extends FormRequest
 {
@@ -12,7 +13,9 @@ class PasswordChangeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $availableStatuses = [UserStatusEnum::ACTIVE->value, UserStatusEnum::BANNED->value];
+
+        return !empty($this->user()->email) && in_array($this->user()->status, $availableStatuses, true);
     }
 
     /**
@@ -23,9 +26,9 @@ class PasswordChangeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'password' => ['required', 'string'],
-            'newPassword' => ['required_with:repeatPassword', 'string', 'min:8'],
-            'repeatPassword' => ['required_with:newPassword', 'same:newPassword'],
+            'password' => ['required', 'string', new PasswordValidationRule($this->user()->email)],
+            'newPassword' => ['required', 'string', 'min:8', 'different:password'],
+            'repeatPassword' => ['required', 'string', 'same:newPassword'],
         ];
     }
 }

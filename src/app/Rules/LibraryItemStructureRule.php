@@ -13,30 +13,18 @@ use Illuminate\Validation\ValidationException;
 /**
  * A request validation rule to check that the payload of a new Library's Item
  * matches the structure of the Library the new Item will be created into.
+ *
+ * @property int $libraryId - The ID of a table to get the structure from, based on an entry from SqliteLibraryMeta
+ * @property int|null $libraryItemId - The ID of an existing Item
  */
 class LibraryItemStructureRule implements ValidationRule
 {
     /**
-     * The ID of a table to get the structure from, based on an entry from SqliteLibraryMeta
-     * @var int
-     */
-    private int $libraryId;
-
-    /**
-     * The ID of an existing Item.
-     * It is necessary for skipping "unique" validation on update the entry, may be skipped on create a new entry
-     * @var int|null
-     */
-    private ?int $libraryItemId;
-
-    /**
      * Create a new rule instance.
      * @return void
      */
-    public function __construct(int $libraryId, ?int $libraryItemId = null)
+    public function __construct(private readonly int $libraryId, private readonly ?int $libraryItemId = null)
     {
-        $this->libraryId = $libraryId;
-        $this->libraryItemId = $libraryItemId;
     }
 
     /**

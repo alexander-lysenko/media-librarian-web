@@ -23,7 +23,7 @@ class UniqueLibraryNameRule implements ValidationRule
         $sqliteLibraryMeta = new SqliteLibraryMeta();
 
         if ($sqliteLibraryMeta->getConnection()->getSchemaBuilder()->hasTable($value)) {
-            $fail ('The :attribute has already been taken.');
+            $fail('The :attribute has already been taken.');
         }
     }
 }

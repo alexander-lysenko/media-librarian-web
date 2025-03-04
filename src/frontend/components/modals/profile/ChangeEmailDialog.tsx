@@ -55,8 +55,6 @@ export const ChangeEmailDialog = ({ open, onClose }: SimpleDialogProps) => {
     onClose(event);
   };
 
-  console.log(formState);
-
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {};
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
     setLoading(true);

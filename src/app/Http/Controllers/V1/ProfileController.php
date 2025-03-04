@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use OpenApi\Attributes as OA;
 
@@ -39,6 +40,8 @@ use OpenApi\Attributes as OA;
 )]
 /**
  * Profile controller - manage account/profile actions
+ *
+ * TODO: Create User Repository
  */
 class ProfileController extends ApiV1Controller
 {
@@ -126,7 +129,7 @@ class ProfileController extends ApiV1Controller
         $user->settings()->save($userSettings);
         $user->save();
 
-        // todo; implement sending of verification email
+        // TODO: implement sending of verification email
         // if ($request->email) {
         //     $userToUpdate['email'] = $request->email;
         // }
@@ -138,7 +141,7 @@ class ProfileController extends ApiV1Controller
         path: '/api/v1/profile/password',
         operationId: 'profile-change-password',
         description: "Changes password of the authenticated User. Current password is required. \n\n" .
-        'WARNING! This action invalidates all active sessions except current (technically - the last used one).',
+        'WARNING! This action invalidates all active sessions (personal access tokens) except current one.',
         summary: 'Change User\'s Password',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
@@ -160,10 +163,20 @@ class ProfileController extends ApiV1Controller
     /**
      * @param PasswordChangeRequest $request
      * @return JsonResponse
+     *
+     * TODO: Protect this endpoint with captcha
      */
     public function changePassword(PasswordChangeRequest $request): JsonResponse
     {
-        // todo: implement payload
+        // Changes password (assuming that the current password was successfully validated)
+        $request->user()
+            ->forceFill(['password' => Hash::make($request->validated('newPassword'))])
+            ->save();
+
+        // Revoke all personal access tokens excluding current
+        $currentAccessToken = $request->user()->currentAccessToken();
+        $request->user()->tokens()->whereNot('id', $currentAccessToken->id)->delete();
+
         return new JsonResponse(null, 204);
     }
 

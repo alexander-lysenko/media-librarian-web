@@ -1,4 +1,14 @@
-import { Avatar, Dialog, DialogTitle, Grow, List, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Avatar,
+  Dialog,
+  DialogTitle,
+  Grow,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  styled,
+} from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -70,7 +80,7 @@ export const ChangeThemeDialog = ({ open, onClose }: SimpleDialogProps) => {
 
   return (
     <Dialog {...dialogProps} onClose={onClose}>
-      <DialogTitle>{t("dialogs.changeThemeDialog.title")}</DialogTitle>
+      <StyledDialogTitle>{t("dialogs.changeThemeDialog.title")}</StyledDialogTitle>
       <List>
         {Object.entries(colors).map(([key, color]) => {
           const onClick = (event: SyntheticEvent) => handleThemeItemClick(event, key as PaletteMode);
@@ -90,3 +100,7 @@ export const ChangeThemeDialog = ({ open, onClose }: SimpleDialogProps) => {
     </Dialog>
   );
 };
+
+const StyledDialogTitle = styled(DialogTitle)({
+  paddingBottom: 0,
+});

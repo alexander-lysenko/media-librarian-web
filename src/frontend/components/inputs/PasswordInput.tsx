@@ -17,7 +17,7 @@ type Props = InputCustomProps & {
  */
 export const PasswordInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
-  const { autoFocus } = props;
+  const { margin, autoFocus, fullWidth } = props;
 
   const { t } = useTranslation();
   const [passVisible, setPassVisible] = useState<boolean>(false);
@@ -48,8 +48,8 @@ export const PasswordInput = forwardRef((props: Props, ref) => {
       helperText={errorMessage || helperText}
       type={passVisible ? "text" : "password"}
       size="small"
-      margin="normal"
-      fullWidth={props.fullWidth ?? true}
+      margin={margin || "dense"}
+      fullWidth={fullWidth ?? true}
       autoComplete="off"
       autoFocus={autoFocus}
       onChange={onChange}
