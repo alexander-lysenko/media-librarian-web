@@ -22,11 +22,12 @@ import { useProfileStore } from "../../../store/useProfileStore";
 
 import type { Language } from "../../../store/system/useTranslationStore";
 import type { DialogProps } from "@mui/material";
+import type { SyntheticEvent } from "react";
 
 /**
  * A Simple Dialog to change locale settings (language) from Profile section
  */
-export const ChangeLocaleDialog = () => {
+export const SelectLocaleDialog = () => {
   const { t } = useTranslation();
 
   const languages = useTranslationStore((state) => state.languages);
@@ -38,6 +39,15 @@ export const ChangeLocaleDialog = () => {
 
   const profileUpdateRequest = useProfilePutRequest();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const handleClose = (event: SyntheticEvent) => {
+    if (loading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+    setOpen(false);
+  };
 
   const handleItemClick = (locale: Language) => {
     setLoading(true);
@@ -69,7 +79,7 @@ export const ChangeLocaleDialog = () => {
   };
 
   return (
-    <Dialog {...dialogProps} onClose={() => setOpen(false)}>
+    <Dialog {...dialogProps} onClose={handleClose}>
       <StyledDialogTitle>{t("dialogs.changeLocaleDialog.title")}</StyledDialogTitle>
       <List>
         {Object.entries(languages).map(([key, label]) => (

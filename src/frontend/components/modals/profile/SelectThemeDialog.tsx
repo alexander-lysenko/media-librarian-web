@@ -21,11 +21,12 @@ import { useProfileStore } from "../../../store/useProfileStore";
 import { ImageOutlined } from "../../icons";
 
 import type { DialogProps, PaletteMode } from "@mui/material";
+import type { SyntheticEvent } from "react";
 
 /**
  * A Simple Dialog to change interface settings (theme) from Profile section
  */
-export const ChangeThemeDialog = () => {
+export const SelectThemeDialog = () => {
   const { t } = useTranslation();
 
   const { setMode: setThemeMode } = useThemeStore((state) => state);
@@ -46,6 +47,15 @@ export const ChangeThemeDialog = () => {
       background: grey["900"],
       highlight: grey["200"],
     },
+  };
+
+  const handleClose = (event: SyntheticEvent) => {
+    if (loading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+    setOpen(false);
   };
 
   const handleItemClick = (theme: PaletteMode) => {
@@ -78,7 +88,7 @@ export const ChangeThemeDialog = () => {
   };
 
   return (
-    <Dialog {...dialogProps} onClose={() => setOpen(false)}>
+    <Dialog {...dialogProps} onClose={handleClose}>
       <StyledDialogTitle>{t("dialogs.changeThemeDialog.title")}</StyledDialogTitle>
       <List>
         {Object.entries(colors).map(([key, color]) => (

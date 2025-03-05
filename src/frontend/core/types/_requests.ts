@@ -31,8 +31,9 @@ export type HttpRequestHookConfig<ResponseType = never> = {
   endpoint: string;
   method: "GET" | "DELETE" | "HEAD" | "OPTIONS" | "POST" | "PUT" | "PATCH" | "PURGE" | "LINK" | "UNLINK";
   customEvents?: HttpResponseEvents<ResponseType>;
-  verbose?: boolean; // default: false
   withCredentials?: boolean; // default: true
+  abortController?: AbortController;
+  verbose?: boolean; // default: false
 };
 
 /** The unified error response interface */

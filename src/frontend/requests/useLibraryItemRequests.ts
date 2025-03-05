@@ -37,7 +37,6 @@ export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItems
     method: "GET",
     endpoint: libraryItemsEndpoint,
     customEvents,
-    verbose: true,
   })();
 };
 
@@ -57,7 +56,6 @@ export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemRe
     method: "GET",
     endpoint: libraryItemEndpoint,
     customEvents,
-    verbose: true,
   })();
 };
 
@@ -83,7 +81,6 @@ export const useLibraryItemPostRequest = (): UseRequestReturn<PostLibraryItemReq
     method: "POST",
     endpoint: libraryItemsEndpoint,
     customEvents,
-    verbose: true,
   })();
 };
 
@@ -109,7 +106,6 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequ
     method: "PUT",
     endpoint: libraryItemEndpoint,
     customEvents,
-    verbose: true,
   })();
 };
 
@@ -129,6 +125,5 @@ export const useLibraryItemDeleteRequest = (): UseRequestReturn<void, void> => {
     method: "DELETE",
     endpoint: libraryItemEndpoint,
     customEvents,
-    verbose: true,
   })();
 };

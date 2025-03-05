@@ -31,7 +31,6 @@ export const useProfileGetRequest = (): UseRequestReturn<void, GetProfileRespons
     method: "GET",
     endpoint: profileEndpoint,
     customEvents: responseEvents,
-    verbose: true,
   })();
 };
 
@@ -44,7 +43,6 @@ export const useProfilePutRequest = (): UseRequestReturn<Partial<ProfileData["us
     method: "PUT",
     endpoint: profileEndpoint,
     customEvents: {},
-    verbose: true,
   })();
 };
 
@@ -66,6 +64,5 @@ export const useProfileChangePasswordRequest = (): UseRequestReturn<PasswordData
     method: "PUT",
     endpoint: changePasswordEndpoint,
     customEvents: responseEvents,
-    verbose: true,
   })();
 };

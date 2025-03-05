@@ -42,9 +42,12 @@ export const ChangePasswordDialog = () => {
   const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
 
   const handleClose = (event: SyntheticEvent) => {
-    event.persist();
+    if (loading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
     reset();
-    setLoading(false);
     setOpen(false);
   };
 
@@ -58,7 +61,6 @@ export const ChangePasswordDialog = () => {
         enqueueSnack({ message: t("dialogs.changePasswordDialog.success"), type: "success" });
       },
       onError: (reason) => {
-        setLoading(false);
         setError("root.serverError", { message: reason.message });
         if (reason.errors?.["password"]) {
           setError("password", { message: reason.errors?.["password"][0] });
@@ -69,6 +71,9 @@ export const ChangePasswordDialog = () => {
         if (reason.errors?.["repeatPassword"]) {
           setError("repeatPassword", { message: reason.errors?.["repeatPassword"][0] });
         }
+      },
+      onComplete: () => {
+        setLoading(false);
       },
     });
 
@@ -82,6 +87,7 @@ export const ChangePasswordDialog = () => {
   const dialogProps: DialogProps = {
     open: open,
     fullWidth: true,
+    maxWidth: "xs",
     disableRestoreFocus: true,
     slots: { transition: Grow },
     slotProps: {

@@ -21,9 +21,10 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
   config: HttpRequestHookConfig<ResponseType>,
 ): (() => UseRequestReturn<RequestType, ResponseType>) => {
   return function useHook(): UseRequestReturn<RequestType, ResponseType> {
-    const { endpoint: url, method, customEvents } = config;
-    const { verbose = false, withCredentials = true } = config;
+    const { endpoint: url, method, customEvents, withCredentials = true } = config;
+    const { verbose = import.meta.env.VITE_APP_DEBUG } = config;
 
+    // const abortController = config.abortController;
     const [abortController] = useState<AbortController>(new AbortController());
     const [status, setStatus] = useState<RequestStatus>("IDLE");
 
@@ -81,13 +82,13 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
         method,
         data,
         withCredentials,
-        signal: abortController.signal,
+        signal: abortController?.signal,
       };
 
       return await axiosFetch<RequestType, ResponseType>(config, eventHandlers);
     };
 
-    const abort = () => abortController.abort();
+    const abort = () => abortController?.abort();
 
     return { status, fetch, abort, setResponseEvents };
   };

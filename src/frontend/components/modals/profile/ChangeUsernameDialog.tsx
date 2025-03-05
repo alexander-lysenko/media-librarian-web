@@ -48,9 +48,12 @@ export const ChangeUsernameDialog = () => {
   const { formState, reset, handleSubmit } = useHookForm;
 
   const handleClose = (event: SyntheticEvent) => {
-    event.persist();
+    if (loading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
     reset();
-    setLoading(false);
     setOpen(false);
   };
 

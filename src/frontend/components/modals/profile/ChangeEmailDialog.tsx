@@ -50,9 +50,12 @@ export const ChangeEmailDialog = () => {
   const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
 
   const handleClose = (event: SyntheticEvent) => {
-    event.persist();
+    if (loading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
     reset();
-    setLoading(false);
     setOpen(false);
   };
 
@@ -69,6 +72,9 @@ export const ChangeEmailDialog = () => {
       onError: (reason) => {
         setLoading(false);
         setError("root.serverError", { message: reason.message });
+      },
+      onComplete: () => {
+        setLoading(false);
       },
     });
 

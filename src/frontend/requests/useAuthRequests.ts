@@ -51,6 +51,5 @@ export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormRetur
     endpoint: userLoginEndpoint,
     customEvents: responseEvents,
     withCredentials: false,
-    verbose: true,
   })();
 };
