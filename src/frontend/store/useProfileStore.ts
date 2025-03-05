@@ -40,17 +40,17 @@ export const useProfileStore = create<ProfileState>((set) => ({
   profile: {
     user: {
       id: 1,
-      name: "Vasiliy Pupkin",
-      email: "vasyapupkinverylongemailaddress@example.com",
+      name: "Unauthenticated Person",
+      email: "this.email.address.does.not.exist@example.com",
       locale: "en",
       theme: "light",
-      avatar: "https://source.unsplash.com/dFnoV-mpiGY/240x240",
+      avatar: "https://source.unsplash.com/dFnoVmpiGY/240x240",
     },
     stats: {
       status: "BANNED",
       emailVerifiedAt: null,
-      createdAt: "2020-01-01 00:00:00",
-      updatedAt: "2022-12-31 00:00:00",
+      createdAt: "1970-01-01 00:00:00",
+      updatedAt: "2024-12-31 23:59:59",
       deletedAt: null,
       librariesTotal: 0,
       itemsTotal: 0,

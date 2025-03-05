@@ -14,8 +14,8 @@ type SnackbarStore = {
   setOpen: (open: boolean) => void;
   snacks: SnackOptions[];
   enqueueSnack: (snackOptions: SnackOptions) => void;
-  removeSnack: () => void;
-  clear: () => void;
+  removeSnack: VoidFunction;
+  clear: VoidFunction;
 };
 
 /**

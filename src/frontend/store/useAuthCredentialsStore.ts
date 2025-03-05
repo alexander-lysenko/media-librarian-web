@@ -5,7 +5,7 @@ interface CredentialsState {
   email: string;
   token: string;
   setCredentials: (email: string, token: string) => void;
-  clear: () => void;
+  clear: VoidFunction;
 }
 
 /**

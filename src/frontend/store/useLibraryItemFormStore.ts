@@ -10,7 +10,7 @@ type LibraryItemFormState = {
   poster: string | null;
   setPoster: (poster: string | null) => void;
   handleOpen: (selectedLibraryId: number, selectedItem?: LibraryItem) => void;
-  handleClose: () => void;
+  handleClose: VoidFunction;
 };
 
 export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({

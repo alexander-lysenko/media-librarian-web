@@ -1,12 +1,4 @@
-import {
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-} from "@mui/material";
+import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -37,16 +29,16 @@ export const MyLibraries = () => {
 
   const dataFetchedRef = useRef(false);
 
-  const { fetch: getLibraries, status } = useLibrariesGetRequest();
-  const { fetch: deleteLibrary } = useLibraryDeleteRequest();
-  const { fetch: cleanupLibrary } = useLibraryCleanupRequest();
+  const getLibrariesRequest = useLibrariesGetRequest();
+  const libraryDeleteRequest = useLibraryDeleteRequest();
+  const libraryCleanupRequest = useLibraryCleanupRequest();
 
   useEffect(() => {
     if (!dataFetchedRef.current) {
       dataFetchedRef.current = true;
-      void getLibraries();
+      void getLibrariesRequest.fetch();
     }
-  }, [getLibraries]);
+  }, [getLibrariesRequest]);
 
   const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
   const handleClearLibrary =
@@ -57,7 +49,9 @@ export const MyLibraries = () => {
         message: t("confirm.cleanupLibrary"),
         subjectItem: name,
         onConfirm: async () => {
-          await cleanupLibrary(undefined, { id }).then(() => getLibraries());
+          await libraryCleanupRequest.fetch(undefined, { id }).then(() => {
+            return getLibrariesRequest.fetch();
+          });
         },
       });
     };
@@ -69,12 +63,14 @@ export const MyLibraries = () => {
         message: t("confirm.deleteLibrary"),
         subjectItem: name,
         onConfirm: async () => {
-          await deleteLibrary(undefined, { id }).then(() => getLibraries());
+          await libraryDeleteRequest.fetch(undefined, { id }).then(() => {
+            return getLibrariesRequest.fetch();
+          });
         },
       });
     };
 
-  if (status === "LOADING") {
+  if (getLibrariesRequest.status === "LOADING") {
     return <LoadingOverlayInner sx={{ height: 180 }} />;
   }
   if (libraries.length === 0) {
@@ -87,8 +83,10 @@ export const MyLibraries = () => {
         <ListItemText
           primary={t("myLibraries.createLibrary")}
           secondary={t("myLibraries.useLibraryWizard")}
-          primaryTypographyProps={{ noWrap: true, textTransform: "uppercase" }}
-          secondaryTypographyProps={{ noWrap: true }}
+          slotProps={{
+            primary: { noWrap: true },
+            secondary: { noWrap: true },
+          }}
         />
       </ListItemButton>
       {libraries.map((library) => {
@@ -96,12 +94,16 @@ export const MyLibraries = () => {
         const listItemSecondaryActions = (
           <>
             <TooltipWrapper title={t("myLibraries.cleanupThisLibrary")} placement={"top"}>
-              <IconButton size="small" aria-label="clear" onClick={handleClearLibrary(library.id, library.title)}>
+              <IconButton size="small" aria-label="clear" onClick={() => handleClearLibrary(library.id, library.title)}>
                 <CleaningServicesOutlined />
               </IconButton>
             </TooltipWrapper>
             <TooltipWrapper title={t("myLibraries.deleteThisLibrary")} placement={"top"}>
-              <IconButton size="small" aria-label="delete" onClick={handleDeleteLibrary(library.id, library.title)}>
+              <IconButton
+                size="small"
+                aria-label="delete"
+                onClick={() => handleDeleteLibrary(library.id, library.title)}
+              >
                 <DeleteForeverOutlined />
               </IconButton>
             </TooltipWrapper>
@@ -114,8 +116,10 @@ export const MyLibraries = () => {
             <ListItemText
               primary={library.title}
               secondary={columnsToDisplay}
-              primaryTypographyProps={{ noWrap: true }}
-              secondaryTypographyProps={{ noWrap: true, title: columnsToDisplay }}
+              slotProps={{
+                primary: { noWrap: true },
+                secondary: { noWrap: true, title: columnsToDisplay },
+              }}
             />
           </ListItem>
         );

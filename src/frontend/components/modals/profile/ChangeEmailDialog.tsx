@@ -17,26 +17,26 @@ import { useTranslation } from "react-i18next";
 import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
 import { useProfilePutRequest } from "../../../requests/useProfileRequests";
+import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useProfileStore } from "../../../store/useProfileStore";
 import { DoneOutlined } from "../../icons";
 import { EmailInput } from "../../inputs/EmailInput";
 
-import type { SimpleDialogProps } from "../../../core/types";
 import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
  * Profile - Dialog - Change Account's Username
- *
- * @param open
- * @param onClose
  */
-export const ChangeEmailDialog = ({ open, onClose }: SimpleDialogProps) => {
+export const ChangeEmailDialog = () => {
   const { t } = useTranslation();
 
   const profile = useProfileStore((state) => state.profile);
   const setProfile = useProfileStore((state) => state.setProfile);
+
+  const open = useProfileDialogsStore((state) => state.emailDialogOpen);
+  const setOpen = useProfileDialogsStore((state) => state.setEmailDialogOpen);
 
   const profileUpdateRequest = useProfilePutRequest();
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,9 +50,10 @@ export const ChangeEmailDialog = ({ open, onClose }: SimpleDialogProps) => {
   const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
 
   const handleClose = (event: SyntheticEvent) => {
+    event.persist();
     reset();
     setLoading(false);
-    onClose(event);
+    setOpen(false);
   };
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {};

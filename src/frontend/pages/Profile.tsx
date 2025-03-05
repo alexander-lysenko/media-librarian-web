@@ -10,6 +10,7 @@ import {
   ListItemText,
   ListSubheader,
   Paper,
+  styled,
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
@@ -34,7 +35,6 @@ import {
   PasswordOutlined,
   PermContactCalendarOutlined,
   PhotoAlbumOutlined,
-  PowerSettingsNewOutlined,
   RemoveCircleOutlined,
   TranslateOutlined,
 } from "../components/icons";
@@ -46,11 +46,11 @@ import {
   ChangeUsernameDialog,
   LibraryCreateDialog,
 } from "../components/modals";
-import { SimpleDialog } from "../components/modals/SimpleDialog";
+import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { ProfileAvatar } from "../components/ui/ProfileAvatar";
-import { enqueueSnack } from "../core/actions";
 import { AccountStatusEnum } from "../core/enums";
 import { useProfileGetRequest } from "../requests/useProfileRequests";
+import { useProfileDialogsStore } from "../store/app/useProfileDialogsStore";
 import { useLanguageStore, useTranslationStore } from "../store/system/useTranslationStore";
 import { useProfileStore } from "../store/useProfileStore";
 
@@ -61,9 +61,10 @@ import type { ReactNode } from "react";
  */
 export const Profile = () => {
   const { t } = useTranslation();
-  const { fetch: request } = useProfileGetRequest();
+
   const profile = useProfileStore((state) => state.profile);
 
+  const getProfileRequest = useProfileGetRequest();
   const dataFetchedRef = useRef(false);
 
   const [profileSectionOpen, setProfileSectionOpen] = useState(true);
@@ -72,9 +73,9 @@ export const Profile = () => {
   useEffect(() => {
     if (!dataFetchedRef.current) {
       dataFetchedRef.current = true;
-      void request();
+      void getProfileRequest.fetch();
     }
-  }, [request]);
+  }, [getProfileRequest]);
 
   return (
     <>
@@ -88,17 +89,21 @@ export const Profile = () => {
             actionIcon={profileSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
             actionEvents={{ onClick: () => setProfileSectionOpen(!profileSectionOpen) }}
           />
-          <Grid container columnSpacing={2} display={profileSectionOpen ? "flex" : "none"}>
-            <Grid id="profiler" size={{ xs: 12, md: 4 }} sx={{ maxWidth: { md: 320 } }}>
-              <Profiler username={profile.user.name} email={profile.user.email} avatar={profile.user.avatar} />
+          {getProfileRequest.status === "SUCCESS" ? (
+            <Grid container columnSpacing={2} display={profileSectionOpen ? "flex" : "none"}>
+              <Grid id="profiler" size={{ xs: 12, md: 4 }} sx={{ maxWidth: { md: 320 } }}>
+                <Profiler username={profile.user.name} email={profile.user.email} avatar={profile.user.avatar} />
+              </Grid>
+              <Grid id="preferences" size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
+                <ProfileActions />
+              </Grid>
+              <Grid id="account-info" size={{ xs: 12, sm: 6, md: "grow" }}>
+                <AccountInfo />
+              </Grid>
             </Grid>
-            <Grid id="preferences" size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
-              <ProfileActions />
-            </Grid>
-            <Grid id="account-info" size={{ xs: 12, sm: 6, md: "grow" }}>
-              <AccountInfo />
-            </Grid>
-          </Grid>
+          ) : (
+            <LoadingOverlayInner sx={{ height: 354 }} />
+          )}
         </Paper>
         <Paper elevation={3} sx={{ my: 3 }}>
           <PaperCardHeader
@@ -113,7 +118,13 @@ export const Profile = () => {
           </Box>
         </Paper>
       </Container>
-      <SimpleDialog />
+      <>
+        <ChangeUsernameDialog />
+        <ChangeEmailDialog />
+        <ChangePasswordDialog />
+        <ChangeThemeDialog />
+        <ChangeLocaleDialog />
+      </>
       <LibraryCreateDialog />
     </>
   );
@@ -141,14 +152,15 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
 
 const ProfileActions = () => {
   const { t } = useTranslation();
+
   const { name: username, email, locale, theme } = useProfileStore((state) => state.profile.user);
   const language = useTranslationStore().languages[locale];
 
-  const [usernameDialogOpen, setUsernameDialogOpen] = useState<boolean>(false);
-  const [emailDialogOpen, setEmailDialogOpen] = useState<boolean>(false);
-  const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false);
-  const [localeDialogOpen, setLocaleDialogOpen] = useState<boolean>(false);
-  const [themeDialogOpen, setThemeDialogOpen] = useState<boolean>(false);
+  const setUsernameDialogOpen = useProfileDialogsStore((state) => state.setUsernameDialogOpen);
+  const setEmailDialogOpen = useProfileDialogsStore((state) => state.setEmailDialogOpen);
+  const setPasswordDialogOpen = useProfileDialogsStore((state) => state.setPasswordDialogOpen);
+  const setLocaleDialogOpen = useProfileDialogsStore((state) => state.setLocaleDialogOpen);
+  const setThemeDialogOpen = useProfileDialogsStore((state) => state.setThemeDialogOpen);
 
   return (
     <List dense disablePadding component="div">
@@ -180,33 +192,17 @@ const ProfileActions = () => {
         <ListItemIcon children={<LightModeOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.theme")} secondary={t(`theme.${theme}`)} />
       </ListItemButton>
-      <ListItemButton divider onClick={() => setLocaleDialogOpen(true)}>
+      <ListItemButton onClick={() => setLocaleDialogOpen(true)}>
         <ListItemIcon children={<TranslateOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.locale")} secondary={language} />
       </ListItemButton>
-      <ListItemButton
-        onClick={() => {
-          enqueueSnack({
-            message: "Logged Out!",
-            type: "success",
-            enableCloseButton: true,
-          });
-        }}
-      >
-        <ListItemIcon children={<PowerSettingsNewOutlined />} />
-        <ListItemText primary={"Log Out"} secondary={"Tap here to invalidate your session"} />
-      </ListItemButton>
-      <ChangeUsernameDialog open={usernameDialogOpen} onClose={() => setUsernameDialogOpen(false)} />
-      <ChangeEmailDialog open={emailDialogOpen} onClose={() => setEmailDialogOpen(false)} />
-      <ChangePasswordDialog open={passwordDialogOpen} onClose={() => setPasswordDialogOpen(false)} />
-      <ChangeThemeDialog open={themeDialogOpen} onClose={() => setThemeDialogOpen(false)} />
-      <ChangeLocaleDialog open={localeDialogOpen} onClose={() => setLocaleDialogOpen(false)} />
     </List>
   );
 };
 
 const AccountInfo = () => {
   const { t } = useTranslation();
+
   const { status, emailVerifiedAt, createdAt } = useProfileStore((state) => state.profile.stats);
   const { librariesTotal, itemsTotal } = useProfileStore((state) => state.profile.stats);
   const locale = useLanguageStore((state) => state.getLanguage());
@@ -229,7 +225,7 @@ const AccountInfo = () => {
           secondary={t(`profile.accountStatusEnum.${status}`)}
         />
       </ListItem>
-      <Divider sx={{ borderColor: "transparent" }} />
+      <DividerTransparent />
       <ListItem>
         <ListItemIcon>{emailVerifiedAt ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
         <ListItemText
@@ -237,7 +233,7 @@ const AccountInfo = () => {
           secondary={t(`profile.emailVerifiedEnum.${emailVerifiedAt ? "verified" : "unverified"}`)}
         />
       </ListItem>
-      <Divider sx={{ borderColor: "transparent" }} />
+      <DividerTransparent />
       <ListItem>
         <ListItemIcon children={<CalendarMonthOutlined />} />
         <ListItemText
@@ -245,17 +241,19 @@ const AccountInfo = () => {
           secondary={dayjs(createdAt).locale(locale).format("LL")}
         />
       </ListItem>
-      <Divider sx={{ borderColor: "transparent" }} />
+      <DividerTransparent />
       <ListItem>
         <ListItemIcon>{<LibraryBooksOutlined />}</ListItemIcon>
         <ListItemText primary={t("profile.detailsEnum.librariesCount")} secondary={librariesTotal} />
       </ListItem>
-      <Divider sx={{ borderColor: "transparent" }} />
+      <DividerTransparent />
       <ListItem>
         <ListItemIcon>{<GridViewOutlined />}</ListItemIcon>
         <ListItemText primary={t("profile.detailsEnum.itemsTotalCount")} secondary={itemsTotal} />
       </ListItem>
-      <Divider sx={{ borderColor: "transparent" }} />
+      <DividerTransparent />
     </List>
   );
 };
+
+const DividerTransparent = styled(Divider)({ borderColor: "transparent" });

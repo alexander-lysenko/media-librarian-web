@@ -16,30 +16,30 @@ import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
 import { useProfilePutRequest } from "../../../requests/useProfileRequests";
+import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useLanguageStore, useTranslationStore } from "../../../store/system/useTranslationStore";
 import { useProfileStore } from "../../../store/useProfileStore";
 
-import type { SimpleDialogProps } from "../../../core/types";
 import type { Language } from "../../../store/system/useTranslationStore";
 import type { DialogProps } from "@mui/material";
-import type { SyntheticEvent } from "react";
 
 /**
  * A Simple Dialog to change locale settings (language) from Profile section
- *
- * @param open
- * @param onClose
  */
-export const ChangeLocaleDialog = ({ open, onClose }: SimpleDialogProps) => {
+export const ChangeLocaleDialog = () => {
   const { t } = useTranslation();
+
   const languages = useTranslationStore((state) => state.languages);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
   const setProfile = useProfileStore((state) => state.setProfile);
 
+  const open = useProfileDialogsStore((state) => state.localeDialogOpen);
+  const setOpen = useProfileDialogsStore((state) => state.setLocaleDialogOpen);
+
   const profileUpdateRequest = useProfilePutRequest();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleLocaleItemClick = (event: SyntheticEvent, locale: Language) => {
+  const handleItemClick = (locale: Language) => {
     setLoading(true);
     profileUpdateRequest.setResponseEvents({
       onSuccess: (response) => {
@@ -52,7 +52,7 @@ export const ChangeLocaleDialog = ({ open, onClose }: SimpleDialogProps) => {
       },
       onComplete: () => {
         setLoading(false);
-        onClose(event);
+        setOpen(false);
       },
     });
 
@@ -69,23 +69,17 @@ export const ChangeLocaleDialog = ({ open, onClose }: SimpleDialogProps) => {
   };
 
   return (
-    <Dialog {...dialogProps} onClose={onClose}>
+    <Dialog {...dialogProps} onClose={() => setOpen(false)}>
       <StyledDialogTitle>{t("dialogs.changeLocaleDialog.title")}</StyledDialogTitle>
       <List>
-        {Object.entries(languages).map(([key, label]) => {
-          const onClick = (event: SyntheticEvent) => {
-            return handleLocaleItemClick(event, key as Language);
-          };
-
-          return (
-            <ListItemButton key={key} disabled={loading} onClick={onClick}>
-              <ListItemAvatar>
-                <Avatar>{key}</Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={label} />
-            </ListItemButton>
-          );
-        })}
+        {Object.entries(languages).map(([key, label]) => (
+          <ListItemButton key={key} disabled={loading} onClick={() => handleItemClick(key as Language)}>
+            <ListItemAvatar>
+              <Avatar>{key}</Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={label} />
+          </ListItemButton>
+        ))}
       </List>
       <StyledDialogContent>
         <Typography variant="body2">{"More languages coming soon"}</Typography>

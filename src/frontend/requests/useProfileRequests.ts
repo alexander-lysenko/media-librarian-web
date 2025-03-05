@@ -24,10 +24,6 @@ export const useProfileGetRequest = (): UseRequestReturn<void, GetProfileRespons
   const responseEvents: HttpResponseEvents<GetProfileResponse> = {
     onSuccess: (response) => {
       setProfile(response);
-      enqueueSnack({
-        type: "success",
-        message: "Profile loaded",
-      });
     },
   };
 

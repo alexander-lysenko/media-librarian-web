@@ -17,23 +17,22 @@ import { useTranslation } from "react-i18next";
 import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
 import { useProfileChangePasswordRequest } from "../../../requests/useProfileRequests";
+import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { DoneOutlined } from "../../icons";
 import { PasswordInput } from "../../inputs/PasswordInput";
 
-import type { SimpleDialogProps } from "../../../core/types";
 import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
- * TODO: WIP
- * @param open
- * @param onClose
- * @param onSubmit
- * @constructor
+ * Profile - Dialog - Change Account's Password
  */
-export const ChangePasswordDialog = ({ open, onClose }: SimpleDialogProps) => {
+export const ChangePasswordDialog = () => {
   const { t } = useTranslation();
+
+  const open = useProfileDialogsStore((state) => state.passwordDialogOpen);
+  const setOpen = useProfileDialogsStore((state) => state.setPasswordDialogOpen);
 
   const changePasswordRequest = useProfileChangePasswordRequest();
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,9 +42,10 @@ export const ChangePasswordDialog = ({ open, onClose }: SimpleDialogProps) => {
   const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
 
   const handleClose = (event: SyntheticEvent) => {
+    event.persist();
     reset();
     setLoading(false);
-    onClose(event);
+    setOpen(false);
   };
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {};
