@@ -118,6 +118,15 @@
     "usernameMinLength": "Expected a full Personal Name (min {{n}} symbols)",
     "usernameRequired": "Personal Name is required"
   },
+  "imageCrop": {
+    "flipHorizontal": "Flip Horizontal",
+    "flipVertical": "Flip Vertical",
+    "options": "More Options",
+    "rotateLeft": "Rotate Left",
+    "rotateRight": "Rotate Right",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out"
+  },
   "libraryCreate": {
     "addNewField": "Add a Field",
     "field": "Field",

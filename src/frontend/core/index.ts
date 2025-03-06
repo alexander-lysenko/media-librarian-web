@@ -1,4 +1,5 @@
 export * as actions from "./actions";
-export * from "./helpers";
+export { getCroppedImg } from "./helpers/cropImage";
+export * from "./helpers/index";
 export * from "./request/axiosFetch";
 export * from "./request/createHttpRequestHook";

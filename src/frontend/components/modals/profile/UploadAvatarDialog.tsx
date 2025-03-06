@@ -1,19 +1,20 @@
 import {
   BottomNavigation,
   BottomNavigationAction,
+  Box,
   Button,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid2 as Grid,
   Grow,
   styled,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { getCroppedImg } from "../../../core";
 import { enqueueSnack } from "../../../core/actions";
 import { useProfilePutRequest } from "../../../requests/useProfileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
@@ -22,6 +23,7 @@ import { CloseOutlined, CloudUploadOutlined, DoneOutlined } from "../../icons";
 import { ImageCrop } from "../../ui/ImageCrop";
 import { ProfileAvatar } from "../../ui/ProfileAvatar";
 
+import type { CropParams } from "../../../core/types";
 import type { DialogProps } from "@mui/material";
 import type { ChangeEvent, SyntheticEvent } from "react";
 
@@ -41,7 +43,9 @@ export const UploadAvatarDialog = () => {
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [cropMode, setCropMode] = useState<boolean>(false);
   const [avatar, setAvatar] = useState<string | null>();
+  const [cropOptions, setCropOptions] = useState<CropParams>();
 
   useEffect(() => {
     setAvatar(profile.user.avatar);
@@ -49,10 +53,7 @@ export const UploadAvatarDialog = () => {
 
   const resetAvatar = () => {
     setAvatar(profile.user.avatar);
-  };
-
-  const handleBrowseClick = () => {
-    hiddenFileInputRef.current?.click();
+    (hiddenFileInputRef.current as HTMLInputElement).value = "";
   };
 
   const handleClose = (event: SyntheticEvent) => {
@@ -62,7 +63,13 @@ export const UploadAvatarDialog = () => {
       return false;
     }
     resetAvatar();
+    setCropMode(false);
+    setCropOptions(undefined);
     setOpen(false);
+  };
+
+  const handleBrowseClick = () => {
+    hiddenFileInputRef.current?.click();
   };
 
   const handleAvatar = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -71,14 +78,14 @@ export const UploadAvatarDialog = () => {
     reader.addEventListener("load", () => {
       const result = reader.result as string;
       setAvatar(result);
-      setOpen(true);
+      setCropMode(true);
     });
     if (file) {
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (event: SyntheticEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     if (avatar === profile.user.avatar) {
       handleClose(event);
       return false;
@@ -99,6 +106,14 @@ export const UploadAvatarDialog = () => {
       },
     });
 
+    if (cropMode && cropOptions) {
+      setCropMode(false);
+      const image = await getCroppedImg(avatar || "", cropOptions.area, cropOptions.rotation, cropOptions.flip);
+
+      void profileUpdateRequest.fetch({ avatar: image });
+      return true;
+    }
+
     void profileUpdateRequest.fetch({ avatar });
   };
 
@@ -114,30 +129,35 @@ export const UploadAvatarDialog = () => {
   return (
     <Dialog {...dialogProps} onClose={handleClose}>
       <DialogTitle variant={"h5"}>{t("dialogs.changeAvatarDialog.title")}</DialogTitle>
-      <DialogContent>
-        <Grid size={{ xs: 12, sm: "auto" }} sx={{ display: "flex", justifyContent: "center" }}>
-          <ProfileAvatar username={profile.user.name} src={avatar || undefined} sx={{ height: 192, width: 192 }} />
-        </Grid>
-        <Grid size={{ xs: 12, sm: "auto" }} sx={{ height: 240, display: "flex", justifyContent: "center" }}>
-          <ImageCrop cropSize={{ width: 192, height: 192 }} />
-        </Grid>
-        <HiddenInput type="file" ref={hiddenFileInputRef} onChange={handleAvatar} />
+      <DialogContent sx={{ py: 1 }}>
+        {!cropMode ? (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <ProfileAvatar username={profile.user.name} src={avatar || undefined} sx={{ height: 192, width: 192 }} />
+          </Box>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <ImageCrop image={avatar ?? ""} cropSize={{ width: 256, height: 256 }} onCropUpdate={setCropOptions} />
+          </Box>
+        )}
       </DialogContent>
-      <BottomNavigation showLabels sx={{ background: "transparent" }}>
-        <Action disabled />
-        <Action
-          label={t("dialogs.changeAvatarDialog.uploadPhoto")}
-          icon={<CloudUploadOutlined />}
-          onClick={handleBrowseClick}
-        />
-        <Action
-          label={t("dialogs.changeAvatarDialog.removePhoto")}
-          icon={<CloseOutlined />}
-          onClick={() => setAvatar(null)}
-        />
-        <Action disabled />
-      </BottomNavigation>
+      {!cropMode && (
+        <BottomNavigation showLabels sx={{ background: "transparent" }}>
+          <Action disabled />
+          <Action
+            label={t("dialogs.changeAvatarDialog.uploadPhoto")}
+            icon={<CloudUploadOutlined />}
+            onClick={handleBrowseClick}
+          />
+          <Action
+            label={t("dialogs.changeAvatarDialog.removePhoto")}
+            icon={<CloseOutlined />}
+            onClick={() => setAvatar(null)}
+          />
+          <Action disabled />
+        </BottomNavigation>
+      )}
       <DialogActions>
+        <HiddenInput type="file" ref={hiddenFileInputRef} onChange={handleAvatar} />
         <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
         <Button
           variant="contained"

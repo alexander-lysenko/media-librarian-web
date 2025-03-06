@@ -118,6 +118,15 @@
     "usernameMinLength": "Попробуйте ввести полное имя (не менее {{n}} символов)",
     "usernameRequired": "Поле с именем не должно оставаться пустым"
   },
+  "imageCrop": {
+    "flipHorizontal": "Отразить по горизонтали",
+    "flipVertical": "Отразить по вертикали",
+    "options": "Больше опций",
+    "rotateLeft": "Повернуть влево",
+    "rotateRight": "Повернуть вправо",
+    "zoomIn": "Увеличить масштаб",
+    "zoomOut": "Уменьшить масштаб"
+  },
   "libraryCreate": {
     "addNewField": "Добавить еще поле",
     "field": "Поле",

@@ -1,3 +1,4 @@
+export * from "./_cropImage";
 export * from "./_dataTable";
 export * from "./_dialogs";
 export * from "./_input";
