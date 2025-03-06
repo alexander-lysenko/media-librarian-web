@@ -18,6 +18,9 @@ type DialogsState = {
 
   avatarDialogOpen: boolean;
   setAvatarDialogOpen: (open: boolean) => void;
+
+  avatarClicked: boolean;
+  setAvatarClicked: (open: boolean) => void;
 };
 
 export const useProfileDialogsStore = create<DialogsState>((set) => ({
@@ -49,5 +52,10 @@ export const useProfileDialogsStore = create<DialogsState>((set) => ({
   avatarDialogOpen: false,
   setAvatarDialogOpen: (open: boolean) => {
     set({ avatarDialogOpen: open });
+  },
+
+  avatarClicked: false,
+  setAvatarClicked: (open: boolean) => {
+    set({ avatarClicked: open });
   },
 }));

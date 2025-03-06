@@ -127,7 +127,6 @@ const DrawerWrapper = ({
 
 const CloseButton = ({ onClose }: { onClose: MouseEventHandler }) => (
   <IconButton
-    aria-label="close"
     onClick={onClose}
     sx={{ position: "absolute", right: 16, top: 8, color: (theme) => theme.palette.grey[200], zIndex: 1 }}
     children={<CloseOutlined />}

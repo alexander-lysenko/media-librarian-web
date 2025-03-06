@@ -1,24 +1,32 @@
 import {
   Box,
+  Button,
   Container,
   Divider,
+  Fade,
   Grid2 as Grid,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Menu,
+  MenuItem,
   Paper,
   styled,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppNavbar, MyLibraries, PaperCardHeader } from "../components";
 import {
+  AccountBox,
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
   BadgeOutlined,
@@ -32,6 +40,7 @@ import {
   LightModeOutlined,
   MarkEmailReadOutlined,
   MarkEmailUnreadOutlined,
+  MoreVertOutlined,
   PasswordOutlined,
   PermContactCalendarOutlined,
   PhotoAlbumOutlined,
@@ -40,12 +49,13 @@ import {
 } from "../components/icons";
 import {
   ChangeEmailDialog,
-  ChangeLocaleDialog,
   ChangePasswordDialog,
-  ChangeThemeDialog,
   ChangeUsernameDialog,
   LibraryCreateDialog,
+  SelectLocaleDialog,
+  SelectThemeDialog,
 } from "../components/modals";
+import { UploadAvatarDialog } from "../components/modals/profile/UploadAvatarDialog";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { ProfileAvatar } from "../components/ui/ProfileAvatar";
 import { AccountStatusEnum } from "../core/enums";
@@ -54,7 +64,8 @@ import { useProfileDialogsStore } from "../store/app/useProfileDialogsStore";
 import { useLanguageStore, useTranslationStore } from "../store/system/useTranslationStore";
 import { useProfileStore } from "../store/useProfileStore";
 
-import type { ReactNode } from "react";
+import type { MenuProps } from "@mui/material";
+import type { ReactNode, SyntheticEvent } from "react";
 
 /**
  * Component representing the Profile page
@@ -65,17 +76,14 @@ export const Profile = () => {
   const profile = useProfileStore((state) => state.profile);
 
   const getProfileRequest = useProfileGetRequest();
-  const dataFetchedRef = useRef(false);
 
   const [profileSectionOpen, setProfileSectionOpen] = useState(true);
   const [libSectionOpen, setLibSectionOpen] = useState(true);
 
-  useEffect(() => {
-    if (!dataFetchedRef.current) {
-      dataFetchedRef.current = true;
-      void getProfileRequest.fetch();
-    }
-  }, [getProfileRequest]);
+  useLayoutEffect(() => {
+    void getProfileRequest.fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -98,7 +106,7 @@ export const Profile = () => {
                 <ProfileActions />
               </Grid>
               <Grid id="account-info" size={{ xs: 12, sm: 6, md: "grow" }}>
-                <AccountInfo />
+                <ProfileStats />
               </Grid>
             </Grid>
           ) : (
@@ -122,30 +130,77 @@ export const Profile = () => {
         <ChangeUsernameDialog />
         <ChangeEmailDialog />
         <ChangePasswordDialog />
-        <ChangeThemeDialog />
-        <ChangeLocaleDialog />
+        <SelectThemeDialog />
+        <SelectLocaleDialog />
+        <UploadAvatarDialog />
       </>
       <LibraryCreateDialog />
     </>
   );
 };
 
-const Profiler = ({ username, email, avatar }: { username: string; email: string; avatar: string }) => {
-  const avatarSizes = { height: { xs: 64, sm: 128, md: 192 }, width: { xs: 64, sm: 128, md: 192 } };
+const Profiler = ({ username, email, avatar }: { username: string; email: string; avatar: string | null }) => {
+  const { t } = useTranslation();
+  const mobileViewport = useMediaQuery(useTheme().breakpoints.down("sm"));
 
+  const setAvatarDialogOpen = useProfileDialogsStore((state) => state.setAvatarDialogOpen);
+  const openAvatarDialog = () => setAvatarDialogOpen(true);
+
+  const [anchorEl, setAnchorEl] = useState<null | Element>(null);
+  const handleMenuClick = (event: SyntheticEvent) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const avatarSizes = { height: { xs: 64, sm: 128, md: 192 }, width: { xs: 64, sm: 128, md: 192 } };
+  const menuProps: MenuProps = {
+    anchorEl: anchorEl,
+    open: !!anchorEl,
+    anchorOrigin: { vertical: "bottom", horizontal: "right" },
+    transformOrigin: { vertical: "top", horizontal: "right" },
+    slots: { transition: Fade },
+    onClose: handleClose,
+  };
+
+  // noinspection CommaExpressionJS
   return (
     <Grid container>
-      <Grid size={{ xs: "auto", md: 12 }} display="flex" justifyContent="center" alignItems="center" p={2}>
-        <ProfileAvatar sx={{ ...avatarSizes }} src={avatar} username={username} />
-      </Grid>
-      <Grid size={{ xs: "grow", md: 12 }} p={2} ml={{ xs: -2, sm: 0 }}>
-        <Typography variant="h5" noWrap title={username} width="100%" textAlign={{ md: "center" }}>
-          {username}
-        </Typography>
-        <Typography variant="subtitle2" noWrap title={email} width="100%" textAlign={{ md: "center" }}>
-          {email}
-        </Typography>
-      </Grid>
+      <AvatarGrid size={{ xs: "auto", md: 12 }}>
+        <ProfileAvatar sx={{ ...avatarSizes }} src={avatar || undefined} username={username} />
+      </AvatarGrid>
+      <IdentityGrid container size={{ xs: "grow", md: 12 }}>
+        <Grid size={{ xs: "grow", sm: 12 }}>
+          <Typography variant="h5" noWrap title={username} width="100%" textAlign={{ md: "center" }}>
+            {username}
+          </Typography>
+          <Typography variant="subtitle2" noWrap title={email} width="100%" textAlign={{ md: "center" }}>
+            {email}
+          </Typography>
+        </Grid>
+        <ButtonsGrid size="auto">
+          {mobileViewport ? (
+            <span>
+              <IconButton size="large" onClick={handleMenuClick}>
+                <MoreVertOutlined />
+              </IconButton>
+              <Menu {...menuProps}>
+                <MenuItem dense onClick={() => (handleClose(), openAvatarDialog())}>
+                  <ListItemIcon>
+                    <AccountBox fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>{t("profile.preferencesEnum.avatar")}</ListItemText>
+                </MenuItem>
+              </Menu>
+            </span>
+          ) : (
+            <Button variant="outlined" startIcon={<AccountBox />} onClick={openAvatarDialog}>
+              {t("profile.preferencesEnum.avatar")}
+            </Button>
+          )}
+        </ButtonsGrid>
+      </IdentityGrid>
     </Grid>
   );
 };
@@ -162,11 +217,17 @@ const ProfileActions = () => {
   const setLocaleDialogOpen = useProfileDialogsStore((state) => state.setLocaleDialogOpen);
   const setThemeDialogOpen = useProfileDialogsStore((state) => state.setThemeDialogOpen);
 
+  const openUsernameDialog = () => setUsernameDialogOpen(true);
+  const openEmailDialog = () => setEmailDialogOpen(true);
+  const openPasswordDialog = () => setPasswordDialogOpen(true);
+  const openThemeDialog = () => setThemeDialogOpen(true);
+  const openLocaleDialog = () => setLocaleDialogOpen(true);
+
   return (
     <List dense disablePadding component="div">
       <ListSubheader disableSticky component="div" children={t("profile.preferences")} />
       <Divider />
-      <ListItemButton divider onClick={() => setUsernameDialogOpen(true)}>
+      <ListItemButton divider onClick={openUsernameDialog}>
         <ListItemIcon children={<BadgeOutlined />} />
         <ListItemText
           primary={t("profile.preferencesEnum.username")}
@@ -175,7 +236,7 @@ const ProfileActions = () => {
           slotProps={{ secondary: { noWrap: true } }}
         />
       </ListItemButton>
-      <ListItemButton divider onClick={() => setEmailDialogOpen(true)}>
+      <ListItemButton divider onClick={openEmailDialog}>
         <ListItemIcon children={<EmailOutlined />} />
         <ListItemText
           primary={t("profile.preferencesEnum.email")}
@@ -184,15 +245,15 @@ const ProfileActions = () => {
           slotProps={{ secondary: { noWrap: true } }}
         />
       </ListItemButton>
-      <ListItemButton divider onClick={() => setPasswordDialogOpen(true)}>
+      <ListItemButton divider onClick={openPasswordDialog}>
         <ListItemIcon children={<PasswordOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.password")} secondary={"********"} />
       </ListItemButton>
-      <ListItemButton divider onClick={() => setThemeDialogOpen(true)}>
+      <ListItemButton divider onClick={openThemeDialog}>
         <ListItemIcon children={<LightModeOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.theme")} secondary={t(`theme.${theme}`)} />
       </ListItemButton>
-      <ListItemButton onClick={() => setLocaleDialogOpen(true)}>
+      <ListItemButton onClick={openLocaleDialog}>
         <ListItemIcon children={<TranslateOutlined />} />
         <ListItemText primary={t("profile.preferencesEnum.locale")} secondary={language} />
       </ListItemButton>
@@ -200,7 +261,7 @@ const ProfileActions = () => {
   );
 };
 
-const AccountInfo = () => {
+const ProfileStats = () => {
   const { t } = useTranslation();
 
   const { status, emailVerifiedAt, createdAt } = useProfileStore((state) => state.profile.stats);
@@ -255,5 +316,33 @@ const AccountInfo = () => {
     </List>
   );
 };
+
+const AvatarGrid = styled(Grid)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  padding: 16,
+  [theme.breakpoints.down("sm")]: {
+    paddingRight: 0,
+  },
+}));
+
+const IdentityGrid = styled(Grid)(({ theme }) => ({
+  display: "flex",
+  alignContent: "flex-start",
+  justifyContent: "center",
+  padding: 16,
+  [theme.breakpoints.down("md")]: {
+    justifyContent: "flex-start",
+  },
+}));
+
+const ButtonsGrid = styled(Grid)(({ theme }) => ({
+  display: "flex",
+  alignContent: "flex-start",
+  paddingTop: 8,
+  [theme.breakpoints.down("sm")]: {
+    paddingTop: 0,
+  },
+}));
 
 const DividerTransparent = styled(Divider)({ borderColor: "transparent" });

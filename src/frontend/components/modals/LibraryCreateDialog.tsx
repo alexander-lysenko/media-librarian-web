@@ -198,7 +198,7 @@ const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTem
       <Grid size={{ xs: 2, sm: 1 }} textAlign={"right"}>
         <FormControl size="small" margin="dense">
           <TooltipWrapper title={tooltipTitle} placement="left" arrow wrap>
-            <IconButton aria-label="delete" disabled={leading} onClick={onRemove}>
+            <IconButton disabled={leading} onClick={onRemove}>
               <RemoveCircleOutlineOutlined />
             </IconButton>
           </TooltipWrapper>

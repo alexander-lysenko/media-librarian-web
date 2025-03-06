@@ -1,3 +1,4 @@
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
 import ArrowDropDownOutlinedIcon from "@mui/icons-material/ArrowDropDownOutlined";
@@ -20,6 +21,7 @@ import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRen
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import ErrorOutlinedIcon from "@mui/icons-material/ErrorOutlined";
+import FlipOutlinedIcon from "@mui/icons-material/FlipOutlined";
 import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
@@ -34,6 +36,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
 import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import NotificationImportantOutlinedIcon from "@mui/icons-material/NotificationImportantOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
@@ -46,6 +49,8 @@ import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOu
 import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
+import RotateLeftIcon from "@mui/icons-material/RotateLeft";
+import RotateRightIcon from "@mui/icons-material/RotateRight";
 import SaveAsOutlinedIcon from "@mui/icons-material/SaveAsOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import StarIcon from "@mui/icons-material/Star";
@@ -55,8 +60,12 @@ import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 
+// noinspection JSUnusedGlobalSymbols
 export {
+  AccountBoxIcon as AccountBox,
   AddCircleOutlinedIcon as AddCircleOutlined,
   AlternateEmailOutlinedIcon as AlternateEmailOutlined,
   ArrowDropDownOutlinedIcon as ArrowDropDownOutlined,
@@ -79,6 +88,7 @@ export {
   EditNoteOutlinedIcon as EditNoteOutlined,
   EmailOutlinedIcon as EmailOutlined,
   ErrorOutlinedIcon as ErrorOutlined,
+  FlipOutlinedIcon as FlipOutlined,
   GridViewOutlinedIcon as GridViewOutlined,
   HighlightOffOutlinedIcon as HighlightOffOutlined,
   HourglassBottomOutlinedIcon as HourglassBottomOutlined,
@@ -93,6 +103,7 @@ export {
   MarkEmailReadOutlinedIcon as MarkEmailReadOutlined,
   MarkEmailUnreadOutlinedIcon as MarkEmailUnreadOutlined,
   MenuOutlinedIcon as MenuOutlined,
+  MoreVertOutlinedIcon as MoreVertOutlined,
   NavigateNextOutlinedIcon as NavigateNextOutlined,
   NotificationImportantOutlinedIcon as NotificationImportantOutlined,
   NotificationsOutlinedIcon as NotificationsOutlined,
@@ -105,6 +116,8 @@ export {
   PublicOutlinedIcon as PublicOutlined,
   RemoveCircleOutlinedIcon as RemoveCircleOutlined,
   RemoveCircleOutlineOutlinedIcon as RemoveCircleOutlineOutlined,
+  RotateLeftIcon as RotateLeft,
+  RotateRightIcon as RotateRight,
   SaveAsOutlinedIcon as SaveAsOutlined,
   SendIcon as Send,
   StarIcon as Star,
@@ -114,4 +127,6 @@ export {
   UploadFileOutlinedIcon as UploadFileOutlined,
   VisibilityOffOutlinedIcon as VisibilityOffOutlined,
   VisibilityOutlinedIcon as VisibilityOutlined,
+  ZoomInIcon as ZoomIn,
+  ZoomOutIcon as ZoomOut,
 };

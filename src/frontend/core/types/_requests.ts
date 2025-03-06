@@ -67,7 +67,7 @@ export type ApiRequestHookReturn<Request, Response> = {
 export type UseRequestReturn<Request, Response> = {
   status: RequestStatus;
   fetch: ApiRequestFetch<Request, Response>;
-  abort: () => void;
+  abort: AbortController["abort"];
   setResponseEvents: (events: HttpResponseEvents<Response>) => void;
 };
 

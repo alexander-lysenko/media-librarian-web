@@ -10,7 +10,7 @@ type UserData = {
   email: string;
   locale: Language;
   theme: PaletteMode | string;
-  avatar: string;
+  avatar: string | null;
 };
 
 type StatsData = {

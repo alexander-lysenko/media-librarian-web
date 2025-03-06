@@ -1,5 +1,5 @@
 import { Button, Container, Paper, styled, Typography } from "@mui/material";
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 
@@ -19,7 +19,6 @@ import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 
 export const App = () => {
   const { t } = useTranslation();
-  const dataFetchedRef = useRef(false);
 
   const libraries = useLibrariesStore((state) => state.libraries);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
@@ -45,17 +44,16 @@ export const App = () => {
     openItemDialog(selectedLibraryId);
   }, [getSelectedLibrary, openItemDialog]);
 
-  useLayoutEffect(() => {
-    if (!dataFetchedRef.current) {
-      dataFetchedRef.current = true;
-      requestLibraries.fetch().then(getItems);
-    }
+  useEffect(() => {
+    requestLibraries.fetch().then(getItems);
 
-    return useLibraryTableStore.subscribe((state) => [state.sort, state.page, state.rowsPerPage], getItems, {
-      equalityFn: shallow,
-      // fireImmediately: false,
-    });
-  }, [getItems, requestLibraries]);
+    return useLibraryTableStore.subscribe(
+      (state) => [state.sort, state.page, state.rowsPerPage],
+      getItems, // don't let prettier reformat this code
+      { equalityFn: shallow },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

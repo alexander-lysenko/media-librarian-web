@@ -1,5 +1,5 @@
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { confirmDialog } from "../../core/actions";
@@ -27,21 +27,17 @@ export const MyLibraries = () => {
   const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
   const libraries = useLibrariesStore((state) => state.libraries);
 
-  const dataFetchedRef = useRef(false);
-
   const getLibrariesRequest = useLibrariesGetRequest();
   const libraryDeleteRequest = useLibraryDeleteRequest();
   const libraryCleanupRequest = useLibraryCleanupRequest();
 
   useEffect(() => {
-    if (!dataFetchedRef.current) {
-      dataFetchedRef.current = true;
-      void getLibrariesRequest.fetch();
-    }
-  }, [getLibrariesRequest]);
+    void getLibrariesRequest.fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
-  const handleClearLibrary =
+  const handleCleanupLibrary =
     (id: number, name: string): MouseEventHandler<HTMLButtonElement> =>
     (event) => {
       event.preventDefault();
@@ -94,16 +90,12 @@ export const MyLibraries = () => {
         const listItemSecondaryActions = (
           <>
             <TooltipWrapper title={t("myLibraries.cleanupThisLibrary")} placement={"top"}>
-              <IconButton size="small" aria-label="clear" onClick={() => handleClearLibrary(library.id, library.title)}>
+              <IconButton size="small" onClick={handleCleanupLibrary(library.id, library.title)}>
                 <CleaningServicesOutlined />
               </IconButton>
             </TooltipWrapper>
             <TooltipWrapper title={t("myLibraries.deleteThisLibrary")} placement={"top"}>
-              <IconButton
-                size="small"
-                aria-label="delete"
-                onClick={() => handleDeleteLibrary(library.id, library.title)}
-              >
+              <IconButton size="small" onClick={handleDeleteLibrary(library.id, library.title)}>
                 <DeleteForeverOutlined />
               </IconButton>
             </TooltipWrapper>

@@ -57,6 +57,11 @@
     }
   },
   "dialogs": {
+    "changeAvatarDialog": {
+      "title": "Manage Profile Picture (avatar)",
+      "uploadPhoto": "Choose photo",
+      "removePhoto": "Remove photo"
+    },
     "changeEmailDialog": {
       "title": "Change Account's E-mail Address",
       "subtitle": "You will have to confirm your new e-mail address. We will send you the instructions to your new address.",
@@ -229,9 +234,9 @@
       "email": "Change e-mail address",
       "locale": "Language",
       "password": "Update password",
-      "profile": "Update your profile",
       "theme": "Interface theme",
-      "username": "Change display name"
+      "username": "Change display name",
+      "avatar": "Change avatar"
     }
   },
   "signupPage": {

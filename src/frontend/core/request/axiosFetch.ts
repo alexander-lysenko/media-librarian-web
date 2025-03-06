@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { CanceledError } from "axios";
 import { update } from "lodash-es";
 
 import { useAuthCredentialsStore } from "../../store/useAuthCredentialsStore";
@@ -58,8 +58,7 @@ export const axiosFetch = async <RequestType, ResponseType>(
   try {
     const response = await instance.request<ResponseType, AxiosResponse<ResponseType>, RequestType>(config);
     if (response && [4, 5].includes(response.status / 100)) {
-      console.log(response);
-      onReject?.(response as never);
+      onError?.(response as never);
 
       return Promise.reject(response as never);
     }
@@ -67,8 +66,11 @@ export const axiosFetch = async <RequestType, ResponseType>(
 
     return Promise.resolve(response.data);
   } catch (error) {
-    console.error(error);
-    onError?.((error as AxiosError<ErrorResponse>).response?.data ?? (error as never));
+    if (error instanceof CanceledError) {
+      onReject?.(error);
+    } else {
+      onError?.((error as AxiosError<ErrorResponse>).response?.data ?? (error as never));
+    }
   } finally {
     onComplete?.();
   }

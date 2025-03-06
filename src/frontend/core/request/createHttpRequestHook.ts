@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { bindPathParams } from "../helpers";
 import { axiosFetch } from "./axiosFetch";
@@ -23,9 +23,9 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
   return function useHook(): UseRequestReturn<RequestType, ResponseType> {
     const { endpoint: url, method, customEvents, withCredentials = true } = config;
     const { verbose = import.meta.env.VITE_APP_DEBUG } = config;
+    const descriptor = `[${method}] ${url} -->`;
 
-    // const abortController = config.abortController;
-    const [abortController] = useState<AbortController>(new AbortController());
+    const [abortController] = useState<AbortController>(config.abortController ?? new AbortController());
     const [status, setStatus] = useState<RequestStatus>("IDLE");
 
     // Response events will be intentionally getting mutated to apply changes immediately without awaiting re-render
@@ -40,33 +40,33 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
         setStatus("LOADING");
         responseEvents?.beforeSend?.();
         // eslint-disable-next-line no-console
-        verbose && console.log(`Requesting: ${method} ${url}`);
+        verbose && console.log(`${descriptor} Requesting...`);
       },
       onSuccess: (response) => {
         setStatus("SUCCESS");
         responseEvents?.onSuccess?.(response);
         // eslint-disable-next-line no-console
-        verbose && console.log("Response", response);
+        verbose && console.log(`${descriptor} Loaded!`, response);
         debugStatus = "SUCCESS";
       },
       onReject: (reason) => {
         setStatus("FAILED");
         responseEvents?.onReject?.(reason);
         // eslint-disable-next-line no-console
-        verbose && console.log("Rejected", reason);
+        verbose && console.error(`${descriptor} Rejected!`, reason);
         debugStatus = "FAILED";
       },
       onError: (error) => {
         setStatus("FAILED");
         responseEvents?.onError?.(error);
         // eslint-disable-next-line no-console
-        verbose && console.log("Failed", error);
+        verbose && console.error(`${descriptor} Failed!`, error);
         debugStatus = "FAILED";
       },
       onComplete: () => {
         responseEvents?.onComplete?.();
         // eslint-disable-next-line no-console
-        verbose && console.log("Status: ", debugStatus);
+        verbose && console.log(`${descriptor} Status:`, debugStatus);
       },
     };
 
@@ -88,7 +88,7 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
       return await axiosFetch<RequestType, ResponseType>(config, eventHandlers);
     };
 
-    const abort = () => abortController?.abort();
+    const abort: AbortController["abort"] = () => abortController?.abort();
 
     return { status, fetch, abort, setResponseEvents };
   };
