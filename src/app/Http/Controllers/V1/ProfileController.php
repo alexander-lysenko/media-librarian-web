@@ -119,7 +119,8 @@ class ProfileController extends ApiV1Controller
         if ($request->locale) {
             $userSettings->locale = $request->locale;
         }
-        if ($request->avatar) {
+        // avatar may be null, so we need to check its presence
+        if ($request->has('avatar')) {
             $userSettings->avatar = $request->avatar;
         }
         if ($request->name) {
