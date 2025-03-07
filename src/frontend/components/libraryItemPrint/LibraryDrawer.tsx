@@ -1,8 +1,9 @@
-import { Box, Container, Divider, Drawer, IconButton, List, ListItem, ListItemText, Tooltip } from "@mui/material";
+import { Box, Container, Divider, Drawer, IconButton, styled } from "@mui/material";
+import { BottomNavigation, BottomNavigationAction, List, ListItem, ListItemText } from "@mui/material";
 import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useLibraryItemActions } from "../../hooks/useLibraryItemActions";
+import { useLibraryItemActions } from "../../hooks";
 import { usePreviewDrawerStore } from "../../store/app/usePreviewDrawerStore";
 import { useLibraryTableStore } from "../../store/library/useLibraryTableStore";
 import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from "../icons";
@@ -13,8 +14,8 @@ import { PrintRating } from "./PrintRating";
 import { PrintSwitch } from "./PrintSwitch";
 
 import type { LibraryElement } from "../../core/types";
-import type { SxProps, Theme } from "@mui/material";
-import type { MouseEventHandler, ReactElement, ReactNode } from "react";
+import type { DrawerProps } from "@mui/material";
+import type { MouseEventHandler, ReactElement } from "react";
 
 /**
  * A right-side drawer displaying the entire item selected from a Library
@@ -51,8 +52,20 @@ export const LibraryDrawer = () => {
     return () => window.removeEventListener("keydown", handleEscapeClose);
   }, [setOpen, setSelectedItemId]);
 
+  const drawerProps: DrawerProps = {
+    open,
+    variant: "persistent",
+    anchor: "right",
+    hideBackdrop: true,
+    // sx: { width: 0 },
+    slotProps: {
+      paper: { sx: { width: { xs: "100%", sm: 480, md: 480, xl: 480 } } },
+    },
+    onClose: handleClose,
+  };
+
   return (
-    <DrawerWrapper open={open} onClose={handleClose}>
+    <Drawer {...drawerProps}>
       <CloseButton onClose={handleClose as unknown as MouseEventHandler} />
       <Box sx={{ overflowY: "auto" }}>
         <PosterBox
@@ -60,6 +73,21 @@ export const LibraryDrawer = () => {
           src="https://source.unsplash.com/wMkaMXTJjlQ"
           height={360}
         />
+        <Divider />
+        <BottomNavigation showLabels sx={{ background: "transparent" }}>
+          <Action
+            label={t("libraryItem.updateThisEntry")}
+            icon={<EditNoteOutlined />}
+            onClick={handleItemEdit}
+            sx={{ color: (theme) => theme.palette.info[theme.palette.mode] }}
+          />
+          <Action
+            label={t("libraryItem.deleteThisEntry")}
+            icon={<DeleteOutlined />}
+            onClick={handleItemDelete}
+            sx={{ color: (theme) => theme.palette.error[theme.palette.mode] }}
+          />
+        </BottomNavigation>
         <Divider />
         <Container>
           <List dense disablePadding>
@@ -74,59 +102,13 @@ export const LibraryDrawer = () => {
           </List>
         </Container>
       </Box>
-      <Divider sx={{ mt: "auto" }} />
-      <Box component="footer" sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between", gap: 1 }}>
-        <Tooltip arrow title={t("libraryItem.updateThisEntry")}>
-          <IconButton type="button" color="info" onClick={handleItemEdit}>
-            <EditNoteOutlined />
-          </IconButton>
-        </Tooltip>
-        <Tooltip arrow title={t("libraryItem.deleteThisEntry")}>
-          <IconButton type="button" color="error" onClick={handleItemDelete}>
-            <DeleteOutlined />
-          </IconButton>
-        </Tooltip>
-        <Box flex="1 0 auto" />
-        <Tooltip arrow title={t("common.close")}>
-          <IconButton type="button" onClick={handleClose as unknown as MouseEventHandler}>
-            <CloseOutlined color="disabled" />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    </DrawerWrapper>
-  );
-};
-
-const DrawerWrapper = ({
-  open,
-  children,
-  onClose,
-}: {
-  open: boolean;
-  children: ReactNode;
-  onClose: (event: KeyboardEvent | MouseEvent) => void;
-}) => {
-  const responsiveSx: SxProps<Theme> = {
-    width: { xs: "100%", sm: 480, md: 480, xl: 480 },
-    background: (theme) => theme.palette.background.paper,
-  };
-
-  return (
-    <Drawer
-      open={open}
-      variant="persistent"
-      anchor="right"
-      hideBackdrop
-      sx={{ width: 0 }}
-      PaperProps={{ sx: responsiveSx }}
-      onClose={onClose}
-      children={children}
-    />
+    </Drawer>
   );
 };
 
 const CloseButton = ({ onClose }: { onClose: MouseEventHandler }) => (
   <IconButton
+    size="large"
     onClick={onClose}
     sx={{ position: "absolute", right: 16, top: 8, color: (theme) => theme.palette.grey[200], zIndex: 1 }}
     children={<CloseOutlined />}
@@ -155,3 +137,9 @@ const ItemCellContents = memo(({ type, value }: { type: LibraryElement; value: n
       return <PrintSwitch asText value={value as boolean} />;
   }
 });
+
+const Action = styled(BottomNavigationAction)(({ theme }) => ({
+  "&:hover": {
+    background: theme.palette.action.hover,
+  },
+}));

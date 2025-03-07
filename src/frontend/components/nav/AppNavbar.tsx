@@ -27,7 +27,7 @@ import { NotificationsPopover } from "./NotificationsPopover";
 import type { ReactElement } from "react";
 
 interface Props {
-  children?: ReactElement;
+  children: ReactElement<{ elevation?: number }>;
 }
 
 type NavRoute = {
@@ -99,9 +99,7 @@ const ElevationScroll = (props: Props) => {
     threshold: 0,
   });
 
-  return cloneElement(children as ReactElement, {
-    elevation: trigger ? 4 : 0,
-  });
+  return cloneElement(children, { elevation: trigger ? 4 : 0 });
 };
 
 const NavDrawer = ({ open, onDrawerToggle, navRoutes }: DrawerProps) => {

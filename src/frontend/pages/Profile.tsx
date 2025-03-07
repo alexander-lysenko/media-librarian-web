@@ -168,7 +168,7 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
   return (
     <Grid container>
       <AvatarGrid size={{ xs: "auto", md: 12 }}>
-        <ProfileAvatar sx={{ ...avatarSizes }} src={avatar || undefined} username={username} />
+        <ProfileAvatar sx={{ ...avatarSizes }} src={avatar} username={username} />
       </AvatarGrid>
       <IdentityGrid container size={{ xs: "grow", md: 12 }}>
         <Grid size={{ xs: "grow", sm: 12 }}>

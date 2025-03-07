@@ -145,8 +145,8 @@
       "create": "Новая запись",
       "edit": "Редактировать запись"
     },
-    "updateThisEntry": "Update this entry",
-    "deleteThisEntry": "Delete this entry"
+    "updateThisEntry": "Изменить эту запись",
+    "deleteThisEntry": "Удалить эту запись"
   },
   "libraryTypes": {
     "checkmark": "Переключатель",

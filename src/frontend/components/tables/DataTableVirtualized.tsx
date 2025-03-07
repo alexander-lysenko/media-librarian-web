@@ -65,6 +65,13 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
       }
 
       if (nextIndex !== null) {
+        // todo: check on paginated collection
+        if (nextIndex > rows.length) {
+          nextIndex = rows.length;
+        } else if (nextIndex <= 1) {
+          nextIndex = 1;
+        }
+
         ref.current?.scrollIntoView({
           index: nextIndex,
           behavior: "auto",
@@ -75,7 +82,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
         event.preventDefault();
       }
     },
-    [selectedItemId, ref, setSelectedItemId],
+    [rows.length, selectedItemId, setSelectedItemId],
   );
 
   const scroller = useCallback(

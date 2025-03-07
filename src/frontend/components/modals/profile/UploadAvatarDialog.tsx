@@ -132,7 +132,7 @@ export const UploadAvatarDialog = () => {
       <DialogContent sx={{ py: 1 }}>
         {!cropMode ? (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <ProfileAvatar username={profile.user.name} src={avatar || undefined} sx={{ height: 192, width: 192 }} />
+            <ProfileAvatar username={profile.user.name} src={avatar || null} sx={{ height: 192, width: 192 }} />
           </Box>
         ) : (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
