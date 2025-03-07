@@ -40,7 +40,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'IMDB Rating', type: 'integer', example: 8),
         new OA\Property(property: 'My Rating', type: 'integer', example: 5),
         new OA\Property(property: 'Watched', type: 'boolean', example: true),
-        new OA\Property(property: 'Watched At', type: 'string', example: '2020-01-01 00:00:01'),
+        new OA\Property(property: 'Added At', type: 'string', example: '2020-01-01 00:00:01'),
         new OA\Property(property: 'Chance To Recommend', type: 'integer', example: 5),
     ]
 ), OA\Schema(
@@ -59,7 +59,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'IMDB Rating', example: 8),
         new OA\Property(property: 'My Rating', example: 5),
         new OA\Property(property: 'Watched', example: true),
-        new OA\Property(property: 'Watched At', example: '2020-01-01 00:00:01'),
+        new OA\Property(property: 'Added At', example: '2020-01-01 00:00:01'),
         new OA\Property(property: 'Chance To Recommend', example: 5),
     ],
 ), OA\Schema(
@@ -98,7 +98,7 @@ use OpenApi\Attributes as OA;
             new OA\Property('operator', example: 'notEqualTo'),
             new OA\Property('value', example: false),
         ])),
-        new OA\Property(property: 'Watched At', type: 'array', items: new OA\Items(oneOf: [
+        new OA\Property(property: 'Added At', type: 'array', items: new OA\Items(oneOf: [
             new OA\Property('operator', example: 'lessThan'),
             new OA\Property('value', example: '2023-01-01 00:00:00'),
         ])),

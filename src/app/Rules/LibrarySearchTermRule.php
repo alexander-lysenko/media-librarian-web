@@ -53,7 +53,7 @@ class LibrarySearchTermRule implements ValidationRule
      *   "IMDB Rating" => "rating10",
      *   "My Rating" => "rating5precision",
      *   "Watched" => "checkmark",
-     *   "Watched At" => "datetime",
+     *   "Added At" => "datetime",
      *   "Chance To Recommend" => "priority"
      * ]
      * @var array
@@ -83,7 +83,7 @@ class LibrarySearchTermRule implements ValidationRule
      *   'IMDB Rating' => ['between', 5, 9],
      *   'My Rating' => ['lessThan', 5],
      *   'Watched' => ['notEqualTo', false],
-     *   'Watched At' => ['lessThan', '2023-01-01 00:00:00'],
+     *   'Added At' => ['lessThan', '2023-01-01 00:00:00'],
      *   'Chance To Recommend' => ['equalTo', '0'],
      * ]
      *

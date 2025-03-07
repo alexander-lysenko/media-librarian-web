@@ -1,47 +1,41 @@
-import type { CropArea, CropFlip } from "../types";
+import type { CropArea, CropFlip, CropSize } from "../types";
 
-export const createImage = (url: string): Promise<HTMLImageElement> =>
-  new Promise((resolve, reject) => {
+const createImage = (url: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
     const image = new Image();
     image.addEventListener("load", () => resolve(image));
     image.addEventListener("error", (error) => reject(error));
     image.setAttribute("crossOrigin", "anonymous"); // needed to avoid cross-origin issues on CodeSandbox
     image.src = url;
   });
+};
 
-export function getRadianAngle(degreeValue: number): number {
+const getRadianAngle = (degreeValue: number): number => {
   return (degreeValue * Math.PI) / 180;
-}
+};
 
 /**
  * Returns the new bounding area of a rotated rectangle.
  */
-export function rotateSize(
-  width: number,
-  height: number,
-  rotation: number,
-): {
-  width: number;
-  height: number;
-} {
+const rotateSize = (width: number, height: number, rotation: number): CropSize => {
   const rotRad = getRadianAngle(rotation);
 
   return {
     width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
     height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
   };
-}
+};
 
 /**
  * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
  */
-export async function getCroppedImg(
+export const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: CropArea,
   rotation: number = 0,
   flip: CropFlip = { horizontal: false, vertical: false },
   output: "blob" | "base64" = "base64",
-): Promise<string | null> {
+): Promise<string | null> => {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -99,9 +93,7 @@ export async function getCroppedImg(
   } else {
     // As a blob
     return new Promise((resolve) => {
-      croppedCanvas.toBlob((file: Blob | null) => {
-        resolve(URL.createObjectURL(file as Blob));
-      }, "image/jpeg");
+      croppedCanvas.toBlob((file: Blob | null) => resolve(URL.createObjectURL(file as Blob)), "image/jpeg");
     });
   }
-}
+};

@@ -250,7 +250,7 @@
   },
   "signupPage": {
     "email": "Email Address",
-    "emailAsLoginHint": "Your e-mail address will be used as your account name.",
+    "emailAsLoginHint": "This address will be used to authenticate your account.",
     "language": "Language",
     "languageHint": "Choose an interface language. You can always change it in your profile.",
     "password": "Password",

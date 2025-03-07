@@ -23,8 +23,7 @@ import { TooltipWrapper } from "./TooltipWrapper";
 import type { CropFlip, CropParams } from "../../core/types";
 import type { MenuProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
-import type { Area, Point, Size } from "react-easy-crop";
-import type { CropperProps } from "react-easy-crop";
+import type { Area, CropperProps, Point, Size } from "react-easy-crop";
 
 type Props = {
   image: string;

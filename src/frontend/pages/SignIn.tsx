@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid2 as Grid, Link, Paper, Typography } from "@mui/material";
+import { Avatar, Container, Grid2 as Grid, Link, Paper, styled, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
@@ -8,8 +8,6 @@ import { LoginForm } from "../components/forms/LoginForm";
 import { LockOutlined } from "../components/icons";
 import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
-
-import type { ReactNode } from "react";
 
 /**
  * Component representing the SignIn (Login) page
@@ -38,8 +36,8 @@ export const SignIn = () => {
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <BackgroundContainer />
-      <PageContainer>
-        <Box mx={4} my={8} display="flex" flexDirection="column" alignItems="center">
+      <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} component={Paper} elevation={6} square>
+        <Contents>
           <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
             <LockOutlined />
           </Avatar>
@@ -60,23 +58,20 @@ export const SignIn = () => {
               </Link>
             </Grid>
           </Grid>
-        </Box>
+        </Contents>
         <StickyFooter>
           <Copyright />
         </StickyFooter>
-      </PageContainer>
+      </Grid>
       <PasswordRecoveryRequestDialog open={passwordRecoverDialogOpen} onClose={handleRecoveryDialogClose} />
       <PasswordResetDialog open={passwordResetDialogOpen} onClose={handleResetDialogClose} />
     </Grid>
   );
 };
 
-type PageContainerProps = {
-  children?: ReactNode;
-};
-
-const PageContainer = ({ children }: PageContainerProps) => (
-  <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} direction="column" component={Paper} elevation={6} square>
-    {children}
-  </Grid>
-);
+const Contents = styled(Container)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  paddingTop: 64,
+});

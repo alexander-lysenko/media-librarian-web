@@ -1,3 +1,8 @@
+export type CropSize = {
+  width: number;
+  height: number;
+};
+
 export type CropArea = {
   width: number;
   height: number;

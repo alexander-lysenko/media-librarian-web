@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { bindPathParams } from "../helpers";
 import { axiosFetch } from "./axiosFetch";

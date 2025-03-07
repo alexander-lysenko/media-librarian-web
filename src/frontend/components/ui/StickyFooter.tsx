@@ -25,7 +25,7 @@ type Props = {
 export const StickyFooter = ({ children }: Props) => {
   return (
     <FooterWrapper>
-      <Grid container justifyContent="center" maxWidth="xs">
+      <Grid container justifyContent="center">
         <Typography component="div" color="text.secondary">
           {children}
         </Typography>
@@ -38,5 +38,9 @@ const FooterWrapper = ({ children }: Props) => {
   const backgroundColor = (theme: Theme) =>
     theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[800];
 
-  return <Box component="footer" sx={{ py: 3, px: 2, mt: "auto", backgroundColor }} children={children} />;
+  return (
+    <Box component="footer" sx={{ py: 3, px: 2, mt: "auto", backgroundColor, width: "100%" }}>
+      {children}
+    </Box>
+  );
 };

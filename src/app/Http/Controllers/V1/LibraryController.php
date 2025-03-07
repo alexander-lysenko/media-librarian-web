@@ -45,7 +45,7 @@ use Throwable;
         'IMDB Rating' => 'rating10',
         'My Rating' => 'rating5precision',
         'Watched' => 'checkmark',
-        'Watched At' => 'datetime',
+        'Added At' => 'datetime',
         'Chance To Recommend' => 'priority',
     ],
 )]
@@ -132,7 +132,7 @@ class LibraryController extends ApiV1Controller
                             ['name' => 'IMDB Rating', 'type' => 'rating10'],
                             ['name' => 'My Rating', 'type' => 'rating5precision'],
                             ['name' => 'Watched', 'type' => 'checkmark'],
-                            ['name' => 'Watched At', 'type' => 'datetime'],
+                            ['name' => 'Added At', 'type' => 'datetime'],
                             ['name' => 'Chance To Recommend', 'type' => 'priority'],
                         ],
                     ),

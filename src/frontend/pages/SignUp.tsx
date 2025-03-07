@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid2 as Grid, Link, Paper, Typography } from "@mui/material";
+import { Avatar, Container, Grid2 as Grid, Link, Paper, styled, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
@@ -6,8 +6,6 @@ import { BackgroundContainer, StickyFooter } from "../components";
 import { Copyright } from "../components";
 import { SignupForm } from "../components/forms/SignupForm";
 import { PersonAddAltRounded } from "../components/icons";
-
-import type { ReactNode } from "react";
 
 /**
  * Component representing the SignUp (Register) page
@@ -18,8 +16,8 @@ export const SignUp = () => {
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <BackgroundContainer />
-      <PageContainer>
-        <Box mx={4} mt={8} display="flex" flexDirection="column" alignItems="center">
+      <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} component={Paper} elevation={6} square>
+        <Contents>
           <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
             <PersonAddAltRounded />
           </Avatar>
@@ -37,21 +35,18 @@ export const SignUp = () => {
               </Link>
             </Grid>
           </Grid>
-        </Box>
+        </Contents>
         <StickyFooter>
           <Copyright />
         </StickyFooter>
-      </PageContainer>
+      </Grid>
     </Grid>
   );
 };
 
-type PageContainerProps = {
-  children?: ReactNode;
-};
-
-const PageContainer = ({ children }: PageContainerProps) => (
-  <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} direction="column" component={Paper} elevation={6} square>
-    {children}
-  </Grid>
-);
+const Contents = styled(Container)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  paddingTop: 64,
+});

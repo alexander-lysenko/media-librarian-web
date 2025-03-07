@@ -23,6 +23,8 @@ export type SortOptions = {
   direction: SortDirection;
 };
 
+export type RowsPerPageListOptions = Array<number | { label: string; value: number }> | [];
+
 export type DataTableBaseProps = {
   columns: DataColumn[];
   rows: DataRow[];

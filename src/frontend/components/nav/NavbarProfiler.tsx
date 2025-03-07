@@ -51,7 +51,7 @@ export const NavbarProfiler = () => {
   return (
     <>
       <Tooltip arrow title={t("app.openProfileMenu")}>
-        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, ml: 1 }}>
+        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 1 }}>
           <ProfileAvatar username={username} alt={username} src={avatar} />
         </IconButton>
       </Tooltip>

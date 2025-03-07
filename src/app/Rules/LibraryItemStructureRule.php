@@ -39,7 +39,7 @@ class LibraryItemStructureRule implements ValidationRule
      *   'IMDB Rating' => 8,
      *   'My Rating' => 5,
      *   'Watched' => true,
-     *   'Watched At' => "2020-01-01 00:00:01",
+     *   'Added At' => "2020-01-01 00:00:01",
      *   'Chance To Recommend' => 5
      * ]
      *

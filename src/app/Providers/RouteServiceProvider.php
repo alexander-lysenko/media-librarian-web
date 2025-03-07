@@ -48,6 +48,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
+        RateLimiter::for('web', static function () {
+            return Limit::perMinute(600);
+        });
+
         RateLimiter::for('app', static function (Request $request) {
             return Limit::perMinute(1); // todo: fix, this doesn't work
         });
