@@ -6,6 +6,7 @@ use App\Utils\Enum\UserStatusEnum;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as AuthUser;
@@ -26,7 +27,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static create(array $attributes = [])
  * @method Builder update(array $values)
  */
-class User extends AuthUser implements MustVerifyEmail
+class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -62,6 +63,16 @@ class User extends AuthUser implements MustVerifyEmail
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    /**
+     * Get the user's preferred locale.
+     *
+     * @return string
+     */
+    public function preferredLocale(): string
+    {
+        return $this->settings->locale;
+    }
 
     /**
      * Determine if the user has verified their email address.

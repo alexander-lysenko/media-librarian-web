@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\UserVerify;
+use App\Mail\ConfirmAddress;
 use Illuminate\Http\Request;
 
 class WebController extends Controller
@@ -14,7 +14,7 @@ class WebController extends Controller
     public function emailVerify(Request $request): mixed
     {
         // ddd($request->user());
-        return new UserVerify();
-        return "Ok";
+        $email = new ConfirmAddress(username: $request->user()?->name ?? 'user', token: '123');
+        return $email;
     }
 }

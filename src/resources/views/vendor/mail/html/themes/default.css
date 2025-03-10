@@ -1,7 +1,7 @@
 /* Base */
 
 body,
-body *:not(html):not(style):not(br):not(tr):not(code) {
+body:not(html):not(style):not(br):not(tr):not(code) {
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
@@ -145,6 +145,10 @@ img {
     width: 570px;
 }
 
+.inner-body a {
+    word-break: break-all;
+}
+
 /* Subcopy */
 
 .subcopy {
@@ -219,6 +223,7 @@ img {
     padding: 0;
     text-align: center;
     width: 100%;
+    float: unset;
 }
 
 .button {
