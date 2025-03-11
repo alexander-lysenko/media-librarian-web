@@ -38,8 +38,9 @@ function create_domain_name_mapping() {
 
   if [[ $(ip route list dev docker0 | grep $NGINX_IP) = "" ]]; then
     CN=$(echo $NGINX_IP | cut -d . -f 4)
-    sudo sh -c "ip addr add $NGINX_IP/8 dev docker0 label docker0:sub$CN"
-    # ip addr del $NGINX_IP/8 dev docker0
+    sudo sh -c "ip addr add $NGINX_IP/24 dev docker0 label docker0:sub$CN"
+    # to delete the address, use the following command
+    # ip addr del $NGINX_IP/24 dev docker0
   else
     echo -e "Network interface already exists. "
   fi
