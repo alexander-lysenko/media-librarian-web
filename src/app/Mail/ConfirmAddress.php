@@ -7,6 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\URL;
 
 /**
  * A mailable class to send e-mail message when a user registers its account or changes e-mail address
@@ -45,11 +46,11 @@ class ConfirmAddress extends Mailable
             with: [
                 'username' => $this->username,
                 'isFirstMessage' => $this->isFirstMsg,
-                'confirmationLink' => implode('', [
-                    config('app.url'),
-                    '/email-confirmation?token=',
-                    $this->token,
-                ]),
+                'confirmationLink' => URL::temporarySignedRoute(
+                    name: 'email-confirmation',
+                    expiration: now()->addHours(48),
+                    parameters: ['token' => $this->token]
+                ),
                 'contactEmail' => 'admin@example.com',
             ]
         );
