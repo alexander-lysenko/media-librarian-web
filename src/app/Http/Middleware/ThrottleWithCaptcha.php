@@ -14,6 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * A middleware to simulate API throttling and force using CAPTCHA to unlock rate limiter.
+ * When the rate limit exceeds, providing the CAPTCHA response is mandatory to proceed.
+ * CAPTCHA response may be optionally provided even when the rate limit is not exceeded,
+ * to avoid automated requests or prevent request forgery, then its verification will still perform and may even fail.
+ * When verification succeeded, rate limiter will reset anyway.
  *
  * @see https://peterbabic.dev/blog/throttle-with-recaptcha-laravel-middleware/
  * @see https://bannister.me/blog/custom-throttle-middleware
@@ -48,9 +52,10 @@ class ThrottleWithCaptcha extends ThrottleRequests
 
         $this->limiter->hit($key, decaySeconds: $decayMinutes * 60);
 
-        if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
+        if ($this->limiter->tooManyAttempts($key, $maxAttempts) || $request->has('cf-turnstile-response')) {
             try {
                 $validator->stopOnFirstFailure()->validate();
+                $this->limiter->clear($key);
             } catch (ValidationException $exception) {
                 $errorMessage = $exception->validator->errors()->first();
             }
