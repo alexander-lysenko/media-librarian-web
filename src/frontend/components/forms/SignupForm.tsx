@@ -28,6 +28,7 @@ import type { Language } from "../../store/system/useTranslationStore";
 import type { PaletteMode } from "@mui/material";
 import type { ChangeEvent } from "react";
 import type { ChangeHandler, FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 /**
  * Sign Up (Register) Form functional component
@@ -119,6 +120,9 @@ export const SignupForm = () => {
         label={t("signupPage.theme")}
         helperText={t("signupPage.themeHint") as string}
       />
+      <Box sx={{ textAlign: "center", pt: 1 }}>
+        <Turnstile options={{ size: "flexible", language }} siteKey={import.meta.env.VITE_CF_TURNSTILE_SITEKEY} />
+      </Box>
       <Button
         type="submit"
         fullWidth

@@ -25,15 +25,11 @@ class UserController extends ApiV1Controller
         path: '/api/v1/user/signup',
         operationId: 'user-signup',
         description: 'Sign up a new User',
-        summary: 'Register a new User [WIP]',
-        // requestBody: new OA\RequestBody(
-        //     required: true,
-        //     content: new OA\JsonContent(
-        //         properties: [
-        //
-        //         ]
-        //     )
-        // ),
+        summary: "Register a new User [WIP]\n\n" .
+        "Rate limiter for this endpoint is set as 1 request per the time window of 6 hours (21600 seconds). \n\n" .
+        "--- \n\n" .
+        '**This endpoint is protected with CAPTCHA**. If you need to reset exceeded rate limit for the endpoint, ' .
+        'you have to provide CAPTCHA response into `cf-turnstile-response` field along with the form data',
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(properties: [
@@ -78,10 +74,6 @@ class UserController extends ApiV1Controller
             ),
         ]
     )]
-    /**
-     * @param SignupRequest $request
-     * @return JsonResponse
-     */
     public function signup(SignupRequest $request): JsonResponse
     {
         $user = User::create([
@@ -101,8 +93,12 @@ class UserController extends ApiV1Controller
     #[OA\Post(
         path: '/api/v1/user/login',
         operationId: 'profile-login',
-        description: 'Obtain an API (Bearer) token to execute the rest of requests as an authenticated User',
-        summary: 'Login (obtain an API token)',
+        description: "Obtain an authentication (Bearer) token to perform requests as an authenticated User.\n\n" .
+        "Rate limiter for this endpoint is set as 3 requests per the time window of 2 hours (7200 seconds).\n\n" .
+        "--- \n\n" .
+        '**This endpoint is protected with CAPTCHA**. If you need to reset exceeded rate limit for the endpoint, ' .
+        'you have to provide CAPTCHA response into `cf-turnstile-response` field along with the form data',
+        summary: 'Login / Obtain an Authentication Token',
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(properties: [
@@ -113,6 +109,11 @@ class UserController extends ApiV1Controller
         ),
         tags: ['guest'],
         responses: [
+            new OA\Response(
+                response: 299,
+                description: 'Stub to control "Accept" header by Swagger. Never used anywhere else.',
+                content: new OA\MediaType(mediaType: 'application/json')
+            ),
             new OA\Response(
                 response: 302,
                 description: 'Moved Temporarily',
@@ -129,12 +130,9 @@ class UserController extends ApiV1Controller
                     new OA\Property(property: 'message', type: 'string', example: 'Incorrect email and/or password'),
                 ])
             ),
+            new OA\Response(ref: self::RESPONSE_429_REF, response: 429),
         ]
     )]
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([

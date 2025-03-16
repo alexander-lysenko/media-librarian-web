@@ -20,6 +20,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $name
  * @property string $email
  * @property string $password
+ * @property string $status
+ * @property string $created_at
+ * @property string $updated_at
  * @property string $email_verified_at
  *
  * @property PersonalSetting $settings

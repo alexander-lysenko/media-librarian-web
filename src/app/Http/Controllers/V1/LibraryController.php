@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 use Throwable;
 
@@ -78,10 +79,6 @@ class LibraryController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function index(Request $request): JsonResponse
     {
         $request->hasValidSignature(); // stub
@@ -157,17 +154,12 @@ class LibraryController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param CreateLibraryRequest $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
     public function create(CreateLibraryRequest $request): JsonResponse
     {
         $sqliteLibraryMeta = new SqliteLibraryMeta();
         $connection = $sqliteLibraryMeta->getConnection();
 
-        $connection->transaction(function () use ($connection, $request, $sqliteLibraryMeta, &$resource) {
+        $transaction = static function () use ($connection, $request, $sqliteLibraryMeta, &$resource) {
             $title = $request->input('title');
             $metadata = Arr::pluck($request->input('fields'), 'type', 'name');
 
@@ -202,7 +194,13 @@ class LibraryController extends ApiV1Controller
                 'title' => $title,
                 'fields' => $metadata,
             ]);
-        });
+        };
+
+        try {
+            $connection->transaction($transaction);
+        } catch (Throwable $throwable) {
+            Log::error($throwable);
+        }
 
         return $resource->response()->setStatusCode(201);
     }
@@ -236,10 +234,6 @@ class LibraryController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param LibraryIdRequest $request
-     * @return JsonResponse
-     */
     public function view(LibraryIdRequest $request): JsonResponse
     {
         /** @var SqliteLibraryMeta $sqliteLibraryMeta */

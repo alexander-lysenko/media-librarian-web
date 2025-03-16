@@ -17,7 +17,9 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
+use Random\RandomException;
 
 #[OA\Tag(name: 'items', description: 'Manage Items of a Library')]
 #[OA\Schema(
@@ -155,10 +157,6 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ],
     )]
-    /**
-     * @param LibraryIdRequest $request
-     * @return JsonResponse
-     */
     public function index(LibraryIdRequest $request): JsonResponse
     {
         $paginatedResource = SqliteLibraryMeta::getLibraryTableQuery($request->id)
@@ -223,10 +221,6 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param LibraryItemCreateRequest $request
-     * @return JsonResponse
-     */
     public function create(LibraryItemCreateRequest $request): JsonResponse
     {
         $contents = $request->contents;
@@ -267,10 +261,6 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ],
     )]
-    /**
-     * @param LibraryItemRequest $request
-     * @return JsonResponse
-     */
     public function view(LibraryItemRequest $request): JsonResponse
     {
         $item = SqliteLibraryMeta::getLibraryTableQuery($request->id)
@@ -279,7 +269,7 @@ class LibraryItemController extends ApiV1Controller
             ->first();
 
         $resource = new LibraryItemResource($item);
-        // todo: add poster
+        // todo: include poster
         $resource->with['poster'] = '';
 
         return $resource->response();
@@ -319,10 +309,6 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param LibraryItemUpdateRequest $request
-     * @return JsonResponse
-     */
     public function update(LibraryItemUpdateRequest $request): JsonResponse
     {
         $query = SqliteLibraryMeta::getLibraryTableQuery($request->id)
@@ -423,11 +409,6 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ],
     )]
-    /**
-     * @param LibraryPaginatedRequest $request
-     * @param LibrarySearch $librarySearch
-     * @return JsonResponse
-     */
     public function search(LibraryPaginatedRequest $request, LibrarySearch $librarySearch): JsonResponse
     {
         $filterDto = LibraryFilterDTO::fromRequest($request);
@@ -476,18 +457,18 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param LibraryIdRequest $request
-     * @return JsonResponse
-     * @throws Exception
-     */
     public function random(LibraryIdRequest $request): JsonResponse
     {
         $cacheKey = "items-count-{$request->user()->id}-$request->id";
         $totalRows = Cache::remember($cacheKey, 60, static function () use ($request) {
             return SqliteLibraryMeta::getLibraryTableQuery($request->id)->count('id');
         });
-        $randomOffset = random_int(0, $totalRows - 1);
+
+        try {
+            $randomOffset = random_int(0, $totalRows - 1);
+        } catch (RandomException $e) {
+            Log::error($e);
+        }
 
         $item = SqliteLibraryMeta::getLibraryTableQuery($request->id)
             ->limit(1)
@@ -496,7 +477,7 @@ class LibraryItemController extends ApiV1Controller
             ->first();
 
         $resource = new LibraryItemResource($item);
-        // todo: add poster
+        // todo: include poster
         $resource->with['poster'] = '';
 
         return $resource->response();

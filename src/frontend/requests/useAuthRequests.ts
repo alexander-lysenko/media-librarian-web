@@ -24,7 +24,7 @@ type HookReturn = UseRequestReturn<LoginRequest, LoginResponse>;
  * Request to authenticate a user
  * [POST] /api/v1/user/login
  */
-export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormReturn): HookReturn => {
+export const useUserLoginRequest = ({ getValues, reset }: UseFormReturn): HookReturn => {
   const navigate = useNavigate();
   const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
 
@@ -35,14 +35,6 @@ export const useUserLoginRequest = ({ getValues, setError, reset }: UseFormRetur
       setCredentials(email, token);
       reset();
       navigate(redirectTo);
-    },
-    onReject: (reason) => {
-      reset({ password: "" });
-      setError("root.serverError", { message: reason.message });
-    },
-    onError: (reason) => {
-      reset({ password: "" });
-      setError("root.serverError", { message: reason.message });
     },
   };
 

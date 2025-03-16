@@ -101,6 +101,7 @@
     "fileSizeExceed": "File size exceeds {{n}} MB"
   },
   "formValidation": {
+    "captchaRequired": "Captcha verification is required",
     "emailInvalid": "Please provide a valid e-mail address",
     "emailNotUnique": "This email address has already been taken",
     "emailRequired": "Email Address is required",

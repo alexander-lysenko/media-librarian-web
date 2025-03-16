@@ -13,8 +13,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use OpenApi\Attributes as OA;
+use Throwable;
 
 #[OA\Tag(name: 'profile', description: 'Profile (Authenticated User)')]
 #[OA\Schema(
@@ -61,16 +63,12 @@ class ProfileController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
         ]
     )]
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function index(Request $request): JsonResponse
     {
         return $this->getProfileInfo($request->user());
     }
 
-    #[OA\Put(
+    #[OA\Patch(
         path: '/api/v1/profile',
         operationId: 'profile-update',
         description: "Details of profile can be updated using this endpoint. \n\n" .
@@ -103,15 +101,13 @@ class ProfileController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param ProfileRequest $request
-     * @return JsonResponse
-     */
     public function update(ProfileRequest $request): JsonResponse
     {
         /** @var User $user */
         $user = $request->user();
         $userSettings = $user->settings ?: new PersonalSetting(['user_id' => $user->id]);
+
+        $connection = $user->getConnection();
 
         if ($request->theme) {
             $userSettings->theme = $request->theme;
@@ -127,13 +123,20 @@ class ProfileController extends ApiV1Controller
             $user->name = $request->name;
         }
 
-        $user->settings()->save($userSettings);
-        $user->save();
 
         // TODO: implement sending of verification email
         // if ($request->email) {
         //     $userToUpdate['email'] = $request->email;
         // }
+
+        try {
+            $connection->transaction(static function () use ($user, $userSettings) {
+                $user->settings()->save($userSettings);
+                $user->save();
+            });
+        } catch (Throwable $throwable) {
+            Log::error($throwable);
+        }
 
         return $this->getProfileInfo($user);
     }
@@ -161,14 +164,9 @@ class ProfileController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * @param PasswordChangeRequest $request
-     * @return JsonResponse
-     *
-     * TODO: Protect this endpoint with captcha
-     */
     public function changePassword(PasswordChangeRequest $request): JsonResponse
     {
+        /** TODO: Protect this endpoint with captcha */
         // Changes password (assuming that the current password was successfully validated)
         $request->user()
             ->forceFill(['password' => Hash::make($request->validated('newPassword'))])
@@ -199,10 +197,6 @@ class ProfileController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
         ]
     )]
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function logout(Request $request): JsonResponse
     {
         Auth::guard('web')->logout();
@@ -217,7 +211,9 @@ class ProfileController extends ApiV1Controller
     }
 
     /**
-     * @param mixed $user
+     * A template method to get Profile info in consistent structure.
+     *
+     * @param User $user
      * @return JsonResponse
      */
     private function getProfileInfo(User $user): JsonResponse

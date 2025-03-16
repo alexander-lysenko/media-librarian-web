@@ -39,6 +39,9 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
       rememberMe: {
         setValueAs: (value: string) => !!value,
       },
+      "cf-turnstile-response": {
+        required: t("formValidation.captchaRequired") as Message,
+      },
     },
     passwordRecovery: {
       email: {

@@ -19,12 +19,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 // User authentication, guest routes (unauthenticated user)
-Route::middleware(['guest', 'throttle:api.auth'])
+Route::middleware(['guest'])
     ->prefix('v1/user/')->name('v1.user.')
     ->controller(UserController::class)
     ->group(function () {
-        Route::post('/signup', 'signup')->name('signup');
-        Route::post('/login', 'login')->name('login');
+        Route::post('/signup', 'signup')->name('signup')
+            ->middleware(['throttle.captcha:1,360,signup']);
+        Route::post('/login', 'login')->name('login')
+            ->middleware(['throttle.captcha:3,120,login']);
 
         Route::post('/password-reset', 'requestPasswordReset')->name('requestPasswordReset');
         Route::put('/password-reset', 'performPasswordReset')->name('performPasswordReset');

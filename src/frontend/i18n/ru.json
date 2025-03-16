@@ -101,6 +101,7 @@
     "fileSizeExceed": "Размер файла превышает {{n}} MB"
   },
   "formValidation": {
+    "captchaRequired": "Необходимо пройти проверку Captcha",
     "emailInvalid": "Кажется, формат Вашего e-mail не соответствует действительности",
     "emailNotUnique": "Этот адрес почты уже зарегистрирован",
     "emailRequired": "Адрес почты является обязательным",

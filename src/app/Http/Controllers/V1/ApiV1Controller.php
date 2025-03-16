@@ -45,6 +45,12 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'message', type: 'string', example: 'The given data was invalid'),
     ])
 ), OA\Response(
+    response: 'Code429',
+    description: 'Too Many Attempts',
+    content: new OA\JsonContent(properties: [
+        new OA\Property(property: 'message', type: 'string', example: 'Too Many Attempts'),
+    ])
+), OA\Response(
     response: 'Code500',
     description: 'Internal Server Error',
     content: new OA\JsonContent(properties: [
@@ -72,6 +78,7 @@ abstract class ApiV1Controller extends BaseController
     public const RESPONSE_401_REF = '#/components/responses/Code401';
     public const RESPONSE_404_REF = '#/components/responses/Code404';
     public const RESPONSE_422_REF = '#/components/responses/Code422';
+    public const RESPONSE_429_REF = '#/components/responses/Code429';
     public const RESPONSE_500_REF = '#/components/responses/Code500';
 
     public const SCHEMA_PROFILE_REF = '#/components/schemas/Profile';
@@ -285,4 +292,9 @@ abstract class ApiV1Controller extends BaseController
         'TikoDBsuvlk+5/VSbLr5ZPuf1U4oPI0AwuEvGV4e2yOhUyIi47QwQMyDjUhVNPwm9H+o1cl+CvoFAf/2Q==',
     )]
     private string $posterRef = self::SCHEMA_POSTER_BASE64_REF;
+
+    protected static function rateLimiterOutput(): string
+    {
+        return 'Rate Limiter';
+    }
 }

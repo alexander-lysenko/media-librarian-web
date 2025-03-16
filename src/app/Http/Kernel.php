@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle.captcha' => \App\Http\Middleware\ThrottleWithCaptcha::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
     ];
