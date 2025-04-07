@@ -26,7 +26,7 @@ class UserController extends ApiV1Controller
         operationId: 'user-signup',
         description: 'Sign up a new User',
         summary: "Register a new User [WIP]\n\n" .
-        "Rate limiter for this endpoint is set as 1 request per the time window of 6 hours (21600 seconds). \n\n" .
+        "The rate limit for this endpoint is set to 1 request per the time window of 6 hours (21600 seconds). \n\n" .
         "--- \n\n" .
         '**This endpoint is protected with CAPTCHA**. If you need to reset exceeded rate limit for the endpoint, ' .
         'you have to provide CAPTCHA response into `cf-turnstile-response` field along with the form data',
@@ -78,7 +78,7 @@ class UserController extends ApiV1Controller
     {
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
         ]);
 
@@ -94,7 +94,7 @@ class UserController extends ApiV1Controller
         path: '/api/v1/user/login',
         operationId: 'profile-login',
         description: "Obtain an authentication (Bearer) token to perform requests as an authenticated User.\n\n" .
-        "Rate limiter for this endpoint is set as 3 requests per the time window of 2 hours (7200 seconds).\n\n" .
+        "The rate limit for this endpoint is set to 3 requests per the time window of 2 hours (7200 seconds).\n\n" .
         "--- \n\n" .
         '**This endpoint is protected with CAPTCHA**. If you need to reset exceeded rate limit for the endpoint, ' .
         'you have to provide CAPTCHA response into `cf-turnstile-response` field along with the form data',
@@ -151,7 +151,7 @@ class UserController extends ApiV1Controller
             ], 302);
         }
 
-        return new JsonResponse(['message' => 'Incorrect email and/or password'], 401);
+        return new JsonResponse(['message' => 'Incorrect email and/or password'], Response::HTTP_UNAUTHORIZED);
     }
 
     /*
@@ -207,7 +207,7 @@ class UserController extends ApiV1Controller
         $user = User::query()->where('email', $request->email)->first();
 
         if ($user->hasVerifiedEmail()) {
-            return Response::json([
+            return new JsonResponse([
                 'message' => "The user's email is already verified",
             ], 410);
         }
@@ -217,7 +217,7 @@ class UserController extends ApiV1Controller
             event(new Verified($user));
         }
 
-        return Response::json([
+        return new JsonResponse([
             'message' => "Email has been verified. The user's account is active now",
         ]);
     }
@@ -275,7 +275,7 @@ class UserController extends ApiV1Controller
         $user = User::query()->where('email', $validated['email'])->first();
         $user->sendEmailVerificationNotification();
 
-        return Response::json([
+        return new JsonResponse([
             'message' => 'success',
         ]);
     }
