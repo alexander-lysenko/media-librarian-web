@@ -1,11 +1,7 @@
-import { useNavigate } from "react-router-dom";
-
 import { createHttpRequestHook } from "../core";
-import { userLoginEndpoint } from "../core/links";
-import { useAuthCredentialsStore } from "../store/useAuthCredentialsStore";
+import { userLoginEndpoint, userPasswordResetEndpoint } from "../core/links";
 
-import type { HttpResponseEvents, UseRequestReturn } from "../core/types";
-import type { UseFormReturn } from "react-hook-form";
+import type { UseRequestReturn } from "../core/types";
 
 type LoginRequest = {
   email: string;
@@ -18,30 +14,55 @@ type LoginResponse = {
   token: string;
 };
 
-type HookReturn = UseRequestReturn<LoginRequest, LoginResponse>;
+type PasswordRecoveryInitRequest = {
+  email: string;
+};
+
+type PasswordResetRequest = {
+  email: string;
+  newPassword: string;
+  repeatPassword: string;
+  token: string;
+};
+
+type MessageResponse = {
+  message: string;
+};
 
 /**
- * Request to authenticate a user
+ * Request to authenticate a user.
  * [POST] /api/v1/user/login
  */
-export const useUserLoginRequest = ({ getValues, reset }: UseFormReturn): HookReturn => {
-  const navigate = useNavigate();
-  const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
-
-  const responseEvents: HttpResponseEvents<LoginResponse> = {
-    onSuccess: (response) => {
-      const { email } = getValues();
-      const { token, redirectTo } = response;
-      setCredentials(email, token);
-      reset();
-      navigate(redirectTo);
-    },
-  };
-
+export const useUserLoginRequest = (): UseRequestReturn<LoginRequest, LoginResponse> => {
   return createHttpRequestHook<LoginRequest, LoginResponse>({
     method: "POST",
     endpoint: userLoginEndpoint,
-    customEvents: responseEvents,
+    customEvents: {},
+    withCredentials: false,
+  })();
+};
+
+/**
+ * Request to initiate password reset.
+ * [POST] /api/v1/user/password-reset
+ */
+export const usePasswordRecoveryRequest = (): UseRequestReturn<PasswordRecoveryInitRequest, MessageResponse> => {
+  return createHttpRequestHook<PasswordRecoveryInitRequest, MessageResponse>({
+    method: "POST",
+    endpoint: userPasswordResetEndpoint,
+    customEvents: {},
+    withCredentials: false,
+  })();
+};
+/**
+ * Request to perform password reset.
+ * [PUT] /api/v1/user/password-reset
+ */
+export const usePasswordResetRequest = (): UseRequestReturn<PasswordResetRequest, MessageResponse> => {
+  return createHttpRequestHook<PasswordResetRequest, MessageResponse>({
+    method: "POST",
+    endpoint: userPasswordResetEndpoint,
+    customEvents: {},
     withCredentials: false,
   })();
 };

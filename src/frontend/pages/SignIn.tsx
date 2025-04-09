@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import { BackgroundContainer, Copyright, StickyFooter } from "../components";
 import { LoginForm } from "../components/forms/LoginForm";
 import { LockOutlined } from "../components/icons";
-import { PasswordRecoveryRequestDialog } from "../components/modals/PasswordRecoveryRequestDialog";
+import { PasswordResetInitDialog } from "../components/modals/PasswordResetInitDialog";
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
 
 /**
@@ -63,7 +63,7 @@ export const SignIn = () => {
           <Copyright />
         </StickyFooter>
       </Grid>
-      <PasswordRecoveryRequestDialog open={passwordRecoverDialogOpen} onClose={handleRecoveryDialogClose} />
+      <PasswordResetInitDialog open={passwordRecoverDialogOpen} onClose={handleRecoveryDialogClose} />
       <PasswordResetDialog open={passwordResetDialogOpen} onClose={handleResetDialogClose} />
     </Grid>
   );

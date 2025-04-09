@@ -7,43 +7,43 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * Email Verification Form Request (API v1, custom)
- *
+ * A request entity to validate email, password and password reset token upon password reset action
  * @property string $email
- * @property string $verificationKey
+ * @property string $newPassword
+ * @property string $repeatPassword
+ * @property string $token
  */
-class EmailVerifyRequest extends FormRequest
+class PasswordResetPerformRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * @return bool
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
     {
         return [
             'email' => ['required', 'email', 'exists:users,email'],
+            'newPassword' => ['required', 'string', 'min:8'],
+            'repeatPassword' => ['required', 'string', 'same:newPassword'],
             'token' => [
                 'required',
                 'string',
-                Rule::exists('email_confirmations', 'token')->where(function (Builder $query) {
+                Rule::exists('password_resets', 'token')->where(function (Builder $query) {
                     $query->where('email', $this->input('email'));
                 }),
             ],
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [

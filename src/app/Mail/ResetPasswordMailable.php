@@ -4,12 +4,13 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\URL;
 
-class PasswordReset extends Mailable
+class ResetPasswordMailable extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,8 +18,11 @@ class PasswordReset extends Mailable
      * Create a new message instance.
      */
     public function __construct(
+        /** The name of the user the email is addressed to */
         public string $username,
+        /** The email address the message will be sent to. It is not always the actual user's address */
         public string $email,
+        /** The confirmation token (previously generated) */
         public string $token,
     ) {}
 
@@ -43,12 +47,8 @@ class PasswordReset extends Mailable
             with: [
                 'username' => $this->username,
                 'email' => $this->email,
-                'resetPasswordLink' => URL::temporarySignedRoute(
-                    name: 'password-reset',
-                    expiration: now()->addHours(4),
-                    parameters: ['token' => $this->token]
-                ),
-                'contactEmail' => 'admin@example.com',
+                'resetPasswordLink' => $this->createConfirmationLink(),
+                'contactEmail' => env('MAIL_ADMIN_ADDRESS', 'admin@example.com'),
             ]
         );
     }
@@ -56,10 +56,25 @@ class PasswordReset extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {
         return [];
+    }
+
+
+    /**
+     * Creates the confirmation link as temporary signed URL
+     *
+     * @return string
+     */
+    private function createConfirmationLink(): string
+    {
+        return URL::temporarySignedRoute(
+            name: 'password.reset',
+            expiration: now()->addHours(4),
+            parameters: ['token' => $this->token]
+        );
     }
 }

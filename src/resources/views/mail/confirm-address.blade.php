@@ -8,12 +8,14 @@
             {{ trans('email.confirm.intro.common', ['application' => config('app.name')]) }}
         @endif
     </p>
-    <span>{{ trans('email.confirm.followTheWhiteRabbit') }}</span>
-    <x-mail::button :url="$confirmationLink">
-        {{ trans('email.confirm.actionText') }}
-    </x-mail::button>
     <p>
-        {{ trans('email.confirm.troubles', ['actionText' => trans('email.confirm.actionText')]) }}<br/>
+        {{ trans('email.confirm.followTheWhiteRabbit') }}
+        <x-mail::button :url="$confirmationLink">
+            {{ trans('email.confirm.actionText') }}
+        </x-mail::button>
+    </p>
+    <p>
+        {{ trans('email.confirm.troubles', ['actionText' => trans('email.confirm.actionText')]) }}<br />
         <code class="break-all">{{ $confirmationLink }}</code>
         {{ trans('email.common.expiresIn') . trans_choice('email.common.hours', 48) }}
     </p>

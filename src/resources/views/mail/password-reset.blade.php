@@ -5,10 +5,12 @@
         {{ trans('email.resetPass.hello', ['username' => $username]) }}<br />
         {{ trans('email.resetPass.intro', ['application' => config('app.name'), 'email' => $email]) }}
     </p>
-    <span>{{ trans('email.resetPass.followTheWhiteRabbit') }}</span>
-    <x-mail::button :url="$resetPasswordLink">
-        {{ trans('email.resetPass.actionText') }}
-    </x-mail::button>
+    <p>
+        {{ trans('email.resetPass.followTheWhiteRabbit') }}
+        <x-mail::button :url="$resetPasswordLink">
+            {{ trans('email.resetPass.actionText') }}
+        </x-mail::button>
+    </p>
     <p>
         {{ trans('email.resetPass.troubles', ['actionText' => trans('email.resetPass.actionText')]) }}<br />
         <code class="break-all">{{ $resetPasswordLink }}</code>

@@ -3,13 +3,16 @@ import { Alert, Box, Button, Checkbox, CircularProgress, Collapse, FormControlLa
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import { useFormValidation } from "../../hooks";
 import { useUserLoginRequest } from "../../requests/useAuthRequests";
+import { useAuthCredentialsStore } from "../../store/useAuthCredentialsStore";
 import { LoginOutlined } from "../icons";
 import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
@@ -18,22 +21,30 @@ import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-
 export const LoginForm = () => {
   const { t, i18n } = useTranslation();
 
-  const captchaRef = useRef(null);
+  const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
+  const navigate = useNavigate();
+  const captchaRef = useRef<TurnstileInstance>(null);
 
   const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("login", useHookForm);
-  const { formState, handleSubmit, setError, clearErrors } = useHookForm;
+  const { formState, handleSubmit, setError, clearErrors, getValues, reset } = useHookForm;
   const { errors } = formState;
 
-  const useLoginRequest = useUserLoginRequest(useHookForm);
+  const useLoginRequest = useUserLoginRequest();
   const loading = useLoginRequest.status === "LOADING";
 
   const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
     useLoginRequest.setResponseEvents({
+      onSuccess: (response) => {
+        const { email } = getValues();
+        const { token, redirectTo } = response;
+        setCredentials(email, token);
+        reset();
+        navigate(redirectTo);
+      },
       onError: (reason) => {
-        useHookForm.reset({ password: "" });
+        reset({ password: "" });
         setError("root.serverError", { message: reason.message });
-        // @ts-ignore TS2339: Property "reset" does not exist on type "never"
         captchaRef.current?.reset();
       },
     });
@@ -74,7 +85,6 @@ export const LoginForm = () => {
           onWidgetLoad={() => registerField("cf-turnstile-response")}
           onSuccess={(token) => useHookForm.setValue("cf-turnstile-response", token)}
           onExpire={() => {
-            // @ts-ignore TS2339: Property "reset" does not exist on type "never"
             captchaRef.current?.reset();
           }}
         />

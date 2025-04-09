@@ -2,6 +2,7 @@ export const apiDomain = import.meta.env.VITE_APP_URL;
 
 export const userSignupEndpoint = "/api/v1/user/signup";
 export const userLoginEndpoint = "/api/v1/user/login";
+export const userPasswordResetEndpoint = "/api/v1/user/password-reset";
 
 export const profileEndpoint = "/api/v1/profile";
 export const changePasswordEndpoint = "/api/v1/profile/password";

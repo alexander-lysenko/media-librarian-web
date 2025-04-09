@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Response;
 use OpenApi\Attributes as OA;
 use Throwable;
 
-#[OA\Tag(name: 'profile', description: 'Profile (Authenticated User)')]
+#[OA\Tag(name: 'profile', description: 'Profile (For Authenticated Users)')]
 #[OA\Schema(
     schema: 'Profile',
     properties: [

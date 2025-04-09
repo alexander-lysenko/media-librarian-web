@@ -61,7 +61,7 @@ class Kernel extends HttpKernel
         // 'auth.basic' => AuthenticateWithBasicAuth::class,
         // 'auth.session' => AuthenticateSession::class,
         'auth.bearer' => \App\Http\Middleware\AuthenticateWithBearer::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'auth' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,

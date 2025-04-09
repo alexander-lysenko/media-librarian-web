@@ -2,8 +2,10 @@
 
 namespace App\Mail;
 
+use App\Utils\Enum\UserStatusEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -12,7 +14,7 @@ use Illuminate\Support\Facades\URL;
 /**
  * A mailable class to send e-mail message when a user registers its account or changes e-mail address
  */
-class ConfirmAddress extends Mailable
+class ConfirmAddressMailable extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,8 +22,11 @@ class ConfirmAddress extends Mailable
      * Create a new message instance.
      */
     public function __construct(
+        /** The name of the user the email is addressed to */
         private readonly string $username,
+        /** The confirmation token (previously generated) */
         private readonly string $token,
+        /** This has an impact on the email's contents. If true, it addresses a user like they have just registered */
         private readonly bool $isFirstMsg = false,
     ) {}
 
@@ -40,18 +45,16 @@ class ConfirmAddress extends Mailable
      */
     public function content(): Content
     {
+        // $isFirstMsg = $notifiable->status === UserStatusEnum::CREATED->value;
+
         return new Content(
         // view: 'mail.confirm-address', // this requires both Markdown and plain text templates
             markdown: 'mail.confirm-address',
             with: [
                 'username' => $this->username,
                 'isFirstMessage' => $this->isFirstMsg,
-                'confirmationLink' => URL::temporarySignedRoute(
-                    name: 'email-confirmation',
-                    expiration: now()->addHours(48),
-                    parameters: ['token' => $this->token]
-                ),
-                'contactEmail' => 'admin@example.com',
+                'confirmationLink' => $this->createConfirmationLink(),
+                'contactEmail' => env('MAIL_ADMIN_ADDRESS', 'admin@example.com'),
             ]
         );
     }
@@ -59,10 +62,24 @@ class ConfirmAddress extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {
         return [];
+    }
+
+    /**
+     * Creates the confirmation link as temporary signed URL
+     *
+     * @return string
+     */
+    private function createConfirmationLink(): string
+    {
+        return URL::temporarySignedRoute(
+            name: 'verification.verify',
+            expiration: now()->addHours(48),
+            parameters: ['token' => $this->token]
+        );
     }
 }

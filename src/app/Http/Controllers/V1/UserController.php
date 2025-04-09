@@ -3,18 +3,28 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Requests\V1\EmailVerifyRequest;
+use App\Http\Requests\V1\PasswordResetPerformRequest;
 use App\Http\Requests\V1\SignupRequest;
+use App\Models\PasswordReset;
 use App\Models\User;
+use App\Notifications\ResetPassword;
+// use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\VerifyEmail;
+use App\Services\UserAccountService;
 use App\Utils\Enum\UserStatusEnum;
+use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Response;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\Response;
 
-#[OA\Tag(name: 'guest', description: 'Guest (Unauthenticated User)')]
+#[OA\Tag(name: 'auth', description: 'Guest (For Unauthenticated Users)')]
 /**
  * User controller - manage user/identity actions
  * @TODO: See https://github.com/laravel/breeze
@@ -24,12 +34,14 @@ class UserController extends ApiV1Controller
     #[OA\Post(
         path: '/api/v1/user/signup',
         operationId: 'user-signup',
-        description: 'Sign up a new User',
-        summary: "Register a new User [WIP]\n\n" .
-        "The rate limit for this endpoint is set to 1 request per the time window of 6 hours (21600 seconds). \n\n" .
-        "--- \n\n" .
-        '**This endpoint is protected with CAPTCHA**. If you need to reset exceeded rate limit for the endpoint, ' .
-        'you have to provide CAPTCHA response into `cf-turnstile-response` field along with the form data',
+        description: 'Registers a new account. This account initially has limited permissions until its owner ' .
+        "confirms email address.\\\n The confirmation link will be sent to the email address mentioned " .
+        "in the request as a successful result of the operation\\\n " .
+        'This email address is used for both account identification and authentication purposes.' .
+        "\n\n **CAPTCHA-PROTECTED**" .
+        "\n### Rate Limiter\\\n| Number of Requests | Time frame |\n| -- | -- |\n" .
+        '| 1 | 6 hours (21600 seconds)',
+        summary: 'Sign up a new User',
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(properties: [
@@ -41,7 +53,7 @@ class UserController extends ApiV1Controller
                 new OA\Property(property: 'theme', type: 'string', example: 'dark'),
             ])
         ),
-        tags: ['guest'],
+        tags: ['auth'],
         responses: [
             new OA\Response(
                 response: 201,
@@ -74,30 +86,34 @@ class UserController extends ApiV1Controller
             ),
         ]
     )]
-    public function signup(SignupRequest $request): JsonResponse
+    public function signup(SignupRequest $request, UserAccountService $accountService): JsonResponse
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => strtolower($request->email),
-            'password' => Hash::make($request->password),
-        ]);
+        $user = $accountService->createNewUser(
+            name: $request->name,
+            email: $request->email,
+            password: $request->password,
+            locale: $request->locale,
+            theme: $request->theme
+        );
 
-        // Event::dispatch(new Registered($user));
+        $confirmation = $accountService->createEmailConfirmationEntry($user->id, $user->email);
+        $user->notify(new VerifyEmail($confirmation));
+
+        Event::dispatch(new Registered($user));
 
         return new JsonResponse([
             'message' => 'Your account has been created. You have to verify your e-mail to activate the account',
             'user' => $user,
-        ], 201);
+        ], Response::HTTP_CREATED);
     }
 
     #[OA\Post(
         path: '/api/v1/user/login',
-        operationId: 'profile-login',
-        description: "Obtain an authentication (Bearer) token to perform requests as an authenticated User.\n\n" .
-        "The rate limit for this endpoint is set to 3 requests per the time window of 2 hours (7200 seconds).\n\n" .
-        "--- \n\n" .
-        '**This endpoint is protected with CAPTCHA**. If you need to reset exceeded rate limit for the endpoint, ' .
-        'you have to provide CAPTCHA response into `cf-turnstile-response` field along with the form data',
+        operationId: 'user-login',
+        description: "Obtain an authentication (Bearer) token to access the API as an authenticated User.\n\n" .
+        "\n\n **CAPTCHA-PROTECTED**" .
+        "\n### Rate Limiter\n| Number of Requests | Time frame |\n| -- | -- |\n" .
+        '| 3 | 2 hours (7200 seconds)',
         summary: 'Login / Obtain an Authentication Token',
         requestBody: new OA\RequestBody(
             required: true,
@@ -107,7 +123,7 @@ class UserController extends ApiV1Controller
                 new OA\Property(property: 'rememberMe', type: 'boolean', example: true),
             ])
         ),
-        tags: ['guest'],
+        tags: ['auth'],
         responses: [
             new OA\Response(
                 response: 299,
@@ -141,6 +157,7 @@ class UserController extends ApiV1Controller
         ]);
 
         if (Auth::guard('web')->attempt($credentials, $request->post('rememberMe', false))) {
+            Auth::guard('web')->authenticate();
             $redirectTo = $request->user()->status === UserStatusEnum::ACTIVE->value ? '/app' : '/profile';
             $token = $request->user()->createToken('apiToken')->plainTextToken;
 
@@ -159,7 +176,7 @@ class UserController extends ApiV1Controller
      *     path:"/api/v1/user/verify-email",
      *     summary:"Activate an account by verifying their email using a verification key",
      *     description:"It is required to provide the verification key sent via e-mail after the successful signup",
-     *     tags: ['guest'],
+     *     tags: ['auth'],
      *
      *     @OA\Parameter(required:true, name:"email", in:"query",
      *         @OA\Schema(type:"string", example:"john.doe@example.com")
@@ -203,20 +220,20 @@ class UserController extends ApiV1Controller
      */
     public function performEmailVerify(EmailVerifyRequest $request): JsonResponse
     {
-        /** @var User $user */
-        $user = User::query()->where('email', $request->email)->first();
-
-        if ($user->hasVerifiedEmail()) {
-            return new JsonResponse([
-                'message' => "The user's email is already verified",
-            ], 410);
-        }
-
-        if (true /*match the verification key with email*/) {
-            $user->markEmailAsVerified();
-            event(new Verified($user));
-        }
-
+        // /** @var User $user */
+        // $user = User::query()->where('email', $request->email)->first();
+        //
+        // if ($user->hasVerifiedEmail()) {
+        //     return new JsonResponse([
+        //         'message' => "The user's email is already verified",
+        //     ], 410);
+        // }
+        //
+        // if (true /*match the verification key with email*/) {
+        //     $user->markEmailAsVerified();
+        //     event(new Verified($user));
+        // }
+        //
         return new JsonResponse([
             'message' => "Email has been verified. The user's account is active now",
         ]);
@@ -227,7 +244,7 @@ class UserController extends ApiV1Controller
      *     path:"/api/v1/user/verify-email",
      *     summary:"Resend email verification link",
      *     description:"Re-sends over email the verification key to activate an account",
-     *     tags: ['guest'],
+     *     tags: ['auth'],
      *
      *     @OA\RequestBody(required:true,
      *         @OA\MediaType(mediaType:"application/json",
@@ -273,7 +290,7 @@ class UserController extends ApiV1Controller
 
         /** @var User $user */
         $user = User::query()->where('email', $validated['email'])->first();
-        $user->sendEmailVerificationNotification();
+        // todo: add notification and dispatch event
 
         return new JsonResponse([
             'message' => 'success',
@@ -281,59 +298,96 @@ class UserController extends ApiV1Controller
     }
 
     /*
-     * @OA\Post(
-     *     path:"/api/v1/user/password-reset",
-     *     summary:"Request a token for reset password on an account",
-     *     description:"The token will be sent over e-mail to the specified e-mail address",
-     *     tags: ['guest'],
-     *
-     *     @OA\RequestBody(required:true,
-     *         @OA\MediaType(mediaType:"application/json",
-     *             @OA\Schema(type:"object",
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response:"200", description:"Work in Progress",
-     *         @OA\JsonContent(type:"object",
-     *             @OA\Property(property:"message", type:"string", example:"Work in Progress")
-     *         ),
-     *     ),
-     * )
-     *
      * WIP
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function requestPasswordReset(Request $request): JsonResponse
+    #[OA\Post(
+        path: '/api/v1/user/password-reset',
+        operationId: 'user-password-reset-request',
+        description: 'The token will be sent over e-mail to the specified e-mail address' .
+        'The token expires 240 minutes (4 hours) after it was issued. The password must be repeated to confirm.' .
+        "\n\n **CAPTCHA-PROTECTED**" .
+        "\n### Rate Limiter\n| Number of Requests | Time frame |\n| -- | -- |\n" .
+        '| 1 | 6 hours (21600 seconds)',
+        summary: 'Request Password Reset',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+            ])
+        ),
+        tags: ['auth'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Success',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'message', type: 'string', example: 'Password reset token has been sent'),
+                ])
+            ),
+            new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
+            new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
+        ]
+    )]
+    public function requestPasswordReset(Request $request, UserAccountService $accountService): JsonResponse
     {
-        return Response::json([
+        $validated = $request->validate([
+            'email' => ['required', 'email'], // validating the presence of the email is intentionally omitted
+        ]);
+
+        /** @var User|null $user */
+        $user = User::query()->where('email', $validated['email'])->first();
+
+        if ($user) {
+            $passwordResetEntry = $accountService->createPasswordResetEntry($user);
+            $notification = new ResetPassword($passwordResetEntry);
+            $user->notify($notification);
+
+            Event::dispatch(new PasswordResetLinkSent($user));
+        }
+
+        return new JsonResponse([
             'message' => 'success',
         ]);
     }
 
-    /*
-     * @OA\Put(
-     *     path:"/api/v1/user/password-reset",
-     *     summary:"Perform the password reset using the token received over e-mail and a new desired password",
-     *     description:"The token expires 60 minutes after it was issued. The password should be confirmed",
-     *     tags: ['guest'],
-     *
-     *     @OA\Response(response:"200", description:"Work in Progress",
-     *         @OA\JsonContent(type:"object",
-     *             @OA\Property(property:"message", type:"string", example:"Work in Progress")
-     *         ),
-     *     ),
-     * )
-     *
-     * WIP
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function performPasswordReset(Request $request): JsonResponse
+    #[OA\Put(
+        path: '/api/v1/user/password-reset',
+        operationId: 'user-password-reset',
+        description: 'Performs the password reset with a new desired password using the token received over e-mail.' .
+        'The token expires 240 minutes (4 hours) after it was issued. The password must be repeated to confirm.' .
+        "\n\n **CAPTCHA-PROTECTED**" .
+        "\n### Rate Limiter\n| Number of Requests | Time frame |\n| -- | -- |\n" .
+        '| 1 | 6 hours (21600 seconds)',
+        summary: 'Perform Password Reset',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                new OA\Property(property: 'newPassword', type: 'string', example: 'NewPassword1234'),
+                new OA\Property(property: 'repeatPassword', type: 'string', example: 'NewPassword1234'),
+                new OA\Property(property: 'token', type: 'string', example: '00000000000000000000000000000000'),
+            ])
+        ),
+        tags: ['auth'],
+        responses: [
+            new OA\Response(ref: self::RESPONSE_204_REF, response: 204),
+            new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
+            new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
+        ]
+    )]
+    public function performPasswordReset(PasswordResetPerformRequest $request): JsonResponse
     {
-        return Response::json([
-            'message' => 'success',
-        ]);
+        $email = strtolower($request->email);
+        $newPassword = Hash::make($request->newPassword);
+
+        $user = User::query()->where('email', $email)->first();
+        $user->forceFill(['password' => $newPassword])->save();
+
+        // Revoke all personal access tokens and password reset tokens
+        // that issued before the password was changed
+        $user->tokens()->delete();
+        $user->password_resets()->delete();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

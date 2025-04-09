@@ -33,5 +33,5 @@ Route::middleware(['throttle:web'])
         });
     });
 
-Route::get('/email-confirmation', [WebController::class, 'emailVerify'])->name('email-confirmation');
-Route::get('/password-reset', [WebController::class, 'resetPassword'])->name('password-reset');
+Route::get('/email-confirmation', [WebController::class, 'emailVerify'])->name('verification.verify');
+Route::get('/password-reset', [WebController::class, 'resetPassword'])->name('password.reset');

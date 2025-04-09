@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // User authentication, guest routes (unauthenticated user)
-Route::middleware(['guest'])
+Route::middleware(['auth'])
     ->prefix('v1/user/')->name('v1.user.')
     ->controller(UserController::class)
     ->group(function () {
@@ -28,11 +28,15 @@ Route::middleware(['guest'])
         Route::post('/login', 'login')->name('login')
             ->middleware(['throttle.captcha:3,120,login']);
 
-        Route::post('/password-reset', 'requestPasswordReset')->name('requestPasswordReset');
-        Route::put('/password-reset', 'performPasswordReset')->name('performPasswordReset');
+        Route::post('/password-reset', 'requestPasswordReset')->name('requestPasswordReset')
+            ->middleware(['throttle.captcha:1,360,requestPasswordReset']);
+        Route::put('/password-reset', 'performPasswordReset')->name('performPasswordReset')
+            ->middleware(['throttle.captcha:1,360,performPasswordReset']);
 
-        Route::post('/verify-email', 'requestEmailVerify')->name('requestEmailVerify');
-        Route::get('/verify-email', 'performEmailVerify')->name('emailVerify');
+        Route::post('/verify-email', 'requestEmailVerify')->name('requestEmailVerify')
+            ->middleware(['throttle.captcha:1,30,requestEmailVerify']);
+        Route::get('/verify-email', 'performEmailVerify')->name('emailVerify')
+            ->middleware([':api.basic']);
     });
 
 // Routes for profile (as authenticated user)
@@ -47,7 +51,7 @@ Route::middleware(['auth.bearer:sanctum', 'throttle:api.basic'])
     });
 
 // Routes for validation stuff
-Route::middleware(['guest', 'throttle:api.validation'])
+Route::middleware(['auth', 'throttle:api.validation'])
     ->prefix('v1/validation/')->name('v1.validation.')
     ->controller(ValidationController::class)
     ->group(function () {

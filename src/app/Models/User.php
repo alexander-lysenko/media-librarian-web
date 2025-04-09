@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmail;
 use App\Utils\Enum\UserStatusEnum;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Password;
 use Laravel\Sanctum\HasApiTokens;
+use Nette\NotImplementedException;
 
 /**
  * Authenticate-able user model
@@ -26,8 +29,10 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email_verified_at
  *
  * @property PersonalSetting $settings
+ * @property EmailConfirmation[] $email_confirmations
+ * @property PasswordReset[] $password_resets
  *
- * @method static create(array $attributes = [])
+ * @method static User create(array $attributes = [])
  * @method Builder update(array $values)
  */
 class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
@@ -107,10 +112,9 @@ class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
      */
     public function sendEmailVerificationNotification(): void
     {
-        // $this->notify(new VerifyEmail);
-
-        // TODO: Implement sendEmailVerificationNotification() method.
-        // https://stackoverflow.com/questions/52416804/how-to-customize-the-email-verification-email-from-laravel-5-7
+        throw new NotImplementedException(
+            'Please use `$this->notify(new App\Notifications\VerifyEmail)` instead.'
+        );
     }
 
     /**
@@ -120,6 +124,28 @@ class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
      */
     public function settings(): HasOne
     {
-        return $this->hasOne(PersonalSetting::class, 'user_id', 'id');
+        return $this->hasOne(related: PersonalSetting::class, foreignKey: 'user_id', localKey: 'id');
+    }
+
+    /**
+     * Get the email confirmation tokens associated with the user.
+     *
+     * @return HasMany
+     * @noinspection PhpUnused
+     */
+    public function email_confirmations(): HasMany
+    {
+        return $this->hasMany(related: EmailConfirmation::class, foreignKey: 'user_id', localKey: 'id');
+    }
+
+    /**
+     * Get the password reset tokens associated with the user.
+     *
+     * @return HasMany
+     * @noinspection PhpUnused
+     */
+    public function password_resets(): HasMany
+    {
+        return $this->hasMany(related: PasswordReset::class, foreignKey: 'user_id', localKey: 'id');
     }
 }

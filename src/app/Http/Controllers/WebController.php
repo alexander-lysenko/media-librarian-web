@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ConfirmAddress;
-use App\Mail\PasswordReset;
+use App\Mail\ConfirmAddressMailable;
+use App\Mail\ResetPasswordMailable;
+use App\Models\PasswordReset;
+use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Http\Request;
 
 class WebController extends Controller
@@ -19,7 +22,10 @@ class WebController extends Controller
         //     abort(401);
         // }
         // ddd($request->user());
-        $email = new ConfirmAddress(username: $request->user()?->name ?? 'user', token: '123');
+        $email = new ConfirmAddressMailable(
+            username: $request->user()?->name ?? 'user',
+            token: '123'
+        );
         return $email;
     }
 
@@ -33,7 +39,11 @@ class WebController extends Controller
         // if (!$request->hasValidSignature()) {
         //     abort(401);
         // }
-        $email = new PasswordReset(username: $request->user()?->name ?? 'user', email: 'john.doe@example.com', token: '123');
+        $email = new ResetPasswordMailable(
+            username: $request->user()?->name ?? 'user',
+            email: 'john.doe@example.com',
+            token: '123'
+        );
         return $email;
     }
 }
