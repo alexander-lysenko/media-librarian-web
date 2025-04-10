@@ -20,5 +20,12 @@
   "email.resetPass.intro": "Вы получили это письмо, поскольку Вы (или кто-то другой) запросили восстановление пароля на :application для аккаунта :email",
   "email.resetPass.mistake": "Если Вы не запрашивали эти изменения или думаете, что получили это письмо по ошибке - пожалуйста проигнорируйте его и не совершайте никаких описанных здесь действий!",
   "email.resetPass.title": "Восстановление пароля",
-  "email.resetPass.troubles": "Если у Вас возникают трудности с нажатием кнопки \":actionText\",скопируйте эту ссылку и перейдите по ней из новой вкладки браузера:"
+  "email.resetPass.troubles": "Если у Вас возникают трудности с нажатием кнопки \":actionText\",скопируйте эту ссылку и перейдите по ней из новой вкладки браузера:",
+  "validation.custom.password.required": "ERR-020: The password field is required",
+  "validation.custom.cf-turnstile-response.required": "Captcha verification is required",
+  "validation.custom.cf-turnstile-response.captcha": "Captcha verification failed",
+  "validation.captcha.serverError": "An error occurred when verifying captcha",
+  "validation.email.exists": "Account with this email was not found",
+  "validation.token.expired": "This verification token was expired",
+  "emailAddressVerified": "Ваш адрес электронной почты успешно подтвержден"
 }

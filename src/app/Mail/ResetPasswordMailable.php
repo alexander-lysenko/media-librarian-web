@@ -20,7 +20,7 @@ class ResetPasswordMailable extends Mailable
     public function __construct(
         /** The name of the user the email is addressed to */
         public string $username,
-        /** The email address the message will be sent to. It is not always the actual user's address */
+        /** The actual user's email address. This message will be sent to the address */
         public string $email,
         /** The confirmation token (previously generated) */
         public string $token,
@@ -74,7 +74,7 @@ class ResetPasswordMailable extends Mailable
         return URL::temporarySignedRoute(
             name: 'password.reset',
             expiration: now()->addHours(4),
-            parameters: ['token' => $this->token]
+            parameters: ['email' => $this->email, 'token' => $this->token]
         );
     }
 }

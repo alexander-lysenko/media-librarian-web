@@ -39,6 +39,7 @@ class VerifyEmail extends IlluminateVerifyEmail implements ShouldQueue
 
         $mailable = new ConfirmAddressMailable(
             username: $notifiable->name,
+            email: $this->emailConfirmation->email, // Usually this is not the user's current address
             token: $this->emailConfirmation->token,
             isFirstMsg: $isFirstMsg
         );

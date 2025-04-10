@@ -26,6 +26,6 @@
   "validation.custom.cf-turnstile-response.captcha": "Captcha verification failed",
   "validation.captcha.serverError": "An error occurred when verifying captcha",
   "validation.email.exists": "Account with this email was not found",
-  "validation.token.expired": "This verification token was expired"
-
+  "validation.token.expired": "This verification token was expired",
+  "emailAddressVerified": "Your email address has been successfully verified"
 }

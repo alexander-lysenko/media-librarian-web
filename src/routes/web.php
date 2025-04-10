@@ -14,24 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+$forwardToSinglePage = static function () {
+    return view('index');
+};
+
 Route::middleware(['throttle:web'])
-    ->group(function () {
-        Route::get('/', static function () {
-            return view('index');
-        });
-        Route::get('/app', static function () {
-            return view('index');
-        });
-        Route::get('/login', static function () {
-            return view('index');
-        });
-        Route::get('/signup', static function () {
-            return view('index');
-        });
-        Route::get('/profile', static function () {
-            return view('index');
-        });
+    ->group(function () use ($forwardToSinglePage) {
+        Route::get('/', $forwardToSinglePage);
+        Route::get('/app', $forwardToSinglePage);
+        Route::get('/login', $forwardToSinglePage);
+        Route::get('/signup', $forwardToSinglePage);
+        Route::get('/profile', $forwardToSinglePage);
     });
 
-Route::get('/email-confirmation', [WebController::class, 'emailVerify'])->name('verification.verify');
-Route::get('/password-reset', [WebController::class, 'resetPassword'])->name('password.reset');
+Route::middleware(['throttle:web', /*'signed:relative'*/]) // todo: manage correct middleware
+    ->group(function () {
+        Route::get('/email-confirmation', [WebController::class, 'emailVerify'])
+            ->name('verification.verify');
+        Route::get('/password-reset', [WebController::class, 'resetPassword'])
+            ->name('password.reset');
+    });

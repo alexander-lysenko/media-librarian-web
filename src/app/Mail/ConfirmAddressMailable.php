@@ -24,6 +24,8 @@ class ConfirmAddressMailable extends Mailable
     public function __construct(
         /** The name of the user the email is addressed to */
         private readonly string $username,
+        /** The email address the message will be sent to. It is not always the actual user's address */
+        public string $email,
         /** The confirmation token (previously generated) */
         private readonly string $token,
         /** This has an impact on the email's contents. If true, it addresses a user like they have just registered */
@@ -79,7 +81,7 @@ class ConfirmAddressMailable extends Mailable
         return URL::temporarySignedRoute(
             name: 'verification.verify',
             expiration: now()->addHours(48),
-            parameters: ['token' => $this->token]
+            parameters: ['email' => $this->email, 'token' => $this->token]
         );
     }
 }

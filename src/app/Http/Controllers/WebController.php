@@ -2,48 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ConfirmAddressMailable;
-use App\Mail\ResetPasswordMailable;
+use App\Models\EmailConfirmation;
 use App\Models\PasswordReset;
-use App\Models\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Utils\Enum\UserStatusEnum;
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class WebController extends Controller
 {
     /**
-     * TODO: this is temporary
+     * Processes confirmation/verification of user's email address
+     *
      * @param Request $request
-     * @return mixed
+     * @return ViewContract
+     * @noinspection PhpRedundantCatchClauseInspection
      */
-    public function emailVerify(Request $request): mixed
+    public function emailVerify(Request $request): ViewContract
     {
-        // if (!$request->hasValidSignature()) {
-        //     abort(401);
-        // }
-        // ddd($request->user());
-        $email = new ConfirmAddressMailable(
-            username: $request->user()?->name ?? 'user',
-            token: '123'
-        );
-        return $email;
+        try {
+            $request->validate([
+                'email' => ['required', 'email'],
+                'token' => ['required', 'string', 'size:64'],
+            ]);
+        } catch (ValidationException $exception) {
+            throw new UnprocessableEntityHttpException($exception->getMessage());
+        }
+
+        $confirmationEntry = EmailConfirmation::query()
+            ->where('email', $request->input('email'))
+            ->where('token', $request->input('token'))
+            ->firstOr(function () {
+                throw new UnprocessableEntityHttpException(trans('validation.token.expired'));
+            });
+
+        $user = $confirmationEntry->user;
+        if ($user->status === UserStatusEnum::CREATED->value) {
+            $user->forceFill([
+                'status' => UserStatusEnum::ACTIVE->value,
+            ]);
+        }
+        $user->forceFill([
+            'email' => strtolower($request->input('email')),
+            'email_verified_at' => now(),
+        ])->save();
+
+        EmailConfirmation::query()->where('user_id', $user->id)->delete();
+
+        return View::make('verified');
     }
 
     /**
-     * TODO: this is temporary
+     * Validates password reset token and navigates to password reset dialog
+     *
      * @param Request $request
-     * @return mixed
+     * @return ViewContract
+     * @noinspection PhpRedundantCatchClauseInspection
      */
-    public function resetPassword(Request $request): mixed
+    public function resetPassword(Request $request): ViewContract
     {
-        // if (!$request->hasValidSignature()) {
-        //     abort(401);
-        // }
-        $email = new ResetPasswordMailable(
-            username: $request->user()?->name ?? 'user',
-            email: 'john.doe@example.com',
-            token: '123'
-        );
-        return $email;
+        try {
+            $request->validate([
+                'email' => ['required', 'email'],
+                'token' => ['required', 'string', 'size:64'],
+            ]);
+        } catch (ValidationException $exception) {
+            throw new UnprocessableEntityHttpException($exception->getMessage());
+        }
+
+        PasswordReset::query()
+            ->where('email', $request->input('email'))
+            ->where('token', $request->input('token'))
+            ->firstOr(function () {
+                throw new UnprocessableEntityHttpException(trans('validation.token.expired'));
+            });
+
+        return View::make('index');
     }
 }
