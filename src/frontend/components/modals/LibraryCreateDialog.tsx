@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 
 import { LibraryElementEnum } from "../../core/enums";
 import { useFormValidation } from "../../hooks";
-import { useLibrariesGetRequest, useLibraryCreateRequest } from "../../requests/useLibraryRequests";
+import { useLibrariesGetRequest, useLibraryCreateRequest } from "../../requests/libraryRequests";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 import {
   AddCircleOutlined,

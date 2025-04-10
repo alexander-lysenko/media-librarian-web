@@ -7,6 +7,7 @@ import type { InputCustomProps } from "../../core/types";
 
 type Props = InputCustomProps & {
   margin?: TextFieldProps["margin"];
+  disabled?: TextFieldProps["disabled"];
   loadingState?: boolean;
   disableAutoComplete?: boolean;
 };
@@ -17,7 +18,7 @@ type Props = InputCustomProps & {
  */
 export const EmailInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
-  const { margin, loadingState, disableAutoComplete, autoFocus, fullWidth } = props;
+  const { margin, loadingState, disableAutoComplete, autoFocus, fullWidth, disabled } = props;
 
   const endAdornment = (
     <InputAdornment position="end">
@@ -37,6 +38,7 @@ export const EmailInput = forwardRef((props: Props, ref) => {
       margin={margin || "dense"}
       autoComplete={disableAutoComplete ? "off" : "email"}
       autoFocus={autoFocus}
+      disabled={disabled}
       onChange={onChange}
       onBlur={onBlur}
       slotProps={{ input: { endAdornment } }}

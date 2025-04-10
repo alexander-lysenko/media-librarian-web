@@ -15,7 +15,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
-import { useProfilePutRequest } from "../../../requests/useProfileRequests";
+import { useProfilePutRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useLanguageStore, useTranslationStore } from "../../../store/system/useTranslationStore";
 import { useProfileStore } from "../../../store/useProfileStore";

@@ -6,7 +6,7 @@ import {
   useLibraryAllItemsGetRequest,
   useLibraryItemDeleteRequest,
   useLibraryItemGetRequest,
-} from "../requests/useLibraryItemRequests";
+} from "../requests/libraryItemRequests";
 import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";

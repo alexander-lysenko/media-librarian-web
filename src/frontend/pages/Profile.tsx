@@ -59,7 +59,7 @@ import { UploadAvatarDialog } from "../components/modals/profile/UploadAvatarDia
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { ProfileAvatar } from "../components/ui/ProfileAvatar";
 import { AccountStatusEnum } from "../core/enums";
-import { useProfileGetRequest } from "../requests/useProfileRequests";
+import { useProfileGetRequest } from "../requests/profileRequests";
 import { useProfileDialogsStore } from "../store/app/useProfileDialogsStore";
 import { useLanguageStore, useTranslationStore } from "../store/system/useTranslationStore";
 import { useProfileStore } from "../store/useProfileStore";

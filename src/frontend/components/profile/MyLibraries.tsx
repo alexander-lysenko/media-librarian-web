@@ -7,7 +7,7 @@ import {
   useLibrariesGetRequest,
   useLibraryCleanupRequest,
   useLibraryDeleteRequest,
-} from "../../requests/useLibraryRequests";
+} from "../../requests/libraryRequests";
 import { useLibrariesStore } from "../../store/library/useLibrariesStore";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 import {

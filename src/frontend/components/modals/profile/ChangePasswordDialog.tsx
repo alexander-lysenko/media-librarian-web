@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
-import { useProfileChangePasswordRequest } from "../../../requests/useProfileRequests";
+import { useProfileChangePasswordRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { DoneOutlined } from "../../icons";
 import { PasswordInput } from "../../inputs/PasswordInput";

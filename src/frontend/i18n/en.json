@@ -1,5 +1,6 @@
 {
   "app": {
+    "backToApplication": "Back To Application",
     "errorOccurred": "An error occurred while your content was being loaded.",
     "logout": "Log Out",
     "noNewNotifications": "You've all caught up!",
@@ -182,6 +183,7 @@
     "useLibraryWizard": "using Library Creation Wizard"
   },
   "notifications": {
+    "emailAddressConfirmed": "Your email address has been successfully confirmed",
     "libraryCleaned_few": "",
     "libraryCleaned_many": "",
     "libraryCleaned_one": "Library \"{{title}}\" has been cleaned up. {{count}} item deleted",
@@ -200,10 +202,11 @@
   },
   "passwordReset": {
     "backToSignIn": "Back To Sign In",
+    "email": "Email address",
     "newPassword": "New password",
     "newPasswordRepeat": "Repeat new password",
-    "successfullyReset": "Password has been reset. You can sign in using your new password.",
     "subtitle": "Alright, now you can set a new password for your account.",
+    "successfullyReset": "Password has been reset. You can sign in using your new password.",
     "title": "Password Reset"
   },
   "priorityOptions": {

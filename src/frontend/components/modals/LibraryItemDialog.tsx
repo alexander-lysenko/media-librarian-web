@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../hooks";
-import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/useLibraryItemRequests";
+import { useLibraryItemPostRequest, useLibraryItemPutRequest } from "../../requests/libraryItemRequests";
 import { useSelectedLibraryStore } from "../../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { AddCircleOutlined, ArrowDropDownOutlined, ArrowDropUpOutlined, SaveAsOutlined } from "../icons";

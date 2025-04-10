@@ -56,7 +56,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
             const prevField = "newPasswordRepeat";
             const { isDirty, invalid } = getFieldState(prevField);
             if (isDirty || invalid) {
-              trigger(prevField).then(() => true);
+              void trigger(prevField);
             }
 
             return true;
@@ -68,9 +68,9 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         validate: {
           matchesPasswords: (value: string, formValues: FieldValues) => {
             const message = t("formValidation.passwordRepeatNotMatch");
-            const { password } = formValues;
+            const { newPassword } = formValues;
 
-            return password === value || message;
+            return newPassword === value || message;
           },
         },
       },
@@ -86,7 +86,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
       },
     },
     signup: {
-      username: {
+      name: {
         setValueAs: (value: string) => value.trim(),
         required: t("formValidation.usernameRequired") as Message,
         minLength: { value: 3, message: t("formValidation.usernameMinLength", { n: 3 }) },

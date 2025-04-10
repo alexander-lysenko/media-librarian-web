@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import { useFormValidation } from "../../hooks";
-import { useUserLoginRequest } from "../../requests/useAuthRequests";
+import { useUserLoginRequest } from "../../requests/authRequests";
 import { useAuthCredentialsStore } from "../../store/useAuthCredentialsStore";
 import { LoginOutlined } from "../icons";
 import { EmailInput } from "../inputs/EmailInput";
@@ -20,9 +20,9 @@ import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-
  */
 export const LoginForm = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
-  const navigate = useNavigate();
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
@@ -40,7 +40,7 @@ export const LoginForm = () => {
         const { token, redirectTo } = response;
         setCredentials(email, token);
         reset();
-        navigate(redirectTo);
+        navigate(redirectTo, { replace: true });
       },
       onError: (reason) => {
         reset({ password: "" });

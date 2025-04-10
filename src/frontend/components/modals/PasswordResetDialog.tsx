@@ -1,11 +1,14 @@
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
+  type DialogProps,
   DialogTitle,
   Grow,
   InputAdornment,
@@ -14,7 +17,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { type SubmitErrorHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../core/actions";
@@ -25,6 +28,8 @@ import type { InputCustomProps } from "../../core/types";
 import type { TextFieldProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
+import { TextInput } from "../inputs/TextInput";
+import { PasswordInput } from "../inputs/PasswordInput";
 
 type Props = {
   open: boolean;
@@ -43,12 +48,22 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState<boolean>(false);
 
+  const queryParams = new URLSearchParams(location.search);
+
   const usePasswordResetForm = useForm({
     mode: "onBlur",
     reValidateMode: "onChange",
+    defaultValues: {
+      token: queryParams.get("token"),
+      email: queryParams.get("email"),
+      newPassword: "",
+      newPasswordRepeat: "",
+      root: "",
+    },
   });
+
   const { registerField } = useFormValidation("passwordRecovery", usePasswordResetForm);
-  const { formState, reset, handleSubmit } = usePasswordResetForm;
+  const { formState, reset, handleSubmit, setError } = usePasswordResetForm;
   const { errors } = formState;
 
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
@@ -73,86 +88,65 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
     }, 2000);
   };
 
+  const dialogProps: DialogProps = {
+    open: open,
+    fullWidth: true,
+    fullScreen: fullScreen,
+    disableRestoreFocus: true,
+    slots: { transition: Grow },
+    slotProps: {
+      transition: { timeout: 250 },
+      paper: {
+        component: "form",
+        onSubmit: handleSubmit(onValidSubmit),
+      },
+    },
+  };
+
   return (
-    <Dialog
-      open={open}
-      fullWidth
-      onClose={handleCloseWithReset}
-      fullScreen={fullScreen}
-      TransitionComponent={Grow}
-      transitionDuration={120}
-    >
-      <Box component="form" noValidate onSubmit={handleSubmit(onValidSubmit)} sx={{ mt: 1 }}>
-        <DialogTitle variant={"h5"}>{t("passwordReset.title")}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{t("passwordReset.subtitle")}</DialogContentText>
-          <EmailTextField value={"lol@kek.gii"} />
-          <PasswordTextField
-            {...registerField("newPassword")}
-            label={t("passwordReset.newPassword") as string}
-            errorMessage={errors.newPassword?.message as string}
-          />
-          <PasswordTextField
-            {...registerField("newPasswordRepeat")}
-            label={t("passwordReset.newPasswordRepeat") as string}
-            errorMessage={errors.newPasswordRepeat?.message as string}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button variant="text" fullWidth={fullScreen} onClick={handleCloseWithReset}>
-            {t("passwordReset.backToSignIn")}
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth={fullScreen}
-            disabled={loading}
-            endIcon={loading ? <CircularProgress size={14} /> : <LockReset />}
-            children={t("common.save")}
-          />
-        </DialogActions>
-      </Box>
+    <Dialog {...dialogProps} onClose={handleCloseWithReset}>
+      <DialogTitle variant={"h5"}>{t("passwordReset.title")}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{t("passwordReset.subtitle")}</DialogContentText>
+        <br />
+        <Collapse in={!!errors.root?.serverError} unmountOnExit>
+          <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ my: 2 }}>
+            {errors.root?.serverError.message as string}
+          </Alert>
+        </Collapse>
+        <TextField type={"hidden"} {...registerField("token")} sx={{ visibility: "hidden", display: "none" }} />
+        <TextInput
+          {...registerField("email")}
+          label={t("passwordReset.email") as string}
+          errorMessage={errors.email?.message as string}
+          disabled
+          icon={<AlternateEmailOutlined />}
+        />
+        <PasswordInput
+          {...registerField("newPassword")}
+          label={t("passwordReset.newPassword") as string}
+          errorMessage={errors.newPassword?.message as string}
+        />
+        <PasswordInput
+          {...registerField("newPasswordRepeat")}
+          label={t("passwordReset.newPasswordRepeat") as string}
+          errorMessage={errors.newPasswordRepeat?.message as string}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" fullWidth={fullScreen} onClick={handleCloseWithReset}>
+          {t("passwordReset.backToSignIn")}
+        </Button>
+        <Box sx={{ flex: "1" }}></Box>
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth={fullScreen}
+          disabled={loading}
+          endIcon={loading ? <CircularProgress size={14} /> : <LockReset />}
+          children={t("common.save")}
+        />
+      </DialogActions>
     </Dialog>
-  );
-};
-
-const EmailTextField = (props: Partial<InputCustomProps & TextFieldProps>) => {
-  const endAdornment = <InputAdornment position="end" children={<AlternateEmailOutlined />} />;
-
-  return (
-    <TextField
-      inputRef={props.ref}
-      size="small"
-      margin="normal"
-      fullWidth
-      disabled
-      id="passwordReset-email"
-      name="email"
-      value={props.value}
-      slotProps={{ input: { endAdornment } }}
-    />
-  );
-};
-
-const PasswordTextField = (props: Partial<InputCustomProps & TextFieldProps>) => {
-  const endAdornment = <InputAdornment position="end" children={<LockOutlined />} />;
-
-  return (
-    <TextField
-      inputRef={props.ref}
-      size="small"
-      margin="normal"
-      fullWidth
-      type="password"
-      id={"passwordReset-" + props.name}
-      name={props.name}
-      label={props.label}
-      error={!!props.errorMessage}
-      helperText={props.errorMessage || props.helperText}
-      autoComplete="off"
-      onChange={props.onChange}
-      onBlur={props.onBlur}
-      slotProps={{ input: { endAdornment } }}
-    />
   );
 };

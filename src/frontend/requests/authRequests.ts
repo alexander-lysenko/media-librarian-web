@@ -1,7 +1,22 @@
 import { createHttpRequestHook } from "../core";
-import { userLoginEndpoint, userPasswordResetEndpoint } from "../core/links";
+import { userLoginEndpoint, userPasswordResetEndpoint, userSignupEndpoint } from "../core/links";
 
 import type { UseRequestReturn } from "../core/types";
+import type { Language } from "../store/system/useTranslationStore";
+
+type SignupRequest = {
+  email: string;
+  name: string;
+  password: string;
+  passwordRepeat: string;
+  locale: Language;
+  theme: "dark" | "light";
+};
+
+type SignupResponse = {
+  message: string;
+  user: object;
+};
 
 type LoginRequest = {
   email: string;
@@ -27,6 +42,19 @@ type PasswordResetRequest = {
 
 type MessageResponse = {
   message: string;
+};
+
+/**
+ * Request to signup / register / create a user.
+ * [POST] /api/v1/user/signup
+ */
+export const useUserSignupRequest = (): UseRequestReturn<SignupRequest, SignupResponse> => {
+  return createHttpRequestHook<SignupRequest, SignupResponse>({
+    method: "POST",
+    endpoint: userSignupEndpoint,
+    customEvents: {},
+    withCredentials: false,
+  })();
 };
 
 /**

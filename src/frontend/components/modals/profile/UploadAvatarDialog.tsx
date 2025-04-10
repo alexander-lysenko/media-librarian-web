@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 
 import { getCroppedImg } from "../../../core";
 import { enqueueSnack } from "../../../core/actions";
-import { useProfilePutRequest } from "../../../requests/useProfileRequests";
+import { useProfilePutRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useProfileStore } from "../../../store/useProfileStore";
 import { CloseOutlined, CloudUploadOutlined, DoneOutlined } from "../../icons";

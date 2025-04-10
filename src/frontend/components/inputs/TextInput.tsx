@@ -7,9 +7,10 @@ import type { TextFieldProps } from "@mui/material";
 import type { ReactElement } from "react";
 
 type Props = InputCustomProps & {
-  margin?: TextFieldProps["margin"];
   autoComplete?: TextFieldProps["autoComplete"];
+  disabled?: TextFieldProps["disabled"];
   icon?: ReactElement<SvgIconComponent>;
+  margin?: TextFieldProps["margin"];
 };
 
 /**
@@ -18,7 +19,7 @@ type Props = InputCustomProps & {
  */
 export const TextInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
-  const { margin, autoFocus, autoComplete, icon } = props;
+  const { margin, autoFocus, autoComplete, icon, disabled } = props;
 
   const endAdornment = icon ? <InputAdornment position="end" children={icon} /> : undefined;
 
@@ -34,6 +35,7 @@ export const TextInput = forwardRef((props: Props, ref) => {
       margin={margin || "dense"}
       autoComplete={autoComplete || "off"}
       autoFocus={autoFocus}
+      disabled={disabled}
       onChange={onChange}
       onBlur={onBlur}
       slotProps={{

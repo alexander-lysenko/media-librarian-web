@@ -17,6 +17,8 @@ import { useThemeStore } from "./store/system/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/system/useTranslationStore";
 import { useAuthCredentialsStore } from "./store/useAuthCredentialsStore";
 import { getDesignTokens } from "./theme";
+import { PasswordReset } from "./pages/PasswordReset";
+import { EmailConfirmation } from "./pages/EmailConfirmation";
 
 const debug = import.meta.env.VITE_APP_DEBUG;
 
@@ -47,6 +49,8 @@ export const Main = () => {
           <Route path={AppRoutes.signup} element={<SignUp />} />
           <Route path={AppRoutes.appHome} element={<App />} />
           <Route path={AppRoutes.profile} element={<Profile />} />
+          <Route path={AppRoutes.passwordReset} element={<PasswordReset />} />
+          <Route path={AppRoutes.emailConfirmation} element={<EmailConfirmation />} />
         </Routes>
       </Router>
       <GlobalSnackbar />

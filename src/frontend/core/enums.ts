@@ -3,6 +3,8 @@ export enum AppRoutes {
   login = "/login",
   signup = "/signup",
   profile = "/profile",
+  passwordReset = "/password-reset",
+  emailConfirmation = "/email-confirmation",
 }
 
 export enum AccountStatusEnum {

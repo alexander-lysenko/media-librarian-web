@@ -21,7 +21,7 @@ import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../core/actions";
 import { useFormValidation } from "../../hooks";
-import { usePasswordRecoveryRequest } from "../../requests/useAuthRequests";
+import { usePasswordRecoveryRequest } from "../../requests/authRequests";
 import { AlternateEmailOutlined, Send } from "../icons";
 
 import type { InputCustomProps } from "../../core/types";

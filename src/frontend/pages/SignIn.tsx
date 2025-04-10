@@ -7,21 +7,14 @@ import { BackgroundContainer, Copyright, StickyFooter } from "../components";
 import { LoginForm } from "../components/forms/LoginForm";
 import { LockOutlined } from "../components/icons";
 import { PasswordResetInitDialog } from "../components/modals/PasswordResetInitDialog";
-import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
 
 /**
  * Component representing the SignIn (Login) page
  */
 export const SignIn = () => {
-  const { search } = window.location;
-  const searchParams = new URLSearchParams(search);
-
   const { t } = useTranslation();
 
   const [passwordRecoverDialogOpen, setPasswordRecoverDialogOpen] = useState<boolean>(false);
-  const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState<boolean>(
-    searchParams.has("action") && searchParams.get("action") === "recover",
-  );
 
   const handleRecoveryDialogOpen = () => {
     setPasswordRecoverDialogOpen(true);
@@ -29,10 +22,6 @@ export const SignIn = () => {
   const handleRecoveryDialogClose = () => {
     setPasswordRecoverDialogOpen(false);
   };
-  const handleResetDialogClose = () => {
-    setPasswordResetDialogOpen(false);
-  };
-
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <BackgroundContainer />
@@ -64,7 +53,6 @@ export const SignIn = () => {
         </StickyFooter>
       </Grid>
       <PasswordResetInitDialog open={passwordRecoverDialogOpen} onClose={handleRecoveryDialogClose} />
-      <PasswordResetDialog open={passwordResetDialogOpen} onClose={handleResetDialogClose} />
     </Grid>
   );
 };
