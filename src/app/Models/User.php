@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
-use App\Notifications\VerifyEmail;
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailNotification;
 use App\Utils\Enum\UserStatusEnum;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\RecordNotFoundException;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Password;
 use Laravel\Sanctum\HasApiTokens;
-use Nette\NotImplementedException;
 
 /**
  * Authenticate-able user model
@@ -99,10 +100,28 @@ class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
      */
     public function markEmailAsVerified(): bool
     {
-        return $this->forceFill([
-            'status' => UserStatusEnum::ACTIVE->value,
+        $isFreshUser = $this->status === UserStatusEnum::CREATED->value;
+        $this->forceFill([
+            'status' => $isFreshUser ? UserStatusEnum::ACTIVE->value : $this->status,
             'email_verified_at' => $this->freshTimestamp(),
-        ])->save();
+        ]);
+
+        return $this->save();
+    }
+
+    /**
+     * Get the email address that should be used for verification.
+     *
+     * @return string
+     */
+    public function getEmailForVerification(): string
+    {
+        /** @var EmailConfirmation $confirmation */
+        $confirmation = $this->email_confirmations()->latest()->firstOr(function () {
+            throw new ModelNotFoundException('Email confirmation token was not found.');
+        });
+
+        return $confirmation->email;
     }
 
     /**
@@ -112,15 +131,29 @@ class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
      */
     public function sendEmailVerificationNotification(): void
     {
-        throw new NotImplementedException(
-            'Please use `$this->notify(new App\Notifications\VerifyEmail)` instead.'
-        );
+        /** @var EmailConfirmation $confirmation */
+        $confirmation = $this->email_confirmations()->latest()->firstOr(function () {
+            throw new RecordNotFoundException('Email confirmation token was not found.');
+        });
+
+        $this->notify(new VerifyEmailNotification($confirmation));
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /**
      * Get the personal settings associated with the user.
      *
-     * @return HasOne
+     * @return HasOne<PersonalSetting>
      */
     public function settings(): HasOne
     {
@@ -130,7 +163,7 @@ class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
     /**
      * Get the email confirmation tokens associated with the user.
      *
-     * @return HasMany
+     * @return HasMany<EmailConfirmation>
      * @noinspection PhpUnused
      */
     public function email_confirmations(): HasMany
@@ -141,7 +174,7 @@ class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
     /**
      * Get the password reset tokens associated with the user.
      *
-     * @return HasMany
+     * @return HasMany<PasswordReset>
      * @noinspection PhpUnused
      */
     public function password_resets(): HasMany

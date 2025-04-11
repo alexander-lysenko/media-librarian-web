@@ -21,7 +21,7 @@ export default defineConfig(({ command, mode }) => {
     base: command === "serve" ? "" : "/build/",
     root: command === "serve" ? "./frontend" : "",
     publicDir: "fake_dir_so_nothing_gets_copied",
-    envDir: "../",
+    envDir: command === "serve" ? "../" : "./",
     plugins: [react()],
     build: {
       manifest: true,

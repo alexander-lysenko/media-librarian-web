@@ -4,43 +4,45 @@ namespace App\Notifications;
 
 use App\Mail\ResetPasswordMailable;
 use App\Models\PasswordReset;
-use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword as IlluminateResetPassword;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 
-class ResetPassword extends IlluminateResetPassword implements ShouldQueue
+class ResetPasswordNotification extends ResetPassword implements ShouldQueue
 {
     use Queueable;
 
     /**
-     * Create a new notification instance.
+     * Determine which queues should be used for each notification channel.
+     *
+     * @return array<string, string>
+     * @noinspection PhpUnused
      */
-    public function __construct(protected readonly PasswordReset $passwordReset)
+    public function viaQueues(): array
     {
-        // todo: change connection
-        $this->onConnection('sync');
-
-        parent::__construct(token: $passwordReset->token);
+        return [
+            'mail' => 'notifications',
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param User $notifiable
+     * @param string $notifiable
      * @return Mailable
      */
     public function toMail(mixed $notifiable): Mailable
     {
-        $email = $this->passwordReset->email;
+        $passwordReset = PasswordReset::query()->where('token', $notifiable)->firstOrFail();
+
         $mailable = new ResetPasswordMailable(
-            username: $notifiable->name,
-            email: $email,
-            token: $this->passwordReset->token
+            username: $passwordReset->user->name,
+            email: $passwordReset->email,
+            token: $passwordReset->token
         );
 
-        return $mailable->to($email);
+        return $mailable->to($passwordReset->email);
     }
 
     /**

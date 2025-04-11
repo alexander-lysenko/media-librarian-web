@@ -39,15 +39,8 @@ class WebController extends Controller
             });
 
         $user = $confirmationEntry->user;
-        if ($user->status === UserStatusEnum::CREATED->value) {
-            $user->forceFill([
-                'status' => UserStatusEnum::ACTIVE->value,
-            ]);
-        }
-        $user->forceFill([
-            'email' => strtolower($request->input('email')),
-            'email_verified_at' => now(),
-        ])->save();
+        $user->forceFill(['email' => strtolower($request->input('email'))]);
+        $user->markEmailAsVerified();
 
         EmailConfirmation::query()->where('user_id', $user->id)->delete();
 
@@ -61,7 +54,7 @@ class WebController extends Controller
      * @return ViewContract
      * @noinspection PhpRedundantCatchClauseInspection
      */
-    public function resetPassword(Request $request): ViewContract
+    public function resetPasswordForm(Request $request): ViewContract
     {
         try {
             $request->validate([

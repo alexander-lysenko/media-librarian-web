@@ -7,13 +7,13 @@ use App\Http\Requests\V1\PasswordResetPerformRequest;
 use App\Http\Requests\V1\SignupRequest;
 use App\Models\PasswordReset;
 use App\Models\User;
-use App\Notifications\ResetPassword;
-// use Illuminate\Auth\Notifications\ResetPassword;
-use App\Notifications\VerifyEmail;
+use App\Notifications\ResetPasswordNotification;
+// use Illuminate\Auth\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailNotification;
 use App\Services\UserAccountService;
 use App\Utils\Enum\UserStatusEnum;
-use Illuminate\Auth\Events\PasswordResetLinkSent;
-use Illuminate\Auth\Events\Registered;
+use App\Events\PasswordResetLinkSent;
+use App\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -96,10 +96,7 @@ class UserController extends ApiV1Controller
             theme: $request->theme
         );
 
-        $confirmation = $accountService->createEmailConfirmationEntry($user->id, $user->email);
-        $user->notify(new VerifyEmail($confirmation));
-
-        Event::dispatch(new Registered($user));
+        Event::dispatch(new Registered($user, $user->email));
 
         return new JsonResponse([
             'message' => 'Your account has been created. You have to verify your e-mail to activate the account',
@@ -338,10 +335,6 @@ class UserController extends ApiV1Controller
         $user = User::query()->where('email', $validated['email'])->first();
 
         if ($user) {
-            $passwordResetEntry = $accountService->createPasswordResetEntry($user);
-            $notification = new ResetPassword($passwordResetEntry);
-            $user->notify($notification);
-
             Event::dispatch(new PasswordResetLinkSent($user));
         }
 

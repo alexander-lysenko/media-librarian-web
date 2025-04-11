@@ -31,6 +31,6 @@ Route::middleware(['throttle:web', /*'signed:relative'*/]) // todo: manage corre
     ->group(function () {
         Route::get('/email-confirmation', [WebController::class, 'emailVerify'])
             ->name('verification.verify');
-        Route::get('/password-reset', [WebController::class, 'resetPassword'])
+        Route::get('/password-reset', [WebController::class, 'resetPasswordForm'])
             ->name('password.reset');
     });
