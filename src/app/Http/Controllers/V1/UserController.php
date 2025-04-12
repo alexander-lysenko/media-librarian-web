@@ -34,7 +34,7 @@ class UserController extends ApiV1Controller
         "in the request as a successful result of the operation\\\n " .
         'This email address is used for both account identification and authentication purposes.' .
         "\n\n **CAPTCHA-PROTECTED**" .
-        "\n### Rate Limiter\\\n| Number of Requests | Time frame |\n| -- | -- |\n" .
+        "\n### Rate Limiter\n| Number of Requests | Time frame |\n| -- | -- |\n" .
         '| 1 | 6 hours (21600 seconds)',
         summary: 'Sign up a new User',
         requestBody: new OA\RequestBody(

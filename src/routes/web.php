@@ -34,3 +34,9 @@ Route::middleware(['throttle:web', /*'signed:relative'*/]) // todo: manage corre
         Route::get('/password-reset', [WebController::class, 'resetPasswordForm'])
             ->name('password.reset');
     });
+
+Route::middleware(['throttle:web'])
+    ->group(function () {
+        Route::get('/email-confirmation-preview', [WebController::class, 'previewVerifyEmail']);
+        Route::get('/password-reset-preview', [WebController::class, 'previewPasswordResetEmail']);
+    });

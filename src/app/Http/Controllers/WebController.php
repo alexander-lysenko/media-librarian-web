@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ConfirmAddressMailable;
+use App\Mail\ResetPasswordMailable;
 use App\Models\EmailConfirmation;
 use App\Models\PasswordReset;
+use Illuminate\Contracts\Mail\Mailable as MailableContract;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class WebController extends Controller
@@ -17,18 +19,13 @@ class WebController extends Controller
      *
      * @param Request $request
      * @return ViewContract
-     * @noinspection PhpRedundantCatchClauseInspection
      */
     public function emailVerify(Request $request): ViewContract
     {
-        try {
-            $request->validate([
-                'email' => ['required', 'email'],
-                'token' => ['required', 'string', 'size:64'],
-            ]);
-        } catch (ValidationException $exception) {
-            throw new UnprocessableEntityHttpException($exception->getMessage());
-        }
+        $request->validate([
+            'email' => ['required', 'email'],
+            'token' => ['required', 'string', 'size:64'],
+        ]);
 
         $confirmationEntry = EmailConfirmation::query()
             ->where('email', $request->input('email'))
@@ -51,18 +48,13 @@ class WebController extends Controller
      *
      * @param Request $request
      * @return ViewContract
-     * @noinspection PhpRedundantCatchClauseInspection
      */
     public function resetPasswordForm(Request $request): ViewContract
     {
-        try {
-            $request->validate([
-                'email' => ['required', 'email'],
-                'token' => ['required', 'string', 'size:64'],
-            ]);
-        } catch (ValidationException $exception) {
-            throw new UnprocessableEntityHttpException($exception->getMessage());
-        }
+        $request->validate([
+            'email' => ['required', 'email'],
+            'token' => ['required', 'string', 'size:64'],
+        ]);
 
         PasswordReset::query()
             ->where('email', $request->input('email'))
@@ -72,5 +64,43 @@ class WebController extends Controller
             });
 
         return View::make('index');
+    }
+
+    public function previewVerifyEmail(Request $request): MailableContract
+    {
+        $request->validate([
+            'username' => ['string'],
+            'email' => ['email'],
+            'token' => ['string', 'max:64'],
+            'locale' => ['string', 'in:ru,en'],
+        ]);
+
+        $email = new ConfirmAddressMailable(
+            username: $request->input('username') ?: 'John Doe',
+            email: $request->input('email') ?: 'john.doe@example.com',
+            token: $request->input('token')
+                ?: '0000000000000000000000000000000000000000000000000000000000000000'
+        );
+
+        return $email->locale($request->input('locale') ?: 'en');
+    }
+
+    public function previewPasswordResetEmail(Request $request): MailableContract
+    {
+        $request->validate([
+            'username' => ['string'],
+            'email' => ['email'],
+            'token' => ['string', 'max:64'],
+            'locale' => ['string', 'in:ru,en'],
+        ]);
+
+        $email = new ResetPasswordMailable(
+            username: $request->input('username') ?: 'John Doe',
+            email: $request->input('email') ?: 'john.doe@example.com',
+            token: $request->input('token')
+                ?: '0000000000000000000000000000000000000000000000000000000000000000'
+        );
+
+        return $email->locale($request->input('locale') ?: 'en');
     }
 }
