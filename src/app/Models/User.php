@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Contracts\DoesResetPassword;
+use App\Contracts\DoesVerifyEmail;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
 use App\Utils\Enum\UserStatusEnum;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,7 +37,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static User create(array $attributes = [])
  * @method Builder update(array $values)
  */
-class User extends AuthUser implements MustVerifyEmail, HasLocalePreference
+class User extends AuthUser implements HasLocalePreference, DoesVerifyEmail, DoesResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable;
 

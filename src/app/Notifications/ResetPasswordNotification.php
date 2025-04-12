@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\DoesResetPassword;
 use App\Mail\ResetPasswordMailable;
 use App\Models\PasswordReset;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -34,7 +35,11 @@ class ResetPasswordNotification extends ResetPassword implements ShouldQueue
      */
     public function toMail(mixed $notifiable): Mailable
     {
-        $passwordReset = PasswordReset::query()->where('token', $notifiable)->firstOrFail();
+        if ($notifiable instanceof DoesResetPassword) {
+            $passwordReset = $notifiable->password_resets()->where('token', $this->token)->firstOrFail();
+        } else {
+            $passwordReset = PasswordReset::query()->where('token', $this->token)->firstOrFail();
+        }
 
         $mailable = new ResetPasswordMailable(
             username: $passwordReset->user->name,

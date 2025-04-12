@@ -6,12 +6,11 @@ use App\Models\PasswordReset;
 use Illuminate\Auth\Events\PasswordResetLinkSent as IlluminatePasswordResetLinkSent;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Password;
 
 class PasswordResetLinkSent extends IlluminatePasswordResetLinkSent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
 
     /**
      * Create a new event instance.

@@ -2,31 +2,30 @@
 
 namespace App\Listeners;
 
+use App\Contracts\DoesResetPassword;
 use App\Events\PasswordResetLinkSent;
-use App\Models\PasswordReset;
-use Illuminate\Contracts\Auth\CanResetPassword;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\RecordNotFoundException;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Password;
-use Mockery\Generator\StringManipulation\Pass\Pass;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class SendPasswordResetNotification
 {
     /**
      * Handle the event.
-     * @noinspection PhpPossiblePolymorphicInvocationInspection
      */
     public function handle(PasswordResetLinkSent $event): void
     {
-        $passwordRepository = Password::getRepository();
-        if ($event->user instanceof CanResetPassword && $passwordRepository->recentlyCreatedToken($event->user)) {
-            $resetEntry = PasswordReset::query()
-                ->where('user_id', $event->user->id)
-                ->latest()
-                ->first();
+        if ($event->user instanceof DoesResetPassword) {
+            $resetEntry = $event->user->password_resets()->latest()->first();
 
             $event->user->sendPasswordResetNotification($resetEntry->token);
         }
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(PasswordResetLinkSent $event, Throwable $exception): void
+    {
+        Log::error($exception);
     }
 }
