@@ -2,23 +2,18 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Events\PasswordResetLinkSent;
+use App\Events\Registered;
 use App\Http\Requests\V1\EmailVerifyRequest;
 use App\Http\Requests\V1\PasswordResetPerformRequest;
 use App\Http\Requests\V1\SignupRequest;
-use App\Models\PasswordReset;
 use App\Models\User;
-use App\Notifications\ResetPasswordNotification;
-// use Illuminate\Auth\Notifications\ResetPasswordNotification;
-use App\Notifications\VerifyEmailNotification;
 use App\Services\UserAccountService;
 use App\Utils\Enum\UserStatusEnum;
-use App\Events\PasswordResetLinkSent;
-use App\Events\Registered;
-use Illuminate\Auth\Events\Verified;
+use Illuminate\Auth\Events\PasswordReset as PasswordResetEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use OpenApi\Attributes as OA;
@@ -376,10 +371,7 @@ class UserController extends ApiV1Controller
         $user = User::query()->where('email', $email)->first();
         $user->forceFill(['password' => $newPassword])->save();
 
-        // Revoke all personal access tokens and password reset tokens
-        // that issued before the password was changed
-        $user->tokens()->delete();
-        $user->password_resets()->delete();
+        Event::dispatch(new PasswordResetEvent($user));
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

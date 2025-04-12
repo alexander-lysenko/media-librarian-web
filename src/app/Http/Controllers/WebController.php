@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\EmailConfirmation;
 use App\Models\PasswordReset;
-use App\Utils\Enum\UserStatusEnum;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -35,7 +34,7 @@ class WebController extends Controller
             ->where('email', $request->input('email'))
             ->where('token', $request->input('token'))
             ->firstOr(function () {
-                throw new UnprocessableEntityHttpException(trans('validation.token.expired'));
+                throw new UnprocessableEntityHttpException('validation.token.expired');
             });
 
         $user = $confirmationEntry->user;
@@ -69,7 +68,7 @@ class WebController extends Controller
             ->where('email', $request->input('email'))
             ->where('token', $request->input('token'))
             ->firstOr(function () {
-                throw new UnprocessableEntityHttpException(trans('validation.token.expired'));
+                throw new UnprocessableEntityHttpException('validation.token.expired');
             });
 
         return View::make('index');

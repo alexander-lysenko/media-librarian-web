@@ -1,5 +1,5 @@
 @extends('errors::minimal')
 
-@section('title', __('Error'))
+@section('title', trans('Error'))
 @section('code', $exception->getStatusCode())
-@section('message', __($exception->getMessage() ?: 'Forbidden'))
+@section('message', trans($exception->getMessage()))

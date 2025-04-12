@@ -30,6 +30,7 @@ import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
 import { TextInput } from "../inputs/TextInput";
 import { PasswordInput } from "../inputs/PasswordInput";
+import { usePasswordResetRequest } from "../../requests/authRequests";
 
 type Props = {
   open: boolean;
@@ -49,6 +50,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const queryParams = new URLSearchParams(location.search);
+  const passwordResetRequest = usePasswordResetRequest();
 
   const usePasswordResetForm = useForm({
     mode: "onBlur",
@@ -57,7 +59,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
       token: queryParams.get("token"),
       email: queryParams.get("email"),
       newPassword: "",
-      newPasswordRepeat: "",
+      repeatPassword: "",
       root: "",
     },
   });
@@ -77,15 +79,24 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
     onClose(event, reason);
   };
 
-  const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
-    console.log(data);
+  const onValidSubmit: SubmitHandler<FieldValues> = async (data, event) => {
     setLoading(true);
 
-    setTimeout(() => {
-      // Submit request
-      handleCloseWithReset(event as SyntheticEvent);
-      enqueueSnack({ type: "success", message: t("passwordReset.successfullyReset") });
-    }, 2000);
+    passwordResetRequest.setResponseEvents({
+      onSuccess: () => {
+        handleCloseWithReset(event as SyntheticEvent);
+        enqueueSnack({ type: "success", message: t("passwordReset.successfullyReset") });
+      },
+      onError: (reason) => {
+        reset({ newPassword: "", repeatPassword: "" });
+        setError("root.serverError", { message: reason.message });
+      },
+      onComplete: () => {
+        setLoading(false);
+      },
+    });
+
+    await passwordResetRequest.fetch(data as never);
   };
 
   const dialogProps: DialogProps = {
@@ -107,8 +118,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
     <Dialog {...dialogProps} onClose={handleCloseWithReset}>
       <DialogTitle variant={"h5"}>{t("passwordReset.title")}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{t("passwordReset.subtitle")}</DialogContentText>
-        <br />
+        <DialogContentText sx={{ pb: 1 }}>{t("passwordReset.subtitle")}</DialogContentText>
         <Collapse in={!!errors.root?.serverError} unmountOnExit>
           <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ my: 2 }}>
             {errors.root?.serverError.message as string}
@@ -118,19 +128,22 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
         <TextInput
           {...registerField("email")}
           label={t("passwordReset.email") as string}
+          helperText={t("passwordReset.emailHint") as string}
           errorMessage={errors.email?.message as string}
           disabled
           icon={<AlternateEmailOutlined />}
         />
         <PasswordInput
           {...registerField("newPassword")}
-          label={t("passwordReset.newPassword") as string}
+          label={t("dialogs.changePasswordDialog.newPasswordLabel") as string}
+          helperText={t("dialogs.changePasswordDialog.newPasswordHint") as string}
           errorMessage={errors.newPassword?.message as string}
         />
         <PasswordInput
-          {...registerField("newPasswordRepeat")}
-          label={t("passwordReset.newPasswordRepeat") as string}
-          errorMessage={errors.newPasswordRepeat?.message as string}
+          {...registerField("repeatPassword")}
+          label={t("dialogs.changePasswordDialog.repeatPasswordLabel") as string}
+          helperText={t("dialogs.changePasswordDialog.repeatPasswordHint") as string}
+          errorMessage={errors.repeatPassword?.message as string}
         />
       </DialogContent>
       <DialogActions>

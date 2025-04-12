@@ -17,6 +17,7 @@ use Illuminate\Database\RecordNotFoundException;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\Contracts\HasApiTokens as HasApiTokensContract;
 
 /**
  * Authenticate-able user model
@@ -37,7 +38,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static User create(array $attributes = [])
  * @method Builder update(array $values)
  */
-class User extends AuthUser implements HasLocalePreference, DoesVerifyEmail, DoesResetPassword
+class User extends AuthUser implements HasApiTokensContract, HasLocalePreference, DoesVerifyEmail, DoesResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable;
 

@@ -78,7 +78,7 @@
       "success": "Your password has been updated. All others active sessions were terminated.",
       "passwordLabel": "Current Password",
       "newPasswordLabel": "New Password",
-      "repeatPasswordLabel": "Repeat Password",
+      "repeatPasswordLabel": "Repeat New Password",
       "passwordHint": "This is the password you use for authentication in this application.",
       "newPasswordHint": "At least 8 characters, mixed alpha-numeric set.",
       "repeatPasswordHint": "Should match the password entry from the prior field."
@@ -203,8 +203,7 @@
   "passwordReset": {
     "backToSignIn": "Back To Sign In",
     "email": "Email address",
-    "newPassword": "New password",
-    "newPasswordRepeat": "Repeat new password",
+    "emailHint": "This email address is the identifier of your account",
     "subtitle": "Alright, now you can set a new password for your account.",
     "successfullyReset": "Password has been reset. You can sign in using your new password.",
     "title": "Password Reset"

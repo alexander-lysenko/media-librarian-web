@@ -53,7 +53,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         validate: {
           matchesPasswords: () => {
             const { getFieldState, trigger } = useFormReturn;
-            const prevField = "newPasswordRepeat";
+            const prevField = "repeatPassword";
             const { isDirty, invalid } = getFieldState(prevField);
             if (isDirty || invalid) {
               void trigger(prevField);
@@ -63,7 +63,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
           },
         },
       },
-      newPasswordRepeat: {
+      repeatPassword: {
         required: t("formValidation.passwordRepeatRequired") as Message,
         validate: {
           matchesPasswords: (value: string, formValues: FieldValues) => {

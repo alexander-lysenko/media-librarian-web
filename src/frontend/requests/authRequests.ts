@@ -82,13 +82,14 @@ export const usePasswordRecoveryRequest = (): UseRequestReturn<PasswordRecoveryI
     withCredentials: false,
   })();
 };
+
 /**
  * Request to perform password reset.
  * [PUT] /api/v1/user/password-reset
  */
 export const usePasswordResetRequest = (): UseRequestReturn<PasswordResetRequest, MessageResponse> => {
   return createHttpRequestHook<PasswordResetRequest, MessageResponse>({
-    method: "POST",
+    method: "PUT",
     endpoint: userPasswordResetEndpoint,
     customEvents: {},
     withCredentials: false,

@@ -31,12 +31,10 @@ Route::middleware(['auth'])
         Route::post('/password-reset', 'requestPasswordReset')->name('requestPasswordReset')
             ->middleware(['throttle.captcha:1,360,requestPasswordReset']);
         Route::put('/password-reset', 'performPasswordReset')->name('performPasswordReset')
-            ->middleware(['throttle.captcha:1,360,performPasswordReset']);
+            ->middleware(['throttle:api.basic']);
 
         Route::post('/verify-email', 'requestEmailVerify')->name('requestEmailVerify')
             ->middleware(['throttle.captcha:1,30,requestEmailVerify']);
-        Route::get('/verify-email', 'performEmailVerify')->name('emailVerify')
-            ->middleware([':api.basic']);
     });
 
 // Routes for profile (as authenticated user)
