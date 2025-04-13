@@ -33,7 +33,7 @@ export const LoginForm = () => {
   const useLoginRequest = useUserLoginRequest();
   const loading = useLoginRequest.status === "LOADING";
 
-  const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
     useLoginRequest.setResponseEvents({
       onSuccess: (response) => {
         const { email } = getValues();
@@ -48,7 +48,8 @@ export const LoginForm = () => {
         captchaRef.current?.reset();
       },
     });
-    await useLoginRequest.fetch(data as never);
+
+    void useLoginRequest.fetch(data as never);
   };
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {
     if (errors["cf-turnstile-response"]) {
@@ -84,9 +85,7 @@ export const LoginForm = () => {
           siteKey={import.meta.env.VITE_CF_TURNSTILE_SITEKEY}
           onWidgetLoad={() => registerField("cf-turnstile-response")}
           onSuccess={(token) => useHookForm.setValue("cf-turnstile-response", token)}
-          onExpire={() => {
-            captchaRef.current?.reset();
-          }}
+          onExpire={() => captchaRef.current?.reset()}
         />
       </Box>
       <Button

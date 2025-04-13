@@ -63,7 +63,6 @@ class ResetPasswordMailable extends Mailable
         return [];
     }
 
-
     /**
      * Creates the confirmation link as temporary signed URL
      *

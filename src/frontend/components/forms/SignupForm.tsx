@@ -57,12 +57,12 @@ export const SignupForm = () => {
   const { errors } = formState;
 
   const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
-  const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
     setLoading(true);
 
     signupRequest.setResponseEvents({
       onSuccess: () => {
-        navigate(AppRoutes.profile, { replace: true });
+        navigate(AppRoutes.login, { replace: true });
       },
       onError: (reason) => {
         reset({ password: "", passwordRepeat: "" });
@@ -140,9 +140,7 @@ export const SignupForm = () => {
           siteKey={import.meta.env.VITE_CF_TURNSTILE_SITEKEY}
           onWidgetLoad={() => registerField("cf-turnstile-response")}
           onSuccess={(token) => useHookForm.setValue("cf-turnstile-response", token)}
-          onExpire={() => {
-            captchaRef.current?.reset();
-          }}
+          onExpire={() => captchaRef.current?.reset()}
         />
       </Box>
       <Button

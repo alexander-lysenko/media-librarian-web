@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[OA\Tag(name: 'auth', description: 'Guest (For Unauthenticated Users)')]
 /**
  * User controller - manage user/identity actions
- * @TODO: See https://github.com/laravel/breeze
+ * @see https://github.com/laravel/breeze
  */
 class UserController extends ApiV1Controller
 {
@@ -94,7 +94,7 @@ class UserController extends ApiV1Controller
         Event::dispatch(new Registered($user, $user->email));
 
         return new JsonResponse([
-            'message' => 'Your account has been created. You have to verify your e-mail to activate the account',
+            'message' => trans('common.signup.created') . ' ' . trans('common.signup.mustConfirmEmail'),
             'user' => $user,
         ], Response::HTTP_CREATED);
     }
@@ -145,153 +145,25 @@ class UserController extends ApiV1Controller
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required'],
+            'password' => ['required', 'string'],
+            'rememberMe' => ['boolean'],
         ]);
 
         if (Auth::guard('web')->attempt($credentials, $request->post('rememberMe', false))) {
-            Auth::guard('web')->authenticate();
+            // Auth::guard('web')->authenticate();
             $redirectTo = $request->user()->status === UserStatusEnum::ACTIVE->value ? '/app' : '/profile';
             $token = $request->user()->createToken('apiToken')->plainTextToken;
 
             return new JsonResponse([
-                'message' => 'Successfully logged in',
+                'message' => trans('common.auth.success'),
                 'token' => explode('|', $token)[1],
                 'redirectTo' => $redirectTo,
             ], 302);
         }
 
-        return new JsonResponse(['message' => 'Incorrect email and/or password'], Response::HTTP_UNAUTHORIZED);
+        return new JsonResponse(['message' => trans('common.auth.invalid')], Response::HTTP_UNAUTHORIZED);
     }
 
-    /*
-     * @OA\Get(
-     *     path:"/api/v1/user/verify-email",
-     *     summary:"Activate an account by verifying their email using a verification key",
-     *     description:"It is required to provide the verification key sent via e-mail after the successful signup",
-     *     tags: ['auth'],
-     *
-     *     @OA\Parameter(required:true, name:"email", in:"query",
-     *         @OA\Schema(type:"string", example:"john.doe@example.com")
-     *     ),
-     *     @OA\Parameter(required:true, name:"verificationKey", in:"query",
-     *         @OA\Schema(type:"string", example:"57c131437cc7885444087a775884d453")
-     *     ),
-     *
-     *     @OA\Response(response:"200", description:"Success",
-     *         @OA\JsonContent(type:"object",
-     *             @OA\Property(property:"message",
-     *                 type:"string",
-     *                 example:"Email has been verified. The user's account is active now"
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response:"410", description:"Gone",
-     *         @OA\JsonContent(type:"object",
-     *             @OA\Property(property:"message",
-     *                 type:"string",
-     *                 example:"The user's email is already verified or the verification key is expired"
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response:"422", description:"Unprocessable Entity",
-     *         @OA\JsonContent(type:"object",
-     *             @OA\Property(property:"message", type:"string", example:"Account with this email was not found"),
-     *             @OA\Property(property:"errors", type:"object",
-     *                 @OA\Property(property:"email", type:"array",
-     *                     @OA\Items(type:"string", example:"Account with this email was not found")
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     * )
-     *
-     * @param EmailVerifyRequest $request
-     * @return JsonResponse
-     */
-    public function performEmailVerify(EmailVerifyRequest $request): JsonResponse
-    {
-        // /** @var User $user */
-        // $user = User::query()->where('email', $request->email)->first();
-        //
-        // if ($user->hasVerifiedEmail()) {
-        //     return new JsonResponse([
-        //         'message' => "The user's email is already verified",
-        //     ], 410);
-        // }
-        //
-        // if (true /*match the verification key with email*/) {
-        //     $user->markEmailAsVerified();
-        //     event(new Verified($user));
-        // }
-        //
-        return new JsonResponse([
-            'message' => "Email has been verified. The user's account is active now",
-        ]);
-    }
-
-    /*
-     * @OA\Post(
-     *     path:"/api/v1/user/verify-email",
-     *     summary:"Resend email verification link",
-     *     description:"Re-sends over email the verification key to activate an account",
-     *     tags: ['auth'],
-     *
-     *     @OA\RequestBody(required:true,
-     *         @OA\MediaType(mediaType:"application/json",
-     *             @OA\Schema(type:"object",
-     *                 @OA\Property(property:"email", type:"string", example:"john.doe@example.com"),
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response:"200", description:"Success",
-     *         @OA\JsonContent(type:"object",
-     *             @OA\Property(property:"message",
-     *                 type:"string",
-     *                 example:"Email has been verified. The user's account is active now"
-     *             ),
-     *         ),
-     *     ),
-     *
-     *     @OA\Response(response:"422", description:"Unprocessable Entity",
-     *         @OA\JsonContent(type:"object",
-     *             @OA\Property(property:"message", type:"string", example:"Account with this email was not found"),
-     *             @OA\Property(property:"errors", type:"object",
-     *                 @OA\Property(property:"email", type:"array",
-     *                     @OA\Items(type:"string", example:"Account with this email was not found")
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     * )
-     *
-     * @param EmailVerifyRequest $request
-     * @return JsonResponse
-     */
-    public function requestEmailVerify(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            // rules
-            'email' => ['required', 'email', 'exists:users,email'],
-        ], [
-            // messages
-            'email.exists' => 'Account with this email was not found',
-        ]);
-
-        /** @var User $user */
-        $user = User::query()->where('email', $validated['email'])->first();
-        // todo: add notification and dispatch event
-
-        return new JsonResponse([
-            'message' => 'success',
-        ]);
-    }
-
-    /*
-     * WIP
-     */
     #[OA\Post(
         path: '/api/v1/user/password-reset',
         operationId: 'user-password-reset-request',
@@ -333,19 +205,16 @@ class UserController extends ApiV1Controller
             Event::dispatch(new PasswordResetLinkSent($user));
         }
 
-        return new JsonResponse([
-            'message' => 'success',
-        ]);
+        return new JsonResponse(['message' => trans('common.password.sent')]);
     }
 
     #[OA\Put(
         path: '/api/v1/user/password-reset',
         operationId: 'user-password-reset',
         description: 'Performs the password reset with a new desired password using the token received over e-mail.' .
-        'The token expires 240 minutes (4 hours) after it was issued. The password must be repeated to confirm.' .
-        "\n\n **CAPTCHA-PROTECTED**" .
-        "\n### Rate Limiter\n| Number of Requests | Time frame |\n| -- | -- |\n" .
-        '| 1 | 6 hours (21600 seconds)',
+        "The token expires 240 minutes (4 hours) after it was issued. Password must be repeated to confirm.\n\n" .
+        'Email address is used to identify the account that requested password reset, ' .
+        'it must not be available to change through the request.',
         summary: 'Perform Password Reset',
         requestBody: new OA\RequestBody(
             required: true,

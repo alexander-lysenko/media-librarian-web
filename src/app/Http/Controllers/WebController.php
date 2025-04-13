@@ -77,14 +77,16 @@ class WebController extends Controller
         ]);
 
         $email = new ConfirmAddressMailable(
-            username: $request->input('username') ?: 'John Doe',
-            email: $request->input('email') ?: 'john.doe@example.com',
-            token: $request->input('token')
-                ?: '0000000000000000000000000000000000000000000000000000000000000000',
-            isFirstMsg: $request->input('isFirstMsg') ?: false,
+            username: $request->input(key: 'username', default: 'John Doe'),
+            email: $request->input(key: 'email', default: 'john.doe@example.com'),
+            token: $request->input(
+                key: 'token',
+                default: '0000000000000000000000000000000000000000000000000000000000000000'
+            ),
+            isFirstMsg: $request->input(key: 'isFirstMsg', default: false),
         );
 
-        return $email->locale($request->input('locale') ?: 'en');
+        return $email->locale($request->input('locale', 'en'));
     }
 
     public function previewPasswordResetEmail(Request $request): MailableContract
@@ -97,12 +99,14 @@ class WebController extends Controller
         ]);
 
         $email = new ResetPasswordMailable(
-            username: $request->input('username') ?: 'John Doe',
-            email: $request->input('email') ?: 'john.doe@example.com',
-            token: $request->input('token')
-                ?: '0000000000000000000000000000000000000000000000000000000000000000'
+            username: $request->input(key: 'username', default: 'John Doe'),
+            email: $request->input(key: 'email', default: 'john.doe@example.com'),
+            token: $request->input(
+                key: 'token',
+                default: '0000000000000000000000000000000000000000000000000000000000000000'
+            ),
         );
 
-        return $email->locale($request->input('locale') ?: 'en');
+        return $email->locale($request->input('locale', 'en'));
     }
 }
