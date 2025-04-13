@@ -32,7 +32,7 @@ class ResetPasswordMailable extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: trans('email.resetPass.title'),
+            subject: trans('mail.passwordReset.title'),
         );
     }
 

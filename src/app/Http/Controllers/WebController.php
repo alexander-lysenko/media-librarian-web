@@ -73,13 +73,15 @@ class WebController extends Controller
             'email' => ['email'],
             'token' => ['string', 'max:64'],
             'locale' => ['string', 'in:ru,en'],
+            'isFirstMsg' => ['boolean'],
         ]);
 
         $email = new ConfirmAddressMailable(
             username: $request->input('username') ?: 'John Doe',
             email: $request->input('email') ?: 'john.doe@example.com',
             token: $request->input('token')
-                ?: '0000000000000000000000000000000000000000000000000000000000000000'
+                ?: '0000000000000000000000000000000000000000000000000000000000000000',
+            isFirstMsg: $request->input('isFirstMsg') ?: false,
         );
 
         return $email->locale($request->input('locale') ?: 'en');

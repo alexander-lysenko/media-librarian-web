@@ -28,7 +28,10 @@ class ConfirmAddressMailable extends Mailable
         public string $email,
         /** The confirmation token (previously generated) */
         private readonly string $token,
-        /** This has an impact on the email's contents. If true, it addresses a user like they have just registered */
+        /**
+         * This has an impact on the email's contents.
+         * If set to true, the message addresses to a user like they have just registered.
+         */
         private readonly bool $isFirstMsg = false,
     ) {}
 
@@ -38,7 +41,7 @@ class ConfirmAddressMailable extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: trans('email.confirm.title'),
+            subject: trans('mail.verification.title'),
         );
     }
 

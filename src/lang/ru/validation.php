@@ -3,7 +3,7 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Validation Language Lines
+    | Языковые строки валидации (стандартные)
     |--------------------------------------------------------------------------
     | The following language lines contain the default error messages used by
     | the validator class. Some of these rules have multiple versions such
@@ -161,7 +161,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Custom Validation Language Lines
+    | Языковые строки валидации (кастомные)
     |--------------------------------------------------------------------------
     | Here you may specify custom validation messages for attributes using the
     | convention "attribute.rule" to name the lines. This makes it quick to
@@ -240,7 +240,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Custom Validation Attributes
+    | Кастомные атрибуты валидации
     |--------------------------------------------------------------------------
     | The following language lines are used to swap our attribute placeholder
     | with something more reader friendly such as "E-Mail Address" instead
@@ -256,7 +256,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Other Validation Messages
+    | Прочие сообщения валидации
     |--------------------------------------------------------------------------
     | The following language lines may not directly relate to validation rules or
     | attribute placeholders but may describe various side effects on validation.
