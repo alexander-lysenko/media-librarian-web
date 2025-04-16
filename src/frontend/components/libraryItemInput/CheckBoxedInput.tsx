@@ -12,20 +12,18 @@ export const CheckBoxedInput = (props: CheckBoxedInputProps) => {
 
   return (
     <FormControl fullWidth margin="dense" error={!!errorMessage}>
-      <FormControlLabel
-        label={label}
-        slotProps={{
-          typography: { noWrap: true },
-        }}
-        control={
-          <Controller
-            name={name}
-            control={control}
-            render={({ field }) => (
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <FormControlLabel
+            label={label}
+            slotProps={{ typography: { noWrap: true } }}
+            control={
               <Checkbox inputRef={field.ref} name={field.name} checked={!!field.value} onChange={field.onChange} />
-            )}
+            }
           />
-        }
+        )}
       />
       <FormHelperText variant={"outlined"}>{errorMessage || helperText}</FormHelperText>
     </FormControl>

@@ -186,10 +186,12 @@ const useDialogFormEvents = (
       updateLibraryItemRequest
         .fetch(request, { id: selectedLibraryId as number, item: selectedItem?.id as number })
         .then(() => handleCloseWithReset(event as SyntheticEvent));
+      // todo: mutate store with the response data
     } else {
       createLibraryItemRequest
         .fetch(request, { id: selectedLibraryId as number })
         .then(() => handleCloseWithReset(event as SyntheticEvent));
+      // todo: mutate store with the response data
     }
   };
 

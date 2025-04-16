@@ -40,18 +40,18 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
 
   return (
     <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
-      <FormControlLabel
-        label={label}
-        labelPlacement="start"
-        sx={{ justifyContent: "space-between", ml: 0 }}
-        slotProps={{
-          typography: { noWrap: true },
-        }}
-        control={
-          <Controller
-            name={name}
-            control={control}
-            render={({ field }: UseControllerReturn) => (
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }: UseControllerReturn) => (
+          <FormControlLabel
+            label={label}
+            labelPlacement="start"
+            sx={{ justifyContent: "space-between", ml: 0 }}
+            slotProps={{
+              typography: { noWrap: true },
+            }}
+            control={
               <Rating
                 ref={field.ref}
                 name={field.name}
@@ -67,9 +67,9 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
                   setStateValue(Number(newValue));
                 }}
               />
-            )}
+            }
           />
-        }
+        )}
       />
       <FormHelperText>{errorMessage || helperText}</FormHelperText>
     </FormControl>
