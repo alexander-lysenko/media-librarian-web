@@ -1,7 +1,8 @@
 import type { DataRow } from "./_dataTable";
 import type { LibraryElement, LibraryItem, LibraryItemFormValues, LibrarySchema } from "./_library";
 
-type PathParams = Record<string, string | number>;
+export type PathParams = Record<string, string | number>;
+export type QueryParams = Record<string, string | number | string[] | number[]>;
 
 // == core request types == //
 
@@ -51,9 +52,9 @@ export type ErrorResponse = {
 };
 
 export type ApiRequestFetch<Request, Response> = (
-  data: Request,
-  pathParams?: PathParams,
+  data?: Request,
   options?: {
+    signal?: AbortSignal;
     fakeResponse?: Response;
   },
 ) => Promise<Response | void>;
@@ -69,6 +70,8 @@ export type UseRequestReturn<Request, Response> = {
   fetch: ApiRequestFetch<Request, Response>;
   abort: AbortController["abort"];
   setResponseEvents: (events: HttpResponseEvents<Response>) => void;
+  setQueryParams: (params?: QueryParams) => void;
+  setPathParams: (params?: PathParams) => void;
 };
 
 // == useLibraryRequests == //

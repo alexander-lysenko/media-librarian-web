@@ -47,6 +47,10 @@ export default defineConfig(({ command, mode }) => {
           target: env.VITE_APP_URL,
           changeOrigin: true,
         },
+        "/api/unsplash": {
+          target: env.VITE_APP_URL,
+          changeOrigin: true,
+        },
         "/home": {
           target: env.VITE_APP_URL,
           changeOrigin: true,

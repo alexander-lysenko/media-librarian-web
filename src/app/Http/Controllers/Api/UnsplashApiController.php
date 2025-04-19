@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'unsplash', description: 'Unsplash API')]
@@ -113,15 +114,35 @@ class UnsplashApiController extends BaseController
     )]
     public function randomImage(Request $request, UnsplashApiService $service): JsonResponse
     {
-        $request->validate(['topics' => ['array'], 'topics.*' => 'string']);
+        $request->validate([
+            'query' => ['string'],
+            'topics' => ['array'],
+            'topics.*' => 'string',
+            'collections' => ['array'],
+            'collections.*' => 'string',
+        ]);
 
-        $topics = $request->input('topics');
-        $topicsJoint = implode(',', $request->input('topics'));
+        $filters = [];
+        $requestPrint = [];
+        if ($request->has('topics') && !$request->has('query')) {
+            $filters['topics'] = $request->input('topics');
+            $requestPrint[] = implode(',', $request->input('topics'));
+        }
+        if ($request->has('collections')&& !$request->has('query')) {
+            $filters['collections'] = $request->input('collections');
+            $requestPrint[] = implode(',', $request->input('collections'));
+        }
+        if ($request->has('query')) {
+            $filters['query'] = $request->input('query');
+            $requestPrint[] = $request->input('query');
+        }
+
+        $cacheKey = Hash::make(implode(':', $requestPrint));
 
         $images = Cache::remember(
-            key: "unsplash:random:$topicsJoint",
+            key: "unsplash:random:$cacheKey",
             ttl: 3_600,
-            callback: static fn() => $service->getRandomImages($topics)
+            callback: static fn() => $service->getRandomImages($filters)
         );
 
         return new JsonResponse(['image' => $images[array_rand($images)]]);

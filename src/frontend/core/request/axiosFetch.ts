@@ -21,7 +21,7 @@ export type FetchRequestConfig<Request> = AxiosRequestConfig<Request> & {
 };
 
 /**
- * Create an Axios instance with custom configuration preset
+ * Create an Axios instance with a custom configuration preset
  */
 const axiosInstance = () => {
   const instance = axios.create();

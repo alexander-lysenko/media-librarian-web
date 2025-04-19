@@ -112,7 +112,7 @@ Route::middleware(['throttle:api.basic'])
     ->prefix('unsplash/')->name('unsplash.')
     ->group(function () {
         Route::get('/image/{id}', [UnsplashApiController::class, 'getImage'])
-            ->whereAlphaNumeric('id')
+            ->where('id', '[\w]+')
             ->name('image');
         Route::get('/random', [UnsplashApiController::class, 'randomImage'])
             ->name('random');

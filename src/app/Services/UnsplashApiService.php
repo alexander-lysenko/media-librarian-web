@@ -22,18 +22,17 @@ class UnsplashApiService
     }
 
     /**
-     * @param array $topics
+     * @param array $filters
      * @param int $count
      * @return array<UnsplashImageDto>
      * @see https://unsplash.com/documentation#get-a-random-photo
      */
-    public function getRandomImages(array $topics, int $count = 30): array
+    public function getRandomImages(array $filters, int $count = 30): array
     {
         $photos = Photo::random([
             'orientation' => 'landscape',
             'count' => $count,
-            'topics' => implode(',', $topics),
-        ]);
+        ] + $filters);
 
         return array_map(static fn($photo) => new UnsplashImageDto(
             id: $photo['id'],

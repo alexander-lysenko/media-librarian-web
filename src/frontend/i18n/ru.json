@@ -272,5 +272,9 @@
   "theme": {
     "dark": "Темная",
     "light": "Светлая"
+  },
+  "unsplash": {
+    "author": "Автор",
+    "viewOnUnsplash": "Посмотреть на Unsplash"
   }
 }
