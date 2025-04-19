@@ -13,6 +13,7 @@ trim_trailing_whitespace = true
 [*.php]
 ij_php_line_comment_at_first_column = false
 ij_php_line_comment_add_space = true
+ij_php_blank_lines_before_return_statement = 1
 
 # noinspection ALL
 [*.md]

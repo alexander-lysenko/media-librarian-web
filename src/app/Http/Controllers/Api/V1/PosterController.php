@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Api\ApiV1Controller;
 use App\Utils\FileHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,6 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-#[OA\Tag(name: 'posters', description: 'Upload Posters for Library Items')]
 /**
  * PosterController - Uses a temporary storage to upload posters
  */

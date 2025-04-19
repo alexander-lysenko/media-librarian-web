@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\PasswordChangeRequest;
 use App\Http\Requests\V1\ProfileRequest;
 use App\Models\PersonalSetting;
@@ -18,7 +19,6 @@ use Illuminate\Support\Facades\Response;
 use OpenApi\Attributes as OA;
 use Throwable;
 
-#[OA\Tag(name: 'profile', description: 'Profile (For Authenticated Users)')]
 #[OA\Schema(
     schema: 'Profile',
     properties: [

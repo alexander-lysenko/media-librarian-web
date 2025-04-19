@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\V1\LibraryIdRequest;
+use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\CreateLibraryRequest;
+use App\Http\Requests\V1\LibraryIdRequest;
 use App\Models\SqliteLibraryMeta;
 use Carbon\Carbon;
 use Illuminate\Database\Schema\Blueprint;
@@ -15,7 +16,6 @@ use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 use Throwable;
 
-#[OA\Tag(name: 'libraries', description: 'Manage Libraries')]
 #[OA\Schema(
     schema: 'DataTypes',
     description: 'List of available types to be used for building inputs',

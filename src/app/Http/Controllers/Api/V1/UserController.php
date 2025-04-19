@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Events\PasswordResetLinkSent;
 use App\Events\Registered;
-use App\Http\Requests\V1\EmailVerifyRequest;
+use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\PasswordResetPerformRequest;
 use App\Http\Requests\V1\SignupRequest;
 use App\Models\User;
@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Hash;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
-#[OA\Tag(name: 'auth', description: 'Guest (For Unauthenticated Users)')]
 /**
  * User controller - manage user/identity actions
  * @see https://github.com/laravel/breeze

@@ -11,11 +11,12 @@ import type { UseControllerReturn } from "react-hook-form";
 
 /**
  * Library Item Form - Colored Rating Input
- * Supports setting value as null by second click on active star
- * The color is auto applied by value:
+ * Supports cleaning value by the second click on the last active star (or double-click on any star).
+ * It applies the color automatically depending on the ratio (input's value / star count):
+ * - "gray" - ratio is 0, or value is undefined
  * - "red" - ratio is under 0.5
  * - "yellow" - ratio is between 0.5 - 0.89
- * - "green" - ratio is 0.9 and up
+ * - "green" - ratio is 0.9 and more
  */
 export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
   const { label, errorMessage, helperText, size, precision } = props;

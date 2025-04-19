@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\DTO\LibraryFilterDTO;
+use App\DTO\LibraryFilterDto;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -20,10 +20,10 @@ class LibrarySearch
 
     /**
      * The search payload method
-     * @param LibraryFilterDTO $filter
+     * @param LibraryFilterDto $filter
      * @return LengthAwarePaginator
      */
-    public function search(LibraryFilterDTO $filter): LengthAwarePaginator
+    public function search(LibraryFilterDto $filter): LengthAwarePaginator
     {
         $this->query = SqliteLibraryMeta::getLibraryTableQuery($filter->libraryId);
         foreach ($filter->term as $column => $parameters) {

@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api\V1;
 
-use App\DTO\LibraryFilterDTO;
+use App\DTO\LibraryFilterDto;
+use App\Http\Controllers\Api\ApiV1Controller;
+use App\Http\Requests\V1\LibraryIdRequest;
 use App\Http\Requests\V1\LibraryItemCreateRequest;
 use App\Http\Requests\V1\LibraryItemRequest;
 use App\Http\Requests\V1\LibraryItemUpdateRequest;
-use App\Http\Requests\V1\LibraryIdRequest;
 use App\Http\Requests\V1\LibraryPaginatedRequest;
 use App\Http\Resources\LibraryItemResource;
-use App\Jobs\PosterUploadJob;
 use App\Models\LibrarySearch;
 use App\Models\SqliteLibraryMeta;
-use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,7 +20,6 @@ use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 use Random\RandomException;
 
-#[OA\Tag(name: 'items', description: 'Manage Items of a Library')]
 #[OA\Schema(
     schema: 'LibraryItemExample',
     title: 'LibraryItemExample',
@@ -411,7 +409,7 @@ class LibraryItemController extends ApiV1Controller
     )]
     public function search(LibraryPaginatedRequest $request, LibrarySearch $librarySearch): JsonResponse
     {
-        $filterDto = LibraryFilterDTO::fromRequest($request);
+        $filterDto = LibraryFilterDto::fromRequest($request);
         // todo: test it
         $paginatedResource = $librarySearch->search($filterDto);
 

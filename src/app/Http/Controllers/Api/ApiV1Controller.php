@@ -1,6 +1,7 @@
 <?php
+/** @noinspection SpellCheckingInspection */
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -89,6 +90,13 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'message', type: 'string', example: 'An internal server error occurred'),
     ])
 )]
+
+#[OA\Tag(name: 'auth', description: 'Guest (For Unauthenticated Users)')]
+#[OA\Tag(name: 'profile', description: 'Profile (For Authenticated Users)')]
+#[OA\Tag(name: 'libraries', description: 'Manage Libraries')]
+#[OA\Tag(name: 'items', description: 'Manage Items of a Library')]
+#[OA\Tag(name: 'posters', description: 'Upload Posters for Library Items')]
+#[OA\Tag(name: 'validations', description: 'Auxiliary validation endpoints for front-end forms')]
 /**
  * Base controller for API v1 routing in application
  */
@@ -324,9 +332,4 @@ abstract class ApiV1Controller extends BaseController
         'TikoDBsuvlk+5/VSbLr5ZPuf1U4oPI0AwuEvGV4e2yOhUyIi47QwQMyDjUhVNPwm9H+o1cl+CvoFAf/2Q==',
     )]
     private string $posterRef = self::SCHEMA_POSTER_BASE64_REF;
-
-    protected static function rateLimiterOutput(): string
-    {
-        return 'Rate Limiter';
-    }
 }

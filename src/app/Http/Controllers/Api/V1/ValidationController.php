@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\ValidateLibraryItemNameRequest;
 use App\Rules\UniqueLibraryNameRule;
 use App\Utils\Enum\RegexPatternsEnum;
@@ -9,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
-#[OA\Tag(name: 'validations', description: 'Auxiliary validation endpoints for front-end forms')]
 /**
  * Validation Controller - performs various independent asynchronous validations
  */
@@ -20,7 +20,7 @@ class ValidationController extends ApiV1Controller
         operationId: 'validate-email',
         description: '',
         summary: "Validate user's e-mail address during signup and/or changing address through its profile",
-        tags: ['validation'],
+        tags: ['validations'],
         parameters: [
             new OA\Parameter(name: 'email', in: 'query', required: true, schema: new OA\Schema(type: 'string')),
         ],
@@ -45,7 +45,7 @@ class ValidationController extends ApiV1Controller
         description: '',
         summary: 'Validate uniqueness for Library name when a new Library is created',
         security: self::SECURITY_SCHEME_BEARER,
-        tags: ['validation'],
+        tags: ['validations'],
         parameters: [
             new OA\Parameter(name: 'title', in: 'query', required: true, schema: new OA\Schema(type: 'string')),
         ],
@@ -73,7 +73,7 @@ class ValidationController extends ApiV1Controller
         description: '',
         summary: 'Validate uniqueness for Item name when the Item is created or updated',
         security: self::SECURITY_SCHEME_BEARER,
-        tags: ['validation'],
+        tags: ['validations'],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
             new OA\Parameter(
