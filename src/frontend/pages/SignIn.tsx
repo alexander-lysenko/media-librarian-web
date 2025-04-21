@@ -29,7 +29,7 @@ export const SignIn = () => {
         setBackground(response.image as never);
       },
     });
-    getImageRequest.setQueryParams({ query: "movie, movie poster, cinema" });
+    getImageRequest.setQueryParams({ query: "movie, cinema, audio, music, studio, arts" });
     void getImageRequest.fetch();
 
     return () => getImageRequest.abort();

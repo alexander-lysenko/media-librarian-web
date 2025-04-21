@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 import { confirmDialog, enqueueSnack } from "../core/actions";
@@ -27,19 +27,6 @@ export const useLibraryItemActions = () => {
   const requestItem = useLibraryItemGetRequest();
   const deleteItemRequest = useLibraryItemDeleteRequest();
 
-  useEffect(() => {
-    deleteItemRequest.setResponseEvents({
-      onSuccess: () => {
-        enqueueSnack({
-          type: "success",
-          message: t("notifications.libraryItemDeleted", { title: "555" }),
-        });
-        alert("getItems()");
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   /**
    * Launch LibraryItemDialog to create a Library item
    */
@@ -67,11 +54,12 @@ export const useLibraryItemActions = () => {
       },
     });
 
-    void requestItem.fetch(undefined, { id: selectedLibraryId, item: selectedItemId });
+    requestItem.setPathParams({ id: selectedLibraryId, item: selectedItemId });
+    void requestItem.fetch();
   }, [getSelectedLibrary, requestItem, selectedItemId]);
 
   /**
-   * Launch confirm dialog and initiate a request to delete a Library item
+   * Launch confirmation dialog and initiate a request to delete a Library item
    */
   const handleItemDelete = useCallback(() => {
     const selectedLibraryId = getSelectedLibrary()?.id;
@@ -96,7 +84,8 @@ export const useLibraryItemActions = () => {
       message: t("confirm.deleteLibraryItem"),
       subjectItem: subjectTitle,
       onConfirm: async () => {
-        await deleteItemRequest.fetch(undefined, { id: selectedLibraryId, item: selectedItemId });
+        deleteItemRequest.setPathParams({ id: selectedLibraryId, item: selectedItemId });
+        await deleteItemRequest.fetch();
       },
     });
   }, [deleteItemRequest, getSelectedLibrary, selectedItemId, t]);

@@ -1,5 +1,7 @@
-import { Button, Fade, Grid2 as Grid, styled, Typography } from "@mui/material";
+import { alpha, Fade, Grid2 as Grid, Link, Paper, styled, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+
+import { OpenInNewOutlined } from "../icons";
 
 import type { CSSProperties } from "react";
 
@@ -29,15 +31,16 @@ export const BackgroundContainer = ({ backgroundInfo }: Props) => {
     <Fade in timeout={150}>
       <Background size={{ xs: false, sm: 4, md: 7, xl: 8 }} style={cssVariables as CSSProperties}>
         {backgroundInfo && (
-          <Credits>
+          <Grid container justifyContent="space-between" component={Credits} square elevation={8}>
             <Typography variant="body2">
               {t("unsplash.author") + ": "}
-              {backgroundInfo?.author}
+              {backgroundInfo.author}
             </Typography>
-            <Button variant="text" size="small" href={backgroundInfo?.linkHtml ?? ""} target="_blank" rel="noreferrer">
+            <Link href={backgroundInfo.linkHtml} variant="body2" color="inherit" target="_blank" rel="noreferrer">
               {t("unsplash.viewOnUnsplash")}
-            </Button>
-          </Credits>
+              <OpenInNewOutlined fontSize="small" sx={{ ml: 0.5, verticalAlign: "bottom" }} />
+            </Link>
+          </Grid>
         )}
       </Background>
     </Fade>
@@ -45,6 +48,7 @@ export const BackgroundContainer = ({ backgroundInfo }: Props) => {
 };
 
 const Background = styled(Grid)(({ theme }) => ({
+  alignContent: "end",
   backgroundColor: theme.palette.mode === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
   backgroundRepeat: "no-repeat",
   backgroundSize: "cover",
@@ -63,9 +67,9 @@ const Background = styled(Grid)(({ theme }) => ({
   },
 }));
 
-const Credits = styled("div")({
+const Credits = styled(Paper)(({ theme }) => ({
   padding: "16px",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-});
+  width: "100%",
+  backdropFilter: "blur(10px)",
+  backgroundColor: alpha(theme.palette.background.paper, 0.5),
+}));

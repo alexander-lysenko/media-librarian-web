@@ -27,7 +27,7 @@ export const SignUp = () => {
         setBackground(response.image as never);
       },
     });
-    getImage.setQueryParams({ query: "poster, audio, studio" });
+    getImage.setQueryParams({ query: "movie, cinema, audio, music, studio, arts" });
     void getImage.fetch();
 
     return () => getImage.abort();
@@ -37,7 +37,7 @@ export const SignUp = () => {
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <BackgroundContainer backgroundInfo={background} />
-      <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} component={Paper} elevation={6} square>
+      <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} component={FormPaper} elevation={6} square>
         <Contents>
           <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
             <PersonAddAltRounded />
@@ -70,4 +70,9 @@ const Contents = styled(Container)({
   flexDirection: "column",
   alignItems: "center",
   paddingTop: 64,
+});
+
+const FormPaper = styled(Paper)({
+  height: "100vh",
+  overflow: "auto",
 });

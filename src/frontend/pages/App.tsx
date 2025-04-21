@@ -31,7 +31,8 @@ export const App = () => {
     const selectedLibraryId = getSelectedLibrary()?.id;
 
     if (selectedLibraryId) {
-      void requestItems.fetch(undefined, { id: selectedLibraryId });
+      requestItems.setPathParams({ id: selectedLibraryId });
+      void requestItems.fetch();
     }
   }, [getSelectedLibrary, requestItems]);
 
@@ -47,11 +48,16 @@ export const App = () => {
   useEffect(() => {
     requestLibraries.fetch().then(getItems);
 
-    return useLibraryTableStore.subscribe(
+    useLibraryTableStore.subscribe(
       (state) => [state.sort, state.page, state.rowsPerPage],
       getItems, // don't let prettier reformat this code
       { equalityFn: shallow },
     );
+
+    return () => {
+      requestLibraries.abort();
+      requestItems.abort();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

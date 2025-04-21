@@ -39,7 +39,7 @@ const FooterWrapper = ({ children }: Props) => {
     theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[800];
 
   return (
-    <Box component="footer" sx={{ py: 3, px: 2, mt: "auto", backgroundColor, width: "100%" }}>
+    <Box component="footer" sx={{ py: 2, px: 2, mt: "auto", backgroundColor, width: "100%" }}>
       {children}
     </Box>
   );

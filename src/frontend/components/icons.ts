@@ -40,6 +40,7 @@ import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import NotificationImportantOutlinedIcon from "@mui/icons-material/NotificationImportantOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import PasswordOutlinedIcon from "@mui/icons-material/PasswordOutlined";
 import PermContactCalendarOutlinedIcon from "@mui/icons-material/PermContactCalendarOutlined";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
@@ -107,6 +108,7 @@ export {
   NavigateNextOutlinedIcon as NavigateNextOutlined,
   NotificationImportantOutlinedIcon as NotificationImportantOutlined,
   NotificationsOutlinedIcon as NotificationsOutlined,
+  OpenInNewOutlinedIcon as OpenInNewOutlined,
   PasswordOutlinedIcon as PasswordOutlined,
   PermContactCalendarOutlinedIcon as PermContactCalendarOutlined,
   PersonAddAltOutlinedIcon as PersonAddAltOutlined,

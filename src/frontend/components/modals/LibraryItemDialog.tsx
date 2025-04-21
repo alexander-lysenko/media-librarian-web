@@ -32,7 +32,6 @@ import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } fr
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
  * TODO: WIP
- * Todo: fix rating fields in edit mode
  */
 export const LibraryItemDialog = () => {
   const { t } = useTranslation();
@@ -49,11 +48,7 @@ export const LibraryItemDialog = () => {
   const { formState, reset, handleSubmit, control } = useHookForm;
   const { errors } = formState;
 
-  const { onValidSubmit, onInvalidSubmit, handleCloseWithReset, handleSubmitByCtrlEnter } = useDialogFormEvents(
-    useHookForm,
-    setLoading,
-    setShowPoster,
-  );
+  const formEvents = useDialogFormEvents(useHookForm, setLoading, setShowPoster);
 
   useEffect(() => {
     if (open) {
@@ -77,14 +72,14 @@ export const LibraryItemDialog = () => {
       paper: {
         component: "form",
         sx: { minHeight: { sm: "calc(100% - 128px)" } },
-        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
-        onKeyDown: handleSubmitByCtrlEnter,
+        onSubmit: handleSubmit(formEvents.onValidSubmit, formEvents.onInvalidSubmit),
+        onKeyDown: formEvents.handleSubmitByCtrlEnter,
       },
     },
   };
 
   return (
-    <Dialog {...dialogProps} onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
+    <Dialog {...dialogProps} onSubmit={handleSubmit(formEvents.onValidSubmit, formEvents.onInvalidSubmit)}>
       <DialogTitle variant="h5" noWrap>
         {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
       </DialogTitle>
@@ -114,7 +109,7 @@ export const LibraryItemDialog = () => {
           children={t("libraryItem.addPoster")}
         />
         <Box flex="1 0 auto" />
-        <Button variant="text" onClick={handleCloseWithReset} children={t("common.cancel")} />
+        <Button variant="text" onClick={formEvents.handleCloseWithReset} children={t("common.cancel")} />
         <Button
           type="submit"
           variant="contained"
@@ -183,14 +178,24 @@ const useDialogFormEvents = (
     };
 
     if (isEditMode) {
-      updateLibraryItemRequest
-        .fetch(request, { id: selectedLibraryId as number, item: selectedItem?.id as number })
-        .then(() => handleCloseWithReset(event as SyntheticEvent));
+      updateLibraryItemRequest.setPathParams({ id: selectedLibraryId as number, item: selectedItem?.id as number });
+      updateLibraryItemRequest.setResponseEvents({
+        onSuccess: () => {
+          handleCloseWithReset(event as SyntheticEvent);
+        },
+      });
+
+      void updateLibraryItemRequest.fetch(request);
       // todo: mutate store with the response data
     } else {
-      createLibraryItemRequest
-        .fetch(request, { id: selectedLibraryId as number })
-        .then(() => handleCloseWithReset(event as SyntheticEvent));
+      createLibraryItemRequest.setPathParams({ id: selectedLibraryId as number });
+      createLibraryItemRequest.setResponseEvents({
+        onSuccess: () => {
+          handleCloseWithReset(event as SyntheticEvent);
+        },
+      });
+
+      void createLibraryItemRequest.fetch(request);
       // todo: mutate store with the response data
     }
   };
