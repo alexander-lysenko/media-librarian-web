@@ -21,12 +21,13 @@ export { TextInputSingleLine } from "./TextInputSingleLine";
 export { UrlInputLine } from "./UrlInputLine";
 
 type LibraryInputProps = InputCustomProps & {
-  control: Control;
   type: keyof typeof LibraryElementEnum;
+  control: Control;
+  loadingState?: boolean;
 };
 
 /**
- * Auto selects input controls into Library Item Form
+ * Auto-selects input controls into Library Item Form
  * based on the schema object of Library
  *
  * WARNING: React Hook Form must control the default values of the libraryItemInputs (both initial and pre-filled)

@@ -2,6 +2,7 @@
   "app": {
     "backToApplication": "Вернуться в приложение",
     "errorOccurred": "Во время загрузки Вашего контента произошла ошибка.",
+    "internalServerError": "Произошла внутренняя ошибка сервера.",
     "logout": "Выйти из аккаунта",
     "noNewNotifications": "Тишь да гладь, ничего нового",
     "openProfileMenu": "Открыть меню профиля",

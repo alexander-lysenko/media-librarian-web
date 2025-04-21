@@ -9,6 +9,8 @@ type LibraryItemFormState = {
   selectedItem: LibraryItem | null;
   poster: string | null;
   setPoster: (poster: string | null) => void;
+  titleUniqueProcessing: boolean;
+  setTitleUniqueProcessing: (value: boolean) => void;
   handleOpen: (selectedLibraryId: number, selectedItem?: LibraryItem) => void;
   handleClose: VoidFunction;
 };
@@ -20,6 +22,8 @@ export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
   selectedItem: null,
   poster: null,
   setPoster: (poster) => set({ poster }),
+  titleUniqueProcessing: false,
+  setTitleUniqueProcessing: (value: boolean) => set({ titleUniqueProcessing: value }),
   handleOpen: (selectedLibraryId, selectedItem = undefined) =>
     set({
       open: true,

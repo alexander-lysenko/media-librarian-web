@@ -36,7 +36,7 @@ export const SidebarProfiler = () => {
     <List sx={{ py: 0 }}>
       <ListItem key="profile" sx={profileSx}>
         <Grid container>
-          <ProfileAvatar username="User Name" sx={{ width: 60, height: 60 }} />
+          <ProfileAvatar username="User Name" src="" sx={{ width: 60, height: 60 }} />
           <Grid container alignItems="flex-end" sx={{ mt: 2 }} wrap="nowrap" onClick={toggleCollapse}>
             <Grid item xs zeroMinWidth>
               <Typography variant="subtitle1" sx={{ fontWeight: "bold", lineHeight: 1.5 }} noWrap>

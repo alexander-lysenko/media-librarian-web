@@ -14,3 +14,7 @@ export const libraryItemEndpoint = "/api/v1/libraries/{id}/items/{item}";
 
 export const unsplashRandomImageEndpoint = "/api/unsplash/random";
 export const unsplashExactImageEndpoint = "/api/unsplash/image/{id}";
+
+export const validateEmailEndpoint = "/api/v1/validations/email";
+export const validateLibraryNameEndpoint = "/api/v1/validations/libraries";
+export const validateItemNameEndpoint = "/api/v1/validations/libraries/{id}/items";

@@ -1,8 +1,13 @@
 import { debounce } from "@mui/material/utils";
 import { useTranslation } from "react-i18next";
 
-import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
-import { useSignupFormStore } from "../store/useSignupFormStore";
+import {
+  useEmailValidationRequest,
+  useItemTitleValidationRequest,
+  useLibraryTitleValidationRequest,
+} from "../requests/validationRequests";
+import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
+import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 
 import type { RegisteredFormNamesEnum } from "../core/enums";
 import type {
@@ -13,12 +18,20 @@ import type {
   UseFormRegisterReturn,
   UseFormReturn,
 } from "react-hook-form";
+import type { ValidateResult } from "react-hook-form/dist/types/validator";
 
 type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: UseFormReturn<any>) => {
   const { t } = useTranslation();
+
+  const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
+  const selectedItem = useLibraryItemFormStore((state) => state.selectedItem?.id);
+
+  const validateEmail = useEmailValidationRequest();
+  const validateLibraryTitle = useLibraryTitleValidationRequest();
+  const validateItemTitle = useItemTitleValidationRequest();
 
   const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   const urlPattern = /^(ht|f)tps?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,9}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/i;
@@ -99,20 +112,10 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
           message: t("formValidation.emailInvalid"),
         },
         validate: {
-          uniqueValidation: async (value: string) => {
-            const setEmailCheckingState = useSignupFormStore.getState().setEmailUniqueProcessing;
-            const message = t("formValidation.emailNotUnique");
-            setEmailCheckingState(true);
-
-            // todo: replace with a real API request
-            const hasEmailTaken = await new Promise<boolean>((resolve) => {
-              setTimeout(() => {
-                resolve(value === "admin@example.com");
-              }, 1000);
-            });
-
-            setEmailCheckingState(false);
-            return !hasEmailTaken || message;
+          uniqueValidation: async (value: string): Promise<ValidateResult> => {
+            const message = await validateEmail.fetch({ email: value }).catch((error) => error.message);
+            console.log(message);
+            return message;
           },
         },
       },
@@ -149,20 +152,8 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         setValueAs: (value: string) => value.trim(),
         required: t("formValidation.libraryTitleRequired") as Message,
         validate: {
-          uniqueValidation: async (value: string) => {
-            const message = t("formValidation.libraryTitleNotUnique");
-            const setTitleCheckingState = useLibraryCreateFormStore.getState().setTitleUniqueProcessing;
-            setTitleCheckingState(true);
-
-            // todo: replace with a real API request
-            const hasTitleTaken = await new Promise<boolean>((resolve) => {
-              setTimeout(() => {
-                resolve(value === "Example");
-              }, 1000);
-            });
-
-            setTitleCheckingState(false);
-            return !hasTitleTaken || message;
+          uniqueValidation: async (value: string): Promise<ValidateResult> => {
+            return await validateLibraryTitle.fetch({ title: value });
           },
         },
       },
@@ -189,20 +180,10 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         setValueAs: (value: string) => value?.trim(),
         required: t("formValidation.entryTitleRequired") as Message,
         validate: {
-          uniqueValidation: async (value: string) => {
-            const message = t("formValidation.entryTitleNotUnique");
-            const setTitleCheckingState = useLibraryCreateFormStore.getState().setTitleUniqueProcessing;
-            setTitleCheckingState(true);
+          uniqueValidation: async (value: string): Promise<ValidateResult> => {
+            validateItemTitle.setPathParams({ id: selectedLibrary?.id as number });
 
-            // todo: replace with a real API request
-            const hasTitleTaken = await new Promise<boolean>((resolve) => {
-              setTimeout(() => {
-                resolve(value === "Example");
-              }, 1000);
-            });
-
-            setTitleCheckingState(false);
-            return !hasTitleTaken || message;
+            return await validateItemTitle.fetch({ title: value, item: selectedItem ?? null });
           },
         },
       },
@@ -229,18 +210,9 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
         validate: {
           uniqueValidation: async (value: string) => {
-            const setEmailCheckingState = useSignupFormStore.getState().setEmailUniqueProcessing;
             const message = t("formValidation.emailNotUnique");
-            setEmailCheckingState(true);
 
-            // todo: replace with a real API request
-            const hasEmailTaken = await new Promise<boolean>((resolve) => {
-              setTimeout(() => {
-                resolve(value === "admin@example.com");
-              }, 1000);
-            });
-
-            setEmailCheckingState(false);
+            const hasEmailTaken = await validateEmail.fetch({ email: value });
             return !hasEmailTaken || message;
           },
         },

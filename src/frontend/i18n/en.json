@@ -2,6 +2,7 @@
   "app": {
     "backToApplication": "Back To Application",
     "errorOccurred": "An error occurred while your content was being loaded.",
+    "internalServerError": "An internal server error occurred.",
     "logout": "Log Out",
     "noNewNotifications": "You've all caught up!",
     "openProfileMenu": "Open Profile Menu",

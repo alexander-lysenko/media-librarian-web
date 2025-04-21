@@ -13,7 +13,7 @@ export type FetchRequestConfig<Request> = AxiosRequestConfig<Request> & {
   /** The API endpoint's route (absolute URL) */
   url: string;
 
-  /** The API request method: GET, POST, PUT, DELETE, etc */
+  /** The API request method: GET, POST, PUT, DELETE, etc. */
   method: Method;
 
   /** The endpoint's request payload */
@@ -44,7 +44,7 @@ const axiosInstance = () => {
 export const axiosFetch = async <RequestType, ResponseType>(
   config: FetchRequestConfig<RequestType>,
   events: HttpResponseEvents<ResponseType>,
-): Promise<ResponseType | void> => {
+): Promise<ResponseType | undefined> => {
   const instance = axiosInstance();
   const bearerToken = useAuthCredentialsStore.getState().token;
   const { beforeSend, onSuccess, onReject, onError, onComplete } = events;

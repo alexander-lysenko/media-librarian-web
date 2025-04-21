@@ -55,12 +55,12 @@ Route::middleware(['auth.bearer:sanctum', 'throttle:api.basic'])
 
 // Routes for validation stuff
 Route::middleware(['auth', 'throttle:api.validation'])
-    ->prefix('v1/validation/')->name('v1.validation.')
+    ->prefix('v1/validations/')->name('v1.validation.')
     ->group(function () {
         Route::post('/email', [ValidationController::class, 'validateUserEmail'])->name('email');
     });
 Route::middleware(['auth.bearer:sanctum', 'throttle:api.validation'])
-    ->prefix('v1/validation/')->name('v1.validation.')
+    ->prefix('v1/validations/')->name('v1.validation.')
     ->group(function () {
         Route::post('/libraries', [ValidationController::class, 'validateLibraryName'])
             ->name('libraries');

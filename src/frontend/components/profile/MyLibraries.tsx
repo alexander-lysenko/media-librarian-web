@@ -45,7 +45,8 @@ export const MyLibraries = () => {
         message: t("confirm.cleanupLibrary"),
         subjectItem: name,
         onConfirm: async () => {
-          await libraryCleanupRequest.fetch(undefined, { id }).then(() => {
+          libraryCleanupRequest.setPathParams({ id });
+          await libraryCleanupRequest.fetch().then(() => {
             return getLibrariesRequest.fetch();
           });
         },
@@ -59,7 +60,8 @@ export const MyLibraries = () => {
         message: t("confirm.deleteLibrary"),
         subjectItem: name,
         onConfirm: async () => {
-          await libraryDeleteRequest.fetch(undefined, { id }).then(() => {
+          libraryDeleteRequest.setPathParams({ id });
+          await libraryDeleteRequest.fetch().then(() => {
             return getLibrariesRequest.fetch();
           });
         },

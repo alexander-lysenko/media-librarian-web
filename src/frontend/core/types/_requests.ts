@@ -57,7 +57,7 @@ export type ApiRequestFetch<Request, Response> = (
     signal?: AbortSignal;
     fakeResponse?: Response;
   },
-) => Promise<Response | void>;
+) => Promise<Response | undefined>;
 
 export type ApiRequestHookReturn<Request, Response> = {
   status: RequestStatus;

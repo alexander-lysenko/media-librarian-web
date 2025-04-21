@@ -38,7 +38,7 @@ export const LibraryItemDialog = () => {
   const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
-  const { open, isEditMode, selectedItem } = useLibraryItemFormStore();
+  const { open, isEditMode, selectedItem, titleUniqueProcessing } = useLibraryItemFormStore();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [showPoster, setShowPoster] = useState<boolean>(false);
@@ -87,10 +87,11 @@ export const LibraryItemDialog = () => {
         {Object.entries(selectedLibrary?.fields || {}).map(([label, type]: [string, LibraryElement], index: number) => (
           <LibraryItemInputControl
             key={label}
-            type={type}
+            type={type as LibraryElement}
             label={label}
             control={control}
             errorMessage={errors?.[label]?.message as string}
+            loadingState={index === 0 ? titleUniqueProcessing : false}
             {...(index === 0 // prettier ignore
               ? registerFieldDebounced(1000, label, "title")
               : registerField(label, type))}

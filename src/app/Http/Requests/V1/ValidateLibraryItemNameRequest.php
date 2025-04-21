@@ -45,8 +45,8 @@ class ValidateLibraryItemNameRequest extends FormRequest
         /**
          * If the upper level validation fails, an exception will be thrown and the rules below will never run.
          * If the upper level validation succeeds, the validated values may be used in the lower level rules.
-         * ['id' => "1"] // This is the example of successful validation result (illustrated by field "id")
-         * ['item' => "1"] // This is the example of successful validation result (illustrated by field "item")
+         * ['id' => "1"] // This is the example of a successful validation result (illustrated by field "id")
+         * ['item' => "1"] // This is the example of a successful validation result (illustrated by field "item")
          */
 
         $idValidated = $this->validate([
@@ -68,6 +68,6 @@ class ValidateLibraryItemNameRequest extends FormRequest
 
         $uniqueRule = Rule::unique($libraryTablePath, $libraryNameColumn)->ignore($itemValidated['item'] ?? null);
 
-        return ['name' => ['required', 'string', $uniqueRule]];
+        return ['title' => ['required', 'string', $uniqueRule]];
     }
 }

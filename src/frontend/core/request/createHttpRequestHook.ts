@@ -27,7 +27,8 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
     const { verbose = import.meta.env.VITE_APP_DEBUG } = config;
     const descriptor = `[${method}] ${url} -->`;
 
-    // const [abortController] = useState<AbortController>(config.abortController ?? new AbortController());
+    // abortController is intentionally mutated,
+    // because new AbortController() could be created inside useEffect, and it must not trigger re-renders;
     let abortController: AbortController | undefined;
     const [status, setStatus] = useState<RequestStatus>("IDLE");
 
@@ -41,33 +42,28 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
     const eventHandlers: HttpResponseEvents<ResponseType> = {
       beforeSend: () => {
         setStatus("LOADING");
-        responseEvents?.beforeSend?.();
         // eslint-disable-next-line no-console
         verbose && console.log(`${descriptor} Requesting...`);
       },
       onSuccess: (response) => {
         setStatus("SUCCESS");
-        responseEvents?.onSuccess?.(response);
         // eslint-disable-next-line no-console
         verbose && console.log(`${descriptor} Loaded!`, response);
         debugStatus = "SUCCESS";
       },
       onReject: (reason) => {
         setStatus("FAILED");
-        responseEvents?.onReject?.(reason);
         // eslint-disable-next-line no-console
         verbose && console.error(`${descriptor} Rejected!`, reason);
         debugStatus = "FAILED";
       },
       onError: (error) => {
         setStatus("FAILED");
-        responseEvents?.onError?.(error);
         // eslint-disable-next-line no-console
         verbose && console.error(`${descriptor} Failed!`, error);
         debugStatus = "FAILED";
       },
       onComplete: () => {
-        responseEvents?.onComplete?.();
         // eslint-disable-next-line no-console
         verbose && console.log(`${descriptor} Status:`, debugStatus);
       },
@@ -88,9 +84,7 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
     /**
      * Implemented `fetch` using Axios
      */
-    const fetch: ApiRequestFetch<RequestType, ResponseType> = async (
-      data?: RequestType,
-    ): Promise<ResponseType | void> => {
+    const fetch: ApiRequestFetch<RequestType, ResponseType> = async (data?: RequestType) => {
       abortController = new AbortController();
 
       const config: FetchRequestConfig<RequestType> = {
