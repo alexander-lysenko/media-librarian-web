@@ -7,12 +7,12 @@ import type { DataColumn, DataColumnPropsByType, DataRow } from "../../core/type
 
 type SortDirection = "asc" | "desc";
 
-type SortOptions = {
+interface SortOptions {
   column: string;
   direction: SortDirection;
-};
+}
 
-type LibraryTableState = {
+interface LibraryTableState {
   columnOptions: DataColumnPropsByType;
   columns: DataColumn[];
   rows: DataRow[];
@@ -31,7 +31,7 @@ type LibraryTableState = {
   setRowsPerPage: (rowsPerPage: number) => void;
   applyRowsPerPage: (rowsPerPage: number) => void;
   setPagination: (page: number, rowsPerPage: number, total: number) => void;
-};
+}
 
 export const useLibraryTableStore = create(
   subscribeWithSelector<LibraryTableState>((set) => ({

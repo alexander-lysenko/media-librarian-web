@@ -1,22 +1,22 @@
-export type CropSize = {
+export interface CropSize {
   width: number;
   height: number;
-};
+}
 
-export type CropArea = {
+export interface CropArea {
   width: number;
   height: number;
   x: number;
   y: number;
-};
+}
 
-export type CropFlip = {
+export interface CropFlip {
   horizontal: boolean;
   vertical: boolean;
-};
+}
 
-export type CropParams = {
+export interface CropParams {
   area: CropArea;
   rotation: number;
   flip: CropFlip;
-};
+}

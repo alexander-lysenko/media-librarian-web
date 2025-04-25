@@ -1,11 +1,11 @@
-import { alpha, Fade, Grid2 as Grid, Link, Paper, styled, Typography } from "@mui/material";
+import { alpha, Fade, Grid, Link, Paper, styled, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import { OpenInNewOutlined } from "../icons";
 
 import type { CSSProperties } from "react";
 
-type Props = {
+interface Props {
   backgroundInfo?: {
     linkHtml: string;
     urlFull: string;
@@ -13,7 +13,7 @@ type Props = {
     urlSmall: string;
     author: string;
   };
-};
+}
 
 /**
  * The component can be used as a Container with background-image taken randomly from Unsplash.

@@ -44,28 +44,38 @@ export const createHttpRequestHook = <RequestType = never, ResponseType = never>
         setStatus("LOADING");
         // eslint-disable-next-line no-console
         verbose && console.log(`${descriptor} Requesting...`);
+
+        return responseEvents?.beforeSend?.();
       },
       onSuccess: (response) => {
         setStatus("SUCCESS");
         // eslint-disable-next-line no-console
         verbose && console.log(`${descriptor} Loaded!`, response);
         debugStatus = "SUCCESS";
+
+        return responseEvents?.onSuccess?.(response);
       },
       onReject: (reason) => {
         setStatus("FAILED");
         // eslint-disable-next-line no-console
         verbose && console.error(`${descriptor} Rejected!`, reason);
         debugStatus = "FAILED";
+
+        return responseEvents?.onReject?.(reason);
       },
       onError: (error) => {
         setStatus("FAILED");
         // eslint-disable-next-line no-console
         verbose && console.error(`${descriptor} Failed!`, error);
         debugStatus = "FAILED";
+
+        return responseEvents?.onError?.(error);
       },
       onComplete: () => {
         // eslint-disable-next-line no-console
         verbose && console.log(`${descriptor} Status:`, debugStatus);
+
+        return responseEvents?.onComplete?.();
       },
     };
 

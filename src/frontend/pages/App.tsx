@@ -48,13 +48,12 @@ export const App = () => {
   useEffect(() => {
     requestLibraries.fetch().then(getItems);
 
-    useLibraryTableStore.subscribe(
-      (state) => [state.sort, state.page, state.rowsPerPage],
-      getItems, // don't let prettier reformat this code
-      { equalityFn: shallow },
-    );
-
     return () => {
+      useLibraryTableStore.subscribe(
+        (state) => [state.sort, state.page, state.rowsPerPage],
+        getItems, // don't let prettier reformat this code
+        { equalityFn: shallow },
+      );
       requestLibraries.abort();
       requestItems.abort();
     };
@@ -67,7 +66,7 @@ export const App = () => {
       <Container maxWidth="xl">
         <StyledHeaderBox>
           <Typography variant="h4" noWrap children={getSelectedLibrary()?.title} />
-          {"STATUS:" + requestItems.status}
+          {"STATUS:" + requestLibraries.status + " " + requestItems.status}
           <Button
             type="button"
             variant="contained"
@@ -82,7 +81,7 @@ export const App = () => {
             <LoadingOverlayInner />
           ) : requestLibraries.status === "FAILED" || requestItems.status === "FAILED" ? (
             <LibrariesErrorState />
-          ) : requestLibraries.status === "SUCCESS" && requestLibraries.status === "SUCCESS" && !libraries.length ? (
+          ) : requestLibraries.status === "SUCCESS" && requestItems.status === "SUCCESS" && !libraries.length ? (
             <LibrariesEmptyState />
           ) : (
             <LibraryTable />

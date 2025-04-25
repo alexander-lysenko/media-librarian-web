@@ -2,14 +2,14 @@ import { create } from "zustand";
 
 import type { ConfirmDialogProps } from "../../core/types";
 
-type DialogOpenState = {
+interface DialogOpenState {
   open: boolean;
   setOpen: (open: boolean) => void;
-};
+}
 
-type InitState = {
+interface InitState {
   init: (state: ConfirmDialogProps) => void;
-};
+}
 
 export const useConfirmDialogStore = create<InitState & DialogOpenState & ConfirmDialogProps>((set) => ({
   open: false,

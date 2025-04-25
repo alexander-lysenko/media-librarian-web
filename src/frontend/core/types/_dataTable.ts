@@ -4,72 +4,73 @@ import type { CSSProperties, MouseEvent } from "react";
 
 export type SortDirection = "asc" | "desc";
 
-export type DataRow = { id: number } & Record<string, unknown>;
+export interface DataRow extends Record<string, unknown> {
+  id: number;
+}
 
-export type DataColumn = {
+export interface DataColumn {
   label: string;
   type: LibraryElement;
-};
+}
 
-export type DataColumnStyleProps = {
+export interface DataColumnStyleProps {
   headerCellStyle?: CSSProperties;
   contentCellStyle?: CSSProperties;
-};
+}
 
 export type DataColumnPropsByType = Record<LibraryElement, DataColumnStyleProps>;
 
-export type SortOptions = {
+export interface SortOptions {
   column: string;
   direction: SortDirection;
-};
+}
 
-export type RowsPerPageListOptions = Array<number | { label: string; value: number }> | [];
+export type RowsPerPageListOptions = (number | { label: string; value: number })[] | [];
 
-export type DataTableBaseProps = {
+export interface DataTableBaseProps {
   columns: DataColumn[];
   rows: DataRow[];
-};
+}
 
-export type DataTableSelectedItemState = {
+export interface DataTableSelectedItemState {
   selectedItemId?: number | null;
   setSelectedItemId?: (selectedItem: number | null) => void;
-};
+}
 
-export type DataTableSortingState = {
+export interface DataTableSortingState {
   sort?: SortOptions | undefined;
   setSort?: (sort?: SortOptions) => void;
-};
+}
 
-export type DataTablePaginationProps = {
+export interface DataTablePaginationProps {
   total: number;
   page: number;
   rowsPerPage: number;
 
   setPage: (page: number) => void;
   setRowsPerPage: (rowsPerPage: number) => void;
-};
+}
 
-export type DataTableHeaderProps = DataTableSortingState & {
+export interface DataTableHeaderProps extends DataTableSortingState {
   columns: DataColumn[];
   columnOptions: DataColumnPropsByType;
-};
+}
 
-export type DataTableEventsProps = {
+export interface DataTableEventsProps {
   onSort: (columnId: string) => (event: MouseEvent) => void;
   onRowClick: (rowId: string | number) => (event: MouseEvent) => void;
-};
+}
 
-export type VirtuosoContextProps = {
+export interface VirtuosoContextProps {
   tableContainer?: TableContainerProps;
   table?: TableProps;
   tableHead?: TableHeadProps;
   tableRow?: TableRowProps;
   tableBody?: TableBodyProps;
-};
+}
 
 export type DataTableComponentProps = DataTableBaseProps & DataTableHeaderProps;
 
-export type DataTableVirtualizedProps = DataTableComponentProps &
-  DataTableSelectedItemState & {
-    componentProps?: VirtuosoContextProps;
-  };
+export interface DataTableVirtualizedProps extends DataTableComponentProps, DataTablePaginationProps {
+  componentProps?: VirtuosoContextProps;
+}

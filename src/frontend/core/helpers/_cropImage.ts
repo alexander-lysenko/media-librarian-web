@@ -32,7 +32,7 @@ const rotateSize = (width: number, height: number, rotation: number): CropSize =
 export const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: CropArea,
-  rotation: number = 0,
+  rotation = 0,
   flip: CropFlip = { horizontal: false, vertical: false },
   output: "blob" | "base64" = "base64",
 ): Promise<string | null> => {

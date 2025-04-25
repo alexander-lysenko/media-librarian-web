@@ -45,14 +45,14 @@ export const useLibraryAllItemsGetRequest = (): UseRequestReturn<GetLibraryItems
  * [GET] /api/v1/libraries/{id}/items/{item}
  * WIP
  */
-export const useLibraryItemGetRequest = (): UseRequestReturn<void, LibraryItemResponse> => {
+export const useLibraryItemGetRequest = (): UseRequestReturn<undefined, LibraryItemResponse> => {
   const customEvents: HttpResponseEvents<LibraryItemResponse> = {
     onError: (reason) => {
       enqueueSnack({ message: reason.message, type: "error" });
     },
   };
 
-  return createHttpRequestHook<void, LibraryItemResponse>({
+  return createHttpRequestHook<undefined, LibraryItemResponse>({
     method: "GET",
     endpoint: libraryItemEndpoint,
     customEvents,
@@ -114,14 +114,14 @@ export const useLibraryItemPutRequest = (): UseRequestReturn<PostLibraryItemRequ
  * [DELETE] /api/v1/libraries/{id}/items/{item}
  * WIP
  */
-export const useLibraryItemDeleteRequest = (): UseRequestReturn<void, void> => {
-  const customEvents: HttpResponseEvents<void> = {
+export const useLibraryItemDeleteRequest = (): UseRequestReturn<undefined, undefined> => {
+  const customEvents: HttpResponseEvents<undefined> = {
     onError: (reason) => {
       enqueueSnack({ message: reason.message, type: "error" });
     },
   };
 
-  return createHttpRequestHook<void, void>({
+  return createHttpRequestHook<undefined, undefined>({
     method: "DELETE",
     endpoint: libraryItemEndpoint,
     customEvents,

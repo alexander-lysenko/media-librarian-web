@@ -8,17 +8,17 @@ import type { ProfileData } from "../store/useProfileStore";
 
 type GetProfileResponse = ProfileData;
 
-type PasswordData = {
+interface PasswordData {
   password: string;
   newPassword: string;
   repeatPassword: string;
-};
+}
 
 /**
  * Request to get profile data
  * [GET] /api/v1/profile
  */
-export const useProfileGetRequest = (): UseRequestReturn<void, GetProfileResponse> => {
+export const useProfileGetRequest = (): UseRequestReturn<undefined, GetProfileResponse> => {
   const setProfile = useProfileStore((state) => state.setProfile);
 
   const responseEvents: HttpResponseEvents<GetProfileResponse> = {
@@ -27,7 +27,7 @@ export const useProfileGetRequest = (): UseRequestReturn<void, GetProfileRespons
     },
   };
 
-  return createHttpRequestHook<void, GetProfileResponse>({
+  return createHttpRequestHook<undefined, GetProfileResponse>({
     method: "GET",
     endpoint: profileEndpoint,
     customEvents: responseEvents,
@@ -50,8 +50,8 @@ export const useProfilePutRequest = (): UseRequestReturn<Partial<ProfileData["us
  * Request to change user's password.
  * [PUT] /api/v1/profile/password
  */
-export const useProfileChangePasswordRequest = (): UseRequestReturn<PasswordData, void> => {
-  const responseEvents: HttpResponseEvents<void> = {
+export const useProfileChangePasswordRequest = (): UseRequestReturn<PasswordData, undefined> => {
+  const responseEvents: HttpResponseEvents<undefined> = {
     onSuccess: () => {
       enqueueSnack({
         type: "success",
@@ -60,7 +60,7 @@ export const useProfileChangePasswordRequest = (): UseRequestReturn<PasswordData
     },
   };
 
-  return createHttpRequestHook<PasswordData, void>({
+  return createHttpRequestHook<PasswordData, undefined>({
     method: "PUT",
     endpoint: changePasswordEndpoint,
     customEvents: responseEvents,

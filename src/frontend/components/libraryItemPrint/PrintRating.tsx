@@ -5,10 +5,10 @@ import { Star, StarBorder, StarHalf } from "../icons";
 
 import type { ReactElement } from "react";
 
-type RatingProps = {
+interface RatingProps {
   size: 5 | 10;
   value: number;
-};
+}
 
 export const PrintRating = memo(({ size, value }: RatingProps) => {
   const stars: ReactElement[] = [];

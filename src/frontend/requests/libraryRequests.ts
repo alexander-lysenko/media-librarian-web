@@ -18,18 +18,18 @@ import type {
 } from "../core/types";
 import type { ErrorOption } from "react-hook-form";
 
-type LibraryCreateRequestProps = {
+interface LibraryCreateRequestProps {
   reset: () => void;
   setLoading: (value: boolean) => void;
   setOpen: (value: boolean) => void;
   setError: (name: never, error: ErrorOption) => void;
-};
+}
 
 /**
  * Request to get the schema of all available libraries
  * [GET] /api/v1/libraries
  */
-export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesResponse> => {
+export const useLibrariesGetRequest = (): UseRequestReturn<undefined, GetLibrariesResponse> => {
   const setLibraries = useLibrariesStore((state) => state.setLibraries);
   const setColumns = useLibraryTableStore((state) => state.setColumns);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
@@ -51,7 +51,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
     },
   };
 
-  return createHttpRequestHook<void, GetLibrariesResponse>({
+  return createHttpRequestHook<undefined, GetLibrariesResponse>({
     method: "GET",
     endpoint: librariesEndpoint,
     customEvents,
@@ -63,7 +63,7 @@ export const useLibrariesGetRequest = (): UseRequestReturn<void, GetLibrariesRes
  * Request to get the schema of a specific library by its ID
  * [GET] /api/v1/libraries/{id}
  */
-export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryResponse> => {
+export const useLibraryGetRequest = (): UseRequestReturn<undefined, GetLibraryResponse> => {
   const customEvents: HttpResponseEvents<GetLibraryResponse> = {
     onSuccess: (response) => {
       void response;
@@ -75,7 +75,7 @@ export const useLibraryGetRequest = (): UseRequestReturn<void, GetLibraryRespons
     },
   };
 
-  return createHttpRequestHook<void, GetLibraryResponse>({
+  return createHttpRequestHook<undefined, GetLibraryResponse>({
     method: "GET",
     endpoint: libraryEndpoint,
     customEvents,
@@ -128,15 +128,15 @@ export const useLibraryCreateRequest = ({
  * Request to delete a library
  * [DELETE] /api/v1/libraries/{id}
  */
-export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
-  const customEvents: HttpResponseEvents<void> = {
+export const useLibraryDeleteRequest = (): UseRequestReturn<undefined, undefined> => {
+  const customEvents: HttpResponseEvents<undefined> = {
     // onSuccess & onError should be filled from the place of request call
     onReject: (reason) => {
       enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
     },
   };
 
-  return createHttpRequestHook<void, void>({
+  return createHttpRequestHook<undefined, undefined>({
     method: "DELETE",
     endpoint: libraryEndpoint,
     customEvents,
@@ -147,7 +147,7 @@ export const useLibraryDeleteRequest = (): UseRequestReturn<void, void> => {
  * Request to clean a library (delete all items from a library but not the library itself)
  * [PATCH] /api/v1/libraries/{id}
  */
-export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryResponse> => {
+export const useLibraryCleanupRequest = (): UseRequestReturn<undefined, PatchLibraryResponse> => {
   const { t } = useTranslation();
 
   const customEvents: HttpResponseEvents<PatchLibraryResponse> = {
@@ -167,7 +167,7 @@ export const useLibraryCleanupRequest = (): UseRequestReturn<void, PatchLibraryR
     },
   };
 
-  return createHttpRequestHook<void, PatchLibraryResponse>({
+  return createHttpRequestHook<undefined, PatchLibraryResponse>({
     method: "PATCH",
     endpoint: libraryEndpoint,
     customEvents,

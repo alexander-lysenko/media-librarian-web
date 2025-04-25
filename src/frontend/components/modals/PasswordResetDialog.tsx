@@ -11,31 +11,28 @@ import {
   type DialogProps,
   DialogTitle,
   Grow,
-  InputAdornment,
   TextField,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import { type SubmitErrorHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../core/actions";
 import { useFormValidation } from "../../hooks";
-import { AlternateEmailOutlined, LockOutlined, LockReset } from "../icons";
+import { usePasswordResetRequest } from "../../requests/authRequests";
+import { AlternateEmailOutlined, LockReset } from "../icons";
+import { PasswordInput } from "../inputs/PasswordInput";
+import { TextInput } from "../inputs/TextInput";
 
-import type { InputCustomProps } from "../../core/types";
-import type { TextFieldProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
-import { TextInput } from "../inputs/TextInput";
-import { PasswordInput } from "../inputs/PasswordInput";
-import { usePasswordResetRequest } from "../../requests/authRequests";
 
-type Props = {
+interface Props {
   open: boolean;
   onClose: (event: SyntheticEvent | Event, reason?: string) => void;
-};
+}
 
 /**
  * Password Reset Dialog

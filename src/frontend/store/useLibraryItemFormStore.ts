@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { LibraryItem } from "../core/types";
 
-type LibraryItemFormState = {
+interface LibraryItemFormState {
   open: boolean;
   isEditMode: boolean;
   selectedLibraryId: number | null;
@@ -13,7 +13,7 @@ type LibraryItemFormState = {
   setTitleUniqueProcessing: (value: boolean) => void;
   handleOpen: (selectedLibraryId: number, selectedItem?: LibraryItem) => void;
   handleClose: VoidFunction;
-};
+}
 
 export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
   open: false,

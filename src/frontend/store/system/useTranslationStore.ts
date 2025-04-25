@@ -9,7 +9,7 @@ import ru from "../../i18n/ru.json";
 import type { i18n } from "i18next";
 
 export type Language = "en" | "ru";
-type LanguageDefinitions = { [lang in Language]: string };
+type LanguageDefinitions = Record<Language, string>;
 
 const languageDefinitions: LanguageDefinitions = {
   en: "English",

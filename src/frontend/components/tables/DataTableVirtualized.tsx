@@ -20,10 +20,10 @@ import type { MouseEvent, MouseEventHandler } from "react";
 import type { TableComponents, VirtuosoHandle } from "react-virtuoso";
 
 type TableHeaderProps = Pick<DataTableVirtualizedProps, "columns" | "columnOptions" | "sort" | "setSort">;
-type SelectedItemContextValue = {
+interface SelectedItemContextValue {
   selectedItemId: number | null;
   handleItemClick: (itemId: number) => (event: MouseEvent) => void;
-};
+}
 
 const SelectedItemContext = createContext<SelectedItemContextValue>({
   selectedItemId: null,

@@ -113,7 +113,10 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
         validate: {
           uniqueValidation: async (value: string): Promise<ValidateResult> => {
-            const message = await validateEmail.fetch({ email: value }).catch((error) => error.message);
+            const message = await validateEmail.fetch({ email: value }).catch((error) => {
+              console.warn(error);
+              return error.message;
+            });
             console.log(message);
             return message;
           },

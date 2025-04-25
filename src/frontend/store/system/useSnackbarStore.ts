@@ -3,20 +3,20 @@ import { create } from "zustand";
 import type { AlertColor } from "@mui/material";
 import type { ReactNode } from "react";
 
-type SnackOptions = {
+interface SnackOptions {
   message: ReactNode;
   type: AlertColor;
   enableCloseButton?: boolean;
-};
+}
 
-type SnackbarStore = {
+interface SnackbarStore {
   open: boolean;
   setOpen: (open: boolean) => void;
   snacks: SnackOptions[];
   enqueueSnack: (snackOptions: SnackOptions) => void;
   removeSnack: VoidFunction;
   clear: VoidFunction;
-};
+}
 
 /**
  * Store for queued snack notifications

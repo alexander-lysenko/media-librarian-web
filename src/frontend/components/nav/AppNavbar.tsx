@@ -30,17 +30,17 @@ interface Props {
   children: ReactElement<{ elevation?: number }>;
 }
 
-type NavRoute = {
+interface NavRoute {
   name: string;
   route: AppRoutes;
   isHeading?: boolean;
-};
+}
 
-type DrawerProps = {
+interface DrawerProps {
   open: boolean;
   onDrawerToggle: () => void;
   navRoutes: NavRoute[];
-};
+}
 
 /**
  * Application's Top navigation bar.

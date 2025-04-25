@@ -4,7 +4,7 @@ import {
   Container,
   Divider,
   Fade,
-  Grid2 as Grid,
+  Grid,
   IconButton,
   List,
   ListItem,
@@ -82,6 +82,8 @@ export const Profile = () => {
 
   useLayoutEffect(() => {
     void getProfileRequest.fetch();
+
+    return () => getProfileRequest.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

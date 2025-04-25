@@ -1,4 +1,4 @@
-import { Avatar, Container, Grid2 as Grid, Link, Paper, styled, Typography } from "@mui/material";
+import { Avatar, Container, Grid, Link, Paper, styled, Typography } from "@mui/material";
 import { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
@@ -19,7 +19,7 @@ export const SignUp = () => {
   const getImage = useUnsplashRandomRequest();
 
   useLayoutEffect(() => {
-    if (!!background) {
+    if (background) {
       return;
     }
     getImage.setResponseEvents({

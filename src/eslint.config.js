@@ -1,4 +1,4 @@
-// import eslint from "@eslint/js";
+import eslint from "@eslint/js";
 import globals from "globals";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import eslintPluginReact from "eslint-plugin-react";
@@ -8,10 +8,11 @@ import eslintPluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import tsEslint from "typescript-eslint";
 
 export default tsEslint.config({
-  files: ["**/*.{ts,tsx}"],
+  files: ["**/*.ts", "**/*.tsx"],
   extends: [
-    // eslint.configs.recommended,
-    tsEslint.configs.recommended,
+    eslint.configs.recommended,
+    tsEslint.configs.strict,
+    tsEslint.configs.stylistic,
     eslintPluginReact.configs.flat.recommended,
     eslintPluginReact.configs.flat["jsx-runtime"],
     eslintPluginPrettierRecommended,

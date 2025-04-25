@@ -3,7 +3,7 @@ import { unsplashExactImageEndpoint, unsplashRandomImageEndpoint } from "../core
 
 import type { UseRequestReturn } from "../core/types";
 
-type UnsplashApiResponse = {
+interface UnsplashApiResponse {
   image: {
     id: string;
     linkHtml: string;
@@ -12,14 +12,14 @@ type UnsplashApiResponse = {
     urlSmall: string;
     author: string;
   };
-};
+}
 
 /**
  * Request to get a random image from Unsplash
  * [GET] /api/unsplash/random
  */
-export const useUnsplashRandomRequest = (): UseRequestReturn<void, UnsplashApiResponse> => {
-  return createHttpRequestHook<void, UnsplashApiResponse>({
+export const useUnsplashRandomRequest = (): UseRequestReturn<undefined, UnsplashApiResponse> => {
+  return createHttpRequestHook<undefined, UnsplashApiResponse>({
     method: "GET",
     endpoint: unsplashRandomImageEndpoint,
     customEvents: {},
@@ -31,8 +31,8 @@ export const useUnsplashRandomRequest = (): UseRequestReturn<void, UnsplashApiRe
  * Request to get an image by its ID from Unsplash
  * [GET] /api/unsplash/image/{id}
  */
-export const useUnsplashImageRequest = (): UseRequestReturn<void, UnsplashApiResponse> => {
-  return createHttpRequestHook<void, UnsplashApiResponse>({
+export const useUnsplashImageRequest = (): UseRequestReturn<undefined, UnsplashApiResponse> => {
+  return createHttpRequestHook<undefined, UnsplashApiResponse>({
     method: "GET",
     endpoint: unsplashExactImageEndpoint,
     customEvents: {},

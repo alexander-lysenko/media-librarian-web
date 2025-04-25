@@ -1,11 +1,11 @@
-import { Box, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 import type { Theme } from "@mui/material";
 import type { ReactNode } from "react";
 
-type Props = {
+interface Props {
   children: ReactNode;
-};
+}
 
 // noinspection GrazieInspection
 /**

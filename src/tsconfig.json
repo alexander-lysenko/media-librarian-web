@@ -2,13 +2,15 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "jsx": "react-jsx",
-    "sourceMap": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "emitDecoratorMetadata": false,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "sourceMap": true,
     "esModuleInterop": true,
+    "strict": true,
     "lib": [
       "esnext",
       "dom"

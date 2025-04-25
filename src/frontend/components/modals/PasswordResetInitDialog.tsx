@@ -1,13 +1,14 @@
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import {
   Alert,
   Box,
   Button,
-  CircularProgress, Collapse,
+  CircularProgress,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  type DialogProps,
   DialogTitle,
   Grow,
   InputAdornment,
@@ -25,15 +26,14 @@ import { usePasswordRecoveryRequest } from "../../requests/authRequests";
 import { AlternateEmailOutlined, Send } from "../icons";
 
 import type { InputCustomProps } from "../../core/types";
-import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
-import type { TextFieldProps } from "@mui/material";
+import type { DialogProps, TextFieldProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
 
-type Props = {
+interface Props {
   open: boolean;
   onClose: (event: SyntheticEvent | Event, reason?: string) => void;
-};
+}
 
 /**
  * Password Reset Init (Recovery Request) Dialog

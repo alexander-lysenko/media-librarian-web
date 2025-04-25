@@ -1,16 +1,16 @@
-import { Grid2 as Grid, Icon, IconButton, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import { Grid, Icon, IconButton, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material";
 
 import type { SvgIconComponent } from "@mui/icons-material";
 import type { IconButtonProps } from "@mui/material";
 import type { ReactNode } from "react";
 
-type Props = {
+interface Props {
   title: string | ReactNode;
   secondaryText?: string | ReactNode;
   itemIcon?: SvgIconComponent;
   actionIcon?: SvgIconComponent;
   actionEvents?: IconButtonProps;
-};
+}
 
 /**
  * Custom Card Header component which looks more like a Bootstrap Card header.

@@ -8,18 +8,18 @@ import { useSignupFormStore } from "../store/useSignupFormStore";
 
 import type { ErrorResponse, HttpResponseEvents, UseRequestReturn } from "../core/types";
 
-type EmailRequest = {
+interface EmailRequest {
   email: string;
-};
+}
 
-type LibraryRequest = {
+interface LibraryRequest {
   title: string;
-};
+}
 
-type LibraryItemRequest = {
+interface LibraryItemRequest {
   title: string;
   item: number | null;
-};
+}
 
 type ResponseMessage = string | boolean;
 

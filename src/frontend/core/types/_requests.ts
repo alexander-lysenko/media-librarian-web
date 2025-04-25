@@ -9,36 +9,39 @@ export type QueryParams = Record<string, string | number | string[] | number[]>;
 /**
  * List of customizable response event handlers
  */
-export type HttpResponseEvents<ResponseType = never> = {
+export interface HttpResponseEvents<ResponseType = never> {
   /** The payload to be executed before the request is run */
   beforeSend?: () => void;
 
   /** The payload to be executed when the request is successfully fulfilled */
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   onSuccess?: (response: ResponseType) => ResponseType | void;
 
   /** The payload to be executed when the request is rejected or unsuccessfully fulfilled */
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   onReject?: (reason: ErrorResponse | never) => PromiseLike<ErrorResponse> | never | void;
 
   /** The payload to be executed when the request is failed */
-  onError?: (reason: ErrorResponse | never) => void;
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+  onError?: (reason: ErrorResponse | never) => PromiseLike<ErrorResponse> | never | void;
 
   /** The payload to be executed when the request is completed regardless of its status */
   onComplete?: () => void;
-};
+}
 
 export type RequestStatus = "IDLE" | "LOADING" | "SUCCESS" | "FAILED";
 
-export type HttpRequestHookConfig<ResponseType = never> = {
+export interface HttpRequestHookConfig<ResponseType = never> {
   endpoint: string;
   method: "GET" | "DELETE" | "HEAD" | "OPTIONS" | "POST" | "PUT" | "PATCH" | "PURGE" | "LINK" | "UNLINK";
   customEvents?: HttpResponseEvents<ResponseType>;
   withCredentials?: boolean; // default: true
   abortController?: AbortController;
   verbose?: boolean; // default: false
-};
+}
 
 /** The unified error response interface */
-export type ErrorResponse = {
+export interface ErrorResponse {
   message: string;
   code?: string;
   // validation errors (if present)
@@ -49,7 +52,7 @@ export type ErrorResponse = {
   file?: string;
   line?: string;
   trace?: never[];
-};
+}
 
 export type ApiRequestFetch<Request, Response> = (
   data?: Request,
@@ -59,37 +62,37 @@ export type ApiRequestFetch<Request, Response> = (
   },
 ) => Promise<Response | undefined>;
 
-export type ApiRequestHookReturn<Request, Response> = {
+export interface ApiRequestHookReturn<Request, Response> {
   status: RequestStatus;
   fetch: ApiRequestFetch<Request, Response>;
   abort: AbortController["abort"];
-};
+}
 
-export type UseRequestReturn<Request, Response> = {
+export interface UseRequestReturn<Request, Response> {
   status: RequestStatus;
   fetch: ApiRequestFetch<Request, Response>;
   abort: AbortController["abort"];
   setResponseEvents: (events: HttpResponseEvents<Response>) => void;
   setQueryParams: (params?: QueryParams) => void;
   setPathParams: (params?: PathParams) => void;
-};
+}
 
 // == useLibraryRequests == //
 
 // noinspection IdentifierGrammar
-export type GetLibrariesResponse = {
+export interface GetLibrariesResponse {
   data: LibrarySchema[];
-};
+}
 
-export type GetLibraryResponse = {
+export interface GetLibraryResponse {
   data: LibrarySchema;
   meta: {
     created_at: string;
     items_count: number;
   };
-};
+}
 
-export type PatchLibraryResponse = {
+export interface PatchLibraryResponse {
   data: {
     id: number;
     title: string;
@@ -98,22 +101,22 @@ export type PatchLibraryResponse = {
     status: "truncated";
     items_affected: number;
   };
-};
+}
 
-export type CreateLibraryRequest = {
+export interface CreateLibraryRequest {
   title: string;
   fields: { name: string; type: LibraryElement }[];
-};
+}
 
-export type CreateLibraryResponse = {
+export interface CreateLibraryResponse {
   data: LibrarySchema;
-};
+}
 
 // == useLibraryItemsRequests == //
 
-export type GetLibraryItemsRequest = void;
+export type GetLibraryItemsRequest = undefined;
 
-export type GetLibraryItemsResponse = {
+export interface GetLibraryItemsResponse {
   items: DataRow[];
   pagination: {
     currentPage: number;
@@ -121,14 +124,14 @@ export type GetLibraryItemsResponse = {
     perPage: number;
     total: number;
   };
-};
+}
 
-export type PostLibraryItemRequest = {
+export interface PostLibraryItemRequest {
   contents: LibraryItemFormValues;
   poster?: string;
-};
+}
 
-export type LibraryItemResponse = {
+export interface LibraryItemResponse {
   item: LibraryItem;
   poster: string;
-};
+}

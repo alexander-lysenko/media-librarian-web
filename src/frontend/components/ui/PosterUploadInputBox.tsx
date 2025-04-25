@@ -1,14 +1,4 @@
-import {
-  Box,
-  Button,
-  CardMedia,
-  Grid2 as Grid,
-  LinearProgress,
-  Paper,
-  styled,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CardMedia, Grid, LinearProgress, Paper, styled, TextField, Typography } from "@mui/material";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -100,8 +90,8 @@ export const PosterUploadInputBox = () => {
 
   // todo: rework that and fix CORS issue
   const downloadByUrl = async (url: string) => {
-    const config: FetchRequestConfig<void> = { url, method: "GET", responseType: "blob", withCredentials: false };
-    const file = await axiosFetch<void, Blob>(config, {
+    const config: FetchRequestConfig<undefined> = { url, method: "GET", responseType: "blob", withCredentials: false };
+    const file = await axiosFetch<undefined, Blob>(config, {
       onSuccess: (response) => {
         console.log(response);
         return response;

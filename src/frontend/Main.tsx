@@ -9,7 +9,9 @@ import { GlobalSnackbar } from "./components";
 import { ConfirmDialog } from "./components/modals";
 import { AppRoutes } from "./core/enums";
 import { App } from "./pages/App";
+import { EmailConfirmation } from "./pages/EmailConfirmation";
 import { Landing } from "./pages/Landing";
+import { PasswordReset } from "./pages/PasswordReset";
 import { Profile } from "./pages/Profile";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
@@ -17,8 +19,6 @@ import { useThemeStore } from "./store/system/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/system/useTranslationStore";
 import { useAuthCredentialsStore } from "./store/useAuthCredentialsStore";
 import { getDesignTokens } from "./theme";
-import { PasswordReset } from "./pages/PasswordReset";
-import { EmailConfirmation } from "./pages/EmailConfirmation";
 
 const debug = import.meta.env.VITE_APP_DEBUG;
 

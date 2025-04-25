@@ -51,7 +51,7 @@ export const ChangePasswordDialog = () => {
     setOpen(false);
   };
 
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {};
+  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
     setLoading(true);
 

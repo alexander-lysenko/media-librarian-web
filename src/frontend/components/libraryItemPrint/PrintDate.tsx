@@ -5,10 +5,10 @@ import { useLanguageStore } from "../../store/system/useTranslationStore";
 
 import type { ReactElement } from "react";
 
-type DateFieldProps = {
+interface DateFieldProps {
   format: "date" | "datetime";
   value: string;
-};
+}
 
 export const PrintDate = memo(({ format, value }: DateFieldProps) => {
   const locale = useLanguageStore((state) => state.getLanguage());

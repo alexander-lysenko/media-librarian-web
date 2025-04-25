@@ -4,16 +4,16 @@ import type { AccountStatusEnum } from "../core/enums";
 import type { Language } from "./system/useTranslationStore";
 import type { PaletteMode } from "@mui/material";
 
-type UserData = {
+interface UserData {
   id: number;
   name: string;
   email: string;
   locale: Language;
   theme: PaletteMode | string;
   avatar: string | null;
-};
+}
 
-type StatsData = {
+interface StatsData {
   status: keyof typeof AccountStatusEnum;
   emailVerifiedAt: string | null;
   createdAt: string;
@@ -21,12 +21,12 @@ type StatsData = {
   deletedAt: string | null;
   librariesTotal: number;
   itemsTotal: number;
-};
+}
 
-export type ProfileData = {
+export interface ProfileData {
   user: UserData;
   stats: StatsData;
-};
+}
 
 interface ProfileState {
   profile: ProfileData;

@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Divider,
   FormControl,
-  Grid2 as Grid,
+  Grid,
   Grow,
   IconButton,
   MenuItem,
@@ -46,12 +46,12 @@ import type {
   UseFormRegisterReturn,
 } from "react-hook-form";
 
-type InlineTemplateProps = {
+interface InlineTemplateProps {
   index: number;
   errors: FieldErrors;
   registerField: (fieldName: string, ruleName?: string) => UseFormRegisterReturn;
   onRemove: () => void;
-};
+}
 
 /**
  * Modal dialog containing the form to create a Library

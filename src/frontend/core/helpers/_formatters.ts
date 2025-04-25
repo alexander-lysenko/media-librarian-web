@@ -6,14 +6,14 @@
  *
  * @return string
  */
-export const slugify = (sequence: string, separator: string = "-"): string => {
+export const slugify = (sequence: string, separator?: string): string => {
   return sequence
     .normalize("NFD") // split an accented letter in the base letter and the ascent
     .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
     .toLowerCase()
     .trim()
     .replace(/[^a-zА-я0-9 ]/g, "") // remove all non-word chars (to be replaced)
-    .replace(/\s+/g, separator);
+    .replace(/\s+/g, separator ?? "-");
 };
 
 // noinspection JSUnusedGlobalSymbols

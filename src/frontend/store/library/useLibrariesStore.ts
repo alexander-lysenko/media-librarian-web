@@ -5,17 +5,17 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { LibrarySchema } from "../../core/types";
 
-type LibraryState = {
+interface LibraryState {
   libraries: LibrarySchema[];
   setLibraries: (libraries: LibrarySchema[]) => void;
-};
+}
 
-type SelectedLibraryState = {
+interface SelectedLibraryState {
   selectedLibraryId: number;
   getSelectedLibrary: () => LibrarySchema | undefined;
   getSelectedLibraryId: () => number;
   setSelectedLibraryId: (selectedLibraryId: number) => void;
-};
+}
 
 /**
  * Store for the list of all user's Libraries.
@@ -27,7 +27,7 @@ export const useLibrariesStore = create<LibraryState>((set) => ({
 
 /**
  * Store for the Library that is selected.
- * Includes the payload to store/restore the ID of selected Library using local storage
+ * Includes the payload to store/restore the ID of the selected Library using local storage
  */
 export const useSelectedLibraryStore = create<SelectedLibraryState>()(
   persist(
@@ -45,7 +45,7 @@ export const useSelectedLibraryStore = create<SelectedLibraryState>()(
         const libraries = useLibrariesStore.getState().libraries;
         const selectedId = get().selectedLibraryId;
 
-        return libraries.find((item: LibrarySchema): boolean => item.id === selectedId) || libraries[0];
+        return libraries.find((item: LibrarySchema): boolean => item.id === selectedId) ?? libraries[0];
       },
     }),
     {

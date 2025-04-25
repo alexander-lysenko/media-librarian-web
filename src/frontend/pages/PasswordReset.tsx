@@ -1,5 +1,5 @@
 import { Box, styled } from "@mui/material";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";

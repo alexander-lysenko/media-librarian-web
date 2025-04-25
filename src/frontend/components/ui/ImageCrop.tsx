@@ -1,7 +1,7 @@
 import {
   Box,
   Fade,
-  Grid2 as Grid,
+  Grid,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -25,11 +25,11 @@ import type { MenuProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { Area, CropperProps, Point, Size } from "react-easy-crop";
 
-type Props = {
+interface Props {
   image: string;
   cropSize: Size;
   onCropUpdate: (cropParams: CropParams) => void;
-};
+}
 
 enum ZoomOptions {
   min = 1,

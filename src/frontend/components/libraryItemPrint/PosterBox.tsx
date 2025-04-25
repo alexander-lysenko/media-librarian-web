@@ -3,11 +3,11 @@ import { Container, styled, Typography } from "@mui/material";
 import type { Theme } from "@mui/material";
 import type { SystemProps } from "@mui/system";
 
-type Props = {
+interface Props {
   src: string;
   title: string;
   height?: SystemProps<Theme>["height"];
-};
+}
 
 export const PosterBox = ({ src, height, title }: Props) => {
   const emptySrc = "https://source.unsplash.com/oqStl2L5oxI";

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type DialogsState = {
+interface DialogsState {
   usernameDialogOpen: boolean;
   setUsernameDialogOpen: (open: boolean) => void;
 
@@ -21,7 +21,7 @@ type DialogsState = {
 
   avatarClicked: boolean;
   setAvatarClicked: (open: boolean) => void;
-};
+}
 
 export const useProfileDialogsStore = create<DialogsState>((set) => ({
   usernameDialogOpen: false,

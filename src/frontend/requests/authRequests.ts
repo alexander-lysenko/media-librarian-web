@@ -4,45 +4,45 @@ import { userLoginEndpoint, userPasswordResetEndpoint, userSignupEndpoint } from
 import type { UseRequestReturn } from "../core/types";
 import type { Language } from "../store/system/useTranslationStore";
 
-type SignupRequest = {
+interface SignupRequest {
   email: string;
   name: string;
   password: string;
   passwordRepeat: string;
   locale: Language;
   theme: "dark" | "light";
-};
+}
 
-type SignupResponse = {
+interface SignupResponse {
   message: string;
   user: object;
-};
+}
 
-type LoginRequest = {
+interface LoginRequest {
   email: string;
   password: string;
   rememberMe?: boolean;
-};
+}
 
-type LoginResponse = {
+interface LoginResponse {
   redirectTo: string;
   token: string;
-};
+}
 
-type PasswordRecoveryInitRequest = {
+interface PasswordRecoveryInitRequest {
   email: string;
-};
+}
 
-type PasswordResetRequest = {
+interface PasswordResetRequest {
   email: string;
   newPassword: string;
   repeatPassword: string;
   token: string;
-};
+}
 
-type MessageResponse = {
+interface MessageResponse {
   message: string;
-};
+}
 
 /**
  * Request to signup / register / create a user.

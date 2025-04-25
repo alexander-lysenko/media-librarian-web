@@ -5,16 +5,16 @@ import { PrintDate, PrintPriority, PrintRating, PrintSwitch } from "../libraryIt
 
 import type { DataColumn, DataColumnPropsByType, DataRow, LibraryElement } from "../../core/types";
 
-type LibraryCellContentProps = {
+interface LibraryCellContentProps {
   type: LibraryElement;
   value: never;
-};
+}
 
-type RowContentsProps = {
+interface RowContentsProps {
   columns: DataColumn[];
   row: DataRow;
   columnOptions: DataColumnPropsByType;
-};
+}
 
 /**
  * Generative DataTable row.

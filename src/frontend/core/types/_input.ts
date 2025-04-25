@@ -1,31 +1,31 @@
 import type { LibraryElement } from "./_library";
 import type { Control, UseFormRegisterReturn } from "react-hook-form";
 
-export type InputCustomProps = Omit<UseFormRegisterReturn, "ref"> & {
+export interface InputCustomProps extends Omit<UseFormRegisterReturn, "ref"> {
   label: string;
   value?: string;
   helperText?: string;
   errorMessage?: string;
   autoFocus?: boolean;
   fullWidth?: boolean;
-};
+}
 
-type FormControlProps = {
+interface FormControlProps {
   control: Control;
-};
+}
 
-type LoadingProps = {
+interface LoadingProps {
   loadingState?: boolean;
-};
+}
 
-type DateInputProps = FormControlProps & {
+interface DateInputProps extends FormControlProps {
   type: "date" | "datetime";
-};
+}
 
-type RatingProps = FormControlProps & {
+interface RatingProps extends FormControlProps {
   precision: 0.5 | 1;
   size: 5 | 10;
-};
+}
 
 export type TextInputSingleLineProps = InputCustomProps & LoadingProps;
 export type TextInputMultiLineProps = InputCustomProps;
@@ -35,7 +35,9 @@ export type PriorityInputProps = InputCustomProps & { control: Control };
 export type CheckBoxedInputProps = InputCustomProps & { control: Control };
 export type UrlInputProps = InputCustomProps;
 
-type RelatedInputProps<T extends LibraryElement> = { type: T };
+interface RelatedInputProps<T extends LibraryElement> {
+  type: T;
+}
 
 export type LibraryInputNarrowProps =
   | (RelatedInputProps<"line"> & InputCustomProps & LoadingProps)

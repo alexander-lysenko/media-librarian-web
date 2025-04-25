@@ -6,10 +6,10 @@ import { CloudUploadOutlined } from "../icons";
 import type { PaperProps } from "@mui/material";
 import type { DragEvent, ReactNode } from "react";
 
-type Props = {
+interface Props {
   children: ReactNode;
   onDrop: (event: DragEvent<HTMLDivElement>) => void;
-};
+}
 
 export const SimpleDropzone = ({ children, onDrop, ...paperProps }: Props & PaperProps) => {
   const { t } = useTranslation();
