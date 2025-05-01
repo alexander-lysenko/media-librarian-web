@@ -29,9 +29,9 @@ export const BackgroundContainer = ({ backgroundInfo }: Props) => {
 
   return (
     <Fade in timeout={150}>
-      <Background size={{ xs: false, sm: 4, md: 7, xl: 8 }} style={cssVariables as CSSProperties}>
+      <Background size={{ xs: false, sm: "grow" }} style={cssVariables as CSSProperties}>
         {backgroundInfo && (
-          <Grid container justifyContent="space-between" component={Credits} square elevation={8}>
+          <Grid container justifyContent="space-between" component={Credits} square>
             <Typography variant="body2">
               {t("unsplash.author") + ": "}
               {backgroundInfo.author}

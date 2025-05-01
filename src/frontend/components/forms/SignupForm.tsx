@@ -11,12 +11,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { forwardRef, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { forwardRef, useRef } from "react";
+import { type SubmitErrorHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 
-import { AppRoutes } from "../../core/enums";
 import { useFormValidation } from "../../hooks";
 import { useUserSignupRequest } from "../../requests/authRequests";
 import { useThemeStore } from "../../store/system/useThemeStore";
@@ -27,21 +25,19 @@ import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 import { TextInput } from "../inputs/TextInput";
 
-import type { InputCustomProps } from "../../core/types";
+import type { InputCustomProps, SignupFormData } from "../../core/types";
 import type { Language } from "../../store/system/useTranslationStore";
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
 import type { PaletteMode } from "@mui/material";
 import type { ChangeEvent } from "react";
-import type { ChangeHandler, FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import type { ChangeHandler, SubmitHandler } from "react-hook-form";
 
 /**
  * Sign Up (Register) Form functional component
  */
 export const SignupForm = () => {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
@@ -50,31 +46,27 @@ export const SignupForm = () => {
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
   const signupRequest = useUserSignupRequest();
+  const loading = signupRequest.status === "pending";
 
-  const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
+  const useHookForm = useForm<SignupFormData>({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField, registerFieldDebounced } = useFormValidation("signup", useHookForm);
   const { formState, handleSubmit, reset, setError } = useHookForm;
   const { errors } = formState;
 
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
-  const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
-    setLoading(true);
-
-    signupRequest.setResponseEvents({
-      onSuccess: () => {
-        navigate(AppRoutes.login, { replace: true });
-      },
+  const onValidSubmit: SubmitHandler<SignupFormData> = (data) => {
+    void signupRequest.mutateAsync(data, {
       onError: (reason) => {
         reset({ password: "", passwordRepeat: "" });
         setError("root.serverError", { message: reason.message });
         captchaRef.current?.reset();
       },
-      onComplete: () => {
-        setLoading(false);
-      },
     });
+  };
 
-    void signupRequest.fetch(data as never);
+  const onInvalidSubmit: SubmitErrorHandler<SignupFormData> = () => {
+    if (errors["cf-turnstile-response"]) {
+      setError("root.serverError", { message: errors["cf-turnstile-response"]?.message as string });
+    }
   };
 
   const handleLanguageSelect = (event: ChangeEvent<HTMLInputElement>) => {

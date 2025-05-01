@@ -21,7 +21,7 @@ import type { MouseEventHandler } from "react";
 const profileSx: SxProps = { p: 2, backgroundImage: "url(https://source.unsplash.com/7OCUyev2M9E/256x155)" };
 
 /**
- * Part of Sidebar Navigation Drawer - Profile Section
+ * Part of "Sidebar Navigation Drawer" - Profile Section
  * @deprecated
  */
 export const SidebarProfiler = () => {
@@ -38,7 +38,7 @@ export const SidebarProfiler = () => {
         <Grid container>
           <ProfileAvatar username="User Name" src="" sx={{ width: 60, height: 60 }} />
           <Grid container alignItems="flex-end" sx={{ mt: 2 }} wrap="nowrap" onClick={toggleCollapse}>
-            <Grid item xs zeroMinWidth>
+            <Grid size="grow">
               <Typography variant="subtitle1" sx={{ fontWeight: "bold", lineHeight: 1.5 }} noWrap>
                 User Name
               </Typography>
@@ -46,7 +46,7 @@ export const SidebarProfiler = () => {
                 username@example.com
               </Typography>
             </Grid>
-            <Grid item xs="auto">
+            <Grid size="auto">
               <IconButton sx={{ p: 0 }}>
                 {collapseOpen ? <ArrowDropUpOutlined /> : <ArrowDropDownOutlined />}
               </IconButton>

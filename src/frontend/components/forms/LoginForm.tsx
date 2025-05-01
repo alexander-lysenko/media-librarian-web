@@ -12,8 +12,9 @@ import { LoginOutlined } from "../icons";
 import { EmailInput } from "../inputs/EmailInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 
+import type { LoginFormData } from "../../core/types";
 import type { TurnstileInstance } from "@marsidev/react-turnstile";
-import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 
 /**
  * Sign In (Login) Form functional component
@@ -25,16 +26,16 @@ export const LoginForm = () => {
   const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
   const captchaRef = useRef<TurnstileInstance>(null);
 
-  const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
+  const useHookForm = useForm<LoginFormData>({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("login", useHookForm);
   const { formState, handleSubmit, setError, clearErrors, getValues, reset } = useHookForm;
   const { errors } = formState;
 
   const useLoginRequest = useUserLoginRequest();
-  const loading = useLoginRequest.status === "LOADING";
+  const loading = useLoginRequest.status === "pending";
 
-  const onValidSubmit: SubmitHandler<FieldValues> = (data) => {
-    useLoginRequest.setResponseEvents({
+  const onValidSubmit: SubmitHandler<LoginFormData> = (data) => {
+    void useLoginRequest.mutateAsync(data, {
       onSuccess: (response) => {
         const { email } = getValues();
         const { token, redirectTo } = response;
@@ -48,10 +49,8 @@ export const LoginForm = () => {
         captchaRef.current?.reset();
       },
     });
-
-    void useLoginRequest.fetch(data as never);
   };
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = () => {
+  const onInvalidSubmit: SubmitErrorHandler<LoginFormData> = () => {
     if (errors["cf-turnstile-response"]) {
       setError("root.serverError", { message: errors["cf-turnstile-response"]?.message as string });
     }

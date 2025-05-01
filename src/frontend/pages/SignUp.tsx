@@ -16,28 +16,16 @@ export const SignUp = () => {
   const { t } = useTranslation();
 
   const [background, setBackground] = useState<never>();
-  const getImage = useUnsplashRandomRequest();
+  const getImageRequest = useUnsplashRandomRequest({ query: "movie, cinema, audio, music, studio, arts" });
 
   useLayoutEffect(() => {
-    if (background) {
-      return;
-    }
-    getImage.setResponseEvents({
-      onSuccess: (response) => {
-        setBackground(response.image as never);
-      },
-    });
-    getImage.setQueryParams({ query: "movie, cinema, audio, music, studio, arts" });
-    void getImage.fetch();
-
-    return () => getImage.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setBackground(getImageRequest.data?.image as never);
+  }, [getImageRequest.data?.image]);
 
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <BackgroundContainer backgroundInfo={background} />
-      <Grid container size={{ xs: 12, sm: 8, md: 5, xl: 4 }} component={FormPaper} elevation={6} square>
+      <Grid container size={{ xs: 12, sm: 8, md: 6, lg: 5, xl: 4 }} component={FormPaper} elevation={6} square>
         <Contents>
           <Avatar sx={{ m: 1, backgroundColor: "secondary.main", height: 64, width: 64 }}>
             <PersonAddAltRounded />

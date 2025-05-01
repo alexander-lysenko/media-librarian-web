@@ -27,15 +27,6 @@ export const App = () => {
   const requestLibraries = useLibrariesGetRequest();
   const requestItems = useLibraryAllItemsGetRequest();
 
-  const getItems = useCallback(() => {
-    const selectedLibraryId = getSelectedLibrary()?.id;
-
-    if (selectedLibraryId) {
-      requestItems.setPathParams({ id: selectedLibraryId });
-      void requestItems.fetch();
-    }
-  }, [getSelectedLibrary, requestItems]);
-
   const handleItemCreate = useCallback(() => {
     const selectedLibraryId = getSelectedLibrary()?.id;
     if (!selectedLibraryId) {
@@ -46,19 +37,15 @@ export const App = () => {
   }, [getSelectedLibrary, openItemDialog]);
 
   useEffect(() => {
-    requestLibraries.fetch().then(getItems);
-
+    const unsubscribe = useLibraryTableStore.subscribe(
+      (state) => [state.sort, state.page, state.rowsPerPage],
+      () => requestItems.refetch(),
+      { equalityFn: shallow },
+    );
     return () => {
-      useLibraryTableStore.subscribe(
-        (state) => [state.sort, state.page, state.rowsPerPage],
-        getItems, // don't let prettier reformat this code
-        { equalityFn: shallow },
-      );
-      requestLibraries.abort();
-      requestItems.abort();
+      unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [requestItems]);
 
   return (
     <>
@@ -77,11 +64,11 @@ export const App = () => {
           />
         </StyledHeaderBox>
         <Paper elevation={3} sx={{ height: { xs: "calc(100vh - 148px)", sm: "calc(100vh - 160px)" } }}>
-          {requestLibraries.status === "LOADING" || requestItems.status === "LOADING" ? (
+          {requestLibraries.status === "pending" || requestItems.status === "pending" ? (
             <LoadingOverlayInner />
-          ) : requestLibraries.status === "FAILED" || requestItems.status === "FAILED" ? (
+          ) : requestLibraries.status === "error" || requestItems.status === "error" ? (
             <LibrariesErrorState />
-          ) : requestLibraries.status === "SUCCESS" && requestItems.status === "SUCCESS" && !libraries.length ? (
+          ) : requestLibraries.status === "success" && requestItems.status === "success" && !libraries.length ? (
             <LibrariesEmptyState />
           ) : (
             <LibraryTable />

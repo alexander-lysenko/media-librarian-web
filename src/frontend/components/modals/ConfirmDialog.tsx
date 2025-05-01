@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useConfirmDialogStore } from "../../store/app/useConfirmDialogStore";
 import { CloseOutlined, DoneOutlined, NavigateNextOutlined } from "../icons";
 
+import type { DialogProps } from "@mui/material";
 import type { MouseEventHandler } from "react";
 
 /**
@@ -47,11 +48,25 @@ export const ConfirmDialog = () => {
     setOpen(false);
   };
 
+  const dialogProps: DialogProps = {
+    open,
+    keepMounted: true,
+    fullWidth: true,
+    maxWidth: "xs",
+    disableRestoreFocus: true,
+    closeAfterTransition: true,
+    slots: { transition: Grow },
+    slotProps: {
+      transition: { timeout: 120 },
+    },
+    onClose: () => setOpen(false),
+  };
+
   return (
-    <Dialog open={open} keepMounted fullWidth maxWidth={"xs"} TransitionComponent={Grow} transitionDuration={120}>
+    <Dialog {...dialogProps}>
       <DialogTitle variant={"h5"}>{t("confirm.title")}</DialogTitle>
       <DialogContent sx={{ pb: 0 }}>
-        <DialogContentText children={message} paragraph />
+        <DialogContentText children={message} component="p" />
         {subjectItem && <Chip label={subjectItem} variant="outlined" icon={<NavigateNextOutlined />} />}
       </DialogContent>
       <DialogActions>
