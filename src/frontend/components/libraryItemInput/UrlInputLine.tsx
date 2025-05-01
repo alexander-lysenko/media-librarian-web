@@ -9,7 +9,7 @@ import type { ChangeEvent } from "react";
 
 /**
  * Library Item Form - Single Line Text Input for URL
- * Click on endAdornment icon opens the link in a new tab
+ * Clicking on the endAdornment icon opens the link in a new tab
  */
 export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
   const { t } = useTranslation();

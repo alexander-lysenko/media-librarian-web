@@ -1,156 +1,153 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { createHttpRequestHook } from "../core";
+import { bindPathParams, createFetch } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { librariesEndpoint, libraryEndpoint } from "../core/links";
 import { useLibrariesStore, useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
+import { useProfileStore } from "../store/useProfileStore";
 
 import type {
-  CreateLibraryRequest,
   CreateLibraryResponse,
   DataColumn,
   GetLibrariesResponse,
-  GetLibraryResponse,
-  HttpResponseEvents,
+  LibraryFormData,
   PatchLibraryResponse,
-  UseRequestReturn,
 } from "../core/types";
-import type { ErrorOption } from "react-hook-form";
 
-interface LibraryCreateRequestProps {
-  reset: () => void;
-  setLoading: (value: boolean) => void;
-  setOpen: (value: boolean) => void;
-  setError: (name: never, error: ErrorOption) => void;
+interface LibraryId {
+  id: number;
+}
+
+interface LibraryData {
+  data: LibraryFormData;
 }
 
 /**
  * Request to get the schema of all available libraries
  * [GET] /api/v1/libraries
  */
-export const useLibrariesGetRequest = (): UseRequestReturn<undefined, GetLibrariesResponse> => {
+export const useLibrariesGetRequest = () => {
   const setLibraries = useLibrariesStore((state) => state.setLibraries);
   const setColumns = useLibraryTableStore((state) => state.setColumns);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
+  const profileLoaded = useProfileStore((state) => state.profile.user.id !== undefined);
 
-  const customEvents: HttpResponseEvents<GetLibrariesResponse> = {
-    onSuccess: (response) => {
-      setLibraries(response.data);
-      const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(getSelectedLibrary()?.fields || {}).map(
-        ([label, type]) => ({ label, type }),
-      );
+  const { refetch, status, data, error } = useQuery({
+    queryKey: ["get", "libraries"],
+    queryFn: (): Promise<GetLibrariesResponse> => createFetch({ url: librariesEndpoint, method: "GET" }),
+    select: (response) => response.data,
+    enabled: profileLoaded || true, // todo: fix it
+  });
 
-      setColumns(fieldsOfSelectedLibrary);
-    },
-    onReject: (reason) => {
-      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
-    },
-    onError: (reason) => {
-      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
-    },
-  };
+  useEffect(() => {
+    switch (status) {
+      case "success": {
+        setLibraries(data);
+        const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(getSelectedLibrary()?.fields || {}).map(
+          ([label, type]) => ({ label, type }),
+        );
 
-  return createHttpRequestHook<undefined, GetLibrariesResponse>({
-    method: "GET",
-    endpoint: librariesEndpoint,
-    customEvents,
-  })();
+        setColumns(fieldsOfSelectedLibrary);
+        break;
+      }
+      case "error":
+        enqueueSnack({ type: "error", message: `${error.code} ${error.message}` });
+        break;
+    }
+  }, [getSelectedLibrary, data, status, setColumns, setLibraries, error]);
+
+  return { refetch, status };
 };
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Request to get the schema of a specific library by its ID
  * [GET] /api/v1/libraries/{id}
  */
-export const useLibraryGetRequest = (): UseRequestReturn<undefined, GetLibraryResponse> => {
-  const customEvents: HttpResponseEvents<GetLibraryResponse> = {
-    onSuccess: (response) => {
-      void response;
-      // const { id, title, fields } = response.data.data;
-      // enqueueSnack({
-      //   type: "success",
-      //   message: "loaded",
-      // });
-    },
-  };
+export const useLibraryGetRequest = (id: number) => {
+  const { status } = useQuery({
+    queryKey: ["get", "libraries", id],
+    queryFn: (): Promise<GetLibrariesResponse> =>
+      createFetch({ url: bindPathParams(libraryEndpoint, { id }), method: "GET" }),
+    select: (response) => response.data,
+    enabled: !!id,
+  });
 
-  return createHttpRequestHook<undefined, GetLibraryResponse>({
-    method: "GET",
-    endpoint: libraryEndpoint,
-    customEvents,
-  })();
+  return { status };
 };
 
 /**
  * Request to create a library
  * [POST] /api/v1/libraries
  */
-export const useLibraryCreateRequest = ({
-  reset,
-  setLoading,
-  setOpen,
-  setError,
-}: LibraryCreateRequestProps): UseRequestReturn<CreateLibraryRequest, CreateLibraryResponse> => {
+export const useLibraryCreateRequest = () => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
-  const customEvents: HttpResponseEvents<CreateLibraryResponse> = {
-    beforeSend: () => {
-      setLoading(true);
+  const { mutateAsync, status } = useMutation({
+    mutationKey: ["post", "libraries"],
+    mutationFn: async ({ data }: LibraryData): Promise<CreateLibraryResponse> => {
+      return await createFetch({
+        url: librariesEndpoint,
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     },
     onSuccess: (response) => {
-      const { title } = response.data;
+      void queryClient.invalidateQueries({ queryKey: ["get", "libraries"], exact: true });
       enqueueSnack({
         type: "success",
-        message: t("notifications.libraryCreated", { title }),
+        message: t("notifications.libraryCreated", { title: response.data.title }),
       });
-      reset();
-      setLoading(false);
-      setOpen(false);
     },
-    onReject: (reason) => {
-      setLoading(false);
-      setError("root.serverError" as never, { message: `${reason.code} ${reason.message}` });
-    },
-    onError: () => {
-      setLoading(false);
-    },
-  };
+  });
 
-  return createHttpRequestHook<CreateLibraryRequest, CreateLibraryResponse>({
-    method: "POST",
-    endpoint: librariesEndpoint,
-    customEvents,
-  })();
+  return { mutateAsync, status };
 };
 
 /**
  * Request to delete a library
  * [DELETE] /api/v1/libraries/{id}
  */
-export const useLibraryDeleteRequest = (): UseRequestReturn<undefined, undefined> => {
-  const customEvents: HttpResponseEvents<undefined> = {
-    // onSuccess & onError should be filled from the place of request call
-    onReject: (reason) => {
+export const useLibraryDeleteRequest = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, status } = useMutation({
+    mutationKey: ["delete", "libraries"],
+    mutationFn: async ({ id }: LibraryId): Promise<void> => {
+      return await createFetch({
+        url: bindPathParams(libraryEndpoint, { id }),
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["get", "libraries"], exact: true });
+    },
+    onError: (reason) => {
       enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
     },
-  };
+  });
 
-  return createHttpRequestHook<undefined, undefined>({
-    method: "DELETE",
-    endpoint: libraryEndpoint,
-    customEvents,
-  })();
+  return { mutateAsync, status };
 };
 
 /**
  * Request to clean a library (delete all items from a library but not the library itself)
  * [PATCH] /api/v1/libraries/{id}
  */
-export const useLibraryCleanupRequest = (): UseRequestReturn<undefined, PatchLibraryResponse> => {
+export const useLibraryCleanupRequest = () => {
   const { t } = useTranslation();
 
-  const customEvents: HttpResponseEvents<PatchLibraryResponse> = {
+  const { mutateAsync, status } = useMutation({
+    mutationKey: ["patch", "libraries"],
+    mutationFn: async ({ id }: LibraryId): Promise<PatchLibraryResponse> => {
+      return await createFetch({
+        url: bindPathParams(libraryEndpoint, { id }),
+        method: "PATCH",
+      });
+    },
     onSuccess: (response) => {
       const { title } = response.data;
       const { items_affected: itemsAffected } = response.meta;
@@ -159,17 +156,10 @@ export const useLibraryCleanupRequest = (): UseRequestReturn<undefined, PatchLib
         message: t("notifications.libraryCleaned", { title, count: itemsAffected }),
       });
     },
-    onReject: (reason) => {
-      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
-    },
     onError: (reason) => {
       enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
     },
-  };
+  });
 
-  return createHttpRequestHook<undefined, PatchLibraryResponse>({
-    method: "PATCH",
-    endpoint: libraryEndpoint,
-    customEvents,
-  })();
+  return { mutateAsync, status };
 };

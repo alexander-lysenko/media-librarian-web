@@ -17,13 +17,12 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { LibraryElementEnum } from "../../core/enums";
 import { useFormValidation } from "../../hooks";
-import { useLibrariesGetRequest, useLibraryCreateRequest } from "../../requests/libraryRequests";
+import { useLibraryCreateRequest } from "../../requests/libraryRequests";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
 import {
   AddCircleOutlined,
@@ -35,16 +34,11 @@ import {
 import { TextInput } from "../inputs/TextInput";
 import { TooltipWrapper } from "../ui/TooltipWrapper";
 
-import type { CreateLibraryRequest } from "../../core/types";
+import type { LibraryFormData } from "../../core/types";
 import type { DialogProps, TextFieldProps } from "@mui/material";
+import type { MutateOptions } from "@tanstack/react-query";
 import type { SyntheticEvent } from "react";
-import type {
-  FieldErrors,
-  FieldValues,
-  SubmitErrorHandler,
-  SubmitHandler,
-  UseFormRegisterReturn,
-} from "react-hook-form";
+import type { FieldErrors, FieldValues, SubmitHandler, UseFormRegisterReturn } from "react-hook-form";
 
 interface InlineTemplateProps {
   index: number;
@@ -54,18 +48,23 @@ interface InlineTemplateProps {
 }
 
 /**
- * Modal dialog containing the form to create a Library
+ * A dialog component for creating new libraries with customizable fields.
+ * Provides a form interface where users can:
+ * - Set the library title
+ * - Add, remove, and configure multiple fields
+ * - Specify field types (e.g., line, text, etc.)
  */
 export const LibraryCreateDialog = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const [loading, setLoading] = useState<boolean>(false);
   const { open, setOpen, titleUniqueProcessing } = useLibraryCreateFormStore();
 
+  const libraryCreateRequest = useLibraryCreateRequest();
+  const loading = libraryCreateRequest.status === "pending";
+
   // HOOK FORM
-  const useHookForm = useForm({
+  const useHookForm = useForm<LibraryFormData>({
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: { title: "", fields: [{ name: "", type: "line" }] },
@@ -75,10 +74,6 @@ export const LibraryCreateDialog = () => {
   const { append, remove } = useFieldArray({ control, name: "fields" });
   const watchingFields = watch("fields");
 
-  // REQUEST
-  const { fetch: submit } = useLibraryCreateRequest({ reset, setLoading, setOpen, setError });
-  const { fetch: getLibraries } = useLibrariesGetRequest();
-
   // EVENTS
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
     if (reason === "backdropClick" || reason === "escapeKeyDown") {
@@ -87,14 +82,23 @@ export const LibraryCreateDialog = () => {
     }
 
     reset();
-    setLoading(false);
     setOpen(false);
   };
 
   const handleAddNewField = () => append({ name: "", type: LibraryElementEnum.line }, { shouldFocus: true });
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
-  const onValidSubmit: SubmitHandler<FieldValues> = async (data) => {
-    await submit(data as CreateLibraryRequest).then(() => getLibraries());
+
+  const onValidSubmit: SubmitHandler<LibraryFormData> = async (data) => {
+    const responseEffects: MutateOptions = {
+      onSuccess: () => {
+        reset();
+        setOpen(false);
+      },
+      onError: (reason) => {
+        setError("root.serverError", { message: `${reason.code} ${reason.message}` });
+      },
+    };
+
+    void libraryCreateRequest.mutateAsync({ data }, responseEffects as never);
   };
 
   const dialogProps: DialogProps = {
@@ -110,13 +114,13 @@ export const LibraryCreateDialog = () => {
       paper: {
         component: "form",
         sx: { minHeight: { sm: "calc(100% - 128px)" } },
-        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+        onSubmit: handleSubmit(onValidSubmit),
       },
     },
   };
 
   return (
-    <Dialog {...dialogProps} onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)}>
+    <Dialog {...dialogProps}>
       <DialogTitle variant={"h5"}>{t("libraryCreate.title")}</DialogTitle>
       <DialogContent dividers>
         <TextInput

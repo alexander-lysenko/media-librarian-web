@@ -1,7 +1,7 @@
+import type { Language } from "../../store/system/useTranslationStore";
 import type { DataRow } from "./_dataTable";
 import type { LibraryElement, LibraryItem, LibraryItemFormValues, LibrarySchema } from "./_library";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
-import type { Language } from "../../store/system/useTranslationStore";
 import type { FieldValues } from "react-hook-form";
 
 export type PathParams = Record<string, string | number>;
@@ -84,7 +84,6 @@ export interface ErrorResponse {
   trace?: never[];
 }
 
-
 /** @deprecated */
 export type ApiRequestFetch<Request, Response> = (
   data?: Request,
@@ -134,11 +133,18 @@ export interface LoginResponse {
   redirectTo: string;
   token: string;
 }
+
 export interface PasswordResetFormData extends FieldValues {
   email: string;
   newPassword: string;
   repeatPassword: string;
   token: string;
+}
+
+export interface PasswordChangeFormData {
+  password: string;
+  newPassword: string;
+  repeatPassword: string;
 }
 
 // == libraryRequests == //

@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
 
-import { DoneOutlined } from "../icons";
+import { DoneOutlined } from "../../icons";
 
 /**
  * A STUB CODE, NOT FOR DIRECT USE

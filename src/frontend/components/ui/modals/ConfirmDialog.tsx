@@ -12,8 +12,8 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useConfirmDialogStore } from "../../store/app/useConfirmDialogStore";
-import { CloseOutlined, DoneOutlined, NavigateNextOutlined } from "../icons";
+import { useConfirmDialogStore } from "../../../store/app/useConfirmDialogStore";
+import { CloseOutlined, DoneOutlined, NavigateNextOutlined } from "../../icons";
 
 import type { DialogProps } from "@mui/material";
 import type { MouseEventHandler } from "react";
@@ -39,11 +39,15 @@ export const ConfirmDialog = () => {
   const handleConfirm: MouseEventHandler = async (event) => {
     setLoading(true);
     await onConfirm?.(event);
-    setOpen(false);
     setLoading(false);
+    setOpen(false);
   };
 
-  const handleCancel: MouseEventHandler = async (event) => {
+  const handleCancel: MouseEventHandler = async (event, reason?: string) => {
+    if (reason === "backdropClick" || reason === "escapeKeyDown") {
+      event.preventDefault();
+      return false;
+    }
     await onCancel?.(event);
     setOpen(false);
   };
@@ -57,9 +61,9 @@ export const ConfirmDialog = () => {
     closeAfterTransition: true,
     slots: { transition: Grow },
     slotProps: {
-      transition: { timeout: 120 },
+      transition: { timeout: 60 },
     },
-    onClose: () => setOpen(false),
+    onClose: handleCancel,
   };
 
   return (
@@ -72,7 +76,7 @@ export const ConfirmDialog = () => {
       <DialogActions>
         <Button
           type="button"
-          variant="text"
+          variant="outlined"
           startIcon={<CloseOutlined />}
           onClick={handleCancel}
           children={t("common.cancel")}

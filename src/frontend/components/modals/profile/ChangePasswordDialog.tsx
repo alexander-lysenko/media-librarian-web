@@ -14,12 +14,12 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useFormValidation } from "../../../hooks";
-import { type PasswordFormData, useProfileChangePasswordRequest } from "../../../requests/profileRequests";
+import { useProfileChangePasswordRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { DoneOutlined } from "../../icons";
 import { PasswordInput } from "../../inputs/PasswordInput";
 
-import type { ErrorResponse } from "../../../core/types";
+import type { ErrorResponse, PasswordChangeFormData } from "../../../core/types";
 import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { SubmitHandler } from "react-hook-form";
@@ -36,7 +36,7 @@ export const ChangePasswordDialog = () => {
   const changePasswordRequest = useProfileChangePasswordRequest();
   const loading = changePasswordRequest.status === "pending";
 
-  const useHookForm = useForm<PasswordFormData>({ mode: "onBlur", reValidateMode: "onChange" });
+  const useHookForm = useForm<PasswordChangeFormData>({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("profile", useHookForm);
   const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
 
@@ -63,7 +63,7 @@ export const ChangePasswordDialog = () => {
     }
   };
 
-  const onValidSubmit: SubmitHandler<PasswordFormData> = (data, event) => {
+  const onValidSubmit: SubmitHandler<PasswordChangeFormData> = (data, event) => {
     void changePasswordRequest.mutateAsync(data, {
       onSuccess: () => {
         handleClose(event as SyntheticEvent);

@@ -1,68 +1,88 @@
-import { createHttpRequestHook } from "../core";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
+import { createFetch } from "../core";
 import { enqueueSnack } from "../core/actions";
 import { changePasswordEndpoint, profileEndpoint } from "../core/links";
 import { useProfileStore } from "../store/useProfileStore";
 
-import type { HttpResponseEvents, UseRequestReturn } from "../core/types";
+import type { PasswordChangeFormData } from "../core/types";
 import type { ProfileData } from "../store/useProfileStore";
 
 type GetProfileResponse = ProfileData;
-
-interface PasswordData {
-  password: string;
-  newPassword: string;
-  repeatPassword: string;
-}
 
 /**
  * Request to get profile data
  * [GET] /api/v1/profile
  */
-export const useProfileGetRequest = (): UseRequestReturn<undefined, GetProfileResponse> => {
+export const useProfileGetRequest = () => {
   const setProfile = useProfileStore((state) => state.setProfile);
 
-  const responseEvents: HttpResponseEvents<GetProfileResponse> = {
-    onSuccess: (response) => {
-      setProfile(response);
-    },
-  };
+  const { refetch, status, data, error } = useQuery({
+    queryKey: ["get", "profile"],
+    queryFn: (): Promise<GetProfileResponse> => createFetch({ url: profileEndpoint, method: "GET" }),
+  });
 
-  return createHttpRequestHook<undefined, GetProfileResponse>({
-    method: "GET",
-    endpoint: profileEndpoint,
-    customEvents: responseEvents,
-  })();
+  useEffect(() => {
+    if (status === "success") {
+      setProfile(data);
+    }
+  }, [data, status, setProfile]);
+
+  return { refetch, status, data, error };
 };
 
 /**
- * Request to update profile data.
- * [PUT] /api/v1/profile
+ * Request to update profile data of the user.
+ * [PATCH] /api/v1/profile
  */
-export const useProfilePutRequest = (): UseRequestReturn<Partial<ProfileData["user"]>, GetProfileResponse> => {
-  return createHttpRequestHook<Partial<ProfileData["user"]>, GetProfileResponse>({
-    method: "PUT",
-    endpoint: profileEndpoint,
-    customEvents: {},
-  })();
+export const useProfilePatchRequest = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, status, data, error } = useMutation({
+    mutationKey: ["patch", "profile"],
+    mutationFn: async (data: Partial<ProfileData["user"]>): Promise<GetProfileResponse> => {
+      return await createFetch({
+        url: profileEndpoint,
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["get", "profile"] });
+    },
+    onError: (reason) => {
+      enqueueSnack({ message: reason.message, type: "error" });
+    },
+  });
+
+  return { mutateAsync, status, data, error };
 };
 
 /**
- * Request to change user's password.
+ * Request to change the user's password.
  * [PUT] /api/v1/profile/password
  */
-export const useProfileChangePasswordRequest = (): UseRequestReturn<PasswordData, undefined> => {
-  const responseEvents: HttpResponseEvents<undefined> = {
+export const useProfileChangePasswordRequest = () => {
+  const { t } = useTranslation();
+
+  const { mutateAsync, status, data, error } = useMutation({
+    mutationKey: ["put", "profile", "password"],
+    mutationFn: async (data: PasswordChangeFormData): Promise<void> => {
+      return await createFetch({
+        url: changePasswordEndpoint,
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
     onSuccess: () => {
       enqueueSnack({
         type: "success",
-        message: "Your password has been changed",
+        message: t("dialogs.changePasswordDialog.success"),
       });
     },
-  };
+  });
 
-  return createHttpRequestHook<PasswordData, undefined>({
-    method: "PUT",
-    endpoint: changePasswordEndpoint,
-    customEvents: responseEvents,
-  })();
+  return { mutateAsync, status, data, error };
 };

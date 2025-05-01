@@ -2,11 +2,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 import { confirmDialog, enqueueSnack } from "../core/actions";
-import {
-  useLibraryAllItemsGetRequest,
-  useLibraryItemDeleteRequest,
-  useLibraryItemGetRequest,
-} from "../requests/libraryItemRequests";
+import { useLibraryItemDeleteRequest, useLibraryItemGetRequest } from "../requests/libraryItemRequests";
 import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
 import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
@@ -23,7 +19,6 @@ export const useLibraryItemActions = () => {
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
   const selectedItemId = usePreviewDrawerStore((state) => state.selectedItemId);
 
-  const getItems = useLibraryAllItemsGetRequest();
   const requestItem = useLibraryItemGetRequest();
   const deleteItemRequest = useLibraryItemDeleteRequest();
 
@@ -48,14 +43,14 @@ export const useLibraryItemActions = () => {
       return false;
     }
 
-    requestItem.setResponseEvents({
-      onSuccess: (response) => {
-        useLibraryItemFormStore.getState().handleOpen(selectedLibraryId, response.item);
+    void requestItem.mutateAsync(
+      { id: selectedLibraryId, item: selectedItemId },
+      {
+        onSuccess: (response) => {
+          useLibraryItemFormStore.getState().handleOpen(selectedLibraryId, response.item);
+        },
       },
-    });
-
-    requestItem.setPathParams({ id: selectedLibraryId, item: selectedItemId });
-    void requestItem.fetch();
+    );
   }, [getSelectedLibrary, requestItem, selectedItemId]);
 
   /**
@@ -71,21 +66,21 @@ export const useLibraryItemActions = () => {
     const item = useLibraryTableStore.getState().rows.find((v) => v.id === selectedItemId);
     const subjectTitle = item?.[columns[0].label] as string;
 
-    deleteItemRequest.setResponseEvents({
-      onSuccess: () => {
-        enqueueSnack({
-          type: "success",
-          message: t("notifications.libraryItemDeleted", { title: subjectTitle }),
-        });
-      },
-    });
-
     confirmDialog({
       message: t("confirm.deleteLibraryItem"),
       subjectItem: subjectTitle,
       onConfirm: async () => {
-        deleteItemRequest.setPathParams({ id: selectedLibraryId, item: selectedItemId });
-        await deleteItemRequest.fetch();
+        await deleteItemRequest.mutateAsync(
+          { id: selectedLibraryId, item: selectedItemId },
+          {
+            onSuccess: () => {
+              enqueueSnack({
+                type: "success",
+                message: t("notifications.libraryItemDeleted", { title: subjectTitle }),
+              });
+            },
+          },
+        );
       },
     });
   }, [deleteItemRequest, getSelectedLibrary, selectedItemId, t]);

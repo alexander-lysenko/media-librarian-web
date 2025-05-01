@@ -24,8 +24,9 @@ import { AddCircleOutlined, ArrowDropDownOutlined, ArrowDropUpOutlined, SaveAsOu
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
 import { PosterUploadInputBox } from "../ui/PosterUploadInputBox";
 
-import type { LibraryElement, LibraryFields, LibraryItemFormValues, PostLibraryItemRequest } from "../../core/types";
+import type { LibraryElement, LibraryFields, LibraryItemFormData, LibraryItemFormValues } from "../../core/types";
 import type { DialogProps } from "@mui/material";
+import type { MutateOptions } from "@tanstack/react-query";
 import type { KeyboardEvent, SyntheticEvent } from "react";
 import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } from "react-hook-form";
 
@@ -79,7 +80,7 @@ export const LibraryItemDialog = () => {
   };
 
   return (
-    <Dialog {...dialogProps} onSubmit={handleSubmit(formEvents.onValidSubmit, formEvents.onInvalidSubmit)}>
+    <Dialog {...dialogProps}>
       <DialogTitle variant="h5" noWrap>
         {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
       </DialogTitle>
@@ -143,7 +144,6 @@ const initFormDefaultValues = (fields?: LibraryFields) => {
 
     return acc;
   };
-
   return Object.entries(fields || {}).reduce(reducer, {});
 };
 
@@ -172,32 +172,23 @@ const useDialogFormEvents = (
 
   const onValidSubmit: SubmitHandler<LibraryItemFormValues> = (data, event) => {
     setLoading(true);
-    // console.log("Form is valid", data);
-    const request: PostLibraryItemRequest = {
+
+    const id = selectedLibraryId as number;
+    const item = selectedItem?.id as number;
+    const requestData: LibraryItemFormData = {
       contents: data,
       // poster: poster ?? "",
     };
 
+    const responseEffects: MutateOptions = {
+      onSuccess: () => handleCloseWithReset(event as SyntheticEvent),
+      onSettled: () => setLoading(false),
+    };
+
     if (isEditMode) {
-      updateLibraryItemRequest.setPathParams({ id: selectedLibraryId as number, item: selectedItem?.id as number });
-      updateLibraryItemRequest.setResponseEvents({
-        onSuccess: () => {
-          handleCloseWithReset(event as SyntheticEvent);
-        },
-      });
-
-      void updateLibraryItemRequest.fetch(request);
-      // todo: mutate store with the response data
+      void updateLibraryItemRequest.mutateAsync({ id, item, data: requestData }, responseEffects as never);
     } else {
-      createLibraryItemRequest.setPathParams({ id: selectedLibraryId as number });
-      createLibraryItemRequest.setResponseEvents({
-        onSuccess: () => {
-          handleCloseWithReset(event as SyntheticEvent);
-        },
-      });
-
-      void createLibraryItemRequest.fetch(request);
-      // todo: mutate store with the response data
+      void createLibraryItemRequest.mutateAsync({ id, data: requestData }, responseEffects as never);
     }
   };
 

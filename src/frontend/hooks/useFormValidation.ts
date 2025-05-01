@@ -1,6 +1,7 @@
 import { debounce } from "@mui/material/utils";
 import { useTranslation } from "react-i18next";
 
+import { RegisteredFormNamesEnum } from "../core/enums";
 import {
   useEmailValidationRequest,
   useItemTitleValidationRequest,
@@ -9,7 +10,6 @@ import {
 import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 
-import type { RegisteredFormNamesEnum } from "../core/enums";
 import type {
   ChangeHandler,
   FieldValues,
@@ -27,7 +27,8 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
   const { t } = useTranslation();
 
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
-  const selectedItem = useLibraryItemFormStore((state) => state.selectedItem?.id);
+  const selectedItemId = useLibraryItemFormStore((state) => state.selectedItem?.id);
+  const isEditMode = useLibraryItemFormStore((state) => state.isEditMode);
 
   const validateEmail = useEmailValidationRequest();
   const validateLibraryTitle = useLibraryTitleValidationRequest();
@@ -37,7 +38,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
   const urlPattern = /^(ht|f)tps?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,9}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/i;
 
   const rules: Record<RegisteredFormNamesEnum, Record<string, RegisterOptions>> = {
-    login: {
+    [RegisteredFormNamesEnum.login]: {
       email: {
         setValueAs: (value: string) => value.trim().toLowerCase(),
         required: t("formValidation.emailRequired") as Message,
@@ -56,7 +57,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         required: t("formValidation.captchaRequired") as Message,
       },
     },
-    passwordRecovery: {
+    [RegisteredFormNamesEnum.passwordRecovery]: {
       email: {
         required: true,
       },
@@ -88,7 +89,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
       },
     },
-    passwordRecoveryRequest: {
+    [RegisteredFormNamesEnum.passwordRecoveryRequest]: {
       email: {
         setValueAs: (value: string) => value.trim().toLowerCase(),
         required: t("formValidation.emailRequired") as Message,
@@ -98,7 +99,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
       },
     },
-    signup: {
+    [RegisteredFormNamesEnum.signup]: {
       name: {
         setValueAs: (value: string) => value.trim(),
         required: t("formValidation.usernameRequired") as Message,
@@ -113,12 +114,10 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
         validate: {
           uniqueValidation: async (value: string): Promise<ValidateResult> => {
-            const message = await validateEmail.fetch({ email: value }).catch((error) => {
-              console.warn(error);
-              return error.message;
-            });
-            console.log(message);
-            return message;
+            return await validateEmail
+              .mutateAsync({ email: value })
+              .then((response) => response?.message)
+              .catch((error) => error.message);
           },
         },
       },
@@ -150,13 +149,16 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
       },
     },
-    libraryCreate: {
+    [RegisteredFormNamesEnum.libraryCreate]: {
       title: {
         setValueAs: (value: string) => value.trim(),
         required: t("formValidation.libraryTitleRequired") as Message,
         validate: {
           uniqueValidation: async (value: string): Promise<ValidateResult> => {
-            return await validateLibraryTitle.fetch({ title: value });
+            return await validateLibraryTitle
+              .mutateAsync({ title: value })
+              .then((response) => response?.message)
+              .catch((error) => error.message);
           },
         },
       },
@@ -178,27 +180,34 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         required: true,
       },
     },
-    libraryItem: {
+    [RegisteredFormNamesEnum.libraryItem]: {
       title: {
         setValueAs: (value: string) => value?.trim(),
         required: t("formValidation.entryTitleRequired") as Message,
         validate: {
           uniqueValidation: async (value: string): Promise<ValidateResult> => {
-            validateItemTitle.setPathParams({ id: selectedLibrary?.id as number });
-
-            return await validateItemTitle.fetch({ title: value, item: selectedItem ?? null });
+            return await validateItemTitle
+              .mutateAsync({ title: value, item: isEditMode ? selectedItemId : undefined })
+              .then((response) => response?.message)
+              .catch((error) => error.message);
           },
         },
       },
+      line: {
+        setValueAs: (value: string) => (value ?? "").trim(),
+      },
+      text: {
+        setValueAs: (value: string) => (value ?? "").trim(),
+      },
       url: {
-        setValueAs: (value: string) => value?.trim(),
+        setValueAs: (value: string) => (value ?? "").trim(),
         pattern: {
           value: urlPattern,
           message: t("formValidation.urlInvalid"),
         },
       },
     },
-    profile: {
+    [RegisteredFormNamesEnum.profile]: {
       username: {
         setValueAs: (value: string) => value?.trim(),
         required: t("formValidation.usernameRequired") as Message,
@@ -215,7 +224,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
           uniqueValidation: async (value: string) => {
             const message = t("formValidation.emailNotUnique");
 
-            const hasEmailTaken = await validateEmail.fetch({ email: value });
+            const hasEmailTaken = await validateEmail.mutateAsync({ email: value });
             return !hasEmailTaken || message;
           },
         },
@@ -223,7 +232,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
       password: {
         required: t("formValidation.passwordRequired") as Message,
       },
-      newPassword: {
+      newPasswordOFF: {
         required: t("formValidation.passwordRequired") as Message,
         minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
         validate: {
@@ -239,7 +248,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
           },
         },
       },
-      repeatPassword: {
+      repeatPasswordOFF: {
         required: t("formValidation.passwordRepeatRequired") as Message,
         validate: {
           matchesPasswords: (value: string, formValues: FieldValues) => {

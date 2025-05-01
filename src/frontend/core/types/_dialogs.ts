@@ -18,9 +18,9 @@ export interface SimpleDialogProps {
  *
  * @property {ReactNode} message
  * The content or message is displayed in the confirmation dialog.
- * @property {MouseEventHandler | VoidFunction | undefined} onConfirm
+ * @property {MouseEventHandler | () => void | Promise<void>} onConfirm
  * Callback executed when the user confirms the action.
- * @property {MouseEventHandler | VoidFunction} [onCancel]
+ * @property {MouseEventHandler | () => void | Promise<void>} [onCancel]
  * Optional callback executed when the user cancels the action.
  * @property {string} [subjectItem]
  * Optional name or identifier of the item related to the confirmation dialog.
@@ -29,8 +29,8 @@ export interface SimpleDialogProps {
  */
 export interface ConfirmDialogProps {
   message: ReactNode;
-  onConfirm: MouseEventHandler | VoidFunction | undefined;
-  onCancel?: MouseEventHandler | VoidFunction;
+  onConfirm: MouseEventHandler | (() => void | Promise<void>);
+  onCancel?: MouseEventHandler | (() => void | Promise<void>);
   subjectItem?: string;
   type?: "question" | "warning";
 }

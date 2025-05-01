@@ -9,6 +9,8 @@ export { MyLibraries } from "./profile/MyLibraries";
 export { BackgroundContainer } from "./ui/BackgroundContainer";
 export { Copyright } from "./ui/Copyright";
 export { GlobalSnackbar } from "./ui/GlobalSnackbar";
+export { ConfirmDialog } from "./ui/modals/ConfirmDialog";
+export { SimpleDialog } from "./ui/modals/SimpleDialog";
 export { PaperCardHeader } from "./ui/PaperCardHeader";
 export { StickyFooter } from "./ui/StickyFooter";
 export { TooltipWrapper } from "./ui/TooltipWrapper";
