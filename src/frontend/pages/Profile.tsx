@@ -21,7 +21,7 @@ import {
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppNavbar, MyLibraries, PaperCardHeader } from "../components";
@@ -80,13 +80,6 @@ export const Profile = () => {
   const [profileSectionOpen, setProfileSectionOpen] = useState(true);
   const [libSectionOpen, setLibSectionOpen] = useState(true);
 
-  useLayoutEffect(() => {
-    void getProfileRequest.fetch();
-
-    return () => getProfileRequest.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <>
       <AppNavbar />
@@ -99,7 +92,7 @@ export const Profile = () => {
             actionIcon={profileSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
             actionEvents={{ onClick: () => setProfileSectionOpen(!profileSectionOpen) }}
           />
-          {getProfileRequest.status === "SUCCESS" ? (
+          {getProfileRequest.status === "success" ? (
             <Grid container columnSpacing={2} display={profileSectionOpen ? "flex" : "none"}>
               <Grid id="profiler" size={{ xs: 12, md: 4 }} sx={{ maxWidth: { md: 320 } }}>
                 <Profiler username={profile.user.name} email={profile.user.email} avatar={profile.user.avatar} />

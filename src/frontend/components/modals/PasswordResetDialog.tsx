@@ -8,26 +8,25 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  type DialogProps,
   DialogTitle,
   Grow,
   TextField,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { enqueueSnack } from "../../core/actions";
 import { useFormValidation } from "../../hooks";
 import { usePasswordResetRequest } from "../../requests/authRequests";
 import { AlternateEmailOutlined, LockReset } from "../icons";
 import { PasswordInput } from "../inputs/PasswordInput";
 import { TextInput } from "../inputs/TextInput";
 
+import type { PasswordResetFormData } from "../../core/types";
+import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
-import type { FieldValues, SubmitHandler } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 
 interface Props {
   open: boolean;
@@ -44,17 +43,17 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const [loading, setLoading] = useState<boolean>(false);
 
   const queryParams = new URLSearchParams(location.search);
   const passwordResetRequest = usePasswordResetRequest();
+  const loading = passwordResetRequest.status === "pending";
 
-  const usePasswordResetForm = useForm({
+  const usePasswordResetForm = useForm<PasswordResetFormData>({
     mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
-      token: queryParams.get("token"),
-      email: queryParams.get("email"),
+      token: queryParams.get("token") ?? undefined,
+      email: queryParams.get("email") ?? undefined,
       newPassword: "",
       repeatPassword: "",
       root: "",
@@ -72,28 +71,19 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
     }
 
     reset();
-    setLoading(false);
     onClose(event, reason);
   };
 
-  const onValidSubmit: SubmitHandler<FieldValues> = async (data, event) => {
-    setLoading(true);
-
-    passwordResetRequest.setResponseEvents({
+  const onValidSubmit: SubmitHandler<PasswordResetFormData> = (data, event) => {
+    void passwordResetRequest.mutateAsync(data, {
       onSuccess: () => {
         handleCloseWithReset(event as SyntheticEvent);
-        enqueueSnack({ type: "success", message: t("passwordReset.successfullyReset") });
       },
       onError: (reason) => {
         reset({ newPassword: "", repeatPassword: "" });
         setError("root.serverError", { message: reason.message });
       },
-      onComplete: () => {
-        setLoading(false);
-      },
     });
-
-    await passwordResetRequest.fetch(data as never);
   };
 
   const dialogProps: DialogProps = {

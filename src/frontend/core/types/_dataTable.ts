@@ -71,6 +71,6 @@ export interface VirtuosoContextProps {
 
 export type DataTableComponentProps = DataTableBaseProps & DataTableHeaderProps;
 
-export interface DataTableVirtualizedProps extends DataTableComponentProps, DataTablePaginationProps {
+export interface DataTableVirtualizedProps extends DataTableComponentProps, DataTableSelectedItemState {
   componentProps?: VirtuosoContextProps;
 }

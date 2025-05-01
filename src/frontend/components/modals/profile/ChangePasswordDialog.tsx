@@ -10,20 +10,19 @@ import {
   DialogTitle,
   Grow,
 } from "@mui/material";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
-import { useProfileChangePasswordRequest } from "../../../requests/profileRequests";
+import { type PasswordFormData, useProfileChangePasswordRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { DoneOutlined } from "../../icons";
 import { PasswordInput } from "../../inputs/PasswordInput";
 
+import type { ErrorResponse } from "../../../core/types";
 import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
-import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 
 /**
  * Profile - Dialog - Change Account's Password
@@ -35,9 +34,9 @@ export const ChangePasswordDialog = () => {
   const setOpen = useProfileDialogsStore((state) => state.setPasswordDialogOpen);
 
   const changePasswordRequest = useProfileChangePasswordRequest();
-  const [loading, setLoading] = useState<boolean>(false);
+  const loading = changePasswordRequest.status === "pending";
 
-  const useHookForm = useForm<FieldValues>({ mode: "onBlur", reValidateMode: "onChange" });
+  const useHookForm = useForm<PasswordFormData>({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("profile", useHookForm);
   const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
 
@@ -51,36 +50,25 @@ export const ChangePasswordDialog = () => {
     setOpen(false);
   };
 
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
-  const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
-    setLoading(true);
+  const onErrorResponse = (reason: ErrorResponse) => {
+    setError("root.serverError", { message: reason.message });
+    if (reason.errors?.["password"]) {
+      setError("password", { message: reason.errors?.["password"][0] });
+    }
+    if (reason.errors?.["newPassword"]) {
+      setError("newPassword", { message: reason.errors?.["newPassword"][0] });
+    }
+    if (reason.errors?.["repeatPassword"]) {
+      setError("repeatPassword", { message: reason.errors?.["repeatPassword"][0] });
+    }
+  };
 
-    changePasswordRequest.setResponseEvents({
+  const onValidSubmit: SubmitHandler<PasswordFormData> = (data, event) => {
+    void changePasswordRequest.mutateAsync(data, {
       onSuccess: () => {
         handleClose(event as SyntheticEvent);
-        enqueueSnack({ message: t("dialogs.changePasswordDialog.success"), type: "success" });
       },
-      onError: (reason) => {
-        setError("root.serverError", { message: reason.message });
-        if (reason.errors?.["password"]) {
-          setError("password", { message: reason.errors?.["password"][0] });
-        }
-        if (reason.errors?.["newPassword"]) {
-          setError("newPassword", { message: reason.errors?.["newPassword"][0] });
-        }
-        if (reason.errors?.["repeatPassword"]) {
-          setError("repeatPassword", { message: reason.errors?.["repeatPassword"][0] });
-        }
-      },
-      onComplete: () => {
-        setLoading(false);
-      },
-    });
-
-    void changePasswordRequest.fetch({
-      password: data.password,
-      newPassword: data.newPassword,
-      repeatPassword: data.repeatPassword,
+      onError: onErrorResponse,
     });
   };
 
@@ -94,7 +82,7 @@ export const ChangePasswordDialog = () => {
       transition: { timeout: 120 },
       paper: {
         component: "form",
-        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+        onSubmit: handleSubmit(onValidSubmit),
       },
     },
   };

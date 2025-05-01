@@ -47,7 +47,7 @@ Route::middleware(['auth.bearer:sanctum', 'throttle:api.basic'])
     ->prefix('v1/profile/')->name('v1.profile.')
     ->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
-        Route::put('/', [ProfileController::class, 'update'])->name('update');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::put('/password', [ProfileController::class, 'changePassword'])->name('changePassword');
 
         Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');

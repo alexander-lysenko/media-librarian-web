@@ -8,4 +8,7 @@ import type { ConfirmDialogProps } from "./types";
  */
 export const enqueueSnack = useSnackbarStore.getState().enqueueSnack;
 
+/**
+ * A shortcut to open a confirmation dialog with the specified properties from anywhere in the application
+ */
 export const confirmDialog = (props: ConfirmDialogProps) => useConfirmDialogStore.setState({ ...props, open: true });

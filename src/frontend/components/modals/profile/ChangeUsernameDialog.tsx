@@ -8,13 +8,11 @@ import {
   DialogTitle,
   Grow,
 } from "@mui/material";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
-import { useProfilePutRequest } from "../../../requests/profileRequests";
+import { useProfilePatchRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useProfileStore } from "../../../store/useProfileStore";
 import { BadgeOutlined, DoneOutlined } from "../../icons";
@@ -23,6 +21,7 @@ import { TextInput } from "../../inputs/TextInput";
 import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import { enqueueSnack } from "../../../core/actions";
 
 /**
  * Profile - Dialog - Change Account's Username
@@ -31,13 +30,12 @@ export const ChangeUsernameDialog = () => {
   const { t } = useTranslation();
 
   const profile = useProfileStore((state) => state.profile);
-  const setProfile = useProfileStore((state) => state.setProfile);
 
   const open = useProfileDialogsStore((state) => state.usernameDialogOpen);
   const setOpen = useProfileDialogsStore((state) => state.setUsernameDialogOpen);
 
-  const profileUpdateRequest = useProfilePutRequest();
-  const [loading, setLoading] = useState<boolean>(false);
+  const profileUpdateRequest = useProfilePatchRequest();
+  const loading = profileUpdateRequest.status === "pending";
 
   const useHookForm = useForm({
     mode: "onBlur",
@@ -57,27 +55,21 @@ export const ChangeUsernameDialog = () => {
     setOpen(false);
   };
 
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
-    setLoading(true);
-
-    profileUpdateRequest.setResponseEvents({
-      onSuccess: (response) => {
-        setProfile(response);
-        enqueueSnack({
-          message: t("dialogs.changeUsernameDialog.success", { username: response.user.name }),
-          type: "success",
-        });
+    void profileUpdateRequest.mutateAsync(
+      { name: data.username },
+      {
+        onSuccess: (response) => {
+          enqueueSnack({
+            message: t("dialogs.changeUsernameDialog.success", { username: response.user.name }),
+            type: "success",
+          });
+        },
+        onSettled: () => {
+          handleClose(event as SyntheticEvent);
+        },
       },
-      onError: (reason) => {
-        enqueueSnack({ message: reason.message, type: "error" });
-      },
-      onComplete: () => {
-        handleClose(event as SyntheticEvent);
-      },
-    });
-
-    void profileUpdateRequest.fetch({ name: data.username });
+    );
   };
 
   const dialogProps: DialogProps = {
@@ -91,7 +83,7 @@ export const ChangeUsernameDialog = () => {
       transition: { timeout: 120 },
       paper: {
         component: "form",
-        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+        onSubmit: handleSubmit(onValidSubmit),
       },
     },
   };

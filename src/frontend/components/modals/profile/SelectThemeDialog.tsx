@@ -10,33 +10,30 @@ import {
   styled,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
-import { useProfilePutRequest } from "../../../requests/profileRequests";
+import { useProfilePatchRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useThemeStore } from "../../../store/system/useThemeStore";
-import { useProfileStore } from "../../../store/useProfileStore";
 import { ImageOutlined } from "../../icons";
 
 import type { DialogProps, PaletteMode } from "@mui/material";
 import type { SyntheticEvent } from "react";
 
 /**
- * A Simple Dialog to change interface settings (theme) from Profile section
+ * A Simple Dialog to change interface settings (theme) from the Profile section
  */
 export const SelectThemeDialog = () => {
   const { t } = useTranslation();
 
   const { setMode: setThemeMode } = useThemeStore((state) => state);
-  const setProfile = useProfileStore((state) => state.setProfile);
 
   const open = useProfileDialogsStore((state) => state.themeDialogOpen);
   const setOpen = useProfileDialogsStore((state) => state.setThemeDialogOpen);
 
-  const profileUpdateRequest = useProfilePutRequest();
-  const [loading, setLoading] = useState<boolean>(false);
+  const profileUpdateRequest = useProfilePatchRequest();
+  const loading = profileUpdateRequest.status === "pending";
 
   const colors: Record<PaletteMode, { background: string; highlight: string }> = {
     light: {
@@ -59,23 +56,18 @@ export const SelectThemeDialog = () => {
   };
 
   const handleItemClick = (theme: PaletteMode) => {
-    setLoading(true);
-    profileUpdateRequest.setResponseEvents({
-      onSuccess: (response) => {
-        setThemeMode(theme);
-        setProfile(response);
-        enqueueSnack({ message: t("common.changesSaved"), type: "success" });
+    void profileUpdateRequest.mutateAsync(
+      { theme },
+      {
+        onSuccess: (response) => {
+          setThemeMode(response.user.theme as PaletteMode);
+          enqueueSnack({ message: t("common.changesSaved"), type: "success" });
+        },
+        onSettled: () => {
+          setOpen(false);
+        },
       },
-      onError: (reason) => {
-        enqueueSnack({ message: reason.message, type: "error" });
-      },
-      onComplete: () => {
-        setLoading(false);
-        setOpen(false);
-      },
-    });
-
-    void profileUpdateRequest.fetch({ theme });
+    );
   };
 
   const dialogProps: DialogProps = {

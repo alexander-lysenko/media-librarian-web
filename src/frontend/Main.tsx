@@ -1,4 +1,5 @@
 import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { StrictMode } from "react";
@@ -20,10 +21,18 @@ import { useLanguageStore, useTranslationStore } from "./store/system/useTransla
 import { useAuthCredentialsStore } from "./store/useAuthCredentialsStore";
 import { getDesignTokens } from "./theme";
 
+import type { ErrorResponse } from "./core/types";
+
 const debug = import.meta.env.VITE_APP_DEBUG;
 
 const i18n = useTranslationStore.getState().i18nInstance;
 const getLanguage = useLanguageStore.getState().getLanguage;
+
+declare module "@tanstack/react-query" {
+  interface Register {
+    defaultError: ErrorResponse;
+  }
+}
 
 // init i18n (needs to be bundled ;))
 i18n.init({ lng: getLanguage(), debug }).then(() => null);
@@ -32,6 +41,20 @@ dayjs.extend(localizedFormat, {});
 
 const rootElement = document.getElementById("root") as Element;
 const root = createRoot(rootElement);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      retry: false,
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+});
 
 export const Main = () => {
   const colorMode = useThemeStore((state) => state.mode);
@@ -42,19 +65,22 @@ export const Main = () => {
     <ThemeProvider noSsr theme={createTheme(getDesignTokens(colorMode))}>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline enableColorScheme />
-      <Router>
-        <Routes>
-          <Route path={"/"} element={<Landing />} />
-          <Route path={AppRoutes.login} element={<SignIn />} />
-          <Route path={AppRoutes.signup} element={<SignUp />} />
-          <Route path={AppRoutes.appHome} element={<App />} />
-          <Route path={AppRoutes.profile} element={<Profile />} />
-          <Route path={AppRoutes.passwordReset} element={<PasswordReset />} />
-          <Route path={AppRoutes.emailConfirmation} element={<EmailConfirmation />} />
-        </Routes>
-      </Router>
-      <GlobalSnackbar />
-      <ConfirmDialog />
+
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <Routes>
+            <Route path={"/"} element={<Landing />} />
+            <Route path={AppRoutes.login} element={<SignIn />} />
+            <Route path={AppRoutes.signup} element={<SignUp />} />
+            <Route path={AppRoutes.appHome} element={<App />} />
+            <Route path={AppRoutes.profile} element={<Profile />} />
+            <Route path={AppRoutes.passwordReset} element={<PasswordReset />} />
+            <Route path={AppRoutes.emailConfirmation} element={<EmailConfirmation />} />
+          </Routes>
+        </Router>
+        <GlobalSnackbar />
+        <ConfirmDialog />
+      </QueryClientProvider>
     </ThemeProvider>
   );
 };

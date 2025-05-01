@@ -14,21 +14,18 @@ export const PasswordReset = () => {
     navigate(AppRoutes.login);
   };
 
-  const getImageRequest = useUnsplashImageRequest();
+  const getImageRequest = useUnsplashImageRequest("o_tcYADlSt8");
   const [backgroundImage, setBackgroundImage] = useState<string>("url()");
 
   useLayoutEffect(() => {
-    getImageRequest.setResponseEvents({
-      onSuccess: (response) => {
-        setBackgroundImage(`url(${response.image.urlRegular})`);
-      },
-    });
-    getImageRequest.setPathParams({ id: "o_tcYADlSt8" });
-    void getImageRequest.fetch();
+    if (getImageRequest.status === "success") {
+      setBackgroundImage(`url(${getImageRequest.data.image.urlRegular})`);
+    }
+  }, [getImageRequest.data?.image.urlRegular, getImageRequest.status]);
 
-    return () => getImageRequest.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (getImageRequest.status === "pending") {
+    return <FullscreenContainer />;
+  }
 
   return (
     <FullscreenContainer style={{ "--var-background-image": backgroundImage } as CSSProperties}>

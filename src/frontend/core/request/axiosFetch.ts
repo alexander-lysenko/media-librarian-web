@@ -8,6 +8,7 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axio
 
 /**
  * Axios Request configuration options (slightly overridden AxiosRequestConfig)
+ * @deprecated
  */
 export type FetchRequestConfig<Request> = AxiosRequestConfig<Request> & {
   /** The API endpoint's route (absolute URL) */
@@ -39,8 +40,8 @@ const axiosInstance = () => {
  *
  * @param {FetchRequestConfig} config
  * @param {HttpResponseEvents} events
+ * @deprecated
  */
-
 export const axiosFetch = async <RequestType, ResponseType>(
   config: FetchRequestConfig<RequestType>,
   events: HttpResponseEvents<ResponseType>,

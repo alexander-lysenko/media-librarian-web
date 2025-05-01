@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 
 import { getCroppedImg } from "../../../core";
 import { enqueueSnack } from "../../../core/actions";
-import { useProfilePutRequest } from "../../../requests/profileRequests";
+import { useProfilePatchRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useProfileStore } from "../../../store/useProfileStore";
 import { CloseOutlined, CloudUploadOutlined, DoneOutlined } from "../../icons";
@@ -25,6 +25,7 @@ import { ProfileAvatar } from "../../ui/ProfileAvatar";
 
 import type { CropParams } from "../../../core/types";
 import type { DialogProps } from "@mui/material";
+import type { MutateOptions } from "@tanstack/react-query";
 import type { ChangeEvent, SyntheticEvent } from "react";
 
 /**
@@ -34,15 +35,14 @@ export const UploadAvatarDialog = () => {
   const { t } = useTranslation();
 
   const profile = useProfileStore((state) => state.profile);
-  const setProfile = useProfileStore((state) => state.setProfile);
-
   const open = useProfileDialogsStore((state) => state.avatarDialogOpen);
   const setOpen = useProfileDialogsStore((state) => state.setAvatarDialogOpen);
 
-  const profileUpdateRequest = useProfilePutRequest();
+  const profileUpdateRequest = useProfilePatchRequest();
+  const loading = profileUpdateRequest.status === "pending";
+
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
-  const [loading, setLoading] = useState<boolean>(false);
   const [cropMode, setCropMode] = useState<boolean>(false);
   const [avatar, setAvatar] = useState<string | null>();
   const [cropOptions, setCropOptions] = useState<CropParams>();
@@ -91,30 +91,24 @@ export const UploadAvatarDialog = () => {
       return false;
     }
 
-    setLoading(true);
-    profileUpdateRequest.setResponseEvents({
-      onSuccess: (response) => {
-        setProfile(response);
+    const responseEffects: MutateOptions = {
+      onSuccess: () => {
         enqueueSnack({ message: t("common.changesSaved"), type: "success" });
       },
-      onError: (reason) => {
-        enqueueSnack({ message: reason.message, type: "error" });
-      },
-      onComplete: () => {
-        setLoading(false);
+      onSettled: () => {
         handleClose(event);
       },
-    });
+    };
 
     if (cropMode && cropOptions) {
       setCropMode(false);
       const image = await getCroppedImg(avatar || "", cropOptions.area, cropOptions.rotation, cropOptions.flip);
 
-      void profileUpdateRequest.fetch({ avatar: image });
+      void profileUpdateRequest.mutateAsync({ avatar: image }, responseEffects as never);
       return true;
     }
 
-    void profileUpdateRequest.fetch({ avatar });
+    void profileUpdateRequest.mutateAsync({ avatar }, responseEffects as never);
   };
 
   const dialogProps: DialogProps = {

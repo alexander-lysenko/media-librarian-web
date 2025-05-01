@@ -1,12 +1,13 @@
-import { useTranslation } from "react-i18next";
+import { useMutation } from "@tanstack/react-query";
 
-import { createHttpRequestHook } from "../core";
+import { bindPathParams, createFetch } from "../core";
 import { validateEmailEndpoint, validateItemNameEndpoint, validateLibraryNameEndpoint } from "../core/links";
+import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 import { useSignupFormStore } from "../store/useSignupFormStore";
 
-import type { ErrorResponse, HttpResponseEvents, UseRequestReturn } from "../core/types";
+import type { ErrorResponse } from "../core/types";
 
 interface EmailRequest {
   email: string;
@@ -18,82 +19,66 @@ interface LibraryRequest {
 
 interface LibraryItemRequest {
   title: string;
-  item: number | null;
+  item?: number;
 }
 
-type ResponseMessage = string | boolean;
+type ValidationResponse = undefined | ErrorResponse;
 
 /**
- * Request to validate the
- * [POST] /api/v1/validations/
+ * Request to validate the email uniqueness during a user signup process or changing the email address in profile.
+ * [POST] /api/v1/validations/email
  */
-export const useEmailValidationRequest = (): UseRequestReturn<EmailRequest, ResponseMessage> => {
-  const { t } = useTranslation();
+export const useEmailValidationRequest = () => {
   const setCheckingState = useSignupFormStore((state) => state.setEmailUniqueProcessing);
 
-  const responseEvents: HttpResponseEvents<ResponseMessage> = {
-    beforeSend: () => setCheckingState(true),
-    onSuccess: () => false,
-    onError: (reason: ErrorResponse) => {
-      return reason.code === "422" ? reason.message : t("app.internalServerError");
-    },
-    onComplete: () => setCheckingState(false),
-  };
+  const { mutateAsync } = useMutation({
+    mutationKey: ["validations", "email"],
+    mutationFn: (data: EmailRequest): Promise<ValidationResponse> =>
+      createFetch({ url: validateEmailEndpoint, method: "POST", body: JSON.stringify(data), credentials: "omit" }),
+    onMutate: () => setCheckingState(true),
+    onSettled: () => setCheckingState(false),
+  });
 
-  return createHttpRequestHook<EmailRequest, ResponseMessage>({
-    method: "POST",
-    endpoint: validateEmailEndpoint,
-    customEvents: responseEvents,
-    withCredentials: false,
-  })();
+  return { mutateAsync };
 };
 
 /**
- * Request to validate the Library title uniqueness.
+ * Request to validate the Library title uniqueness when creating a new Library.
  * [POST] /api/v1/validations/libraries
  */
-export const useLibraryTitleValidationRequest = (): UseRequestReturn<LibraryRequest, ResponseMessage> => {
-  const { t } = useTranslation();
+export const useLibraryTitleValidationRequest = () => {
   const setCheckingState = useLibraryCreateFormStore((state) => state.setTitleUniqueProcessing);
 
-  const responseEvents: HttpResponseEvents<ResponseMessage> = {
-    beforeSend: () => setCheckingState(true),
-    onSuccess: () => false,
-    onError: (reason: ErrorResponse) => {
-      return reason.code === "422" ? reason.message : t("app.internalServerError");
+  const { mutateAsync } = useMutation({
+    mutationKey: ["validations", "libraries", "title"],
+    mutationFn: (data: LibraryRequest): Promise<ValidationResponse> => {
+      return createFetch({ url: validateLibraryNameEndpoint, method: "POST", body: JSON.stringify(data) });
     },
-    onComplete: () => setCheckingState(false),
-  };
+    onMutate: () => setCheckingState(true),
+    onSettled: () => setCheckingState(false),
+  });
 
-  return createHttpRequestHook<LibraryRequest, ResponseMessage>({
-    method: "POST",
-    endpoint: validateLibraryNameEndpoint,
-    customEvents: responseEvents,
-    withCredentials: true,
-  })();
+  return { mutateAsync };
 };
 
 /**
- * Request to validate the Library Item title uniqueness.
+ * Request to validate the Library Item title uniqueness when creating a new Library Item or updating an existing one.
  * [POST] /api/v1/validations/libraries/{id}/items
  */
-export const useItemTitleValidationRequest = (): UseRequestReturn<LibraryItemRequest, ResponseMessage> => {
-  const { t } = useTranslation();
+export const useItemTitleValidationRequest = () => {
   const setCheckingState = useLibraryItemFormStore((state) => state.setTitleUniqueProcessing);
+  const selectedLibraryId = useSelectedLibraryStore((state) => state.getSelectedLibrary()?.id);
 
-  const responseEvents: HttpResponseEvents<ResponseMessage> = {
-    beforeSend: () => setCheckingState(true),
-    onSuccess: () => false,
-    onError: (reason: ErrorResponse) => {
-      return reason.code === "422" ? reason.message : t("app.internalServerError");
+  const { mutateAsync } = useMutation({
+    mutationKey: ["validations", "libraries", "items", "title"],
+    mutationFn: (data: LibraryItemRequest): Promise<ValidationResponse> => {
+      const url = bindPathParams(validateItemNameEndpoint, { id: selectedLibraryId as number });
+
+      return createFetch({ url, method: "POST", body: JSON.stringify(data) });
     },
-    onComplete: () => setCheckingState(false),
-  };
+    onMutate: () => setCheckingState(true),
+    onSettled: () => setCheckingState(false),
+  });
 
-  return createHttpRequestHook<LibraryItemRequest, ResponseMessage>({
-    method: "POST",
-    endpoint: validateItemNameEndpoint,
-    customEvents: responseEvents,
-    withCredentials: true,
-  })();
+  return { mutateAsync };
 };

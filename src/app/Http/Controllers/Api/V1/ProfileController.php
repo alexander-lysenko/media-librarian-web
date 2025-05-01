@@ -28,7 +28,7 @@ use Throwable;
             new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
             new OA\Property(property: 'locale', type: 'string', example: 'en'),
             new OA\Property(property: 'theme', type: 'string', example: 'light'),
-            new OA\Property(property: 'avatar', type: 'string', example: 'data:image/svg+xml;base64,PD9...PC9zdmc+'),
+            new OA\Property(property: 'avatar', type: 'string', example: 'data:image/svg+xml;base64,...'),
         ]),
         new OA\Property(property: 'stats', properties: [
             new OA\Property(property: 'status', type: 'string', example: 'ACTIVE'),
@@ -86,7 +86,7 @@ class ProfileController extends ApiV1Controller
                 new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
                 new OA\Property(property: 'locale', type: 'string', enum: ['en', 'ru']),
                 new OA\Property(property: 'theme', type: 'string', enum: ['dark', 'light']),
-                new OA\Property(property: 'avatar', type: 'string', example: 'data:image/jpeg;base64,PD9...PC9zdmc+'),
+                new OA\Property(property: 'avatar', type: 'string', example: 'data:image/jpeg;base64,...'),
             ])
         ),
         tags: ['profile'],
@@ -211,7 +211,7 @@ class ProfileController extends ApiV1Controller
     }
 
     /**
-     * A template method to get Profile info in consistent structure.
+     * A helper method to retrieve User's Profile information in a consistent format.
      *
      * @param User $user
      * @return JsonResponse

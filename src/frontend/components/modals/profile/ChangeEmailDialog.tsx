@@ -10,13 +10,12 @@ import {
   DialogTitle,
   Grow,
 } from "@mui/material";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
-import { useProfilePutRequest } from "../../../requests/profileRequests";
+import { useProfilePatchRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useProfileStore } from "../../../store/useProfileStore";
 import { DoneOutlined } from "../../icons";
@@ -24,7 +23,7 @@ import { EmailInput } from "../../inputs/EmailInput";
 
 import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
-import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import type { FieldValues, SubmitHandler } from "react-hook-form";
 
 /**
  * Profile - Dialog - Change Account's Username
@@ -33,13 +32,11 @@ export const ChangeEmailDialog = () => {
   const { t } = useTranslation();
 
   const profile = useProfileStore((state) => state.profile);
-  const setProfile = useProfileStore((state) => state.setProfile);
-
   const open = useProfileDialogsStore((state) => state.emailDialogOpen);
   const setOpen = useProfileDialogsStore((state) => state.setEmailDialogOpen);
 
-  const profileUpdateRequest = useProfilePutRequest();
-  const [loading, setLoading] = useState<boolean>(false);
+  const profileUpdateRequest = useProfilePatchRequest();
+  const loading = profileUpdateRequest.status === "pending";
 
   const useHookForm = useForm<FieldValues>({
     mode: "onBlur",
@@ -59,26 +56,19 @@ export const ChangeEmailDialog = () => {
     setOpen(false);
   };
 
-  const onInvalidSubmit: SubmitErrorHandler<FieldValues> = (data) => console.log(data);
   const onValidSubmit: SubmitHandler<FieldValues> = (data, event) => {
-    setLoading(true);
-
-    profileUpdateRequest.setResponseEvents({
-      onSuccess: (response) => {
-        setProfile(response);
-        handleClose(event as SyntheticEvent);
-        enqueueSnack({ message: t("dialogs.changeEmailDialog.success"), type: "success" });
+    void profileUpdateRequest.mutateAsync(
+      { email: data.email },
+      {
+        onSuccess: () => {
+          handleClose(event as SyntheticEvent);
+          enqueueSnack({ message: t("dialogs.changeEmailDialog.success"), type: "success" });
+        },
+        onError: (reason) => {
+          setError("root.serverError", { message: reason.message });
+        },
       },
-      onError: (reason) => {
-        setLoading(false);
-        setError("root.serverError", { message: reason.message });
-      },
-      onComplete: () => {
-        setLoading(false);
-      },
-    });
-
-    void profileUpdateRequest.fetch({ email: data.email });
+    );
   };
 
   const dialogProps: DialogProps = {
@@ -92,7 +82,7 @@ export const ChangeEmailDialog = () => {
       transition: { timeout: 120 },
       paper: {
         component: "form",
-        onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+        onSubmit: handleSubmit(onValidSubmit),
       },
     },
   };

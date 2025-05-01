@@ -16,7 +16,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -35,6 +35,10 @@ interface Props {
   onClose: (event: SyntheticEvent | Event, reason?: string) => void;
 }
 
+interface PasswordRecoveryFormData extends FieldValues {
+  email: string;
+}
+
 /**
  * Password Reset Init (Recovery Request) Dialog
  * @param { open, handleClose }
@@ -44,32 +48,27 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const [loading, setLoading] = useState<boolean>(false);
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const passwordRecoveryRequest = usePasswordRecoveryRequest();
+  const loading = passwordRecoveryRequest.status === "pending";
 
-  const useHookForm = useForm({ mode: "onBlur", reValidateMode: "onChange" });
+  const useHookForm = useForm<PasswordRecoveryFormData>({ mode: "onBlur", reValidateMode: "onChange" });
   const { registerField } = useFormValidation("passwordRecoveryRequest", useHookForm);
   const { formState, reset, handleSubmit, setValue, setError, clearErrors } = useHookForm;
   const { errors } = formState;
 
-  const onValidSubmit: SubmitHandler<FieldValues> = async (data, event) => {
-    console.log(data);
-    setLoading(true);
-    passwordRecoveryRequest.setResponseEvents({
+  const onValidSubmit: SubmitHandler<PasswordRecoveryFormData> = (data, event) => {
+    void passwordRecoveryRequest.mutateAsync(data, {
       onSuccess: () => {
         handleCloseWithReset(event as SyntheticEvent);
         enqueueSnack({ type: "success", message: t("passwordRecovery.emailSent") });
       },
       onError: (reason) => {
-        setLoading(false);
         setError("root.serverError", { message: reason.message });
         captchaRef.current?.reset();
       },
     });
-    await passwordRecoveryRequest.fetch(data as never);
   };
 
   const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
@@ -79,7 +78,6 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
     }
 
     reset({ email: "" });
-    setLoading(false);
     onClose(event, reason);
   };
 

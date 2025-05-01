@@ -53,7 +53,9 @@ export default tsEslint.config({
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-interface": "warn",
+    "@typescript-eslint/no-invalid-void-type": "off",
     "@typescript-eslint/no-restricted-imports": "error",
+    "@typescript-eslint/no-unused-expressions": ["error", { allowShortCircuit: true }],
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
@@ -64,13 +66,12 @@ export default tsEslint.config({
         varsIgnorePattern: "^_",
       },
     ],
-    "@typescript-eslint/no-unused-expressions": ["error", { allowShortCircuit: true }],
     "no-console": "warn",
+    "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "react/display-name": "off",
     "react/no-children-prop": "off",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
-    "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "simple-import-sort/exports": "warn",
     "simple-import-sort/imports": [
       "warn",

@@ -1,41 +1,50 @@
-import { createHttpRequestHook } from "../core";
-import { unsplashExactImageEndpoint, unsplashRandomImageEndpoint } from "../core/links";
+import { useQuery } from "@tanstack/react-query";
 
-import type { UseRequestReturn } from "../core/types";
+import { bindPathParams, createFetch } from "../core";
+import { apiDomain, unsplashExactImageEndpoint, unsplashRandomImageEndpoint } from "../core/links";
 
-interface UnsplashApiResponse {
-  image: {
-    id: string;
-    linkHtml: string;
-    urlFull: string;
-    urlRegular: string;
-    urlSmall: string;
-    author: string;
-  };
-}
+import type { UnsplashApiResponse, UnsplashSearchRequest } from "../core/types";
 
 /**
  * Request to get a random image from Unsplash
  * [GET] /api/unsplash/random
  */
-export const useUnsplashRandomRequest = (): UseRequestReturn<undefined, UnsplashApiResponse> => {
-  return createHttpRequestHook<undefined, UnsplashApiResponse>({
-    method: "GET",
-    endpoint: unsplashRandomImageEndpoint,
-    customEvents: {},
-    withCredentials: false,
-  })();
+export const useUnsplashRandomRequest = (searchParams: UnsplashSearchRequest) => {
+  return useQuery({
+    queryKey: ["unsplash", "random", searchParams],
+    queryFn: (): Promise<UnsplashApiResponse> => {
+      const url = new URL(unsplashRandomImageEndpoint, apiDomain);
+
+      if (searchParams.query) {
+        url.searchParams.append("query", searchParams.query);
+      }
+      if (Array.isArray(searchParams.topics)) {
+        searchParams.topics.forEach((topic) => {
+          url.searchParams.append("topics[]", topic);
+        });
+      }
+      if (Array.isArray(searchParams.collections)) {
+        searchParams.collections.forEach((collection) => {
+          url.searchParams.append("collections[]", collection);
+        });
+      }
+
+      return createFetch({ url, method: "GET", cache: "only-if-cached" });
+    },
+  });
 };
 
 /**
  * Request to get an image by its ID from Unsplash
  * [GET] /api/unsplash/image/{id}
  */
-export const useUnsplashImageRequest = (): UseRequestReturn<undefined, UnsplashApiResponse> => {
-  return createHttpRequestHook<undefined, UnsplashApiResponse>({
-    method: "GET",
-    endpoint: unsplashExactImageEndpoint,
-    customEvents: {},
-    withCredentials: false,
-  })();
+export const useUnsplashImageRequest = (id: string) => {
+  return useQuery({
+    queryKey: ["unsplash", "image", id],
+    queryFn: (): Promise<UnsplashApiResponse> => {
+      const url = bindPathParams(unsplashExactImageEndpoint, { id });
+
+      return createFetch({ url, method: "GET", cache: "force-cache" });
+    },
+  });
 };

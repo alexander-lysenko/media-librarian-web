@@ -81,6 +81,20 @@ class UnsplashApiController extends BaseController
                 required: false,
                 schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string'), example: ['movie', 'posters'])
             ),
+            new OA\Parameter(
+                parameter: 'collections',
+                name: 'collections[]',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string'), example: ['movies'])
+            ),
+            new OA\Parameter(
+                parameter: 'query',
+                name: 'query',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string'), example: 'studio camera')
+            ),
         ],
         responses: [
             new OA\Response(

@@ -1,97 +1,113 @@
-import { createHttpRequestHook } from "../core";
+import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
+import { createFetch } from "../core";
+import { enqueueSnack } from "../core/actions";
+import { AppRoutes } from "../core/enums";
 import { userLoginEndpoint, userPasswordResetEndpoint, userSignupEndpoint } from "../core/links";
 
-import type { UseRequestReturn } from "../core/types";
-import type { Language } from "../store/system/useTranslationStore";
-
-interface SignupRequest {
-  email: string;
-  name: string;
-  password: string;
-  passwordRepeat: string;
-  locale: Language;
-  theme: "dark" | "light";
-}
-
-interface SignupResponse {
-  message: string;
-  user: object;
-}
-
-interface LoginRequest {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-}
-
-interface LoginResponse {
-  redirectTo: string;
-  token: string;
-}
-
-interface PasswordRecoveryInitRequest {
-  email: string;
-}
-
-interface PasswordResetRequest {
-  email: string;
-  newPassword: string;
-  repeatPassword: string;
-  token: string;
-}
-
-interface MessageResponse {
-  message: string;
-}
+import type {
+  LoginFormData,
+  LoginResponse,
+  PasswordResetFormData,
+  SignupFormData,
+  SignupResponse,
+} from "../core/types";
 
 /**
  * Request to signup / register / create a user.
  * [POST] /api/v1/user/signup
  */
-export const useUserSignupRequest = (): UseRequestReturn<SignupRequest, SignupResponse> => {
-  return createHttpRequestHook<SignupRequest, SignupResponse>({
-    method: "POST",
-    endpoint: userSignupEndpoint,
-    customEvents: {},
-    withCredentials: false,
-  })();
+export const useUserSignupRequest = () => {
+  const navigate = useNavigate();
+
+  const { mutateAsync, status } = useMutation({
+    mutationKey: ["post", "user", "signup"],
+    mutationFn: (data: SignupFormData): Promise<SignupResponse> => {
+      return createFetch({
+        url: userSignupEndpoint,
+        method: "POST",
+        body: JSON.stringify(data),
+        credentials: "omit",
+      });
+    },
+    onSuccess: () => {
+      navigate(AppRoutes.login, { replace: true });
+    },
+    // onError should be defined in the places of request's usage
+  });
+
+  return { mutateAsync, status };
 };
 
 /**
  * Request to authenticate a user.
  * [POST] /api/v1/user/login
  */
-export const useUserLoginRequest = (): UseRequestReturn<LoginRequest, LoginResponse> => {
-  return createHttpRequestHook<LoginRequest, LoginResponse>({
-    method: "POST",
-    endpoint: userLoginEndpoint,
-    customEvents: {},
-    withCredentials: false,
-  })();
+export const useUserLoginRequest = () => {
+  const { mutateAsync, status } = useMutation({
+    mutationKey: ["post", "user", "login"],
+    mutationFn: (data: LoginFormData): Promise<LoginResponse> => {
+      return createFetch({
+        url: userLoginEndpoint,
+        method: "POST",
+        body: JSON.stringify(data),
+        credentials: "omit",
+      });
+    },
+    // onSuccess & onError should be defined in the places of request's usage
+  });
+
+  return { mutateAsync, status };
 };
 
 /**
  * Request to initiate password reset.
  * [POST] /api/v1/user/password-reset
  */
-export const usePasswordRecoveryRequest = (): UseRequestReturn<PasswordRecoveryInitRequest, MessageResponse> => {
-  return createHttpRequestHook<PasswordRecoveryInitRequest, MessageResponse>({
-    method: "POST",
-    endpoint: userPasswordResetEndpoint,
-    customEvents: {},
-    withCredentials: false,
-  })();
+export const usePasswordRecoveryRequest = () => {
+  const { t } = useTranslation();
+
+  const { mutateAsync, status } = useMutation({
+    mutationKey: ["post", "user", "password-reset"],
+    mutationFn: (data: { email: string }) => {
+      return createFetch({
+        url: userPasswordResetEndpoint,
+        method: "POST",
+        body: JSON.stringify(data),
+        credentials: "omit",
+      });
+    },
+    onSuccess: () => {
+      enqueueSnack({ type: "success", message: t("passwordRecovery.emailSent") });
+    },
+  });
+
+  return { mutateAsync, status };
 };
 
 /**
  * Request to perform password reset.
  * [PUT] /api/v1/user/password-reset
  */
-export const usePasswordResetRequest = (): UseRequestReturn<PasswordResetRequest, MessageResponse> => {
-  return createHttpRequestHook<PasswordResetRequest, MessageResponse>({
-    method: "PUT",
-    endpoint: userPasswordResetEndpoint,
-    customEvents: {},
-    withCredentials: false,
-  })();
+export const usePasswordResetRequest = () => {
+  const { t } = useTranslation();
+
+  const { mutateAsync, status } = useMutation({
+    mutationKey: ["put", "user", "password-reset"],
+    mutationFn: (data: PasswordResetFormData) => {
+      return createFetch({
+        url: userPasswordResetEndpoint,
+        method: "PUT",
+        body: JSON.stringify(data),
+        credentials: "omit",
+      });
+    },
+    onSuccess: () => {
+      enqueueSnack({ type: "success", message: t("passwordReset.successfullyReset") });
+    },
+  });
+
+  return { mutateAsync, status };
 };
