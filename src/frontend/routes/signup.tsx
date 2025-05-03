@@ -1,18 +1,23 @@
 import { Avatar, Container, Grid, Link, Paper, styled, Typography } from "@mui/material";
+import { createFileRoute, Link as NavLink } from "@tanstack/react-router";
 import { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
 
 import { BackgroundContainer, StickyFooter } from "../components";
 import { Copyright } from "../components";
 import { SignupForm } from "../components/forms/SignupForm";
 import { PersonAddAltRounded } from "../components/icons";
+import { AppRoutes } from "../core/enums";
 import { useUnsplashRandomRequest } from "../requests/unsplashApiRequests";
 
+export const Route = createFileRoute(AppRoutes.signup)({
+  component: Signup,
+});
+
 /**
- * Component representing the SignUp (Register) page
+ * Component representing the Signup (Register) page
  */
-export const SignUp = () => {
+function Signup() {
   const { t } = useTranslation();
 
   const [background, setBackground] = useState<never>();
@@ -51,7 +56,7 @@ export const SignUp = () => {
       </Grid>
     </Grid>
   );
-};
+}
 
 const Contents = styled(Container)({
   display: "flex",

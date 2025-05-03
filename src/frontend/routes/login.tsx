@@ -1,18 +1,23 @@
 import { Avatar, Container, Grid, Link, Paper, styled, Typography } from "@mui/material";
+import { createFileRoute, Link as NavLink } from "@tanstack/react-router";
 import { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
 
 import { BackgroundContainer, Copyright, StickyFooter } from "../components";
 import { LoginForm } from "../components/forms/LoginForm";
 import { LockOutlined } from "../components/icons";
 import { PasswordResetInitDialog } from "../components/modals/PasswordResetInitDialog";
+import { AppRoutes } from "../core/enums";
 import { useUnsplashRandomRequest } from "../requests/unsplashApiRequests";
 
+export const Route = createFileRoute(AppRoutes.login)({
+  component: Login,
+});
+
 /**
- * Component representing the SignIn (Login) page
+ * Component representing the Login (Login) page
  */
-export const SignIn = () => {
+function Login() {
   const { t } = useTranslation();
 
   const [background, setBackground] = useState<never>();
@@ -63,7 +68,7 @@ export const SignIn = () => {
       <PasswordResetInitDialog open={passwordRecoverDialogOpen} onClose={handleRecoveryDialogClose} />
     </Grid>
   );
-};
+}
 
 const Contents = styled(Container)({
   display: "flex",

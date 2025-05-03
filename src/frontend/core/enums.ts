@@ -1,3 +1,5 @@
+import type { FileRoutesByPath } from "@tanstack/react-router";
+
 /**
  * Enum representing the application routes for navigation.
  * Each route is defined as a string constant.

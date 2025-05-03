@@ -1,41 +1,35 @@
 import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import { GlobalSnackbar } from "./components";
-import { ConfirmDialog } from "./components/modals";
-import { AppRoutes } from "./core/enums";
-import { App } from "./pages/App";
-import { EmailConfirmation } from "./pages/EmailConfirmation";
-import { Landing } from "./pages/Landing";
-import { PasswordReset } from "./pages/PasswordReset";
-import { Profile } from "./pages/Profile";
-import { SignIn } from "./pages/SignIn";
-import { SignUp } from "./pages/SignUp";
+import { ConfirmDialog, GlobalSnackbar } from "./components";
+import { routeTree } from "./routeTree.gen";
 import { useThemeStore } from "./store/system/useThemeStore";
 import { useLanguageStore, useTranslationStore } from "./store/system/useTranslationStore";
 import { useAuthCredentialsStore } from "./store/useAuthCredentialsStore";
 import { getDesignTokens } from "./theme";
 
 import type { ErrorResponse } from "./core/types";
+import { initReactI18next } from "react-i18next";
 
 const debug = import.meta.env.VITE_APP_DEBUG;
 
 const i18n = useTranslationStore.getState().i18nInstance;
 const getLanguage = useLanguageStore.getState().getLanguage;
 
-declare module "@tanstack/react-query" {
-  interface Register {
-    defaultError: ErrorResponse;
-  }
-}
-
 // init i18n (needs to be bundled ;))
-i18n.init({ lng: getLanguage(), debug }).then(() => null);
+i18n
+  .use(initReactI18next)
+  .init({
+    lng: getLanguage(),
+    returnNull: false,
+    debug: debug,
+  })
+  .then(() => null);
 // init dayjs
 dayjs.extend(localizedFormat, {});
 
@@ -56,6 +50,9 @@ const queryClient = new QueryClient({
   },
 });
 
+// Create a new router instance
+const router = createRouter({ routeTree });
+
 export const Main = () => {
   const colorMode = useThemeStore((state) => state.mode);
   // @ts-ignore // todo: remove this
@@ -65,19 +62,8 @@ export const Main = () => {
     <ThemeProvider noSsr theme={createTheme(getDesignTokens(colorMode))}>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline enableColorScheme />
-
       <QueryClientProvider client={queryClient}>
-        <Router>
-          <Routes>
-            <Route path={"/"} element={<Landing />} />
-            <Route path={AppRoutes.login} element={<SignIn />} />
-            <Route path={AppRoutes.signup} element={<SignUp />} />
-            <Route path={AppRoutes.appHome} element={<App />} />
-            <Route path={AppRoutes.profile} element={<Profile />} />
-            <Route path={AppRoutes.passwordReset} element={<PasswordReset />} />
-            <Route path={AppRoutes.emailConfirmation} element={<EmailConfirmation />} />
-          </Routes>
-        </Router>
+        <RouterProvider router={router} context={queryClient} />
         <GlobalSnackbar />
         <ConfirmDialog />
       </QueryClientProvider>
@@ -92,3 +78,18 @@ root.render(
     </StyledEngineProvider>
   </StrictMode>,
 );
+
+declare module "@tanstack/react-query" {
+  // noinspection JSUnusedGlobalSymbols
+  interface Register {
+    defaultError: ErrorResponse;
+  }
+}
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+  // noinspection JSUnusedGlobalSymbols
+  interface Register {
+    router: typeof router;
+  }
+}

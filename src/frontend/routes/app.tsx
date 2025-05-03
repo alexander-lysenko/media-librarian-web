@@ -1,4 +1,5 @@
 import { Button, Container, Paper, styled, Typography } from "@mui/material";
+import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
@@ -11,16 +12,28 @@ import { LibraryTable } from "../components/tables/LibraryTable";
 import { LibrariesEmptyState } from "../components/ui/LibrariesEmptyState";
 import { LibrariesErrorState } from "../components/ui/LibrariesErrorState";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
+import { enqueueSnack } from "../core/actions";
+import { AppRoutes } from "../core/enums";
 import { useLibraryAllItemsGetRequest } from "../requests/libraryItemRequests";
 import { useLibrariesGetRequest } from "../requests/libraryRequests";
 import { useLibrariesStore, useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 
-export const App = () => {
+export const Route = createFileRoute(AppRoutes.appHome)({
+  component: App,
+});
+
+/**
+ * Renders the main application content, including the navigation bar, library-related elements, and dialogs.
+ * Manages the state of Libraries and Items, handles user interactions for creating Items,
+ * and reacts to changes in subscription for table sorting and pagination.
+ */
+function App() {
   const { t } = useTranslation();
 
   const libraries = useLibrariesStore((state) => state.libraries);
+  const initSelectedLibraryId = useSelectedLibraryStore((state) => state.selectedLibraryId);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
   const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
 
@@ -35,6 +48,12 @@ export const App = () => {
 
     openItemDialog(selectedLibraryId);
   }, [getSelectedLibrary, openItemDialog]);
+
+  useEffect(() => {
+    if (initSelectedLibraryId !== getSelectedLibrary()?.id) {
+      enqueueSnack({ type: "warning", message: t("notifications.libraryNotFound") });
+    }
+  }, [getSelectedLibrary, initSelectedLibraryId, t]);
 
   useEffect(() => {
     const unsubscribe = useLibraryTableStore.subscribe(
@@ -80,7 +99,7 @@ export const App = () => {
       <LibraryCreateDialog />
     </>
   );
-};
+}
 
 const StyledHeaderBox = styled("div")({
   display: "flex",

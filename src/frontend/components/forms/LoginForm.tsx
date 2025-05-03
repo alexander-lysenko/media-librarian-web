@@ -1,9 +1,9 @@
 import { Turnstile } from "@marsidev/react-turnstile";
 import { Alert, Box, Button, Checkbox, CircularProgress, Collapse, FormControlLabel } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 
 import { useFormValidation } from "../../hooks";
 import { useUserLoginRequest } from "../../requests/authRequests";
@@ -41,7 +41,7 @@ export const LoginForm = () => {
         const { token, redirectTo } = response;
         setCredentials(email, token);
         reset();
-        navigate(redirectTo, { replace: true });
+        navigate({href: redirectTo, replace: true });
       },
       onError: (reason) => {
         reset({ password: "" });

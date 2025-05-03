@@ -194,7 +194,8 @@
     "libraryDeleted": "Library \"{{title}}\" has been deleted",
     "libraryItemCreated": "New entry created: \"{{title}}\"",
     "libraryItemDeleted": "Entry \"{{title}}\" has been deleted",
-    "libraryItemUpdated": "Entry \"{{title}}\" has been updated"
+    "libraryItemUpdated": "Entry \"{{title}}\" has been updated",
+    "libraryNotFound": "We couldn't locate your previously selected library, so we navigated you to the first available one."
   },
   "passwordRecovery": {
     "emailSent": "We have sent an e-mail for you. Please check your inbox.",

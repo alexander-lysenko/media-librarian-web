@@ -17,8 +17,8 @@ import type {
   RegisterOptions,
   UseFormRegisterReturn,
   UseFormReturn,
+  ValidateResult
 } from "react-hook-form";
-import type { ValidateResult } from "react-hook-form/dist/types/validator";
 
 type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
 

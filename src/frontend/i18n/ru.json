@@ -194,7 +194,8 @@
     "libraryDeleted": "Библиотека \"{{title}}\" удалена",
     "libraryItemCreated": "Создана запись: \"{{title}}\"",
     "libraryItemDeleted": "Запись \"{{title}}\" удалена",
-    "libraryItemUpdated": "Запись \"{{title}}\" изменена"
+    "libraryItemUpdated": "Запись \"{{title}}\" изменена",
+    "libraryNotFound": "Мы не смогли найти последнюю выбранную Вами библиотеку, поэтому перенаправили Вас на первую доступную из них."
   },
   "passwordRecovery": {
     "emailSent": "Мы отправили Вам письмо. Проверьте почтовый ящик.",

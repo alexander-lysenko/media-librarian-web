@@ -1,6 +1,9 @@
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig, loadEnv } from "vite";
 
+// @ts-ignore
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+
 import type { ManualChunksOption } from "rollup";
 
 const combineManualChunks: ManualChunksOption = (id) => {
@@ -22,7 +25,17 @@ export default defineConfig(({ command, mode }) => {
     root: command === "serve" ? "./frontend" : "",
     publicDir: "fake_dir_so_nothing_gets_copied",
     envDir: command === "serve" ? "../" : "./",
-    plugins: [react()],
+    plugins: [
+      TanStackRouterVite({
+        target: "react",
+        autoCodeSplitting: true,
+        routesDirectory: "./frontend/routes",
+        generatedRouteTree: "./frontend/routeTree.gen.ts",
+        quoteStyle: "double",
+        semicolons: true,
+      }),
+      react(),
+    ],
     build: {
       manifest: true,
       minify: "esbuild",

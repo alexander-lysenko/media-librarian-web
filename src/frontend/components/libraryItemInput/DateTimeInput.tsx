@@ -24,7 +24,7 @@ export const DateTimeInput = (props: DateTimeInputProps) => {
   const { t } = useTranslation();
   const locale = useLanguageStore((state) => state.getLanguage());
 
-  const slotProps: DateTimePickerSlotProps<Dayjs, false> = {
+  const slotProps: DateTimePickerSlotProps<false> = {
     textField: {
       helperText: errorMessage || helperText,
       fullWidth: true,
@@ -46,7 +46,7 @@ export const DateTimeInput = (props: DateTimeInputProps) => {
     datetime: "YYYY-MM-DD HH:mm:ss",
   };
 
-  const localeText: PickersInputComponentLocaleText<Dayjs> = {
+  const localeText: PickersInputComponentLocaleText = {
     toolbarTitle: t(`dateTimePicker.toolbarTitle.${type}`),
     previousMonth: t("dateTimePicker.previousMonth"),
     nextMonth: t("dateTimePicker.nextMonth"),

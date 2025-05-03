@@ -2,12 +2,10 @@ import { Box, Button, CardMedia, Grid, LinearProgress, Paper, styled, TextField,
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { axiosFetch } from "../../core";
 import { enqueueSnack } from "../../core/actions";
 import { CloudUploadOutlined, ContentPasteOutlined, UploadFileOutlined } from "../icons";
 import { SimpleDropzone } from "./SimpleDropzone";
 
-import type { FetchRequestConfig } from "../../core";
 import type { SxProps } from "@mui/system";
 import type { ChangeEvent, ClipboardEvent, DragEvent, SyntheticEvent } from "react";
 
@@ -90,22 +88,22 @@ export const PosterUploadInputBox = () => {
 
   // todo: rework that and fix CORS issue
   const downloadByUrl = async (url: string) => {
-    const config: FetchRequestConfig<undefined> = { url, method: "GET", responseType: "blob", withCredentials: false };
-    const file = await axiosFetch<undefined, Blob>(config, {
-      onSuccess: (response) => {
-        console.log(response);
-        return response;
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    });
-
-    if (file) {
-      console.log("File Downloaded");
-      console.log(file);
-      setBlobImage(file as Blob);
-    }
+    // const config: FetchRequestConfig<undefined> = { url, method: "GET", responseType: "blob", withCredentials: false };
+    // const file = await axiosFetch<undefined, Blob>(config, {
+    //   onSuccess: (response) => {
+    //     console.log(response);
+    //     return response;
+    //   },
+    //   onError: (error) => {
+    //     console.log(error);
+    //   },
+    // });
+    //
+    // if (file) {
+    //   console.log("File Downloaded");
+    //   console.log(file);
+    //   setBlobImage(file as Blob);
+    // }
   };
 
   // const handleFromClipboard = async (event: SyntheticEvent) => {

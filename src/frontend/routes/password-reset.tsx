@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/material";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useLayoutEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { PasswordResetDialog } from "../components/modals/PasswordResetDialog";
 import { AppRoutes } from "../core/enums";
@@ -8,10 +8,19 @@ import { useUnsplashImageRequest } from "../requests/unsplashApiRequests";
 
 import type { CSSProperties } from "react";
 
-export const PasswordReset = () => {
+export const Route = createFileRoute(AppRoutes.passwordReset)({
+  component: PasswordReset,
+});
+
+/**
+ * Renders the PasswordReset component, which includes a password reset dialog
+ * and a full-screen container with a dynamic background image fetched from Unsplash.
+ * The component navigates to a login route upon closure of the reset dialog.
+ */
+function PasswordReset() {
   const navigate = useNavigate();
   const handleResetDialogClose = () => {
-    navigate(AppRoutes.login);
+    void navigate({ href: AppRoutes.login });
   };
 
   const getImageRequest = useUnsplashImageRequest("o_tcYADlSt8");
@@ -32,7 +41,7 @@ export const PasswordReset = () => {
       <PasswordResetDialog open={true} onClose={handleResetDialogClose} />
     </FullscreenContainer>
   );
-};
+}
 
 const FullscreenContainer = styled(Box)(({ theme }) => ({
   height: "100vh",

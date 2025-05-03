@@ -15,9 +15,9 @@ import {
   Typography,
   useScrollTrigger,
 } from "@mui/material";
+import { Link } from "@tanstack/react-router";
 import { cloneElement, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 import { AppRoutes } from "../../core/enums";
 import { MenuOutlined } from "../icons";

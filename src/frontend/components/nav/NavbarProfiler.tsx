@@ -9,9 +9,9 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 import { AppRoutes } from "../../core/enums";
 import { useThemeStore } from "../../store/system/useThemeStore";

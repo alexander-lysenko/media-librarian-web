@@ -29,7 +29,7 @@ export const useUnsplashRandomRequest = (searchParams: UnsplashSearchRequest) =>
         });
       }
 
-      return createFetch({ url, method: "GET", cache: "only-if-cached" });
+      return createFetch({ url, method: "GET" });
     },
   });
 };

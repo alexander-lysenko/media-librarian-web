@@ -20,6 +20,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { createFileRoute } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -58,7 +59,7 @@ import {
 import { UploadAvatarDialog } from "../components/modals/profile/UploadAvatarDialog";
 import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
 import { ProfileAvatar } from "../components/ui/ProfileAvatar";
-import { AccountStatusEnum } from "../core/enums";
+import { AccountStatusEnum, AppRoutes } from "../core/enums";
 import { useProfileGetRequest } from "../requests/profileRequests";
 import { useProfileDialogsStore } from "../store/app/useProfileDialogsStore";
 import { useLanguageStore, useTranslationStore } from "../store/system/useTranslationStore";
@@ -67,10 +68,14 @@ import { useProfileStore } from "../store/useProfileStore";
 import type { MenuProps } from "@mui/material";
 import type { ReactNode, SyntheticEvent } from "react";
 
+export const Route = createFileRoute(AppRoutes.profile)({
+  component: Profile,
+});
+
 /**
  * Component representing the Profile page
  */
-export const Profile = () => {
+function Profile() {
   const { t } = useTranslation();
 
   const profile = useProfileStore((state) => state.profile);
@@ -132,7 +137,7 @@ export const Profile = () => {
       <LibraryCreateDialog />
     </>
   );
-};
+}
 
 const Profiler = ({ username, email, avatar }: { username: string; email: string; avatar: string | null }) => {
   const { t } = useTranslation();

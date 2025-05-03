@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 
 import { createFetch } from "../core";
 import { enqueueSnack } from "../core/actions";
@@ -33,7 +33,7 @@ export const useUserSignupRequest = () => {
       });
     },
     onSuccess: () => {
-      navigate(AppRoutes.login, { replace: true });
+      void navigate({ href: AppRoutes.login, replace: true });
     },
     // onError should be defined in the places of request's usage
   });
