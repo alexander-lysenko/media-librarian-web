@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Container,
   Divider,
@@ -14,7 +13,6 @@ import {
   ListSubheader,
   Menu,
   MenuItem,
-  Paper,
   styled,
   Typography,
   useMediaQuery,
@@ -25,11 +23,9 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { AppNavbar, MyLibraries, PaperCardHeader } from "../components";
+import { AppNavbar, CollapsiblePaperCard, LoadingOverlayInner } from "../components";
 import {
   AccountBox,
-  ArrowDropDownOutlined,
-  ArrowDropUpOutlined,
   BadgeOutlined,
   CalendarMonthOutlined,
   CheckCircleOutlined,
@@ -57,8 +53,8 @@ import {
   SelectThemeDialog,
 } from "../components/modals";
 import { UploadAvatarDialog } from "../components/modals/profile/UploadAvatarDialog";
-import { LoadingOverlayInner } from "../components/ui/LoadingOverlayInner";
-import { ProfileAvatar } from "../components/ui/ProfileAvatar";
+import { MyLibraries } from "../components/profile/MyLibraries";
+import { ProfileAvatar } from "../components/profile/ProfileAvatar";
 import { AccountStatusEnum, AppRoutes } from "../core/enums";
 import { useProfileGetRequest } from "../requests/profileRequests";
 import { useProfileDialogsStore } from "../store/app/useProfileDialogsStore";
@@ -82,23 +78,13 @@ function Profile() {
 
   const getProfileRequest = useProfileGetRequest();
 
-  const [profileSectionOpen, setProfileSectionOpen] = useState(true);
-  const [libSectionOpen, setLibSectionOpen] = useState(true);
-
   return (
     <>
       <AppNavbar />
       <Container maxWidth="xl">
-        <Paper elevation={3} sx={{ my: 3 }}>
-          <PaperCardHeader
-            title={t("profile.basicDetails")}
-            itemIcon={PermContactCalendarOutlined}
-            // secondaryText={"lorem ipsum dolor sit amet"}
-            actionIcon={profileSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
-            actionEvents={{ onClick: () => setProfileSectionOpen(!profileSectionOpen) }}
-          />
+        <CollapsiblePaperCard title={t("profile.basicDetails")} itemIcon={PermContactCalendarOutlined}>
           {getProfileRequest.status === "success" ? (
-            <Grid container columnSpacing={2} display={profileSectionOpen ? "flex" : "none"}>
+            <Grid container columnSpacing={2}>
               <Grid id="profiler" size={{ xs: 12, md: 4 }} sx={{ maxWidth: { md: 320 } }}>
                 <Profiler username={profile.user.name} email={profile.user.email} avatar={profile.user.avatar} />
               </Grid>
@@ -112,19 +98,14 @@ function Profile() {
           ) : (
             <LoadingOverlayInner sx={{ height: 354 }} />
           )}
-        </Paper>
-        <Paper elevation={3} sx={{ my: 3 }}>
-          <PaperCardHeader
-            title={t("myLibraries.title")}
-            itemIcon={PhotoAlbumOutlined}
-            secondaryText={"lorem ipsum dolor sit amet"}
-            actionIcon={libSectionOpen ? ArrowDropUpOutlined : ArrowDropDownOutlined}
-            actionEvents={{ onClick: () => setLibSectionOpen(!libSectionOpen) }}
-          />
-          <Box display={libSectionOpen ? "block" : "none"}>
-            <MyLibraries />
-          </Box>
-        </Paper>
+        </CollapsiblePaperCard>
+        <CollapsiblePaperCard
+          title={t("myLibraries.title")}
+          itemIcon={PhotoAlbumOutlined}
+          secondaryText={"lorem ipsum dolor sit amet"}
+        >
+          <MyLibraries />
+        </CollapsiblePaperCard>
       </Container>
       <>
         <ChangeUsernameDialog />
@@ -132,7 +113,6 @@ function Profile() {
         <ChangePasswordDialog />
         <SelectThemeDialog />
         <SelectLocaleDialog />
-        <UploadAvatarDialog />
       </>
       <LibraryCreateDialog />
     </>
@@ -201,6 +181,7 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
           )}
         </ButtonsGrid>
       </IdentityGrid>
+      <UploadAvatarDialog />
     </Grid>
   );
 };

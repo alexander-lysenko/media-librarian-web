@@ -1,19 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Collapse,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grow,
-  TextField,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Collapse, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -22,9 +7,9 @@ import { usePasswordResetRequest } from "../../requests/authRequests";
 import { AlternateEmailOutlined, LockReset } from "../icons";
 import { PasswordInput } from "../inputs/PasswordInput";
 import { TextInput } from "../inputs/TextInput";
+import { FormDialog, type FormDialogProps } from "../ui/modals/FormDialog";
 
 import type { PasswordResetFormData } from "../../core/types";
-import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
@@ -34,10 +19,7 @@ interface Props {
 }
 
 /**
- * Password Reset Dialog
- * TODO: WIP
- * @param { open, handleClose }
- * @constructor
+ * Password Reset Form Dialog
  */
 export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const { t } = useTranslation();
@@ -86,26 +68,17 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
     });
   };
 
-  const dialogProps: DialogProps = {
+  const dialogProps: FormDialogProps = {
     open: open,
-    fullWidth: true,
-    fullScreen: fullScreen,
-    disableRestoreFocus: true,
-    slots: { transition: Grow },
-    slotProps: {
-      transition: { timeout: 250 },
-      paper: {
-        component: "form",
-        onSubmit: handleSubmit(onValidSubmit),
-      },
-    },
+    onSubmit: handleSubmit(onValidSubmit),
+    onClose: handleCloseWithReset,
   };
 
   return (
-    <Dialog {...dialogProps} onClose={handleCloseWithReset}>
-      <DialogTitle variant={"h5"}>{t("passwordReset.title")}</DialogTitle>
-      <DialogContent>
-        <DialogContentText sx={{ pb: 1 }}>{t("passwordReset.subtitle")}</DialogContentText>
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t("passwordReset.title")}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t("passwordReset.subtitle")}</FormDialog.Subtitle>
         <Collapse in={!!errors.root?.serverError} unmountOnExit>
           <Alert variant="filled" severity="error" onClose={() => reset({ root: "" })} sx={{ my: 2 }}>
             {errors.root?.serverError.message as string}
@@ -132,8 +105,8 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
           helperText={t("dialogs.changePasswordDialog.repeatPasswordHint") as string}
           errorMessage={errors.repeatPassword?.message as string}
         />
-      </DialogContent>
-      <DialogActions>
+      </FormDialog.Content>
+      <FormDialog.Actions>
         <Button variant="text" fullWidth={fullScreen} onClick={handleCloseWithReset}>
           {t("passwordReset.backToSignIn")}
         </Button>
@@ -146,7 +119,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
           endIcon={loading ? <CircularProgress size={14} /> : <LockReset />}
           children={t("common.save")}
         />
-      </DialogActions>
-    </Dialog>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };

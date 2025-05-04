@@ -1,27 +1,19 @@
-import {
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grow,
-} from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { enqueueSnack } from "../../../core/actions";
 import { useFormValidation } from "../../../hooks";
 import { useProfilePatchRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useProfileStore } from "../../../store/useProfileStore";
 import { BadgeOutlined, DoneOutlined } from "../../icons";
 import { TextInput } from "../../inputs/TextInput";
+import { FormDialog } from "../../ui/modals/FormDialog";
 
-import type { DialogProps } from "@mui/material";
+import type { FormDialogProps } from "../../ui/modals/FormDialog";
 import type { SyntheticEvent } from "react";
-import type { FieldValues, SubmitErrorHandler, SubmitHandler } from "react-hook-form";
-import { enqueueSnack } from "../../../core/actions";
+import type { FieldValues, SubmitHandler } from "react-hook-form";
 
 /**
  * Profile - Dialog - Change Account's Username
@@ -72,27 +64,19 @@ export const ChangeUsernameDialog = () => {
     );
   };
 
-  const dialogProps: DialogProps = {
+  const dialogProps: FormDialogProps = {
     open: open,
-    fullWidth: true,
     maxWidth: "xs",
-    disableRestoreFocus: true,
-    closeAfterTransition: true,
-    slots: { transition: Grow },
-    slotProps: {
-      transition: { timeout: 120 },
-      paper: {
-        component: "form",
-        onSubmit: handleSubmit(onValidSubmit),
-      },
-    },
+    fullScreen: false,
+    onSubmit: handleSubmit(onValidSubmit),
+    onClose: handleClose,
   };
 
   return (
-    <Dialog {...dialogProps} onClose={handleClose}>
-      <DialogTitle variant={"h5"}>{t("dialogs.changeUsernameDialog.title")}</DialogTitle>
-      <DialogContent>
-        <DialogContentText mb={1}>{t("dialogs.changeUsernameDialog.subtitle")}</DialogContentText>
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t("dialogs.changeUsernameDialog.title")}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t("dialogs.changeUsernameDialog.subtitle")}</FormDialog.Subtitle>
         <TextInput
           {...registerField("username")}
           autoFocus
@@ -101,8 +85,8 @@ export const ChangeUsernameDialog = () => {
           errorMessage={formState.errors?.username?.message as string}
           icon={<BadgeOutlined />}
         />
-      </DialogContent>
-      <DialogActions>
+      </FormDialog.Content>
+      <FormDialog.Actions>
         <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
         <Button
           type="submit"
@@ -111,7 +95,7 @@ export const ChangeUsernameDialog = () => {
           endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
           children={t("common.save")}
         />
-      </DialogActions>
-    </Dialog>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };

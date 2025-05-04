@@ -1,15 +1,4 @@
-import {
-  Alert,
-  Button,
-  CircularProgress,
-  Collapse,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grow,
-} from "@mui/material";
+import { Alert, Button, CircularProgress, Collapse } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -20,13 +9,13 @@ import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStor
 import { useProfileStore } from "../../../store/useProfileStore";
 import { DoneOutlined } from "../../icons";
 import { EmailInput } from "../../inputs/EmailInput";
+import { FormDialog, type FormDialogProps } from "../../ui/modals/FormDialog";
 
-import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
 
 /**
- * Profile - Dialog - Change Account's Username
+ * Profile - Dialog - Change Account's Email Address
  */
 export const ChangeEmailDialog = () => {
   const { t } = useTranslation();
@@ -71,27 +60,19 @@ export const ChangeEmailDialog = () => {
     );
   };
 
-  const dialogProps: DialogProps = {
+  const dialogProps: FormDialogProps = {
     open: open,
-    fullWidth: true,
     maxWidth: "xs",
-    disableRestoreFocus: true,
-    closeAfterTransition: true,
-    slots: { transition: Grow },
-    slotProps: {
-      transition: { timeout: 120 },
-      paper: {
-        component: "form",
-        onSubmit: handleSubmit(onValidSubmit),
-      },
-    },
+    fullScreen: false,
+    onSubmit: handleSubmit(onValidSubmit),
+    onClose: handleClose,
   };
 
   return (
-    <Dialog {...dialogProps} onClose={handleClose}>
-      <DialogTitle variant={"h5"}>{t("dialogs.changeEmailDialog.title")}</DialogTitle>
-      <DialogContent>
-        <DialogContentText mb={1}>{t("dialogs.changeEmailDialog.subtitle")}</DialogContentText>
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t("dialogs.changeEmailDialog.title")}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t("dialogs.changeEmailDialog.subtitle")}</FormDialog.Subtitle>
         <Collapse in={!!formState.errors.root?.serverError} unmountOnExit>
           <Alert variant="filled" severity="error" onClose={() => clearErrors("root")} sx={{ my: 2 }}>
             {formState.errors.root?.serverError.message as string}
@@ -103,8 +84,8 @@ export const ChangeEmailDialog = () => {
           label={t("dialogs.changeEmailDialog.label")}
           errorMessage={formState.errors?.email?.message as string}
         />
-      </DialogContent>
-      <DialogActions>
+      </FormDialog.Content>
+      <FormDialog.Actions>
         <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
         <Button
           type="submit"
@@ -113,7 +94,7 @@ export const ChangeEmailDialog = () => {
           endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
           children={t("common.save")}
         />
-      </DialogActions>
-    </Dialog>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };

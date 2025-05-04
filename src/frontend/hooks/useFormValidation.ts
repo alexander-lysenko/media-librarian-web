@@ -7,7 +7,6 @@ import {
   useItemTitleValidationRequest,
   useLibraryTitleValidationRequest,
 } from "../requests/validationRequests";
-import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
 
 import type {
@@ -17,7 +16,7 @@ import type {
   RegisterOptions,
   UseFormRegisterReturn,
   UseFormReturn,
-  ValidateResult
+  ValidateResult,
 } from "react-hook-form";
 
 type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
@@ -26,7 +25,6 @@ type RegisteredFormNames = keyof typeof RegisteredFormNamesEnum;
 export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: UseFormReturn<any>) => {
   const { t } = useTranslation();
 
-  const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
   const selectedItemId = useLibraryItemFormStore((state) => state.selectedItem?.id);
   const isEditMode = useLibraryItemFormStore((state) => state.isEditMode);
 
@@ -214,7 +212,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         minLength: { value: 3, message: t("formValidation.usernameMinLength", { n: 3 }) },
       },
       email: {
-        setValueAs: (value: string) => value.trim().toLowerCase(),
+        setValueAs: (value: string) => value?.trim().toLowerCase(),
         required: t("formValidation.emailRequired") as Message,
         pattern: {
           message: t("formValidation.emailInvalid"),
@@ -222,17 +220,17 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
         },
         validate: {
           uniqueValidation: async (value: string) => {
-            const message = t("formValidation.emailNotUnique");
-
-            const hasEmailTaken = await validateEmail.mutateAsync({ email: value });
-            return !hasEmailTaken || message;
+            return await validateEmail
+              .mutateAsync({ email: value })
+              .then((response) => response?.message)
+              .catch((error) => error.message);
           },
         },
       },
       password: {
         required: t("formValidation.passwordRequired") as Message,
       },
-      newPasswordOFF: {
+      newPassword: {
         required: t("formValidation.passwordRequired") as Message,
         minLength: { value: 8, message: t("formValidation.passwordMinLength", { n: 8 }) },
         validate: {
@@ -248,7 +246,7 @@ export const useFormValidation = (formName: RegisteredFormNames, useFormReturn: 
           },
         },
       },
-      repeatPasswordOFF: {
+      repeatPassword: {
         required: t("formValidation.passwordRepeatRequired") as Message,
         validate: {
           matchesPasswords: (value: string, formValues: FieldValues) => {

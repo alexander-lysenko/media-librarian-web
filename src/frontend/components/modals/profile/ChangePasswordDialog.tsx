@@ -1,15 +1,4 @@
-import {
-  Alert,
-  Button,
-  CircularProgress,
-  Collapse,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grow,
-} from "@mui/material";
+import { Alert, Button, CircularProgress, Collapse } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -18,9 +7,10 @@ import { useProfileChangePasswordRequest } from "../../../requests/profileReques
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { DoneOutlined } from "../../icons";
 import { PasswordInput } from "../../inputs/PasswordInput";
+import { FormDialog } from "../../ui/modals/FormDialog";
 
 import type { ErrorResponse, PasswordChangeFormData } from "../../../core/types";
-import type { DialogProps } from "@mui/material";
+import type { FormDialogProps } from "../../ui/modals/FormDialog";
 import type { SyntheticEvent } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
@@ -72,26 +62,19 @@ export const ChangePasswordDialog = () => {
     });
   };
 
-  const dialogProps: DialogProps = {
+  const dialogProps: FormDialogProps = {
     open: open,
-    fullWidth: true,
     maxWidth: "xs",
-    disableRestoreFocus: true,
-    slots: { transition: Grow },
-    slotProps: {
-      transition: { timeout: 120 },
-      paper: {
-        component: "form",
-        onSubmit: handleSubmit(onValidSubmit),
-      },
-    },
+    fullScreen: false,
+    onSubmit: handleSubmit(onValidSubmit),
+    onClose: handleClose,
   };
 
   return (
-    <Dialog {...dialogProps} onClose={handleClose}>
-      <DialogTitle variant={"h5"}>{t("dialogs.changePasswordDialog.title")}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{t("dialogs.changePasswordDialog.subtitle")}</DialogContentText>
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t("dialogs.changePasswordDialog.title")}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t("dialogs.changePasswordDialog.subtitle")}</FormDialog.Subtitle>
         <Collapse in={!!formState.errors.root?.serverError} unmountOnExit>
           <Alert variant="filled" severity="error" onClose={() => clearErrors("root")} sx={{ my: 2 }}>
             {formState.errors.root?.serverError.message as string}
@@ -115,8 +98,8 @@ export const ChangePasswordDialog = () => {
           helperText={t("dialogs.changePasswordDialog.repeatPasswordHint") as string}
           errorMessage={formState.errors.repeatPassword?.message as string}
         />
-      </DialogContent>
-      <DialogActions>
+      </FormDialog.Content>
+      <FormDialog.Actions>
         <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
         <Button
           type="submit"
@@ -125,7 +108,7 @@ export const ChangePasswordDialog = () => {
           endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
           children={t("common.save")}
         />
-      </DialogActions>
-    </Dialog>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };

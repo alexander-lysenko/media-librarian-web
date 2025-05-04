@@ -1,22 +1,4 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  FormControl,
-  Grid,
-  Grow,
-  IconButton,
-  MenuItem,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Divider, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -24,28 +6,15 @@ import { LibraryElementEnum } from "../../core/enums";
 import { useFormValidation } from "../../hooks";
 import { useLibraryCreateRequest } from "../../requests/libraryRequests";
 import { useLibraryCreateFormStore } from "../../store/useLibraryCreateFormStore";
-import {
-  AddCircleOutlined,
-  DriveFileRenameOutlineOutlined,
-  HourglassBottomOutlined,
-  RemoveCircleOutlineOutlined,
-  SaveAsOutlined,
-} from "../icons";
+import { AddCircleOutlined, DriveFileRenameOutlineOutlined, HourglassBottomOutlined, SaveAsOutlined } from "../icons";
+import { LibraryFieldTemplate } from "../inputs/LibraryFieldTemplate";
 import { TextInput } from "../inputs/TextInput";
-import { TooltipWrapper } from "../ui/TooltipWrapper";
+import { FormDialog, type FormDialogProps } from "../ui/modals/FormDialog";
 
 import type { LibraryFormData } from "../../core/types";
-import type { DialogProps, TextFieldProps } from "@mui/material";
 import type { MutateOptions } from "@tanstack/react-query";
 import type { SyntheticEvent } from "react";
-import type { FieldErrors, FieldValues, SubmitHandler, UseFormRegisterReturn } from "react-hook-form";
-
-interface InlineTemplateProps {
-  index: number;
-  errors: FieldErrors;
-  registerField: (fieldName: string, ruleName?: string) => UseFormRegisterReturn;
-  onRemove: () => void;
-}
+import type { SubmitHandler } from "react-hook-form";
 
 /**
  * A dialog component for creating new libraries with customizable fields.
@@ -101,28 +70,17 @@ export const LibraryCreateDialog = () => {
     void libraryCreateRequest.mutateAsync({ data }, responseEffects as never);
   };
 
-  const dialogProps: DialogProps = {
+  const dialogProps: FormDialogProps = {
     open: open,
-    fullScreen: fullScreen,
-    fullWidth: true,
-    scroll: "paper",
-    disableRestoreFocus: true,
-    closeAfterTransition: true,
-    slots: { transition: Grow },
-    slotProps: {
-      transition: { timeout: 120 },
-      paper: {
-        component: "form",
-        sx: { minHeight: { sm: "calc(100% - 128px)" } },
-        onSubmit: handleSubmit(onValidSubmit),
-      },
-    },
+    paperSx: { minHeight: { sm: "calc(100% - 128px)" } },
+    onSubmit: handleSubmit(onValidSubmit),
+    onClose: handleClose,
   };
 
   return (
-    <Dialog {...dialogProps}>
-      <DialogTitle variant={"h5"}>{t("libraryCreate.title")}</DialogTitle>
-      <DialogContent dividers>
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t("libraryCreate.title")}</FormDialog.Title>
+      <FormDialog.Content dividers>
         <TextInput
           {...registerFieldDebounced(1000, "title")}
           label={t("libraryCreate.libraryTitle")}
@@ -134,7 +92,7 @@ export const LibraryCreateDialog = () => {
         <Divider sx={{ mb: 0.5 }} />
         {watchingFields.map((_field, index) => {
           return (
-            <InputLineTemplate
+            <LibraryFieldTemplate
               key={index}
               index={index}
               registerField={registerField}
@@ -143,8 +101,8 @@ export const LibraryCreateDialog = () => {
             />
           );
         })}
-      </DialogContent>
-      <DialogActions>
+      </FormDialog.Content>
+      <FormDialog.Actions>
         <Button
           variant="outlined"
           onClick={handleAddNewField}
@@ -160,54 +118,7 @@ export const LibraryCreateDialog = () => {
           endIcon={loading || titleUniqueProcessing ? <CircularProgress size={14} /> : <SaveAsOutlined />}
           children={t("common.create")}
         />
-      </DialogActions>
-    </Dialog>
-  );
-};
-
-const InputLineTemplate = ({ index, registerField, errors, onRemove }: InlineTemplateProps) => {
-  const { t } = useTranslation();
-  const leading = index === 0;
-  const tooltipTitle = leading ? t("libraryCreate.fieldCantBeRemoved") : t("libraryCreate.removeField");
-
-  const customSelectProps: Partial<TextFieldProps> = {
-    defaultValue: LibraryElementEnum.line,
-    helperText: "",
-    select: true,
-    fullWidth: true,
-    size: "small",
-    margin: "dense",
-  };
-
-  return (
-    <Grid container spacing={1} alignItems="stretch">
-      <Grid size={{ xs: 12, sm: 7 }}>
-        <TextInput
-          {...registerField(`fields.${index}.name`, "name")}
-          label={t("libraryCreate.fieldName")}
-          errorMessage={(errors as FieldErrors<{ fields: FieldValues[] }>)?.fields?.[index]?.name?.message as string}
-        />
-      </Grid>
-      <Grid size={{ xs: 10, sm: 4 }}>
-        <TextField
-          {...registerField(`fields.${index}.type`, "type")}
-          {...customSelectProps}
-          label={t("libraryCreate.fieldType")}
-          disabled={leading}
-          children={Object.entries(LibraryElementEnum).map(([key, definition]) => (
-            <MenuItem key={key} value={definition} children={t(`libraryTypes.${definition}`)} />
-          ))}
-        />
-      </Grid>
-      <Grid size={{ xs: 2, sm: 1 }} textAlign={"right"}>
-        <FormControl size="small" margin="dense">
-          <TooltipWrapper title={tooltipTitle} placement="left" arrow wrap>
-            <IconButton disabled={leading} onClick={onRemove}>
-              <RemoveCircleOutlineOutlined />
-            </IconButton>
-          </TooltipWrapper>
-        </FormControl>
-      </Grid>
-    </Grid>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };

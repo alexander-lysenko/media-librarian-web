@@ -1,25 +1,13 @@
-import {
-  Avatar,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grow,
-  List,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-  styled,
-  Typography,
-} from "@mui/material";
+import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import { enqueueSnack } from "../../../core/actions";
 import { useProfilePatchRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useLanguageStore, useTranslationStore } from "../../../store/system/useTranslationStore";
+import { SimpleDialog } from "../../ui/modals/SimpleDialog";
 
 import type { Language } from "../../../store/system/useTranslationStore";
-import type { DialogProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 
 /**
@@ -61,18 +49,9 @@ export const SelectLocaleDialog = () => {
     );
   };
 
-  const dialogProps: DialogProps = {
-    open: open,
-    fullWidth: true,
-    maxWidth: "xs",
-    disableRestoreFocus: true,
-    slots: { transition: Grow },
-    slotProps: { transition: { timeout: 120 } },
-  };
-
   return (
-    <Dialog {...dialogProps} onClose={handleClose}>
-      <StyledDialogTitle>{t("dialogs.changeLocaleDialog.title")}</StyledDialogTitle>
+    <SimpleDialog open={open} onClose={handleClose}>
+      <SimpleDialog.Title sx={{ pb: 0 }}>{t("dialogs.changeLocaleDialog.title")}</SimpleDialog.Title>
       <List>
         {Object.entries(languages).map(([key, label]) => (
           <ListItemButton key={key} disabled={loading} onClick={() => handleItemClick(key as Language)}>
@@ -83,17 +62,9 @@ export const SelectLocaleDialog = () => {
           </ListItemButton>
         ))}
       </List>
-      <StyledDialogContent>
+      <SimpleDialog.Content sx={{ pt: 1 }}>
         <Typography variant="body2">{"More languages coming soon"}</Typography>
-      </StyledDialogContent>
-    </Dialog>
+      </SimpleDialog.Content>
+    </SimpleDialog>
   );
 };
-
-const StyledDialogTitle = styled(DialogTitle)({
-  paddingBottom: 0,
-});
-
-const StyledDialogContent = styled(DialogContent)({
-  paddingTop: 8,
-});

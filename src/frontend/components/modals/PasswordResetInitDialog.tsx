@@ -1,21 +1,5 @@
-import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Collapse,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grow,
-  InputAdornment,
-  TextField,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { Alert, Box, Button, CircularProgress, Collapse, InputAdornment, TextField } from "@mui/material";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -24,9 +8,11 @@ import { enqueueSnack } from "../../core/actions";
 import { useFormValidation } from "../../hooks";
 import { usePasswordRecoveryRequest } from "../../requests/authRequests";
 import { AlternateEmailOutlined, Send } from "../icons";
+import { FormDialog } from "../ui/modals/FormDialog";
 
 import type { InputCustomProps } from "../../core/types";
-import type { DialogProps, TextFieldProps } from "@mui/material";
+import type { TurnstileInstance } from "@marsidev/react-turnstile";
+import type { TextFieldProps } from "@mui/material";
 import type { SyntheticEvent } from "react";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
 
@@ -41,13 +27,9 @@ interface PasswordRecoveryFormData extends FieldValues {
 
 /**
  * Password Reset Init (Recovery Request) Dialog
- * @param { open, handleClose }
- * @constructor
  */
 export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
   const { t, i18n } = useTranslation();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const passwordRecoveryRequest = usePasswordRecoveryRequest();
@@ -81,27 +63,11 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
     onClose(event, reason);
   };
 
-  const dialogProps: DialogProps = {
-    open: open,
-    fullWidth: true,
-    fullScreen: fullScreen,
-    disableRestoreFocus: true,
-    closeAfterTransition: true,
-    slots: { transition: Grow },
-    slotProps: {
-      transition: { timeout: 120 },
-      paper: {
-        component: "form",
-        onSubmit: handleSubmit(onValidSubmit),
-      },
-    },
-  };
-
   return (
-    <Dialog {...dialogProps} onClose={handleCloseWithReset}>
-      <DialogTitle variant={"h5"}>{t("passwordRecovery.title")}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{t("passwordRecovery.subtitle")}</DialogContentText>
+    <FormDialog open={open} fullWidth onSubmit={handleSubmit(onValidSubmit)} onClose={handleCloseWithReset}>
+      <FormDialog.Title>{t("passwordRecovery.title")}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t("passwordRecovery.subtitle")}</FormDialog.Subtitle>
         <Collapse in={!!formState.errors.root?.serverError} unmountOnExit>
           <Alert variant="filled" severity="error" onClose={() => clearErrors("root")} sx={{ my: 2 }}>
             {formState.errors.root?.serverError.message as string}
@@ -124,8 +90,8 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
             }}
           />
         </Box>
-      </DialogContent>
-      <DialogActions>
+      </FormDialog.Content>
+      <FormDialog.Actions>
         <Button variant="text" onClick={handleCloseWithReset}>
           {t("common.cancel")}
         </Button>
@@ -136,8 +102,8 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
           endIcon={loading ? <CircularProgress size={14} /> : <Send />}
           children={t("common.submit")}
         />
-      </DialogActions>
-    </Dialog>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };
 

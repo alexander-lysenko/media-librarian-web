@@ -21,7 +21,7 @@ import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStor
 import { useProfileStore } from "../../../store/useProfileStore";
 import { CloseOutlined, CloudUploadOutlined, DoneOutlined } from "../../icons";
 import { ImageCrop } from "../../ui/ImageCrop";
-import { ProfileAvatar } from "../../ui/ProfileAvatar";
+import { ProfileAvatar } from "../../profile/ProfileAvatar";
 
 import type { CropParams } from "../../../core/types";
 import type { DialogProps } from "@mui/material";

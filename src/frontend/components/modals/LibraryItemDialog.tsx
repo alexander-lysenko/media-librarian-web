@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grow,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import dayjs from "dayjs";
 import { defaults, pick } from "lodash-es";
 import { useEffect, useState } from "react";
@@ -22,21 +11,20 @@ import { useSelectedLibraryStore } from "../../store/library/useLibrariesStore";
 import { useLibraryItemFormStore } from "../../store/useLibraryItemFormStore";
 import { AddCircleOutlined, ArrowDropDownOutlined, ArrowDropUpOutlined, SaveAsOutlined } from "../icons";
 import { LibraryItemInputControl } from "../libraryItemInput/LibraryItemInputControl";
+import { FormDialog } from "../ui/modals/FormDialog";
 import { PosterUploadInputBox } from "../ui/PosterUploadInputBox";
 
 import type { LibraryElement, LibraryFields, LibraryItemFormData, LibraryItemFormValues } from "../../core/types";
-import type { DialogProps } from "@mui/material";
+import type { FormDialogProps } from "../ui/modals/FormDialog";
 import type { MutateOptions } from "@tanstack/react-query";
 import type { KeyboardEvent, SyntheticEvent } from "react";
 import type { FieldErrors, SubmitErrorHandler, SubmitHandler, UseFormReturn } from "react-hook-form";
 
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
- * TODO: WIP
  */
 export const LibraryItemDialog = () => {
   const { t } = useTranslation();
-  const fullScreen = useMediaQuery(useTheme().breakpoints.down("sm"));
 
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
   const { open, isEditMode, selectedItem, titleUniqueProcessing } = useLibraryItemFormStore();
@@ -60,31 +48,19 @@ export const LibraryItemDialog = () => {
     }
   }, [open, reset, selectedItem, selectedLibrary]);
 
-  const dialogProps: DialogProps = {
+  const dialogProps: FormDialogProps = {
     open: open,
-    fullScreen: fullScreen,
-    fullWidth: true,
-    scroll: "paper",
-    disableRestoreFocus: true,
-    closeAfterTransition: true,
-    slots: { transition: Grow },
-    slotProps: {
-      transition: { timeout: 120 },
-      paper: {
-        component: "form",
-        sx: { minHeight: { sm: "calc(100% - 128px)" } },
-        onSubmit: handleSubmit(formEvents.onValidSubmit, formEvents.onInvalidSubmit),
-        onKeyDown: formEvents.handleSubmitByCtrlEnter,
-      },
-    },
+    paperSx: { minHeight: { sm: "calc(100% - 128px)" } },
+    onSubmit: handleSubmit(formEvents.onValidSubmit, formEvents.onInvalidSubmit),
+    onKeyDown: formEvents.handleSubmitByCtrlEnter,
   };
 
   return (
-    <Dialog {...dialogProps}>
-      <DialogTitle variant="h5" noWrap>
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title noWrap>
         {isEditMode ? t("libraryItem.title.edit") : t("libraryItem.title.create")}
-      </DialogTitle>
-      <DialogContent dividers>
+      </FormDialog.Title>
+      <FormDialog.Content dividers>
         {Object.entries(selectedLibrary?.fields || {}).map(([label, type]: [string, LibraryElement], index: number) => (
           <LibraryItemInputControl
             key={label}
@@ -98,11 +74,11 @@ export const LibraryItemDialog = () => {
               : registerField(label, type))}
           />
         ))}
-      </DialogContent>
-      <DialogActions sx={{ display: showPoster ? "flex" : "none", pb: 0 }}>
+      </FormDialog.Content>
+      <FormDialog.Actions sx={{ display: showPoster ? "flex" : "none", pb: 0 }}>
         <PosterUploadInputBox />
-      </DialogActions>
-      <DialogActions>
+      </FormDialog.Actions>
+      <FormDialog.Actions>
         <Button
           variant="outlined"
           onClick={() => setShowPoster(!showPoster)}
@@ -119,8 +95,8 @@ export const LibraryItemDialog = () => {
           endIcon={loading ? <CircularProgress size={14} /> : <SaveAsOutlined />}
           children={isEditMode ? t("common.update") : t("common.create")}
         />
-      </DialogActions>
-    </Dialog>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };
 

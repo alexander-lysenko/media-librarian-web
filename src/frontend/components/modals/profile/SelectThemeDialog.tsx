@@ -1,14 +1,4 @@
-import {
-  Avatar,
-  Dialog,
-  DialogTitle,
-  Grow,
-  List,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-  styled,
-} from "@mui/material";
+import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { useTranslation } from "react-i18next";
 
@@ -17,8 +7,9 @@ import { useProfilePatchRequest } from "../../../requests/profileRequests";
 import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
 import { useThemeStore } from "../../../store/system/useThemeStore";
 import { ImageOutlined } from "../../icons";
+import { SimpleDialog } from "../../ui/modals/SimpleDialog";
 
-import type { DialogProps, PaletteMode } from "@mui/material";
+import type { PaletteMode } from "@mui/material";
 import type { SyntheticEvent } from "react";
 
 /**
@@ -70,18 +61,9 @@ export const SelectThemeDialog = () => {
     );
   };
 
-  const dialogProps: DialogProps = {
-    open: open,
-    fullWidth: true,
-    maxWidth: "xs",
-    disableRestoreFocus: true,
-    slots: { transition: Grow },
-    slotProps: { transition: { timeout: 120 } },
-  };
-
   return (
-    <Dialog {...dialogProps} onClose={handleClose}>
-      <StyledDialogTitle>{t("dialogs.changeThemeDialog.title")}</StyledDialogTitle>
+    <SimpleDialog open={open} onClose={handleClose}>
+      <SimpleDialog.Title sx={{ pb: 0 }}>{t("dialogs.changeThemeDialog.title")}</SimpleDialog.Title>
       <List>
         {Object.entries(colors).map(([key, color]) => (
           <ListItemButton key={key} disabled={loading} onClick={() => handleItemClick(key as PaletteMode)}>
@@ -94,10 +76,6 @@ export const SelectThemeDialog = () => {
           </ListItemButton>
         ))}
       </List>
-    </Dialog>
+    </SimpleDialog>
   );
 };
-
-const StyledDialogTitle = styled(DialogTitle)({
-  paddingBottom: 0,
-});

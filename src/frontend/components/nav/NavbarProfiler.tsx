@@ -17,7 +17,7 @@ import { AppRoutes } from "../../core/enums";
 import { useThemeStore } from "../../store/system/useThemeStore";
 import { useProfileStore } from "../../store/useProfileStore";
 import { BadgeOutlined, LightModeOutlined, LogoutOutlined } from "../icons";
-import { ProfileAvatar } from "../ui/ProfileAvatar";
+import { ProfileAvatar } from "../profile/ProfileAvatar";
 
 import type { MouseEvent } from "react";
 

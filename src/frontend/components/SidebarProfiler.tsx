@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 
 import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from "../components/icons";
-import { ProfileAvatar } from "./ui/ProfileAvatar";
+import { ProfileAvatar } from "./profile/ProfileAvatar";
 
 import type { SxProps } from "@mui/system";
 import type { MouseEventHandler } from "react";

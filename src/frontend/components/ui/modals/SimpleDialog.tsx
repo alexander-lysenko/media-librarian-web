@@ -1,24 +1,58 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
 
-import { DoneOutlined } from "../../icons";
+import type {
+  DialogActionsProps,
+  DialogContentProps,
+  DialogContentTextProps,
+  DialogProps,
+  DialogTitleProps,
+} from "@mui/material";
 
-/**
- * A STUB CODE, NOT FOR DIRECT USE
- * @constructor
- */
-export const SimpleDialog = () => {
+const DialogWrapper = ({ open, children, onClose, ...props }: DialogProps) => {
+  const dialogProps: DialogProps = {
+    open: open,
+    fullWidth: true,
+    maxWidth: "xs",
+    disableRestoreFocus: true,
+    slots: { transition: Grow },
+    slotProps: { transition: { timeout: 120 } },
+    ...props,
+  };
+
   return (
-    <Dialog open={false} fullWidth TransitionComponent={Grow} transitionDuration={120}>
-      <DialogTitle variant={"h5"}>Simple Heading</DialogTitle>
-      <DialogContent>
-        <DialogContentText>Simple Title</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button variant="text" onClick={() => false}>
-          Cancel
-        </Button>
-        <Button type="submit" variant="contained" endIcon={<DoneOutlined />} children={"Confirm"} />
-      </DialogActions>
+    <Dialog {...dialogProps} onClose={onClose}>
+      {children}
     </Dialog>
   );
 };
+
+const _Title = ({ children, ...props }: DialogTitleProps) => {
+  return (
+    <DialogTitle {...props}>
+      {children}
+    </DialogTitle>
+  );
+};
+
+const _Subtitle = ({ children, ...props }: DialogContentTextProps) => {
+  return (
+    <DialogContentText sx={{ pb: 0 }} {...props}>
+      {children}
+    </DialogContentText>
+  );
+};
+
+const _Content = ({ children, ...props }: DialogContentProps) => {
+  return <DialogContent {...props}>{children}</DialogContent>;
+};
+
+const _Actions = ({ children, ...props }: DialogActionsProps) => {
+  return <DialogActions {...props}>{children}</DialogActions>;
+};
+
+export const SimpleDialog = Object.assign(DialogWrapper, {
+  Title: _Title,
+  Subtitle: _Subtitle,
+  Content: _Content,
+  Actions: _Actions,
+});
