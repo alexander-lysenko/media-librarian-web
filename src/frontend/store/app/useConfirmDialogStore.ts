@@ -1,6 +1,6 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-import type { ConfirmDialogProps } from "../../core/types";
+import type { ConfirmDialogProps } from '../../core/types';
 
 interface DialogOpenState {
   open: boolean;
@@ -14,7 +14,7 @@ interface InitState {
 export const useConfirmDialogStore = create<InitState & DialogOpenState & ConfirmDialogProps>((set) => ({
   open: false,
   setOpen: (open) => set({ open }),
-  type: "question",
+  type: 'question',
   message: 'Click "OK" to confirm',
   onConfirm: (event) => {
     event.preventDefault();

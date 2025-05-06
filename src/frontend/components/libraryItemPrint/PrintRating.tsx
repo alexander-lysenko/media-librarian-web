@@ -1,9 +1,9 @@
-import { memo } from "react";
+import { memo } from 'react';
 
-import { ratingColorByValue } from "../../core";
-import { Star, StarBorder, StarHalf } from "../icons";
+import { ratingColorByValue } from '../../core';
+import { Star, StarBorder, StarHalf } from '../icons';
 
-import type { ReactElement } from "react";
+import type { ReactElement } from 'react';
 
 interface RatingProps {
   size: 5 | 10;
@@ -17,13 +17,13 @@ export const PrintRating = memo(({ size, value }: RatingProps) => {
   new Array(size).fill(0).forEach((_, index) => {
     switch (true) {
       case value >= index + 1:
-        stars.push(<Star key={index} fontSize="small" sx={{ color }} />);
+        stars.push(<Star key={index} fontSize='small' sx={{ color }} />);
         break;
       case value % 1 > 0 && value > index && value < index + 1:
-        stars.push(<StarHalf key={index} fontSize="small" sx={{ color }} />);
+        stars.push(<StarHalf key={index} fontSize='small' sx={{ color }} />);
         break;
       default:
-        stars.push(<StarBorder key={index} fontSize="small" color={"disabled"} />);
+        stars.push(<StarBorder key={index} fontSize='small' color={'disabled'} />);
         break;
     }
   });

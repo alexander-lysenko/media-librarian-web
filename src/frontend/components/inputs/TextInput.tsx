@@ -1,16 +1,16 @@
-import { InputAdornment, TextField } from "@mui/material";
-import { forwardRef } from "react";
+import { InputAdornment, TextField } from '@mui/material';
+import { forwardRef } from 'react';
 
-import type { InputCustomProps } from "../../core/types";
-import type { SvgIconComponent } from "@mui/icons-material";
-import type { TextFieldProps } from "@mui/material";
-import type { ReactElement } from "react";
+import type { InputCustomProps } from '../../core/types';
+import type { SvgIconComponent } from '@mui/icons-material';
+import type { TextFieldProps } from '@mui/material';
+import type { ReactElement } from 'react';
 
 type Props = InputCustomProps & {
-  autoComplete?: TextFieldProps["autoComplete"];
-  disabled?: TextFieldProps["disabled"];
+  autoComplete?: TextFieldProps['autoComplete'];
+  disabled?: TextFieldProps['disabled'];
   icon?: ReactElement<SvgIconComponent>;
-  margin?: TextFieldProps["margin"];
+  margin?: TextFieldProps['margin'];
 };
 
 /**
@@ -21,7 +21,7 @@ export const TextInput = forwardRef((props: Props, ref) => {
   const { label, errorMessage, helperText, name, onBlur, onChange } = props;
   const { margin, autoFocus, autoComplete, icon, disabled } = props;
 
-  const endAdornment = icon ? <InputAdornment position="end" children={icon} /> : undefined;
+  const endAdornment = icon ? <InputAdornment position='end' children={icon} /> : undefined;
 
   return (
     <TextField
@@ -31,9 +31,9 @@ export const TextInput = forwardRef((props: Props, ref) => {
       error={!!errorMessage}
       helperText={errorMessage || helperText}
       fullWidth={props.fullWidth ?? true}
-      size="small"
-      margin={margin || "dense"}
-      autoComplete={autoComplete || "off"}
+      size='small'
+      margin={margin || 'dense'}
+      autoComplete={autoComplete || 'off'}
       autoFocus={autoFocus}
       disabled={disabled}
       onChange={onChange}

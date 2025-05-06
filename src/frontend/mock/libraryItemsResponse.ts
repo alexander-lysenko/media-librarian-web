@@ -1,12 +1,12 @@
-import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
-import movies from "./movies.json";
+import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
+import movies from './movies.json';
 
-import type { DataRow, GetLibraryItemsResponse } from "../core/types";
+import type { DataRow, GetLibraryItemsResponse } from '../core/types';
 
 export const getFakeLibraryItems = (): GetLibraryItemsResponse => {
   const { page, rowsPerPage, total } = useLibraryTableStore.getState();
 
-  const origDataRows: Omit<DataRow, "id">[] = Array.from(movies);
+  const origDataRows: Omit<DataRow, 'id'>[] = Array.from(movies);
   const dataRows: DataRow[] = [];
 
   const startItem = page * (rowsPerPage > 0 ? rowsPerPage : total);
@@ -18,10 +18,10 @@ export const getFakeLibraryItems = (): GetLibraryItemsResponse => {
       dataRows.push({
         id,
         ...item,
-        "Movie Title": `${id} ${item["Movie Title"]}`,
-        "Origin Title": `${id} ${item["Origin Title"]}`,
-        "IMDB URL": `${id} ${item["IMDB URL"]}`,
-        Description: `${id} ${item["Description"]}`,
+        'Movie Title': `${id} ${item['Movie Title']}`,
+        'Origin Title': `${id} ${item['Origin Title']}`,
+        'IMDB URL': `${id} ${item['IMDB URL']}`,
+        Description: `${id} ${item['Description']}`,
       });
     });
   }

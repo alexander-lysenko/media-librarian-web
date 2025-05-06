@@ -1,8 +1,8 @@
-import type { Language } from "../../store/system/useTranslationStore";
-import type { DataRow } from "./_dataTable";
-import type { LibraryElement, LibraryItem, LibraryItemFormValues, LibrarySchema } from "./_library";
-import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
-import type { FieldValues } from "react-hook-form";
+import type { Language } from '../../store/system/useTranslationStore';
+import type { DataRow } from './_dataTable';
+import type { LibraryElement, LibraryItem, LibraryItemFormValues, LibrarySchema } from './_library';
+import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
+import type { FieldValues } from 'react-hook-form';
 
 export type PathParams = Record<string, string | number>;
 export type QueryParams = Record<string, string | number | string[] | number[]>;
@@ -16,7 +16,7 @@ export type QueryParams = Record<string, string | number | string[] | number[]>;
  */
 export type RequestQueryReturn<Response = undefined> = Pick<
   UseQueryResult<Response, ErrorResponse | Error | null>,
-  "refetch" | "data" | "error" | "status"
+  'refetch' | 'data' | 'error' | 'status'
 >;
 /**
  * Type alias for representing a selective subset of the `UseMutationResult` object, typically used in mutation handling
@@ -26,7 +26,7 @@ export type RequestQueryReturn<Response = undefined> = Pick<
  */
 export type RequestMutationReturn<Response = undefined, Request = undefined> = Pick<
   UseMutationResult<Response, ErrorResponse | Error, Request, unknown>,
-  "mutate" | "mutateAsync" | "data" | "error" | "status"
+  'mutate' | 'mutateAsync' | 'data' | 'error' | 'status'
 >;
 
 // == core request types == //
@@ -55,11 +55,11 @@ export interface HttpResponseEvents<ResponseType = never> {
   onComplete?: () => void;
 }
 /** @deprecated */
-export type RequestStatus = "IDLE" | "LOADING" | "SUCCESS" | "FAILED";
+export type RequestStatus = 'IDLE' | 'LOADING' | 'SUCCESS' | 'FAILED';
 /** @deprecated */
 export interface HttpRequestHookConfig<ResponseType = never> {
   endpoint: string;
-  method: "GET" | "DELETE" | "HEAD" | "OPTIONS" | "POST" | "PUT" | "PATCH" | "PURGE" | "LINK" | "UNLINK";
+  method: 'GET' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'PATCH' | 'PURGE' | 'LINK' | 'UNLINK';
   customEvents?: HttpResponseEvents<ResponseType>;
   withCredentials?: boolean; // default: true
   abortController?: AbortController;
@@ -96,14 +96,14 @@ export type ApiRequestFetch<Request, Response> = (
 export interface ApiRequestHookReturn<Request, Response> {
   status: RequestStatus;
   fetch: ApiRequestFetch<Request, Response>;
-  abort: AbortController["abort"];
+  abort: AbortController['abort'];
 }
 
 /** @deprecated */
 export interface UseRequestReturn<Request, Response> {
   status: RequestStatus;
   fetch: ApiRequestFetch<Request, Response>;
-  abort: AbortController["abort"];
+  abort: AbortController['abort'];
   setResponseEvents: (events: HttpResponseEvents<Response>) => void;
   setQueryParams: (params?: QueryParams) => void;
   setPathParams: (params?: PathParams) => void;
@@ -115,7 +115,7 @@ export interface SignupFormData extends FieldValues {
   password: string;
   passwordRepeat: string;
   locale: Language;
-  theme: "dark" | "light";
+  theme: 'dark' | 'light';
 }
 
 export interface SignupResponse {
@@ -189,7 +189,7 @@ export interface PatchLibraryResponse {
     title: string;
   };
   meta: {
-    status: "truncated";
+    status: 'truncated';
     items_affected: number;
   };
 }

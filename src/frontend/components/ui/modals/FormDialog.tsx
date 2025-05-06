@@ -8,34 +8,34 @@ import {
   Grow,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
+} from '@mui/material';
 
-import type { DialogActionsProps, DialogContentProps, DialogProps, DialogTitleProps, ModalProps } from "@mui/material";
-import type { SxProps } from "@mui/system";
-import type { FormEventHandler, KeyboardEventHandler } from "react";
+import type { DialogActionsProps, DialogContentProps, DialogProps, DialogTitleProps, ModalProps } from '@mui/material';
+import type { SxProps } from '@mui/system';
+import type { FormEventHandler, KeyboardEventHandler } from 'react';
 
 export interface FormDialogProps extends DialogProps {
   onSubmit: FormEventHandler<HTMLDivElement>;
-  onClose?: ModalProps["onClose"];
+  onClose?: ModalProps['onClose'];
   paperSx?: SxProps;
   onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
 }
 
 const DialogWrapper = ({ children, onClose, onSubmit, onKeyDown, paperSx, ...props }: FormDialogProps) => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const dialogProps: DialogProps = {
     fullScreen: props.fullScreen ?? fullScreen,
     fullWidth: true,
-    scroll: "paper",
+    scroll: 'paper',
     disableRestoreFocus: true,
     closeAfterTransition: true,
     slots: { transition: Grow },
     slotProps: {
       transition: { timeout: 120 },
       paper: {
-        component: "form",
+        component: 'form',
         sx: paperSx,
         onSubmit: onSubmit,
         onKeyDown: onKeyDown,
@@ -53,7 +53,7 @@ const DialogWrapper = ({ children, onClose, onSubmit, onKeyDown, paperSx, ...pro
 
 const _Title = ({ children, ...props }: DialogTitleProps) => {
   return (
-    <DialogTitle variant="h5" {...props}>
+    <DialogTitle variant='h5' {...props}>
       {children}
     </DialogTitle>
   );

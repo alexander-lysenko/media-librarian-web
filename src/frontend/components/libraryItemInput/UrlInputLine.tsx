@@ -1,11 +1,11 @@
-import { InputAdornment, TextField, Tooltip } from "@mui/material";
-import { forwardRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { InputAdornment, TextField, Tooltip } from '@mui/material';
+import { forwardRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { PublicOutlined } from "../icons";
+import { PublicOutlined } from '../icons';
 
-import type { UrlInputProps } from "../../core/types";
-import type { ChangeEvent } from "react";
+import type { UrlInputProps } from '../../core/types';
+import type { ChangeEvent } from 'react';
 
 /**
  * Library Item Form - Single Line Text Input for URL
@@ -24,13 +24,13 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
 
   const endAdornment = (
     <InputAdornment
-      position="end"
-      sx={{ cursor: "pointer" }}
+      position='end'
+      sx={{ cursor: 'pointer' }}
       disablePointerEvents={!isValid}
-      onClick={() => isValid && window.open(stateValue, "_blank")}
+      onClick={() => isValid && window.open(stateValue, '_blank')}
     >
-      <Tooltip title={t("common.openInNewTab")} placement="left" arrow>
-        <PublicOutlined color={isValid ? "inherit" : "disabled"} />
+      <Tooltip title={t('common.openInNewTab')} placement='left' arrow>
+        <PublicOutlined color={isValid ? 'inherit' : 'disabled'} />
       </Tooltip>
     </InputAdornment>
   );
@@ -41,10 +41,10 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
       name={name}
       label={label}
       fullWidth
-      size="small"
-      margin="dense"
-      autoComplete="off"
-      spellCheck="false"
+      size='small'
+      margin='dense'
+      autoComplete='off'
+      spellCheck='false'
       error={!!errorMessage}
       helperText={errorMessage || helperText}
       onChange={handleChange}

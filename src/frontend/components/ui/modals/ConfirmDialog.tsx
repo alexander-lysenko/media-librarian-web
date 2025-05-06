@@ -8,15 +8,15 @@ import {
   DialogContentText,
   DialogTitle,
   Grow,
-} from "@mui/material";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+} from '@mui/material';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { useConfirmDialogStore } from "../../../store/app/useConfirmDialogStore";
-import { CloseOutlined, DoneOutlined, NavigateNextOutlined } from "../../icons";
+import { useConfirmDialogStore } from '../../../store/app/useConfirmDialogStore';
+import { CloseOutlined, DoneOutlined, NavigateNextOutlined } from '../../icons';
 
-import type { DialogProps } from "@mui/material";
-import type { MouseEventHandler } from "react";
+import type { DialogProps } from '@mui/material';
+import type { MouseEventHandler } from 'react';
 
 /**
  * Confirmation Dialog - Global Component
@@ -44,7 +44,7 @@ export const ConfirmDialog = () => {
   };
 
   const handleCancel: MouseEventHandler = async (event, reason?: string) => {
-    if (reason === "backdropClick" || reason === "escapeKeyDown") {
+    if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
       event.preventDefault();
       return false;
     }
@@ -56,7 +56,7 @@ export const ConfirmDialog = () => {
     open,
     keepMounted: true,
     fullWidth: true,
-    maxWidth: "xs",
+    maxWidth: 'xs',
     disableRestoreFocus: true,
     closeAfterTransition: true,
     slots: { transition: Grow },
@@ -68,27 +68,27 @@ export const ConfirmDialog = () => {
 
   return (
     <Dialog {...dialogProps}>
-      <DialogTitle variant={"h5"}>{t("confirm.title")}</DialogTitle>
+      <DialogTitle variant={'h5'}>{t('confirm.title')}</DialogTitle>
       <DialogContent sx={{ pb: 0 }}>
-        <DialogContentText children={message} component="p" />
-        {subjectItem && <Chip label={subjectItem} variant="outlined" icon={<NavigateNextOutlined />} />}
+        <DialogContentText children={message} component='p' />
+        {subjectItem && <Chip label={subjectItem} variant='outlined' icon={<NavigateNextOutlined />} />}
       </DialogContent>
       <DialogActions>
         <Button
-          type="button"
-          variant="outlined"
+          type='button'
+          variant='outlined'
           startIcon={<CloseOutlined />}
           onClick={handleCancel}
-          children={t("common.cancel")}
+          children={t('common.cancel')}
         />
         <Button
-          type="submit"
-          variant="contained"
-          color={type === "warning" ? "warning" : "error"}
+          type='submit'
+          variant='contained'
+          color={type === 'warning' ? 'warning' : 'error'}
           disabled={loading}
           endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
           onClick={handleConfirm}
-          children={t("common.ok")}
+          children={t('common.ok')}
         />
       </DialogActions>
     </Dialog>

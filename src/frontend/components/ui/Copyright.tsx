@@ -1,4 +1,4 @@
-import { Link, Typography } from "@mui/material";
+import { Link, Typography } from '@mui/material';
 
 /**
  * Simple Copyright component
@@ -11,9 +11,9 @@ export const Copyright = (props: object) => {
   const appUrl = import.meta.env.VITE_APP_URL;
 
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {"Copyright © "}
-      <Link color="inherit" href={appUrl} children={appName} />
+    <Typography variant='body2' color='text.secondary' align='center' {...props}>
+      {'Copyright © '}
+      <Link color='inherit' href={appUrl} children={appName} />
       {` ${date}.`}
     </Typography>
   );

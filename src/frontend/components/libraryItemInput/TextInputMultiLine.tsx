@@ -1,8 +1,8 @@
-import { TextField } from "@mui/material";
-import { kebabCase } from "lodash-es";
-import { forwardRef } from "react";
+import { TextField } from '@mui/material';
+import { kebabCase } from 'lodash-es';
+import { forwardRef } from 'react';
 
-import type { TextInputMultiLineProps } from "../../core/types";
+import type { TextInputMultiLineProps } from '../../core/types';
 
 /**
  * Library Item Form - Single Line Text Input
@@ -21,9 +21,9 @@ export const TextInputMultiLine = forwardRef((props: TextInputMultiLineProps, re
       multiline
       minRows={5}
       maxRows={20}
-      size="small"
-      margin="dense"
-      autoComplete="off"
+      size='small'
+      margin='dense'
+      autoComplete='off'
       error={!!errorMessage}
       helperText={errorMessage || helperText}
       onBlur={onBlur}

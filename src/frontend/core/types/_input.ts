@@ -1,7 +1,7 @@
-import type { LibraryElement } from "./_library";
-import type { Control, UseFormRegisterReturn } from "react-hook-form";
+import type { LibraryElement } from './_library';
+import type { Control, UseFormRegisterReturn } from 'react-hook-form';
 
-export interface InputCustomProps extends Omit<UseFormRegisterReturn, "ref"> {
+export interface InputCustomProps extends Omit<UseFormRegisterReturn, 'ref'> {
   label: string;
   value?: string;
   helperText?: string;
@@ -19,7 +19,7 @@ interface LoadingProps {
 }
 
 interface DateInputProps extends FormControlProps {
-  type: "date" | "datetime";
+  type: 'date' | 'datetime';
 }
 
 interface RatingProps extends FormControlProps {
@@ -40,14 +40,14 @@ interface RelatedInputProps<T extends LibraryElement> {
 }
 
 export type LibraryInputNarrowProps =
-  | (RelatedInputProps<"line"> & InputCustomProps & LoadingProps)
-  | (RelatedInputProps<"text"> & InputCustomProps)
-  | (RelatedInputProps<"date"> & InputCustomProps & DateInputProps)
-  | (RelatedInputProps<"datetime"> & InputCustomProps & DateInputProps)
-  | (RelatedInputProps<"rating5"> & InputCustomProps & RatingProps)
-  | (RelatedInputProps<"rating5precision"> & InputCustomProps & RatingProps)
-  | (RelatedInputProps<"rating10"> & InputCustomProps & RatingProps)
-  | (RelatedInputProps<"rating10precision"> & InputCustomProps & RatingProps)
-  | (RelatedInputProps<"priority"> & InputCustomProps)
-  | (RelatedInputProps<"checkmark"> & InputCustomProps)
-  | (RelatedInputProps<"url"> & InputCustomProps);
+  | (RelatedInputProps<'line'> & InputCustomProps & LoadingProps)
+  | (RelatedInputProps<'text'> & InputCustomProps)
+  | (RelatedInputProps<'date'> & InputCustomProps & DateInputProps)
+  | (RelatedInputProps<'datetime'> & InputCustomProps & DateInputProps)
+  | (RelatedInputProps<'rating5'> & InputCustomProps & RatingProps)
+  | (RelatedInputProps<'rating5precision'> & InputCustomProps & RatingProps)
+  | (RelatedInputProps<'rating10'> & InputCustomProps & RatingProps)
+  | (RelatedInputProps<'rating10precision'> & InputCustomProps & RatingProps)
+  | (RelatedInputProps<'priority'> & InputCustomProps)
+  | (RelatedInputProps<'checkmark'> & InputCustomProps)
+  | (RelatedInputProps<'url'> & InputCustomProps);

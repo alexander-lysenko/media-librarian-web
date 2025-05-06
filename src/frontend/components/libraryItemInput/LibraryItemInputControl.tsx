@@ -1,24 +1,24 @@
-import { forwardRef } from "react";
+import { forwardRef } from 'react';
 
-import { CheckBoxedInput } from "./CheckBoxedInput";
-import { ColoredRatingInput } from "./ColoredRatingInput";
-import { DateTimeInput } from "./DateTimeInput";
-import { PriorityInput } from "./PriorityInput";
-import { TextInputMultiLine } from "./TextInputMultiLine";
-import { TextInputSingleLine } from "./TextInputSingleLine";
-import { UrlInputLine } from "./UrlInputLine";
+import { CheckBoxedInput } from './CheckBoxedInput';
+import { ColoredRatingInput } from './ColoredRatingInput';
+import { DateTimeInput } from './DateTimeInput';
+import { PriorityInput } from './PriorityInput';
+import { TextInputMultiLine } from './TextInputMultiLine';
+import { TextInputSingleLine } from './TextInputSingleLine';
+import { UrlInputLine } from './UrlInputLine';
 
-import type { LibraryElementEnum } from "../../core/enums";
-import type { InputCustomProps } from "../../core/types";
-import type { Control } from "react-hook-form";
+import type { LibraryElementEnum } from '../../core/enums';
+import type { InputCustomProps } from '../../core/types';
+import type { Control } from 'react-hook-form';
 
-export { CheckBoxedInput } from "./CheckBoxedInput";
-export { ColoredRatingInput } from "./ColoredRatingInput";
-export { DateTimeInput } from "./DateTimeInput";
-export { PriorityInput } from "./PriorityInput";
-export { TextInputMultiLine } from "./TextInputMultiLine";
-export { TextInputSingleLine } from "./TextInputSingleLine";
-export { UrlInputLine } from "./UrlInputLine";
+export { CheckBoxedInput } from './CheckBoxedInput';
+export { ColoredRatingInput } from './ColoredRatingInput';
+export { DateTimeInput } from './DateTimeInput';
+export { PriorityInput } from './PriorityInput';
+export { TextInputMultiLine } from './TextInputMultiLine';
+export { TextInputSingleLine } from './TextInputSingleLine';
+export { UrlInputLine } from './UrlInputLine';
 
 type LibraryInputProps = InputCustomProps & {
   type: keyof typeof LibraryElementEnum;
@@ -37,28 +37,28 @@ export const LibraryItemInputControl = forwardRef((props: LibraryInputProps, ref
   const { type, control, ...inputProps } = props;
 
   switch (props.type) {
-    case "line":
+    case 'line':
     default:
       return <TextInputSingleLine {...inputProps} ref={ref} />;
-    case "text":
+    case 'text':
       return <TextInputMultiLine {...inputProps} ref={ref} />;
-    case "priority":
+    case 'priority':
       return <PriorityInput {...inputProps} control={control} />;
-    case "url":
+    case 'url':
       return <UrlInputLine {...inputProps} ref={ref} />;
-    case "checkmark":
+    case 'checkmark':
       return <CheckBoxedInput {...inputProps} control={control} />;
-    case "date":
-      return <DateTimeInput {...inputProps} control={control} type="date" />;
-    case "datetime":
-      return <DateTimeInput {...inputProps} control={control} type="datetime" />;
-    case "rating5":
+    case 'date':
+      return <DateTimeInput {...inputProps} control={control} type='date' />;
+    case 'datetime':
+      return <DateTimeInput {...inputProps} control={control} type='datetime' />;
+    case 'rating5':
       return <ColoredRatingInput {...inputProps} control={control} size={5} precision={1} />;
-    case "rating5precision":
+    case 'rating5precision':
       return <ColoredRatingInput {...inputProps} control={control} size={5} precision={0.5} />;
-    case "rating10":
+    case 'rating10':
       return <ColoredRatingInput {...inputProps} control={control} size={10} precision={1} />;
-    case "rating10precision":
+    case 'rating10precision':
       return <ColoredRatingInput {...inputProps} control={control} size={10} precision={0.5} />;
   }
 });

@@ -1,18 +1,18 @@
-import "dayjs/locale/en";
-import "dayjs/locale/ru";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
-import { Controller } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import 'dayjs/locale/en';
+import 'dayjs/locale/ru';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { Controller } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
-import { useLanguageStore } from "../../store/system/useTranslationStore";
-import { CalendarMonthOutlined } from "../icons";
+import { useLanguageStore } from '../../store/system/useTranslationStore';
+import { CalendarMonthOutlined } from '../icons';
 
-import type { DateTimeInputProps } from "../../core/types";
-import type { DateOrTimeView, DateTimePickerSlotProps, PickersInputComponentLocaleText } from "@mui/x-date-pickers";
-import type { Dayjs } from "dayjs";
-import type { UseControllerReturn } from "react-hook-form";
+import type { DateTimeInputProps } from '../../core/types';
+import type { DateOrTimeView, DateTimePickerSlotProps, PickersInputComponentLocaleText } from '@mui/x-date-pickers';
+import type { Dayjs } from 'dayjs';
+import type { UseControllerReturn } from 'react-hook-form';
 
 /**
  * Library Item Form - Date/DateTime Input
@@ -28,30 +28,30 @@ export const DateTimeInput = (props: DateTimeInputProps) => {
     textField: {
       helperText: errorMessage || helperText,
       fullWidth: true,
-      size: "small",
-      margin: "dense",
+      size: 'small',
+      margin: 'dense',
     },
     openPickerButton: { sx: { mr: -1 } },
     actionBar: {
-      actions: ["today", "cancel", "accept"],
+      actions: ['today', 'cancel', 'accept'],
     },
   };
 
-  const viewByType: Record<DateTimeInputProps["type"], DateOrTimeView[]> = {
-    date: ["year", "month", "day"],
-    datetime: ["year", "month", "day", "hours", "minutes", "seconds"],
+  const viewByType: Record<DateTimeInputProps['type'], DateOrTimeView[]> = {
+    date: ['year', 'month', 'day'],
+    datetime: ['year', 'month', 'day', 'hours', 'minutes', 'seconds'],
   };
-  const inputFormatByType: Record<DateTimeInputProps["type"], string> = {
-    date: "YYYY-MM-DD",
-    datetime: "YYYY-MM-DD HH:mm:ss",
+  const inputFormatByType: Record<DateTimeInputProps['type'], string> = {
+    date: 'YYYY-MM-DD',
+    datetime: 'YYYY-MM-DD HH:mm:ss',
   };
 
   const localeText: PickersInputComponentLocaleText = {
     toolbarTitle: t(`dateTimePicker.toolbarTitle.${type}`),
-    previousMonth: t("dateTimePicker.previousMonth"),
-    nextMonth: t("dateTimePicker.nextMonth"),
-    todayButtonLabel: t("dateTimePicker.todayButtonLabel"),
-    cancelButtonLabel: t("dateTimePicker.cancelButtonLabel"),
+    previousMonth: t('dateTimePicker.previousMonth'),
+    nextMonth: t('dateTimePicker.nextMonth'),
+    todayButtonLabel: t('dateTimePicker.todayButtonLabel'),
+    cancelButtonLabel: t('dateTimePicker.cancelButtonLabel'),
   };
 
   return (

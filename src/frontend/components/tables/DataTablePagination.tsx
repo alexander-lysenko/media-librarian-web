@@ -1,12 +1,12 @@
-import { TablePagination, useMediaQuery, useTheme } from "@mui/material";
-import { memo, useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { TablePagination, useMediaQuery, useTheme } from '@mui/material';
+import { memo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { detectRowsPerPageOptions } from "../../core";
+import { detectRowsPerPageOptions } from '../../core';
 
-import type { DataTablePaginationProps } from "../../core/types";
-import type { LabelDisplayedRowsArgs } from "@mui/material";
-import type { ChangeEvent, MouseEvent } from "react";
+import type { DataTablePaginationProps } from '../../core/types';
+import type { LabelDisplayedRowsArgs } from '@mui/material';
+import type { ChangeEvent, MouseEvent } from 'react';
 
 /**
  * Self-sufficient Pagination component for DataTable.
@@ -18,7 +18,7 @@ export const DataTablePagination = memo((props: DataTablePaginationProps) => {
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const isLargeViewport = useMediaQuery(theme.breakpoints.up("sm"));
+  const isLargeViewport = useMediaQuery(theme.breakpoints.up('sm'));
 
   const handleChangePage = useCallback(
     (event: MouseEvent | null, newPage: number) => {
@@ -37,22 +37,22 @@ export const DataTablePagination = memo((props: DataTablePaginationProps) => {
   const labelDisplayedRows = useCallback(
     ({ from, to, count, page }: LabelDisplayedRowsArgs) => {
       const total = count !== -1 ? count : `> ${to}`;
-      return t("dataTable.viewingEntries", { from, to, total, page: page + 1 });
+      return t('dataTable.viewingEntries', { from, to, total, page: page + 1 });
     },
     [t],
   );
 
   return (
     <TablePagination
-      component="div"
+      component='div'
       count={total}
       page={page}
       rowsPerPage={rowsPerPage}
       getItemAriaLabel={(type) => type}
       onPageChange={handleChangePage}
       onRowsPerPageChange={handleChangeRowsPerPage}
-      rowsPerPageOptions={detectRowsPerPageOptions(total, t("common.all") as string)}
-      labelRowsPerPage={isLargeViewport ? t("dataTable.rowsPerPage") : null}
+      rowsPerPageOptions={detectRowsPerPageOptions(total, t('common.all') as string)}
+      labelRowsPerPage={isLargeViewport ? t('dataTable.rowsPerPage') : null}
       labelDisplayedRows={labelDisplayedRows}
     />
   );

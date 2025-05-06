@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from '@mui/material';
 
 import type {
   DialogActionsProps,
@@ -6,13 +6,13 @@ import type {
   DialogContentTextProps,
   DialogProps,
   DialogTitleProps,
-} from "@mui/material";
+} from '@mui/material';
 
 const DialogWrapper = ({ open, children, onClose, ...props }: DialogProps) => {
   const dialogProps: DialogProps = {
     open: open,
     fullWidth: true,
-    maxWidth: "xs",
+    maxWidth: 'xs',
     disableRestoreFocus: true,
     slots: { transition: Grow },
     slotProps: { transition: { timeout: 120 } },
@@ -27,11 +27,7 @@ const DialogWrapper = ({ open, children, onClose, ...props }: DialogProps) => {
 };
 
 const _Title = ({ children, ...props }: DialogTitleProps) => {
-  return (
-    <DialogTitle {...props}>
-      {children}
-    </DialogTitle>
-  );
+  return <DialogTitle {...props}>{children}</DialogTitle>;
 };
 
 const _Subtitle = ({ children, ...props }: DialogContentTextProps) => {

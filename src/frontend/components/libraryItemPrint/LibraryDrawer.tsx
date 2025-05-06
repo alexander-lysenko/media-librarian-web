@@ -1,21 +1,21 @@
-import { Box, Container, Divider, Drawer, IconButton, styled } from "@mui/material";
-import { BottomNavigation, BottomNavigationAction, List, ListItem, ListItemText } from "@mui/material";
-import { memo, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { Box, Container, Divider, Drawer, IconButton, styled } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, List, ListItem, ListItemText } from '@mui/material';
+import { memo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { useLibraryItemActions } from "../../hooks";
-import { usePreviewDrawerStore } from "../../store/app/usePreviewDrawerStore";
-import { useLibraryTableStore } from "../../store/library/useLibraryTableStore";
-import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from "../icons";
-import { PosterBox } from "./PosterBox";
-import { PrintDate } from "./PrintDate";
-import { PrintPriority } from "./PrintPriority";
-import { PrintRating } from "./PrintRating";
-import { PrintSwitch } from "./PrintSwitch";
+import { useLibraryItemActions } from '../../hooks';
+import { usePreviewDrawerStore } from '../../store/app/usePreviewDrawerStore';
+import { useLibraryTableStore } from '../../store/library/useLibraryTableStore';
+import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from '../icons';
+import { PosterBox } from './PosterBox';
+import { PrintDate } from './PrintDate';
+import { PrintPriority } from './PrintPriority';
+import { PrintRating } from './PrintRating';
+import { PrintSwitch } from './PrintSwitch';
 
-import type { LibraryElement } from "../../core/types";
-import type { DrawerProps } from "@mui/material";
-import type { MouseEventHandler, ReactElement } from "react";
+import type { LibraryElement } from '../../core/types';
+import type { DrawerProps } from '@mui/material';
+import type { MouseEventHandler, ReactElement } from 'react';
 
 /**
  * A right-side drawer displaying the entire item selected from a Library
@@ -32,7 +32,7 @@ export const LibraryDrawer = () => {
   const { handleItemEdit, handleItemDelete } = useLibraryItemActions();
 
   const handleClose = (event: KeyboardEvent | MouseEvent) => {
-    if (event.type === "keydown" && ["Tab", "Shift"].includes((event as KeyboardEvent).key)) {
+    if (event.type === 'keydown' && ['Tab', 'Shift'].includes((event as KeyboardEvent).key)) {
       return;
     }
 
@@ -42,24 +42,24 @@ export const LibraryDrawer = () => {
 
   useEffect(() => {
     const handleEscapeClose = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         setOpen(false);
         setSelectedItemId(null);
       }
     };
-    window.addEventListener("keydown", handleEscapeClose);
+    window.addEventListener('keydown', handleEscapeClose);
 
-    return () => window.removeEventListener("keydown", handleEscapeClose);
+    return () => window.removeEventListener('keydown', handleEscapeClose);
   }, [setOpen, setSelectedItemId]);
 
   const drawerProps: DrawerProps = {
     open,
-    variant: "persistent",
-    anchor: "right",
+    variant: 'persistent',
+    anchor: 'right',
     hideBackdrop: true,
     // sx: { width: 0 },
     slotProps: {
-      paper: { sx: { width: { xs: "100%", sm: 480, md: 480, xl: 480 } } },
+      paper: { sx: { width: { xs: '100%', sm: 480, md: 480, xl: 480 } } },
     },
     onClose: handleClose,
   };
@@ -67,22 +67,22 @@ export const LibraryDrawer = () => {
   return (
     <Drawer {...drawerProps}>
       <CloseButton onClose={handleClose as unknown as MouseEventHandler} />
-      <Box sx={{ overflowY: "auto" }}>
+      <Box sx={{ overflowY: 'auto' }}>
         <PosterBox
           title={item?.[columns[0].label] as string}
-          src="https://source.unsplash.com/wMkaMXTJjlQ"
+          src='https://source.unsplash.com/wMkaMXTJjlQ'
           height={360}
         />
         <Divider />
-        <BottomNavigation showLabels sx={{ background: "transparent" }}>
+        <BottomNavigation showLabels sx={{ background: 'transparent' }}>
           <Action
-            label={t("libraryItem.updateThisEntry")}
+            label={t('libraryItem.updateThisEntry')}
             icon={<EditNoteOutlined />}
             onClick={handleItemEdit}
             sx={{ color: (theme) => theme.palette.info[theme.palette.mode] }}
           />
           <Action
-            label={t("libraryItem.deleteThisEntry")}
+            label={t('libraryItem.deleteThisEntry')}
             icon={<DeleteOutlined />}
             onClick={handleItemDelete}
             sx={{ color: (theme) => theme.palette.error[theme.palette.mode] }}
@@ -108,38 +108,38 @@ export const LibraryDrawer = () => {
 
 const CloseButton = ({ onClose }: { onClose: MouseEventHandler }) => (
   <IconButton
-    size="large"
+    size='large'
     onClick={onClose}
-    sx={{ position: "absolute", right: 16, top: 8, color: (theme) => theme.palette.grey[200], zIndex: 1 }}
+    sx={{ position: 'absolute', right: 16, top: 8, color: (theme) => theme.palette.grey[200], zIndex: 1 }}
     children={<CloseOutlined />}
   />
 );
 
 const ItemCellContents = memo(({ type, value }: { type: LibraryElement; value: never }) => {
   switch (type) {
-    case "line":
-    case "text":
-      return (value ?? "...") as ReactElement;
-    case "url":
-      return value ? <a href={value} children={value} target="_blank" rel="noreferrer" /> : "...";
-    case "date":
-    case "datetime":
-      return value ? <PrintDate format={type} value={value} /> : "...";
-    case "rating5":
-    case "rating5precision":
+    case 'line':
+    case 'text':
+      return (value ?? '...') as ReactElement;
+    case 'url':
+      return value ? <a href={value} children={value} target='_blank' rel='noreferrer' /> : '...';
+    case 'date':
+    case 'datetime':
+      return value ? <PrintDate format={type} value={value} /> : '...';
+    case 'rating5':
+    case 'rating5precision':
       return <PrintRating value={value ?? 0} size={5} />;
-    case "rating10":
-    case "rating10precision":
+    case 'rating10':
+    case 'rating10precision':
       return <PrintRating value={value ?? 0} size={10} />;
-    case "priority":
+    case 'priority':
       return <PrintPriority value={(value ?? 0) as number} />;
-    case "checkmark":
+    case 'checkmark':
       return <PrintSwitch asText value={value as boolean} />;
   }
 });
 
 const Action = styled(BottomNavigationAction)(({ theme }) => ({
-  "&:hover": {
+  '&:hover': {
     background: theme.palette.action.hover,
   },
 }));

@@ -1,8 +1,8 @@
-import type { LibraryElement } from "./_library";
-import type { TableBodyProps, TableContainerProps, TableHeadProps, TableProps, TableRowProps } from "@mui/material";
-import type { CSSProperties, MouseEvent } from "react";
+import type { LibraryElement } from './_library';
+import type { TableBodyProps, TableContainerProps, TableHeadProps, TableProps, TableRowProps } from '@mui/material';
+import type { CSSProperties, MouseEvent } from 'react';
 
-export type SortDirection = "asc" | "desc";
+export type SortDirection = 'asc' | 'desc';
 
 export interface DataRow extends Record<string, unknown> {
   id: number;

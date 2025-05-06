@@ -1,12 +1,12 @@
-import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { confirmDialog, enqueueSnack } from "../core/actions";
-import { useLibraryItemDeleteRequest, useLibraryItemGetRequest } from "../requests/libraryItemRequests";
-import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
-import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
-import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
-import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
+import { confirmDialog, enqueueSnack } from '../core/actions';
+import { useLibraryItemDeleteRequest, useLibraryItemGetRequest } from '../requests/libraryItemRequests';
+import { usePreviewDrawerStore } from '../store/app/usePreviewDrawerStore';
+import { useSelectedLibraryStore } from '../store/library/useLibrariesStore';
+import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
+import { useLibraryItemFormStore } from '../store/useLibraryItemFormStore';
 
 /**
  * Set of actions with a Library item.
@@ -67,7 +67,7 @@ export const useLibraryItemActions = () => {
     const subjectTitle = item?.[columns[0].label] as string;
 
     confirmDialog({
-      message: t("confirm.deleteLibraryItem"),
+      message: t('confirm.deleteLibraryItem'),
       subjectItem: subjectTitle,
       onConfirm: async () => {
         await deleteItemRequest.mutateAsync(
@@ -75,8 +75,8 @@ export const useLibraryItemActions = () => {
           {
             onSuccess: () => {
               enqueueSnack({
-                type: "success",
-                message: t("notifications.libraryItemDeleted", { title: subjectTitle }),
+                type: 'success',
+                message: t('notifications.libraryItemDeleted', { title: subjectTitle }),
               });
             },
           },

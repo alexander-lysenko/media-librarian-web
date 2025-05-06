@@ -1,9 +1,9 @@
 // noinspection IdentifierGrammar
 
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-import type { LibrarySchema } from "../../core/types";
+import type { LibrarySchema } from '../../core/types';
 
 interface LibraryState {
   libraries: LibrarySchema[];
@@ -49,7 +49,7 @@ export const useSelectedLibraryStore = create<SelectedLibraryState>()(
       },
     }),
     {
-      name: "selectedLibrary", // unique name
+      name: 'selectedLibrary', // unique name
       storage: createJSONStorage(() => localStorage),
     },
   ),

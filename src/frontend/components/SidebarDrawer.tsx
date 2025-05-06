@@ -9,15 +9,15 @@ import {
   SwipeableDrawer,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
+} from '@mui/material';
 
-import { AddCircleOutlined } from "../components/icons";
-import { usePreviewDrawerStore } from "../store/app/usePreviewDrawerStore";
-import { SidebarProfiler } from "./SidebarProfiler";
+import { AddCircleOutlined } from '../components/icons';
+import { usePreviewDrawerStore } from '../store/app/usePreviewDrawerStore';
+import { SidebarProfiler } from './SidebarProfiler';
 
-import type { KeyboardEvent, MouseEvent } from "react";
+import type { KeyboardEvent, MouseEvent } from 'react';
 
-type Anchor = "top" | "left" | "bottom" | "right";
+type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 /**
  * @deprecated
@@ -26,11 +26,11 @@ type Anchor = "top" | "left" | "bottom" | "right";
 export const SidebarDrawer = () => {
   const { open, setOpen } = usePreviewDrawerStore((state) => state);
   const theme = useTheme();
-  const isLargeViewport = useMediaQuery(theme.breakpoints.up("md"));
+  const isLargeViewport = useMediaQuery(theme.breakpoints.up('md'));
 
   const toggleDrawer = (isOpen: boolean) => (event: KeyboardEvent | MouseEvent) => {
-    if (event && event.type === "keydown") {
-      if ((event as KeyboardEvent).key === "Tab" || (event as KeyboardEvent).key === "Shift") {
+    if (event && event.type === 'keydown') {
+      if ((event as KeyboardEvent).key === 'Tab' || (event as KeyboardEvent).key === 'Shift') {
         return;
       }
     }
@@ -38,10 +38,10 @@ export const SidebarDrawer = () => {
     setOpen(isOpen);
   };
 
-  const anchor: Anchor = "left";
+  const anchor: Anchor = 'left';
 
   const drawerContent = (
-    <Box sx={{ width: 256 }} role="presentation" onKeyDown={toggleDrawer(false)}>
+    <Box sx={{ width: 256 }} role='presentation' onKeyDown={toggleDrawer(false)}>
       <SidebarProfiler />
       <List>
         <ListItem>
@@ -64,7 +64,7 @@ export const SidebarDrawer = () => {
   );
 
   return isLargeViewport ? (
-    <Drawer variant="persistent" open={open}>
+    <Drawer variant='persistent' open={open}>
       {drawerContent}
     </Drawer>
   ) : (

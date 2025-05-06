@@ -8,15 +8,15 @@ import {
   TableRow,
   TableSortLabel,
   Typography,
-} from "@mui/material";
-import { useState } from "react";
+} from '@mui/material';
+import { useState } from 'react';
 
-import { LibraryItemRow } from "./LibraryItemRow";
+import { LibraryItemRow } from './LibraryItemRow';
 
-import type { DataTableComponentProps, DataTableEventsProps } from "../../core/types";
-import type { MouseEventHandler } from "react";
+import type { DataTableComponentProps, DataTableEventsProps } from '../../core/types';
+import type { MouseEventHandler } from 'react';
 
-type TableContentsProps = Omit<DataTableComponentProps, "loading"> &
+type TableContentsProps = Omit<DataTableComponentProps, 'loading'> &
   DataTableEventsProps & {
     selectedItem: number | null;
   };
@@ -37,16 +37,16 @@ export const DataTable = (props: DataTableComponentProps) => {
       event.preventDefault();
       if (columnId === sort?.column) {
         const direction = sort?.direction;
-        setSort && setSort({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
+        setSort && setSort({ column: columnId, direction: direction === 'asc' ? 'desc' : 'asc' });
       } else {
-        setSort && setSort({ column: columnId, direction: "asc" });
+        setSort && setSort({ column: columnId, direction: 'asc' });
       }
     };
 
   const handleSelectItem =
     (rowId: string | number): MouseEventHandler =>
     (event) => {
-      if ((event.target as HTMLElement).hasAttribute("href")) {
+      if ((event.target as HTMLElement).hasAttribute('href')) {
         return true;
       }
       event.preventDefault();
@@ -72,7 +72,7 @@ const TableContents = (props: TableContentsProps) => {
   const { columns, columnOptions, rows, sort, selectedItem, onSort, onRowClick } = props;
 
   return (
-    <Table stickyHeader size="small">
+    <Table stickyHeader size='small'>
       <TableHead>
         <TableRow>
           {columns.map((column, index) => {
@@ -82,10 +82,10 @@ const TableContents = (props: TableContentsProps) => {
               <TableCell key={column.label + index} sx={{ px: 1, ...headerStyle }} sortDirection={sort?.direction}>
                 <TableSortLabel
                   active={sort?.column === column.label}
-                  direction={sort?.column === column.label ? sort?.direction : "asc"}
+                  direction={sort?.column === column.label ? sort?.direction : 'asc'}
                   onClick={onSort(column.label)}
                   children={
-                    <Typography variant="subtitle2" noWrap>
+                    <Typography variant='subtitle2' noWrap>
                       {column.label}
                     </Typography>
                   }
@@ -107,6 +107,6 @@ const TableContents = (props: TableContentsProps) => {
 };
 
 const StyledTableContainer = styled(TableContainer)({
-  flex: "1 0 auto",
-  position: "relative",
+  flex: '1 0 auto',
+  position: 'relative',
 });

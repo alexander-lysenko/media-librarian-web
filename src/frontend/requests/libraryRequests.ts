@@ -1,13 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { bindPathParams, createFetch } from "../core";
-import { enqueueSnack } from "../core/actions";
-import { librariesEndpoint, libraryEndpoint } from "../core/links";
-import { useLibrariesStore, useSelectedLibraryStore } from "../store/library/useLibrariesStore";
-import { useLibraryTableStore } from "../store/library/useLibraryTableStore";
-import { useProfileStore } from "../store/useProfileStore";
+import { bindPathParams, createFetch } from '../core';
+import { enqueueSnack } from '../core/actions';
+import { librariesEndpoint, libraryEndpoint } from '../core/links';
+import { useLibrariesStore, useSelectedLibraryStore } from '../store/library/useLibrariesStore';
+import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
+import { useProfileStore } from '../store/useProfileStore';
 
 import type {
   CreateLibraryResponse,
@@ -15,7 +15,7 @@ import type {
   GetLibrariesResponse,
   LibraryFormData,
   PatchLibraryResponse,
-} from "../core/types";
+} from '../core/types';
 
 interface LibraryId {
   id: number;
@@ -36,15 +36,15 @@ export const useLibrariesGetRequest = () => {
   const profileLoaded = useProfileStore((state) => state.profile.user.id !== undefined);
 
   const { refetch, status, data, error } = useQuery({
-    queryKey: ["get", "libraries"],
-    queryFn: (): Promise<GetLibrariesResponse> => createFetch({ url: librariesEndpoint, method: "GET" }),
+    queryKey: ['get', 'libraries'],
+    queryFn: (): Promise<GetLibrariesResponse> => createFetch({ url: librariesEndpoint, method: 'GET' }),
     select: (response) => response.data,
     enabled: profileLoaded || true, // todo: fix it
   });
 
   useEffect(() => {
     switch (status) {
-      case "success": {
+      case 'success': {
         setLibraries(data);
         const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(getSelectedLibrary()?.fields || {}).map(
           ([label, type]) => ({ label, type }),
@@ -53,8 +53,8 @@ export const useLibrariesGetRequest = () => {
         setColumns(fieldsOfSelectedLibrary);
         break;
       }
-      case "error":
-        enqueueSnack({ type: "error", message: `${error.code} ${error.message}` });
+      case 'error':
+        enqueueSnack({ type: 'error', message: `${error.code} ${error.message}` });
         break;
     }
   }, [getSelectedLibrary, data, status, setColumns, setLibraries, error]);
@@ -68,9 +68,9 @@ export const useLibrariesGetRequest = () => {
  */
 export const useLibraryGetRequest = (id: number) => {
   const { status } = useQuery({
-    queryKey: ["get", "libraries", id],
+    queryKey: ['get', 'libraries', id],
     queryFn: (): Promise<GetLibrariesResponse> =>
-      createFetch({ url: bindPathParams(libraryEndpoint, { id }), method: "GET" }),
+      createFetch({ url: bindPathParams(libraryEndpoint, { id }), method: 'GET' }),
     select: (response) => response.data,
     enabled: !!id,
   });
@@ -87,19 +87,19 @@ export const useLibraryCreateRequest = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, status } = useMutation({
-    mutationKey: ["post", "libraries"],
+    mutationKey: ['post', 'libraries'],
     mutationFn: async ({ data }: LibraryData): Promise<CreateLibraryResponse> => {
       return await createFetch({
         url: librariesEndpoint,
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(data),
       });
     },
     onSuccess: (response) => {
-      void queryClient.invalidateQueries({ queryKey: ["get", "libraries"], exact: true });
+      void queryClient.invalidateQueries({ queryKey: ['get', 'libraries'], exact: true });
       enqueueSnack({
-        type: "success",
-        message: t("notifications.libraryCreated", { title: response.data.title }),
+        type: 'success',
+        message: t('notifications.libraryCreated', { title: response.data.title }),
       });
     },
   });
@@ -115,18 +115,18 @@ export const useLibraryDeleteRequest = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, status } = useMutation({
-    mutationKey: ["delete", "libraries"],
+    mutationKey: ['delete', 'libraries'],
     mutationFn: async ({ id }: LibraryId): Promise<void> => {
       return await createFetch({
         url: bindPathParams(libraryEndpoint, { id }),
-        method: "DELETE",
+        method: 'DELETE',
       });
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["get", "libraries"], exact: true });
+      void queryClient.invalidateQueries({ queryKey: ['get', 'libraries'], exact: true });
     },
     onError: (reason) => {
-      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
+      enqueueSnack({ type: 'error', message: `${reason.code} ${reason.message}` });
     },
   });
 
@@ -141,23 +141,23 @@ export const useLibraryCleanupRequest = () => {
   const { t } = useTranslation();
 
   const { mutateAsync, status } = useMutation({
-    mutationKey: ["patch", "libraries"],
+    mutationKey: ['patch', 'libraries'],
     mutationFn: async ({ id }: LibraryId): Promise<PatchLibraryResponse> => {
       return await createFetch({
         url: bindPathParams(libraryEndpoint, { id }),
-        method: "PATCH",
+        method: 'PATCH',
       });
     },
     onSuccess: (response) => {
       const { title } = response.data;
       const { items_affected: itemsAffected } = response.meta;
       enqueueSnack({
-        type: "info",
-        message: t("notifications.libraryCleaned", { title, count: itemsAffected }),
+        type: 'info',
+        message: t('notifications.libraryCleaned', { title, count: itemsAffected }),
       });
     },
     onError: (reason) => {
-      enqueueSnack({ type: "error", message: `${reason.code} ${reason.message}` });
+      enqueueSnack({ type: 'error', message: `${reason.code} ${reason.message}` });
     },
   });
 

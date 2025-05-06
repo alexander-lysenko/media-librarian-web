@@ -1,19 +1,19 @@
-import i18next from "i18next";
-import { initReactI18next } from "react-i18next";
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import i18next from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-import en from "../../i18n/en.json";
-import ru from "../../i18n/ru.json";
+import en from '../../i18n/en.json';
+import ru from '../../i18n/ru.json';
 
-import type { i18n } from "i18next";
+import type { i18n } from 'i18next';
 
-export type Language = "en" | "ru";
+export type Language = 'en' | 'ru';
 type LanguageDefinitions = Record<Language, string>;
 
 const languageDefinitions: LanguageDefinitions = {
-  en: "English",
-  ru: "Русский",
+  en: 'English',
+  ru: 'Русский',
 };
 
 const resources = {
@@ -39,16 +39,16 @@ export const useTranslationStore = create<TranslationState>(() => ({
       // configure languages and resources
       resources: resources,
       supportedLngs: Object.keys(languageDefinitions),
-      fallbackLng: "en",
+      fallbackLng: 'en',
       // lng: "en", // if you're using a language detector, do not define the lng option
 
       // react i18next special options (optional)
       react: {
-        bindI18n: "languageChanged",
-        bindI18nStore: "",
-        transEmptyNodeValue: "",
+        bindI18n: 'languageChanged',
+        bindI18nStore: '',
+        transEmptyNodeValue: '',
         transSupportBasicHtmlNodes: true,
-        transKeepBasicHtmlNodesFor: ["br", "strong", "em"],
+        transKeepBasicHtmlNodesFor: ['br', 'strong', 'em'],
         useSuspense: true,
       },
 
@@ -63,7 +63,7 @@ export const useTranslationStore = create<TranslationState>(() => ({
 export const useLanguageStore = create<LanguageState>()(
   persist(
     (set, get) => ({
-      language: "en",
+      language: 'en',
       setLanguage: (language: Language) => {
         useTranslationStore
           .getState()
@@ -73,7 +73,7 @@ export const useLanguageStore = create<LanguageState>()(
       getLanguage: () => get().language,
     }),
     {
-      name: "localePreferences", // unique name
+      name: 'localePreferences', // unique name
       storage: createJSONStorage(() => localStorage),
     },
   ),

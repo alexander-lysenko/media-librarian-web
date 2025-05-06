@@ -1,13 +1,13 @@
-import { FormControl, FormControlLabel, FormHelperText, Rating, useMediaQuery, useTheme } from "@mui/material";
-import { useState } from "react";
-import { Controller } from "react-hook-form";
+import { FormControl, FormControlLabel, FormHelperText, Rating, useMediaQuery, useTheme } from '@mui/material';
+import { useState } from 'react';
+import { Controller } from 'react-hook-form';
 
-import { ratingColorByValue } from "../../core";
+import { ratingColorByValue } from '../../core';
 
-import type { ColoredRatingInputProps } from "../../core/types";
-import type { SxProps } from "@mui/system";
-import type { SyntheticEvent } from "react";
-import type { UseControllerReturn } from "react-hook-form";
+import type { ColoredRatingInputProps } from '../../core/types';
+import type { SxProps } from '@mui/system';
+import type { SyntheticEvent } from 'react';
+import type { UseControllerReturn } from 'react-hook-form';
 
 /**
  * Library Item Form - Colored Rating Input
@@ -23,7 +23,7 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
   const { name, control } = props;
 
   const theme = useTheme();
-  const smallViewport = useMediaQuery(theme.breakpoints.down("sm"));
+  const smallViewport = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [hover, setHover] = useState(-1);
   const [stateValue, setStateValue] = useState<number | null>(null);
@@ -31,7 +31,7 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
   const generateInputSx = (value: number): SxProps => ({
     mr: 2,
     color: ratingColorByValue(value || 0, size),
-    "&:hover": { color: ratingColorByValue(hover, size) },
+    '&:hover': { color: ratingColorByValue(hover, size) },
   });
 
   const handleHover = (event: SyntheticEvent, newHover: number) => {
@@ -40,15 +40,15 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
   };
 
   return (
-    <FormControl fullWidth size="small" margin="dense" error={!!errorMessage}>
+    <FormControl fullWidth size='small' margin='dense' error={!!errorMessage}>
       <Controller
         name={name}
         control={control}
         render={({ field }: UseControllerReturn) => (
           <FormControlLabel
             label={label}
-            labelPlacement="start"
-            sx={{ justifyContent: "space-between", ml: 0 }}
+            labelPlacement='start'
+            sx={{ justifyContent: 'space-between', ml: 0 }}
             slotProps={{
               typography: { noWrap: true },
             }}
@@ -60,7 +60,7 @@ export const ColoredRatingInput = (props: ColoredRatingInputProps) => {
                 max={size}
                 sx={generateInputSx(stateValue || field.value)}
                 precision={precision}
-                size={smallViewport ? "small" : "medium"}
+                size={smallViewport ? 'small' : 'medium'}
                 onBlur={field.onBlur}
                 onChangeActive={handleHover}
                 onChange={(event, newValue) => {

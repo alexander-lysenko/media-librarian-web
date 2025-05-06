@@ -1,7 +1,7 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-import type { AlertColor } from "@mui/material";
-import type { ReactNode } from "react";
+import type { AlertColor } from '@mui/material';
+import type { ReactNode } from 'react';
 
 interface SnackOptions {
   message: ReactNode;

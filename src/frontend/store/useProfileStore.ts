@@ -1,8 +1,8 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-import type { AccountStatusEnum } from "../core/enums";
-import type { Language } from "./system/useTranslationStore";
-import type { PaletteMode } from "@mui/material";
+import type { AccountStatusEnum } from '../core/enums';
+import type { Language } from './system/useTranslationStore';
+import type { PaletteMode } from '@mui/material';
 
 interface UserData {
   id: number;
@@ -40,17 +40,17 @@ export const useProfileStore = create<ProfileState>((set) => ({
   profile: {
     user: {
       id: 1,
-      name: "Unauthenticated Person",
-      email: "this.email.address.does.not.exist@example.com",
-      locale: "en",
-      theme: "light",
-      avatar: "https://source.unsplash.com/dFnoVmpiGY/240x240",
+      name: 'Unauthenticated Person',
+      email: 'this.email.address.does.not.exist@example.com',
+      locale: 'en',
+      theme: 'light',
+      avatar: 'https://source.unsplash.com/dFnoVmpiGY/240x240',
     },
     stats: {
-      status: "BANNED",
+      status: 'BANNED',
       emailVerifiedAt: null,
-      createdAt: "1970-01-01 00:00:00",
-      updatedAt: "2024-12-31 23:59:59",
+      createdAt: '1970-01-01 00:00:00',
+      updatedAt: '2024-12-31 23:59:59',
       deletedAt: null,
       librariesTotal: 0,
       itemsTotal: 0,

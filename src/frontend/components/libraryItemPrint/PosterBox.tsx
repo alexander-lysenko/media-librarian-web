@@ -1,62 +1,62 @@
-import { Container, styled, Typography } from "@mui/material";
+import { Container, styled, Typography } from '@mui/material';
 
-import type { Theme } from "@mui/material";
-import type { SystemProps } from "@mui/system";
+import type { Theme } from '@mui/material';
+import type { SystemProps } from '@mui/system';
 
 interface Props {
   src: string;
   title: string;
-  height?: SystemProps<Theme>["height"];
+  height?: SystemProps<Theme>['height'];
 }
 
 export const PosterBox = ({ src, height, title }: Props) => {
-  const emptySrc = "https://source.unsplash.com/oqStl2L5oxI";
+  const emptySrc = 'https://source.unsplash.com/oqStl2L5oxI';
   return (
     <Wrapper sx={{ height: height || 240 }}>
       <BlurredBackground sx={{ height: height || 240, backgroundImage: `url(${src})` }} />
       <BackgroundContainer>
         <Image src={src || emptySrc} alt={title} />
         <TitleContainer sx={{ py: 2, px: { xs: 2, sm: 3 } }}>
-          <Title variant={"h5"} title={title} children={title} />
+          <Title variant={'h5'} title={title} children={title} />
         </TitleContainer>
       </BackgroundContainer>
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")({ position: "relative", overflow: "hidden", flex: "1 0 auto" });
+const Wrapper = styled('div')({ position: 'relative', overflow: 'hidden', flex: '1 0 auto' });
 
-const BlurredBackground = styled("div")({
-  width: "100%",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  position: "absolute",
+const BlurredBackground = styled('div')({
+  width: '100%',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  position: 'absolute',
   // filter: "blur(5px) brightness(0.75)",
-  boxShadow: "inset rgba(0,0,0,0.7) 1px 1px 1px 1000px",
+  boxShadow: 'inset rgba(0,0,0,0.7) 1px 1px 1px 1000px',
 });
 
-const BackgroundContainer = styled("div")({
-  position: "relative",
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+const BackgroundContainer = styled('div')({
+  position: 'relative',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 });
 
-const Image = styled("img")({ maxWidth: "100%", height: "100%" });
+const Image = styled('img')({ maxWidth: '100%', height: '100%' });
 
 const TitleContainer = styled(Container)(({ theme }) => ({
   background: `linear-gradient(15deg, ${theme.palette.background.default}, transparent)`,
-  backdropFilter: "blur(6px) brightness(0.7)",
-  width: "100%",
-  position: "absolute",
+  backdropFilter: 'blur(6px) brightness(0.7)',
+  width: '100%',
+  position: 'absolute',
   bottom: 0,
 }));
 
 const Title = styled(Typography)({
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  display: "-webkit-box",
-  WebkitLineClamp: "2",
-  WebkitBoxOrient: "vertical",
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: '2',
+  WebkitBoxOrient: 'vertical',
 });

@@ -1,10 +1,10 @@
-import { Badge, Box, IconButton, Popover, Tooltip, Typography } from "@mui/material";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Badge, Box, IconButton, Popover, Tooltip, Typography } from '@mui/material';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { NotificationImportantOutlined, NotificationsOutlined } from "../icons";
+import { NotificationImportantOutlined, NotificationsOutlined } from '../icons';
 
-import type { MouseEvent } from "react";
+import type { MouseEvent } from 'react';
 
 /**
  * TODO: WIP
@@ -24,9 +24,9 @@ export const NotificationsPopover = () => {
 
   return (
     <>
-      <Tooltip arrow title={t("app.unreadNotifications", { count: notificationsCount })}>
-        <IconButton size="large" color="inherit" onClick={handleOpen}>
-          <Badge badgeContent={notificationsCount} color="error">
+      <Tooltip arrow title={t('app.unreadNotifications', { count: notificationsCount })}>
+        <IconButton size='large' color='inherit' onClick={handleOpen}>
+          <Badge badgeContent={notificationsCount} color='error'>
             <NotificationsOutlined />
           </Badge>
         </IconButton>
@@ -35,12 +35,12 @@ export const NotificationsPopover = () => {
         open={open}
         onClose={handleOpen}
         anchorEl={anchorEl}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         sx={{ mt: { xs: 0.5, sm: 1 } }}
         keepMounted
       >
-        <Box sx={{ width: { xs: "calc(100vw - 32px)", sm: 360 } }}>
+        <Box sx={{ width: { xs: 'calc(100vw - 32px)', sm: 360 } }}>
           <NoNewNotifications />
         </Box>
       </Popover>
@@ -54,16 +54,16 @@ const NoNewNotifications = () => {
   return (
     <Box
       p={2}
-      width="100%"
+      width='100%'
       height={120}
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
+      display='flex'
+      alignItems='center'
+      justifyContent='center'
+      flexDirection='column'
       fontSize={48}
     >
-      <NotificationImportantOutlined fontSize="inherit" color="success" />
-      <Typography variant="body1">{t("app.noNewNotifications")}</Typography>
+      <NotificationImportantOutlined fontSize='inherit' color='success' />
+      <Typography variant='body1'>{t('app.noNewNotifications')}</Typography>
     </Box>
   );
 };

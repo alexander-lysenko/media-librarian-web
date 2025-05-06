@@ -1,9 +1,9 @@
-import { InputAdornment, TextField } from "@mui/material";
-import { forwardRef } from "react";
+import { InputAdornment, TextField } from '@mui/material';
+import { forwardRef } from 'react';
 
-import { DriveFileRenameOutlineOutlined, HourglassBottomOutlined } from "../icons";
+import { DriveFileRenameOutlineOutlined, HourglassBottomOutlined } from '../icons';
 
-import type { TextInputSingleLineProps } from "../../core/types";
+import type { TextInputSingleLineProps } from '../../core/types';
 
 /**
  * Library Item Form - Single Line Text Input
@@ -14,7 +14,7 @@ export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, 
   const { loadingState = false } = props;
 
   const endAdornment = (
-    <InputAdornment position="end">
+    <InputAdornment position='end'>
       {loadingState ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
     </InputAdornment>
   );
@@ -25,9 +25,9 @@ export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, 
       name={name}
       label={label}
       fullWidth
-      size="small"
-      margin="dense"
-      autoComplete="off"
+      size='small'
+      margin='dense'
+      autoComplete='off'
       error={!!errorMessage}
       helperText={errorMessage || helperText}
       onBlur={onBlur}

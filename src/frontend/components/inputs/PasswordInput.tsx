@@ -1,14 +1,14 @@
-import { InputAdornment, TextField } from "@mui/material";
-import { forwardRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { InputAdornment, TextField } from '@mui/material';
+import { forwardRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { VisibilityOffOutlined, VisibilityOutlined } from "../icons";
+import { VisibilityOffOutlined, VisibilityOutlined } from '../icons';
 
-import type { InputCustomProps } from "../../core/types";
-import type { TextFieldProps } from "@mui/material";
+import type { InputCustomProps } from '../../core/types';
+import type { TextFieldProps } from '@mui/material';
 
 type Props = InputCustomProps & {
-  margin?: TextFieldProps["margin"];
+  margin?: TextFieldProps['margin'];
 };
 
 /**
@@ -28,9 +28,9 @@ export const PasswordInput = forwardRef((props: Props, ref) => {
 
   const endAdornment = (
     <InputAdornment
-      position="end"
-      sx={{ cursor: "pointer" }}
-      title={t("common.holdToSeePass")}
+      position='end'
+      sx={{ cursor: 'pointer' }}
+      title={t('common.holdToSeePass')}
       onMouseDown={handlePassVisible}
       onMouseUp={handlePassHide}
       onMouseLeave={handlePassHide}
@@ -46,11 +46,11 @@ export const PasswordInput = forwardRef((props: Props, ref) => {
       label={label}
       error={!!errorMessage}
       helperText={errorMessage || helperText}
-      type={passVisible ? "text" : "password"}
-      size="small"
-      margin={margin || "dense"}
+      type={passVisible ? 'text' : 'password'}
+      size='small'
+      margin={margin || 'dense'}
       fullWidth={fullWidth ?? true}
-      autoComplete="off"
+      autoComplete='off'
       autoFocus={autoFocus}
       onChange={onChange}
       onBlur={onBlur}

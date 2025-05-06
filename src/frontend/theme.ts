@@ -1,38 +1,38 @@
-import { blue, red, yellow } from "@mui/material/colors";
+import { blue, red, yellow } from '@mui/material/colors';
 
-import type { CssVarsThemeOptions, PaletteMode, PaletteOptions, ThemeOptions } from "@mui/material";
-import type { TypographyVariantsOptions } from "@mui/material/styles";
+import type { CssVarsThemeOptions, PaletteMode, PaletteOptions, ThemeOptions } from '@mui/material';
+import type { TypographyVariantsOptions } from '@mui/material/styles';
 
-type DesignTokensOptions = Omit<ThemeOptions, "components"> &
-  Pick<CssVarsThemeOptions, "defaultColorScheme" | "colorSchemes" | "components">;
+type DesignTokensOptions = Omit<ThemeOptions, 'components'> &
+  Pick<CssVarsThemeOptions, 'defaultColorScheme' | 'colorSchemes' | 'components'>;
 
 const lightPalette: PaletteOptions = {
   primary: {
-    main: blue["A400"],
+    main: blue['A400'],
   },
   secondary: {
-    main: blue["400"],
+    main: blue['400'],
   },
   warning: {
-    main: yellow["A400"],
+    main: yellow['A400'],
   },
   error: {
-    main: red["A400"],
+    main: red['A400'],
   },
 };
 
 const darkPalette: PaletteOptions = {
   primary: {
-    main: blue["700"],
+    main: blue['700'],
   },
   secondary: {
-    main: blue["400"],
+    main: blue['400'],
   },
   warning: {
-    main: yellow["A400"],
+    main: yellow['A400'],
   },
   error: {
-    main: red["A400"],
+    main: red['A400'],
   },
 };
 
@@ -46,7 +46,7 @@ export const getDesignTokens = (mode: PaletteMode): DesignTokensOptions => ({
   // },
   palette: {
     mode,
-    ...(mode === "light" ? lightPalette : darkPalette),
+    ...(mode === 'light' ? lightPalette : darkPalette),
   },
   typography,
   components: {
@@ -60,7 +60,7 @@ export const getDesignTokens = (mode: PaletteMode): DesignTokensOptions => ({
     MuiTablePagination: {
       styleOverrides: {
         root: {
-          "& .MuiTablePagination-toolbar": {
+          '& .MuiTablePagination-toolbar': {
             height: 48,
             minHeight: 48,
           },
@@ -77,7 +77,7 @@ export const getDesignTokens = (mode: PaletteMode): DesignTokensOptions => ({
     MuiDialogActions: {
       styleOverrides: {
         spacing: {
-          padding: "16px 24px",
+          padding: '16px 24px',
         },
       },
     },

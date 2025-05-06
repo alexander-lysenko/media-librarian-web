@@ -9,16 +9,16 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-} from "@mui/material";
-import { useState } from "react";
+} from '@mui/material';
+import { useState } from 'react';
 
-import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from "../components/icons";
-import { ProfileAvatar } from "./profile/ProfileAvatar";
+import { ArrowDropDownOutlined, ArrowDropUpOutlined, Badge, LogoutOutlined } from '../components/icons';
+import { ProfileAvatar } from './profile/ProfileAvatar';
 
-import type { SxProps } from "@mui/system";
-import type { MouseEventHandler } from "react";
+import type { SxProps } from '@mui/system';
+import type { MouseEventHandler } from 'react';
 
-const profileSx: SxProps = { p: 2, backgroundImage: "url(https://source.unsplash.com/7OCUyev2M9E/256x155)" };
+const profileSx: SxProps = { p: 2, backgroundImage: 'url(https://source.unsplash.com/7OCUyev2M9E/256x155)' };
 
 /**
  * Part of "Sidebar Navigation Drawer" - Profile Section
@@ -34,19 +34,19 @@ export const SidebarProfiler = () => {
 
   return (
     <List sx={{ py: 0 }}>
-      <ListItem key="profile" sx={profileSx}>
+      <ListItem key='profile' sx={profileSx}>
         <Grid container>
-          <ProfileAvatar username="User Name" src="" sx={{ width: 60, height: 60 }} />
-          <Grid container alignItems="flex-end" sx={{ mt: 2 }} wrap="nowrap" onClick={toggleCollapse}>
-            <Grid size="grow">
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold", lineHeight: 1.5 }} noWrap>
+          <ProfileAvatar username='User Name' src='' sx={{ width: 60, height: 60 }} />
+          <Grid container alignItems='flex-end' sx={{ mt: 2 }} wrap='nowrap' onClick={toggleCollapse}>
+            <Grid size='grow'>
+              <Typography variant='subtitle1' sx={{ fontWeight: 'bold', lineHeight: 1.5 }} noWrap>
                 User Name
               </Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: "regular" }} noWrap>
+              <Typography variant='subtitle2' sx={{ fontWeight: 'regular' }} noWrap>
                 username@example.com
               </Typography>
             </Grid>
-            <Grid size="auto">
+            <Grid size='auto'>
               <IconButton sx={{ p: 0 }}>
                 {collapseOpen ? <ArrowDropUpOutlined /> : <ArrowDropDownOutlined />}
               </IconButton>
@@ -56,19 +56,19 @@ export const SidebarProfiler = () => {
       </ListItem>
       <Divider />
       <Collapse in={collapseOpen}>
-        <ListItemButton key="toProfile">
+        <ListItemButton key='toProfile'>
           <ListItemIcon>
             <Badge />
           </ListItemIcon>
           <ListItemText disableTypography>Profile</ListItemText>
         </ListItemButton>
-        <ListItemButton key="toLogOut">
+        <ListItemButton key='toLogOut'>
           <ListItemIcon>
             <LogoutOutlined />
           </ListItemIcon>
           <ListItemText disableTypography>Log Out</ListItemText>
         </ListItemButton>
-        <Divider variant="middle" sx={{ pt: 1, pb: 0 }} />
+        <Divider variant='middle' sx={{ pt: 1, pb: 0 }} />
       </Collapse>
     </List>
   );

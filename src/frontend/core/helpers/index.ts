@@ -1,8 +1,8 @@
-import { green, grey, orange, red } from "@mui/material/colors";
+import { green, grey, orange, red } from '@mui/material/colors';
 
-export * from "./_cropImage";
-export * from "./_dataTable";
-export * from "./_formatters";
+export * from './_cropImage';
+export * from './_dataTable';
+export * from './_formatters';
 
 /**
  * Calculates rating ratio for ColoredRating component by a value and size and matches it with a color:

@@ -1,8 +1,8 @@
-import { Alert, Slide, Snackbar } from "@mui/material";
+import { Alert, Slide, Snackbar } from '@mui/material';
 
-import { useSnackbarStore } from "../store/system/useSnackbarStore";
+import { useSnackbarStore } from '../store/system/useSnackbarStore';
 
-import type { SyntheticEvent } from "react";
+import type { SyntheticEvent } from 'react';
 
 /**
  * Snackbar - Global Component
@@ -20,7 +20,7 @@ export const GlobalSnackbar = () => {
   const snack = snacks[0];
 
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       event.preventDefault();
       return false;
     }
@@ -46,9 +46,9 @@ export const GlobalSnackbar = () => {
       sx={{ minWidth: 360 }}
       children={
         <Alert
-          variant="filled"
+          variant='filled'
           severity={snack?.type}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
           onClose={(snack?.enableCloseButton ?? true) ? handleClose : undefined}
           children={snack?.message}
         />

@@ -8,18 +8,18 @@ import {
   TableRow,
   TableSortLabel,
   Typography,
-} from "@mui/material";
-import { createContext, forwardRef, memo, useCallback, useContext, useRef } from "react";
-import { TableVirtuoso } from "react-virtuoso";
+} from '@mui/material';
+import { createContext, forwardRef, memo, useCallback, useContext, useRef } from 'react';
+import { TableVirtuoso } from 'react-virtuoso';
 
-import { LibraryItemRow } from "./LibraryItemRow";
+import { LibraryItemRow } from './LibraryItemRow';
 
-import type { DataRow, DataTableVirtualizedProps, VirtuosoContextProps } from "../../core/types";
-import type { TableHeadProps } from "@mui/material";
-import type { MouseEvent, MouseEventHandler } from "react";
-import type { TableComponents, VirtuosoHandle } from "react-virtuoso";
+import type { DataRow, DataTableVirtualizedProps, VirtuosoContextProps } from '../../core/types';
+import type { TableHeadProps } from '@mui/material';
+import type { MouseEvent, MouseEventHandler } from 'react';
+import type { TableComponents, VirtuosoHandle } from 'react-virtuoso';
 
-type TableHeaderProps = Pick<DataTableVirtualizedProps, "columns" | "columnOptions" | "sort" | "setSort">;
+type TableHeaderProps = Pick<DataTableVirtualizedProps, 'columns' | 'columnOptions' | 'sort' | 'setSort'>;
 interface SelectedItemContextValue {
   selectedItemId: number | null;
   handleItemClick: (itemId: number) => (event: MouseEvent) => void;
@@ -45,7 +45,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
 
   const handleItemClick = useCallback(
     (itemId: number) => (event: MouseEvent) => {
-      if ((event.target as HTMLElement).hasAttribute("href")) {
+      if ((event.target as HTMLElement).hasAttribute('href')) {
         return true;
       }
       event.preventDefault();
@@ -58,9 +58,9 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
     (event: KeyboardEvent) => {
       let nextIndex: number | null = null;
 
-      if (event.code === "ArrowUp") {
+      if (event.code === 'ArrowUp') {
         nextIndex = Number(selectedItemId) - 1;
-      } else if (event.code === "ArrowDown") {
+      } else if (event.code === 'ArrowDown') {
         nextIndex = Number(selectedItemId) + 1;
       }
 
@@ -74,7 +74,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
 
         ref.current?.scrollIntoView({
           index: nextIndex,
-          behavior: "auto",
+          behavior: 'auto',
           done: () => {
             setSelectedItemId?.(Number(nextIndex));
           },
@@ -88,10 +88,10 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
   const scroller = useCallback(
     (element: HTMLElement | Window | null) => {
       if (element) {
-        element.addEventListener("keydown", handleKeyDown as EventListener);
+        element.addEventListener('keydown', handleKeyDown as EventListener);
         listRef.current = element;
       } else {
-        listRef.current?.removeEventListener("keydown", handleKeyDown as EventListener);
+        listRef.current?.removeEventListener('keydown', handleKeyDown as EventListener);
       }
     },
     [handleKeyDown],
@@ -106,7 +106,7 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
           data={rows}
           totalCount={rows.length}
           fixedItemHeight={33}
-          style={{ height: "100%" }}
+          style={{ height: '100%' }}
           components={virtuosoTableComponents}
           context={componentProps}
           fixedHeaderContent={() => (
@@ -126,7 +126,7 @@ const virtuosoTableComponents: TableComponents<DataRow, VirtuosoContextProps> = 
   //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
   // }),
   Table: memo(({ context, children, style }) => {
-    return <Table size="small" style={style} {...context?.table} children={children} />;
+    return <Table size='small' style={style} {...context?.table} children={children} />;
   }),
   FillerRow: memo(({ height }) => {
     return <tr children={<td colSpan={2} style={{ height }} />} />;
@@ -152,9 +152,9 @@ const FixedHeaderContent = memo(({ columns, columnOptions, sort, setSort }: Tabl
         event.preventDefault();
         if (columnId === sort?.column) {
           const direction = sort?.direction;
-          setSort?.({ column: columnId, direction: direction === "asc" ? "desc" : "asc" });
+          setSort?.({ column: columnId, direction: direction === 'asc' ? 'desc' : 'asc' });
         } else {
-          setSort?.({ column: columnId, direction: "asc" });
+          setSort?.({ column: columnId, direction: 'asc' });
         }
       },
     [setSort, sort?.column, sort?.direction],
@@ -170,11 +170,11 @@ const FixedHeaderContent = memo(({ columns, columnOptions, sort, setSort }: Tabl
             <TableSortLabel
               hideSortIcon
               active={sort?.column === column.label}
-              direction={sort?.column === column.label ? sort?.direction : "asc"}
-              sx={{ width: "100%" }}
+              direction={sort?.column === column.label ? sort?.direction : 'asc'}
+              sx={{ width: '100%' }}
               onClick={handleSorting(column.label)}
               children={
-                <Typography variant="subtitle2" noWrap>
+                <Typography variant='subtitle2' noWrap>
                   {column.label}
                 </Typography>
               }
@@ -187,8 +187,8 @@ const FixedHeaderContent = memo(({ columns, columnOptions, sort, setSort }: Tabl
 });
 
 const StyledTableContainer = styled(TableContainer)({
-  flex: "1 0 auto",
-  position: "relative",
+  flex: '1 0 auto',
+  position: 'relative',
 });
 
 const StyledTableHead = styled(TableHead)<TableHeadProps>(({ theme }) => ({

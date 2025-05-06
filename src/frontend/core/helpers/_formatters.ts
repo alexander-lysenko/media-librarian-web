@@ -8,12 +8,12 @@
  */
 export const slugify = (sequence: string, separator?: string): string => {
   return sequence
-    .normalize("NFD") // split an accented letter in the base letter and the ascent
-    .replace(/[\u0300-\u036f]/g, "") // remove all previously split accents
+    .normalize('NFD') // split an accented letter in the base letter and the ascent
+    .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
     .toLowerCase()
     .trim()
-    .replace(/[^a-zА-я0-9 ]/g, "") // remove all non-word chars (to be replaced)
-    .replace(/\s+/g, separator ?? "-");
+    .replace(/[^a-zА-я0-9 ]/g, '') // remove all non-word chars (to be replaced)
+    .replace(/\s+/g, separator ?? '-');
 };
 
 // noinspection JSUnusedGlobalSymbols
@@ -31,7 +31,7 @@ export const stringToColor = (sequence: string): string => {
     hash = sequence.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  let color = "#";
+  let color = '#';
 
   for (i = 0; i < 3; i += 1) {
     const value = (hash >> (i * 8)) & 0xff;

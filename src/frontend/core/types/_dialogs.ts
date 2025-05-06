@@ -1,5 +1,5 @@
-import type { SyntheticEvent } from "react";
-import type { MouseEventHandler, ReactNode } from "react";
+import type { SyntheticEvent } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 
 /** Props for the SimpleDialog component that control and handle dialog behavior
  *
@@ -32,5 +32,5 @@ export interface ConfirmDialogProps {
   onConfirm: MouseEventHandler | (() => void | Promise<void>);
   onCancel?: MouseEventHandler | (() => void | Promise<void>);
   subjectItem?: string;
-  type?: "question" | "warning";
+  type?: 'question' | 'warning';
 }

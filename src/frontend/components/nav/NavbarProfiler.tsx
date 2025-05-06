@@ -8,18 +8,18 @@ import {
   MenuItem,
   Tooltip,
   Typography,
-} from "@mui/material";
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+} from '@mui/material';
+import { Link } from '@tanstack/react-router';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { AppRoutes } from "../../core/enums";
-import { useThemeStore } from "../../store/system/useThemeStore";
-import { useProfileStore } from "../../store/useProfileStore";
-import { BadgeOutlined, LightModeOutlined, LogoutOutlined } from "../icons";
-import { ProfileAvatar } from "../profile/ProfileAvatar";
+import { AppRoutes } from '../../core/enums';
+import { useThemeStore } from '../../store/system/useThemeStore';
+import { useProfileStore } from '../../store/useProfileStore';
+import { BadgeOutlined, LightModeOutlined, LogoutOutlined } from '../icons';
+import { ProfileAvatar } from '../profile/ProfileAvatar';
 
-import type { MouseEvent } from "react";
+import type { MouseEvent } from 'react';
 
 /**
  * Profile Avatar and menu designed to use inside AppBar
@@ -41,59 +41,59 @@ export const NavbarProfiler = () => {
   };
 
   const handleUiTheme = () => {
-    setThemeMode(themeMode !== "dark" ? "dark" : "light");
+    setThemeMode(themeMode !== 'dark' ? 'dark' : 'light');
   };
 
   const handleSignOut = () => {
-    console.log("Signed Out");
+    console.log('Signed Out');
   };
 
   return (
     <>
-      <Tooltip arrow title={t("app.openProfileMenu")}>
+      <Tooltip arrow title={t('app.openProfileMenu')}>
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 1 }}>
           <ProfileAvatar username={username} alt={username} src={avatar} />
         </IconButton>
       </Tooltip>
       <Menu
-        id="menu-appbar"
+        id='menu-appbar'
         keepMounted
         anchorEl={anchorElUser}
         open={!!anchorElUser}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         sx={{ mt: { xs: 5, sm: 6 } }}
         slotProps={{ paper: { sx: { maxWidth: 300 } } }}
         onClose={handleCloseUserMenu}
       >
         <ListItem dense>
           <ListItemText disableTypography sx={{ my: 0 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold", lineHeight: 1.5 }} noWrap>
+            <Typography variant='subtitle1' sx={{ fontWeight: 'bold', lineHeight: 1.5 }} noWrap>
               {username}
             </Typography>
-            <Typography variant="subtitle2" sx={{ fontWeight: "regular" }} noWrap>
+            <Typography variant='subtitle2' sx={{ fontWeight: 'regular' }} noWrap>
               {email}
             </Typography>
           </ListItemText>
         </ListItem>
-        <Divider variant="middle" sx={{ my: 1 }} />
-        <MenuItem key="toUiTheme" onClick={handleUiTheme}>
+        <Divider variant='middle' sx={{ my: 1 }} />
+        <MenuItem key='toUiTheme' onClick={handleUiTheme}>
           <ListItemIcon>
             <LightModeOutlined />
           </ListItemIcon>
-          <ListItemText disableTypography>{`${t("app.uiTheme")}: ${t(`theme.${themeMode}`)}`}</ListItemText>
+          <ListItemText disableTypography>{`${t('app.uiTheme')}: ${t(`theme.${themeMode}`)}`}</ListItemText>
         </MenuItem>
-        <MenuItem key="toProfile" component={Link} to={AppRoutes.profile}>
+        <MenuItem key='toProfile' component={Link} to={AppRoutes.profile}>
           <ListItemIcon>
             <BadgeOutlined />
           </ListItemIcon>
-          <ListItemText disableTypography>{t("app.profile")}</ListItemText>
+          <ListItemText disableTypography>{t('app.profile')}</ListItemText>
         </MenuItem>
-        <MenuItem key="toLogOut" onClick={handleSignOut}>
+        <MenuItem key='toLogOut' onClick={handleSignOut}>
           <ListItemIcon>
             <LogoutOutlined />
           </ListItemIcon>
-          <ListItemText disableTypography>{t("app.logout")}</ListItemText>
+          <ListItemText disableTypography>{t('app.logout')}</ListItemText>
         </MenuItem>
       </Menu>
     </>

@@ -10,23 +10,23 @@ import {
   DialogTitle,
   Grow,
   styled,
-} from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+} from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { getCroppedImg } from "../../../core";
-import { enqueueSnack } from "../../../core/actions";
-import { useProfilePatchRequest } from "../../../requests/profileRequests";
-import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
-import { useProfileStore } from "../../../store/useProfileStore";
-import { CloseOutlined, CloudUploadOutlined, DoneOutlined } from "../../icons";
-import { ImageCrop } from "../../ui/ImageCrop";
-import { ProfileAvatar } from "../../profile/ProfileAvatar";
+import { getCroppedImg } from '../../../core';
+import { enqueueSnack } from '../../../core/actions';
+import { useProfilePatchRequest } from '../../../requests/profileRequests';
+import { useProfileDialogsStore } from '../../../store/app/useProfileDialogsStore';
+import { useProfileStore } from '../../../store/useProfileStore';
+import { CloseOutlined, CloudUploadOutlined, DoneOutlined } from '../../icons';
+import { ImageCrop } from '../../ui/ImageCrop';
+import { ProfileAvatar } from '../../profile/ProfileAvatar';
 
-import type { CropParams } from "../../../core/types";
-import type { DialogProps } from "@mui/material";
-import type { MutateOptions } from "@tanstack/react-query";
-import type { ChangeEvent, SyntheticEvent } from "react";
+import type { CropParams } from '../../../core/types';
+import type { DialogProps } from '@mui/material';
+import type { MutateOptions } from '@tanstack/react-query';
+import type { ChangeEvent, SyntheticEvent } from 'react';
 
 /**
  * Profile - Dialog - Change Account's Avatar (Profile Image)
@@ -39,7 +39,7 @@ export const UploadAvatarDialog = () => {
   const setOpen = useProfileDialogsStore((state) => state.setAvatarDialogOpen);
 
   const profileUpdateRequest = useProfilePatchRequest();
-  const loading = profileUpdateRequest.status === "pending";
+  const loading = profileUpdateRequest.status === 'pending';
 
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,7 +53,7 @@ export const UploadAvatarDialog = () => {
 
   const resetAvatar = () => {
     setAvatar(profile.user.avatar);
-    (hiddenFileInputRef.current as HTMLInputElement).value = "";
+    (hiddenFileInputRef.current as HTMLInputElement).value = '';
   };
 
   const handleClose = (event: SyntheticEvent) => {
@@ -75,7 +75,7 @@ export const UploadAvatarDialog = () => {
   const handleAvatar = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     const reader = new FileReader();
-    reader.addEventListener("load", () => {
+    reader.addEventListener('load', () => {
       const result = reader.result as string;
       setAvatar(result);
       setCropMode(true);
@@ -93,7 +93,7 @@ export const UploadAvatarDialog = () => {
 
     const responseEffects: MutateOptions = {
       onSuccess: () => {
-        enqueueSnack({ message: t("common.changesSaved"), type: "success" });
+        enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
       },
       onSettled: () => {
         handleClose(event);
@@ -102,7 +102,7 @@ export const UploadAvatarDialog = () => {
 
     if (cropMode && cropOptions) {
       setCropMode(false);
-      const image = await getCroppedImg(avatar || "", cropOptions.area, cropOptions.rotation, cropOptions.flip);
+      const image = await getCroppedImg(avatar || '', cropOptions.area, cropOptions.rotation, cropOptions.flip);
 
       void profileUpdateRequest.mutateAsync({ avatar: image }, responseEffects as never);
       return true;
@@ -114,7 +114,7 @@ export const UploadAvatarDialog = () => {
   const dialogProps: DialogProps = {
     open: open,
     fullWidth: true,
-    maxWidth: "xs",
+    maxWidth: 'xs',
     disableRestoreFocus: true,
     slots: { transition: Grow },
     slotProps: { transition: { timeout: 120 } },
@@ -122,28 +122,28 @@ export const UploadAvatarDialog = () => {
 
   return (
     <Dialog {...dialogProps} onClose={handleClose}>
-      <DialogTitle variant={"h5"}>{t("dialogs.changeAvatarDialog.title")}</DialogTitle>
+      <DialogTitle variant={'h5'}>{t('dialogs.changeAvatarDialog.title')}</DialogTitle>
       <DialogContent sx={{ py: 1 }}>
         {!cropMode ? (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <ProfileAvatar username={profile.user.name} src={avatar || null} sx={{ height: 192, width: 192 }} />
           </Box>
         ) : (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <ImageCrop image={avatar ?? ""} cropSize={{ width: 256, height: 256 }} onCropUpdate={setCropOptions} />
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <ImageCrop image={avatar ?? ''} cropSize={{ width: 256, height: 256 }} onCropUpdate={setCropOptions} />
           </Box>
         )}
       </DialogContent>
       {!cropMode && (
-        <BottomNavigation showLabels sx={{ background: "transparent" }}>
+        <BottomNavigation showLabels sx={{ background: 'transparent' }}>
           <Action disabled />
           <Action
-            label={t("dialogs.changeAvatarDialog.uploadPhoto")}
+            label={t('dialogs.changeAvatarDialog.uploadPhoto')}
             icon={<CloudUploadOutlined />}
             onClick={handleBrowseClick}
           />
           <Action
-            label={t("dialogs.changeAvatarDialog.removePhoto")}
+            label={t('dialogs.changeAvatarDialog.removePhoto')}
             icon={<CloseOutlined />}
             onClick={() => setAvatar(null)}
           />
@@ -151,24 +151,24 @@ export const UploadAvatarDialog = () => {
         </BottomNavigation>
       )}
       <DialogActions>
-        <HiddenInput type="file" ref={hiddenFileInputRef} onChange={handleAvatar} />
-        <Button variant="text" onClick={handleClose} children={t("common.cancel")} />
+        <HiddenInput type='file' ref={hiddenFileInputRef} onChange={handleAvatar} />
+        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
         <Button
-          variant="contained"
+          variant='contained'
           disabled={loading}
           onClick={handleSubmit}
           endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
-          children={t("common.save")}
+          children={t('common.save')}
         />
       </DialogActions>
     </Dialog>
   );
 };
 
-const HiddenInput = styled("input")({ display: "none", visibility: "hidden" });
+const HiddenInput = styled('input')({ display: 'none', visibility: 'hidden' });
 
 const Action = styled(BottomNavigationAction)(({ theme }) => ({
-  "&:hover": {
+  '&:hover': {
     background: theme.palette.action.hover,
   },
 }));

@@ -1,6 +1,6 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-import type { LibraryItem } from "../core/types";
+import type { LibraryItem } from '../core/types';
 
 interface LibraryItemFormState {
   open: boolean;

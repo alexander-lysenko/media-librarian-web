@@ -24,7 +24,7 @@ trim_trailing_whitespace = false
 indent_size = 2
 
 # noinspection ALL
-[{package.json,composer.json,tsconfig.json,.eslintrc.*}]
+[{package.json,composer.json,tsconfig.json,.eslintrc.*,.prettierrc}]
 indent_size = 2
 
 # noinspection ALL

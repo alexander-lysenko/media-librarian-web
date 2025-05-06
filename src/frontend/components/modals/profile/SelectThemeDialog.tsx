@@ -1,16 +1,16 @@
-import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { useTranslation } from "react-i18next";
+import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import { useTranslation } from 'react-i18next';
 
-import { enqueueSnack } from "../../../core/actions";
-import { useProfilePatchRequest } from "../../../requests/profileRequests";
-import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
-import { useThemeStore } from "../../../store/system/useThemeStore";
-import { ImageOutlined } from "../../icons";
-import { SimpleDialog } from "../../ui/modals/SimpleDialog";
+import { enqueueSnack } from '../../../core/actions';
+import { useProfilePatchRequest } from '../../../requests/profileRequests';
+import { useProfileDialogsStore } from '../../../store/app/useProfileDialogsStore';
+import { useThemeStore } from '../../../store/system/useThemeStore';
+import { ImageOutlined } from '../../icons';
+import { SimpleDialog } from '../../ui/modals/SimpleDialog';
 
-import type { PaletteMode } from "@mui/material";
-import type { SyntheticEvent } from "react";
+import type { PaletteMode } from '@mui/material';
+import type { SyntheticEvent } from 'react';
 
 /**
  * A Simple Dialog to change interface settings (theme) from the Profile section
@@ -24,16 +24,16 @@ export const SelectThemeDialog = () => {
   const setOpen = useProfileDialogsStore((state) => state.setThemeDialogOpen);
 
   const profileUpdateRequest = useProfilePatchRequest();
-  const loading = profileUpdateRequest.status === "pending";
+  const loading = profileUpdateRequest.status === 'pending';
 
   const colors: Record<PaletteMode, { background: string; highlight: string }> = {
     light: {
-      background: grey["200"],
-      highlight: grey["900"],
+      background: grey['200'],
+      highlight: grey['900'],
     },
     dark: {
-      background: grey["900"],
-      highlight: grey["200"],
+      background: grey['900'],
+      highlight: grey['200'],
     },
   };
 
@@ -52,7 +52,7 @@ export const SelectThemeDialog = () => {
       {
         onSuccess: (response) => {
           setThemeMode(response.user.theme as PaletteMode);
-          enqueueSnack({ message: t("common.changesSaved"), type: "success" });
+          enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
         },
         onSettled: () => {
           setOpen(false);
@@ -63,7 +63,7 @@ export const SelectThemeDialog = () => {
 
   return (
     <SimpleDialog open={open} onClose={handleClose}>
-      <SimpleDialog.Title sx={{ pb: 0 }}>{t("dialogs.changeThemeDialog.title")}</SimpleDialog.Title>
+      <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeThemeDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(colors).map(([key, color]) => (
           <ListItemButton key={key} disabled={loading} onClick={() => handleItemClick(key as PaletteMode)}>

@@ -1,7 +1,7 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from '@mui/material';
 
-import type { Theme } from "@mui/material";
-import type { ReactNode } from "react";
+import type { Theme } from '@mui/material';
+import type { ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -25,8 +25,8 @@ interface Props {
 export const StickyFooter = ({ children }: Props) => {
   return (
     <FooterWrapper>
-      <Grid container justifyContent="center">
-        <Typography component="div" color="text.secondary">
+      <Grid container justifyContent='center'>
+        <Typography component='div' color='text.secondary'>
           {children}
         </Typography>
       </Grid>
@@ -36,10 +36,10 @@ export const StickyFooter = ({ children }: Props) => {
 
 const FooterWrapper = ({ children }: Props) => {
   const backgroundColor = (theme: Theme) =>
-    theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[800];
+    theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800];
 
   return (
-    <Box component="footer" sx={{ py: 2, px: 2, mt: "auto", backgroundColor, width: "100%" }}>
+    <Box component='footer' sx={{ py: 2, px: 2, mt: 'auto', backgroundColor, width: '100%' }}>
       {children}
     </Box>
   );

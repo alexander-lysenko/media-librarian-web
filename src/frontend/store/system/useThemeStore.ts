@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-import type { PaletteMode } from "@mui/material";
+import type { PaletteMode } from '@mui/material';
 
 type ColorOptions = string;
 
@@ -15,13 +15,13 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      mode: get()?.mode || "dark",
-      color: get()?.color || "teal",
+      mode: get()?.mode || 'dark',
+      color: get()?.color || 'teal',
       setMode: (mode: PaletteMode) => set(() => ({ mode })),
       setColor: (color: ColorOptions) => set(() => ({ color })),
     }),
     {
-      name: "uiThemePreferences", // unique name
+      name: 'uiThemePreferences', // unique name
       storage: createJSONStorage(() => localStorage),
     },
   ),

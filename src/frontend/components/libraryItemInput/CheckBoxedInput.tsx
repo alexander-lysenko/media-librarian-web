@@ -1,7 +1,7 @@
-import { Checkbox, FormControl, FormControlLabel, FormHelperText } from "@mui/material";
-import { Controller } from "react-hook-form";
+import { Checkbox, FormControl, FormControlLabel, FormHelperText } from '@mui/material';
+import { Controller } from 'react-hook-form';
 
-import type { CheckBoxedInputProps } from "../../core/types";
+import type { CheckBoxedInputProps } from '../../core/types';
 
 /**
  * Library Item Form - Switch (Checkbox) Input
@@ -11,7 +11,7 @@ export const CheckBoxedInput = (props: CheckBoxedInputProps) => {
   const { name, control } = props;
 
   return (
-    <FormControl fullWidth margin="dense" error={!!errorMessage}>
+    <FormControl fullWidth margin='dense' error={!!errorMessage}>
       <Controller
         name={name}
         control={control}
@@ -25,7 +25,7 @@ export const CheckBoxedInput = (props: CheckBoxedInputProps) => {
           />
         )}
       />
-      <FormHelperText variant={"outlined"}>{errorMessage || helperText}</FormHelperText>
+      <FormHelperText variant={'outlined'}>{errorMessage || helperText}</FormHelperText>
     </FormControl>
   );
 };

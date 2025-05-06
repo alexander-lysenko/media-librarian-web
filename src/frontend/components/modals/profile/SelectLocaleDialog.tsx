@@ -1,14 +1,14 @@
-import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Avatar, List, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
-import { enqueueSnack } from "../../../core/actions";
-import { useProfilePatchRequest } from "../../../requests/profileRequests";
-import { useProfileDialogsStore } from "../../../store/app/useProfileDialogsStore";
-import { useLanguageStore, useTranslationStore } from "../../../store/system/useTranslationStore";
-import { SimpleDialog } from "../../ui/modals/SimpleDialog";
+import { enqueueSnack } from '../../../core/actions';
+import { useProfilePatchRequest } from '../../../requests/profileRequests';
+import { useProfileDialogsStore } from '../../../store/app/useProfileDialogsStore';
+import { useLanguageStore, useTranslationStore } from '../../../store/system/useTranslationStore';
+import { SimpleDialog } from '../../ui/modals/SimpleDialog';
 
-import type { Language } from "../../../store/system/useTranslationStore";
-import type { SyntheticEvent } from "react";
+import type { Language } from '../../../store/system/useTranslationStore';
+import type { SyntheticEvent } from 'react';
 
 /**
  * A Simple Dialog to change locale settings (language) from the Profile section
@@ -23,7 +23,7 @@ export const SelectLocaleDialog = () => {
   const setOpen = useProfileDialogsStore((state) => state.setLocaleDialogOpen);
 
   const profileUpdateRequest = useProfilePatchRequest();
-  const loading = profileUpdateRequest.status === "pending";
+  const loading = profileUpdateRequest.status === 'pending';
 
   const handleClose = (event: SyntheticEvent) => {
     if (loading) {
@@ -40,7 +40,7 @@ export const SelectLocaleDialog = () => {
       {
         onSuccess: (response) => {
           setLanguage(response.user.locale);
-          enqueueSnack({ message: t("common.changesSaved"), type: "success" });
+          enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
         },
         onSettled: () => {
           setOpen(false);
@@ -51,7 +51,7 @@ export const SelectLocaleDialog = () => {
 
   return (
     <SimpleDialog open={open} onClose={handleClose}>
-      <SimpleDialog.Title sx={{ pb: 0 }}>{t("dialogs.changeLocaleDialog.title")}</SimpleDialog.Title>
+      <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeLocaleDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(languages).map(([key, label]) => (
           <ListItemButton key={key} disabled={loading} onClick={() => handleItemClick(key as Language)}>
@@ -63,7 +63,7 @@ export const SelectLocaleDialog = () => {
         ))}
       </List>
       <SimpleDialog.Content sx={{ pt: 1 }}>
-        <Typography variant="body2">{"More languages coming soon"}</Typography>
+        <Typography variant='body2'>{'More languages coming soon'}</Typography>
       </SimpleDialog.Content>
     </SimpleDialog>
   );

@@ -1,5 +1,3 @@
-import type { FileRoutesByPath } from "@tanstack/react-router";
-
 /**
  * Enum representing the application routes for navigation.
  * Each route is defined as a string constant.
@@ -14,12 +12,12 @@ import type { FileRoutesByPath } from "@tanstack/react-router";
  * - emailConfirmation: Represents the route for confirming user email addresses.
  */
 export enum AppRoutes {
-  appHome = "/app",
-  login = "/login",
-  signup = "/signup",
-  profile = "/profile",
-  passwordReset = "/password-reset",
-  emailConfirmation = "/email-confirmation",
+  appHome = '/app',
+  login = '/login',
+  signup = '/signup',
+  profile = '/profile',
+  passwordReset = '/password-reset',
+  emailConfirmation = '/email-confirmation',
 }
 
 /**
@@ -35,10 +33,10 @@ export enum AppRoutes {
  * - DELETED: Specifies an account that has been permanently removed.
  */
 export enum AccountStatusEnum {
-  CREATED = "CREATED",
-  ACTIVE = "ACTIVE",
-  BANNED = "BANNED",
-  DELETED = "DELETED",
+  CREATED = 'CREATED',
+  ACTIVE = 'ACTIVE',
+  BANNED = 'BANNED',
+  DELETED = 'DELETED',
 }
 
 // noinspection GrazieInspection
@@ -64,17 +62,17 @@ export enum AccountStatusEnum {
  * - priority: Represents a priority element.
  */
 export enum LibraryElementEnum {
-  line = "line",
-  text = "text",
-  date = "date",
-  datetime = "datetime",
-  url = "url",
-  checkmark = "checkmark",
-  rating5 = "rating5",
-  rating5precision = "rating5precision",
-  rating10 = "rating10",
-  rating10precision = "rating10precision",
-  priority = "priority",
+  line = 'line',
+  text = 'text',
+  date = 'date',
+  datetime = 'datetime',
+  url = 'url',
+  checkmark = 'checkmark',
+  rating5 = 'rating5',
+  rating5precision = 'rating5precision',
+  rating10 = 'rating10',
+  rating10precision = 'rating10precision',
+  priority = 'priority',
 }
 
 /**
@@ -92,11 +90,11 @@ export enum LibraryElementEnum {
  * - profile: Represents the form for user profile management or editing.
  */
 export enum RegisteredFormNamesEnum {
-  signup = "signup",
-  login = "login",
-  passwordRecoveryRequest = "passwordRecoveryRequest",
-  passwordRecovery = "passwordRecovery",
-  libraryCreate = "libraryCreate",
-  libraryItem = "libraryItem",
-  profile = "profile",
+  signup = 'signup',
+  login = 'login',
+  passwordRecoveryRequest = 'passwordRecoveryRequest',
+  passwordRecovery = 'passwordRecovery',
+  libraryCreate = 'libraryCreate',
+  libraryItem = 'libraryItem',
+  profile = 'profile',
 }

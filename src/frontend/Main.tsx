@@ -1,20 +1,20 @@
-import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
-import dayjs from "dayjs";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { initReactI18next } from 'react-i18next';
 
-import { ConfirmDialog, GlobalSnackbar } from "./components";
-import { routeTree } from "./routeTree.gen";
-import { useThemeStore } from "./store/system/useThemeStore";
-import { useLanguageStore, useTranslationStore } from "./store/system/useTranslationStore";
-import { useAuthCredentialsStore } from "./store/useAuthCredentialsStore";
-import { getDesignTokens } from "./theme";
+import { ConfirmDialog, GlobalSnackbar } from './components';
+import { routeTree } from './routeTree.gen';
+import { useThemeStore } from './store/system/useThemeStore';
+import { useLanguageStore, useTranslationStore } from './store/system/useTranslationStore';
+import { useAuthCredentialsStore } from './store/useAuthCredentialsStore';
+import { getDesignTokens } from './theme';
 
-import type { ErrorResponse } from "./core/types";
-import { initReactI18next } from "react-i18next";
+import type { ErrorResponse } from './core/types';
 
 const debug = import.meta.env.VITE_APP_DEBUG;
 
@@ -33,7 +33,7 @@ i18n
 // init dayjs
 dayjs.extend(localizedFormat, {});
 
-const rootElement = document.getElementById("root") as Element;
+const rootElement = document.getElementById('root') as Element;
 const root = createRoot(rootElement);
 
 const queryClient = new QueryClient({
@@ -79,7 +79,7 @@ root.render(
   </StrictMode>,
 );
 
-declare module "@tanstack/react-query" {
+declare module '@tanstack/react-query' {
   // noinspection JSUnusedGlobalSymbols
   interface Register {
     defaultError: ErrorResponse;
@@ -87,7 +87,7 @@ declare module "@tanstack/react-query" {
 }
 
 // Register the router instance for type safety
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   // noinspection JSUnusedGlobalSymbols
   interface Register {
     router: typeof router;

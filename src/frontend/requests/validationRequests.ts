@@ -1,13 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from '@tanstack/react-query';
 
-import { bindPathParams, createFetch } from "../core";
-import { validateEmailEndpoint, validateItemNameEndpoint, validateLibraryNameEndpoint } from "../core/links";
-import { useSelectedLibraryStore } from "../store/library/useLibrariesStore";
-import { useLibraryCreateFormStore } from "../store/useLibraryCreateFormStore";
-import { useLibraryItemFormStore } from "../store/useLibraryItemFormStore";
-import { useSignupFormStore } from "../store/useSignupFormStore";
+import { bindPathParams, createFetch } from '../core';
+import { validateEmailEndpoint, validateItemNameEndpoint, validateLibraryNameEndpoint } from '../core/links';
+import { useSelectedLibraryStore } from '../store/library/useLibrariesStore';
+import { useLibraryCreateFormStore } from '../store/useLibraryCreateFormStore';
+import { useLibraryItemFormStore } from '../store/useLibraryItemFormStore';
+import { useSignupFormStore } from '../store/useSignupFormStore';
 
-import type { ErrorResponse } from "../core/types";
+import type { ErrorResponse } from '../core/types';
 
 interface EmailRequest {
   email: string;
@@ -32,9 +32,9 @@ export const useEmailValidationRequest = () => {
   const setCheckingState = useSignupFormStore((state) => state.setEmailUniqueProcessing);
 
   const { mutateAsync } = useMutation({
-    mutationKey: ["validations", "email"],
+    mutationKey: ['validations', 'email'],
     mutationFn: (data: EmailRequest): Promise<ValidationResponse> =>
-      createFetch({ url: validateEmailEndpoint, method: "POST", body: JSON.stringify(data), credentials: "omit" }),
+      createFetch({ url: validateEmailEndpoint, method: 'POST', body: JSON.stringify(data), credentials: 'omit' }),
     onMutate: () => setCheckingState(true),
     onSettled: () => setCheckingState(false),
   });
@@ -50,9 +50,9 @@ export const useLibraryTitleValidationRequest = () => {
   const setCheckingState = useLibraryCreateFormStore((state) => state.setTitleUniqueProcessing);
 
   const { mutateAsync } = useMutation({
-    mutationKey: ["validations", "libraries", "title"],
+    mutationKey: ['validations', 'libraries', 'title'],
     mutationFn: (data: LibraryRequest): Promise<ValidationResponse> => {
-      return createFetch({ url: validateLibraryNameEndpoint, method: "POST", body: JSON.stringify(data) });
+      return createFetch({ url: validateLibraryNameEndpoint, method: 'POST', body: JSON.stringify(data) });
     },
     onMutate: () => setCheckingState(true),
     onSettled: () => setCheckingState(false),
@@ -70,11 +70,11 @@ export const useItemTitleValidationRequest = () => {
   const selectedLibraryId = useSelectedLibraryStore((state) => state.getSelectedLibrary()?.id);
 
   const { mutateAsync } = useMutation({
-    mutationKey: ["validations", "libraries", "items", "title"],
+    mutationKey: ['validations', 'libraries', 'items', 'title'],
     mutationFn: (data: LibraryItemRequest): Promise<ValidationResponse> => {
       const url = bindPathParams(validateItemNameEndpoint, { id: selectedLibraryId as number });
 
-      return createFetch({ url, method: "POST", body: JSON.stringify(data) });
+      return createFetch({ url, method: 'POST', body: JSON.stringify(data) });
     },
     onMutate: () => setCheckingState(true),
     onSettled: () => setCheckingState(false),

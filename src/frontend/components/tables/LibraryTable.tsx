@@ -1,9 +1,9 @@
-import { styled } from "@mui/material";
+import { styled } from '@mui/material';
 
-import { usePreviewDrawerStore } from "../../store/app/usePreviewDrawerStore";
-import { useLibraryTableStore } from "../../store/library/useLibraryTableStore";
-import { DataTablePagination } from "./DataTablePagination";
-import { DataTableVirtualized } from "./DataTableVirtualized";
+import { usePreviewDrawerStore } from '../../store/app/usePreviewDrawerStore';
+import { useLibraryTableStore } from '../../store/library/useLibraryTableStore';
+import { DataTablePagination } from './DataTablePagination';
+import { DataTableVirtualized } from './DataTableVirtualized';
 
 export const LibraryTable = () => {
   const { columns, rows, total, sort, setSort, columnOptions } = useLibraryTableStore();
@@ -22,8 +22,8 @@ export const LibraryTable = () => {
   );
 };
 
-const StyledTableBox = styled("div")({
-  display: "flex",
-  flexDirection: "column",
-  height: "100%",
+const StyledTableBox = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
 });
