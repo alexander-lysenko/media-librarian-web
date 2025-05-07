@@ -1,5 +1,5 @@
 import { InputAdornment, TextField } from '@mui/material';
-import { forwardRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { VisibilityOffOutlined, VisibilityOutlined } from '../icons';
@@ -7,16 +7,16 @@ import { VisibilityOffOutlined, VisibilityOutlined } from '../icons';
 import type { InputCustomProps } from '../../core/types';
 import type { TextFieldProps } from '@mui/material';
 
-type Props = InputCustomProps & {
+interface Props extends InputCustomProps {
   margin?: TextFieldProps['margin'];
-};
+}
 
 /**
  * Common Input for Password.
- * Supports interactive "Hold to see the password" action on click and hold by endAdornment icon
+ * Supports interactive action "Hold to see the password" on click and hold by endAdornment icon
  */
-export const PasswordInput = forwardRef((props: Props, ref) => {
-  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
+export const PasswordInput = (props: Props) => {
+  const { label, errorMessage, helperText, name, onBlur, onChange, ref } = props;
   const { margin, autoFocus, fullWidth } = props;
 
   const { t } = useTranslation();
@@ -57,4 +57,4 @@ export const PasswordInput = forwardRef((props: Props, ref) => {
       slotProps={{ input: { endAdornment } }}
     />
   );
-});
+};

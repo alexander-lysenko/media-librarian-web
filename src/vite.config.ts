@@ -7,11 +7,14 @@ import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import type { ManualChunksOption } from "rollup";
 
 const combineManualChunks: ManualChunksOption = (id) => {
-  if (id.includes("node_modules/@mui")) {
-    return "mui";
-  } else if (id.includes("node_modules")) {
-    // return "vendor";
-    return id.toString().split("node_modules/")[1].split("/")[0].toString();
+  switch (true) {
+    case id.includes("node_modules/@mui/"):
+      return id.toString().split("node_modules/@mui/")[1].split("/")[0].toString();
+    // return id;
+    // return "mui";
+    case id.includes("node_modules/"):
+      // return id.toString().split("node_modules/")[1].split("/")[0].toString();
+      return "vendor";
   }
 };
 
@@ -31,7 +34,7 @@ export default defineConfig(({ command, mode }) => {
         autoCodeSplitting: true,
         routesDirectory: "./frontend/routes",
         generatedRouteTree: "./frontend/routeTree.gen.ts",
-        quoteStyle: "double",
+        quoteStyle: "single",
         semicolons: true,
       }),
       react(),
@@ -44,7 +47,9 @@ export default defineConfig(({ command, mode }) => {
       outDir: "public/build",
       rollupOptions: {
         input: ["frontend/index.ts"],
+        // preserveEntrySignatures: "exports-only",
         output: {
+          // preserveModules: true,
           manualChunks: combineManualChunks,
         },
       },

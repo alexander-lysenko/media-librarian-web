@@ -16,6 +16,7 @@ interface Props {
   onRemove: () => void;
 }
 
+// todo: get rid of rerenders on input
 export const LibraryFieldTemplate = ({ index, registerField, errors, onRemove }: Props) => {
   const { t } = useTranslation();
   const leading = index === 0;

@@ -1,6 +1,5 @@
 import { TextField } from '@mui/material';
 import { kebabCase } from 'lodash-es';
-import { forwardRef } from 'react';
 
 import type { TextInputMultiLineProps } from '../../core/types';
 
@@ -8,8 +7,8 @@ import type { TextInputMultiLineProps } from '../../core/types';
  * Library Item Form - Single Line Text Input
  * Auto-sized by height, dynamically resizes within 5-20 text rows
  */
-export const TextInputMultiLine = forwardRef((props: TextInputMultiLineProps, ref) => {
-  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
+export const TextInputMultiLine = (props: TextInputMultiLineProps) => {
+  const { label, errorMessage, helperText, name, onBlur, onChange, ref } = props;
   const inputId = kebabCase(name);
 
   return (
@@ -34,4 +33,4 @@ export const TextInputMultiLine = forwardRef((props: TextInputMultiLineProps, re
       }}
     />
   );
-});
+};

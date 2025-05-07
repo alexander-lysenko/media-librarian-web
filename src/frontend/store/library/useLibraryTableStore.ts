@@ -33,6 +33,7 @@ interface LibraryTableState {
   setPagination: (page: number, rowsPerPage: number, total: number) => void;
 }
 
+// todo: subscribe to useSelectedLibraryStore
 export const useLibraryTableStore = create(
   subscribeWithSelector<LibraryTableState>((set) => ({
     columnOptions: dataColumnPropsByType,

@@ -9,7 +9,7 @@ import {
   TableSortLabel,
   Typography,
 } from '@mui/material';
-import { createContext, forwardRef, memo, useCallback, useContext, useRef } from 'react';
+import { createContext, memo, useCallback, useContext, useRef } from 'react';
 import { TableVirtuoso } from 'react-virtuoso';
 
 import { LibraryItemRow } from './LibraryItemRow';
@@ -20,6 +20,7 @@ import type { MouseEvent, MouseEventHandler } from 'react';
 import type { TableComponents, VirtuosoHandle } from 'react-virtuoso';
 
 type TableHeaderProps = Pick<DataTableVirtualizedProps, 'columns' | 'columnOptions' | 'sort' | 'setSort'>;
+
 interface SelectedItemContextValue {
   selectedItemId: number | null;
   handleItemClick: (itemId: number) => (event: MouseEvent) => void;
@@ -122,8 +123,8 @@ export const DataTableVirtualized = memo((props: DataTableVirtualizedProps) => {
 });
 
 const virtuosoTableComponents: TableComponents<DataRow, VirtuosoContextProps> = {
-  // Scroller: forwardRef(({ context, ...props }, ref) => {
-  //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} ref={ref} />;
+  // Scroller: ({ context, ...props }) => {
+  //   return <TableContainer component={Paper} {...context?.tableContainer} {...props} />;
   // }),
   Table: memo(({ context, children, style }) => {
     return <Table size='small' style={style} {...context?.table} children={children} />;
@@ -131,12 +132,12 @@ const virtuosoTableComponents: TableComponents<DataRow, VirtuosoContextProps> = 
   FillerRow: memo(({ height }) => {
     return <tr children={<td colSpan={2} style={{ height }} />} />;
   }),
-  TableHead: forwardRef(({ context, ...props }, ref) => {
-    return <StyledTableHead ref={ref} {...props} {...context?.tableHead} />;
-  }),
-  TableBody: forwardRef(({ context, children }, ref) => {
-    return <TableBody ref={ref} {...context?.tableBody} children={children} />;
-  }),
+  TableHead: ({ context, ...props }) => {
+    return <StyledTableHead {...props} {...context?.tableHead} />;
+  },
+  TableBody: ({ context, children }) => {
+    return <TableBody {...context?.tableBody} children={children} />;
+  },
   TableRow: memo(({ item, context, ...props }) => {
     const { selectedItemId, handleItemClick } = useContext(SelectedItemContext);
     const selected = selectedItemId === item.id;

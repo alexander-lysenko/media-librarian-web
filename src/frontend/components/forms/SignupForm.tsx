@@ -1,17 +1,6 @@
 import { Turnstile } from '@marsidev/react-turnstile';
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Collapse,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material';
-import { forwardRef, useRef } from 'react';
+import { Alert, Box, Button, Collapse } from '@mui/material';
+import { useRef } from 'react';
 import { type SubmitErrorHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -23,9 +12,10 @@ import { useSignupFormStore } from '../../store/useSignupFormStore';
 import { BadgeOutlined, PersonAddAltOutlined } from '../icons';
 import { EmailInput } from '../inputs/EmailInput';
 import { PasswordInput } from '../inputs/PasswordInput';
+import { SelectInput } from '../inputs/SelectInput';
 import { TextInput } from '../inputs/TextInput';
 
-import type { InputCustomProps, SignupFormData } from '../../core/types';
+import type { SignupFormData } from '../../core/types';
 import type { Language } from '../../store/system/useTranslationStore';
 import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import type { PaletteMode } from '@mui/material';
@@ -40,10 +30,10 @@ export const SignupForm = () => {
 
   const captchaRef = useRef<TurnstileInstance>(null);
 
-  const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
-  const language = useLanguageStore((state) => state.language);
-  const setLanguage = useLanguageStore((state) => state.setLanguage);
+  const { language, setLanguage } = useLanguageStore((state) => state);
+  const languages = useTranslationStore((state) => state.languages);
+  const emailChecking = useSignupFormStore((state) => state.emailUniqueProcessing);
 
   const signupRequest = useUserSignupRequest();
   const loading = signupRequest.status === 'pending';
@@ -81,49 +71,55 @@ export const SignupForm = () => {
     <Box component='form' noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
       <Collapse in={!!errors.root?.serverError} unmountOnExit>
         <Alert variant='filled' severity='error' onClose={() => reset({ root: '' })} sx={{ my: 2 }}>
-          {errors.root?.serverError.message as string}
+          {errors.root?.serverError.message}
         </Alert>
       </Collapse>
       <TextInput
         {...registerField('name')}
         label={t('signupPage.username')}
-        helperText={t('signupPage.usernameHint') as string}
-        errorMessage={errors.name?.message as string}
+        helperText={t('signupPage.usernameHint')}
+        errorMessage={errors.name?.message}
         autoComplete={'name'}
         icon={<BadgeOutlined />}
       />
       <EmailInput
         {...registerFieldDebounced(1000, 'email')}
         label={t('signupPage.email')}
-        helperText={t('signupPage.emailAsLoginHint') as string}
-        errorMessage={errors.email?.message as string}
+        helperText={t('signupPage.emailAsLoginHint')}
+        errorMessage={errors.email?.message}
         loadingState={emailChecking}
       />
+      {/* todo: fix rerenders on revalidation */}
       <PasswordInput
         {...registerField('password')}
         label={t('signupPage.password')}
-        helperText={t('signupPage.passwordHint') as string}
-        errorMessage={errors.password?.message as string}
+        helperText={t('signupPage.passwordHint')}
+        errorMessage={errors.password?.message}
       />
       <PasswordInput
         {...registerField('passwordRepeat')}
         label={t('signupPage.passwordRepeat')}
-        helperText={t('signupPage.passwordRepeatHint') as string}
-        errorMessage={errors.passwordRepeat?.message as string}
+        helperText={t('signupPage.passwordRepeatHint')}
+        errorMessage={errors.passwordRepeat?.message}
       />
-      <LanguageSelect
+      <SelectInput
         {...registerField('locale')}
         onChange={handleLanguageSelect as ChangeHandler}
         value={language}
         label={t('signupPage.language')}
-        helperText={t('signupPage.languageHint') as string}
+        helperText={t('signupPage.languageHint')}
+        items={languages}
       />
-      <ThemeSelect
+      <SelectInput
         {...registerField('theme')}
         onChange={handleThemeSelect as ChangeHandler}
         value={themeMode}
         label={t('signupPage.theme')}
-        helperText={t('signupPage.themeHint') as string}
+        helperText={t('signupPage.themeHint')}
+        items={{
+          light: t('theme.light'),
+          dark: t('theme.dark'),
+        }}
       />
       <Box sx={{ textAlign: 'center', pt: 1 }}>
         <Turnstile
@@ -139,66 +135,11 @@ export const SignupForm = () => {
         type='submit'
         fullWidth
         variant='contained'
-        disabled={loading}
-        endIcon={loading ? <CircularProgress size={14} /> : <PersonAddAltOutlined />}
+        loading={loading}
+        endIcon={<PersonAddAltOutlined />}
         sx={{ mt: 3, mb: 2 }}
         children={t('signupPage.signUpBtn')}
       />
     </Box>
   );
 };
-
-const LanguageSelect = forwardRef((props: InputCustomProps, ref) => {
-  const languages = useTranslationStore((state) => state.languages);
-
-  return (
-    <FormControl fullWidth size='small' margin='dense'>
-      <InputLabel id='language'>{props.label}</InputLabel>
-      <Select
-        inputRef={ref}
-        labelId='language'
-        id='language'
-        name='language'
-        variant='outlined'
-        value={props.value}
-        label={props.label}
-        onChange={props.onChange}
-      >
-        {Object.entries(languages).map(([key, definition]) => (
-          <MenuItem key={key} value={key}>
-            {definition}
-          </MenuItem>
-        ))}
-      </Select>
-      <FormHelperText>{props.helperText}</FormHelperText>
-    </FormControl>
-  );
-});
-
-const ThemeSelect = forwardRef((props: InputCustomProps, ref) => {
-  const { t } = useTranslation();
-
-  return (
-    <FormControl fullWidth size='small' margin='dense'>
-      <InputLabel id='theme'>{props.label}</InputLabel>
-      <Select
-        inputRef={ref}
-        labelId='theme'
-        id='theme'
-        name='theme'
-        variant='outlined'
-        value={props.value}
-        label={props.label}
-        onChange={props.onChange}
-      >
-        <MenuItem key={'light'} value={'light'}>
-          {t('theme.light')}
-        </MenuItem>
-        <MenuItem key={'dark'} value={'dark'}>
-          {t('theme.dark')}
-        </MenuItem>
-      </Select>
-      <FormHelperText>{props.helperText}</FormHelperText>
-    </FormControl>
-  );
-});

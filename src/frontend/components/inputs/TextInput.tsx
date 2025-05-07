@@ -1,24 +1,23 @@
 import { InputAdornment, TextField } from '@mui/material';
-import { forwardRef } from 'react';
 
 import type { InputCustomProps } from '../../core/types';
 import type { SvgIconComponent } from '@mui/icons-material';
 import type { TextFieldProps } from '@mui/material';
 import type { ReactElement } from 'react';
 
-type Props = InputCustomProps & {
+interface Props extends InputCustomProps {
   autoComplete?: TextFieldProps['autoComplete'];
   disabled?: TextFieldProps['disabled'];
   icon?: ReactElement<SvgIconComponent>;
   margin?: TextFieldProps['margin'];
-};
+}
 
 /**
  * Common single-line text input.
  * Supports switchable native autocomplete and customizable end adornment icon
  */
-export const TextInput = forwardRef((props: Props, ref) => {
-  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
+export const TextInput = (props: Props) => {
+  const { label, errorMessage, helperText, name, onBlur, onChange, ref } = props;
   const { margin, autoFocus, autoComplete, icon, disabled } = props;
 
   const endAdornment = icon ? <InputAdornment position='end' children={icon} /> : undefined;
@@ -44,4 +43,4 @@ export const TextInput = forwardRef((props: Props, ref) => {
       }}
     />
   );
-});
+};

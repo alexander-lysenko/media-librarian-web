@@ -1,5 +1,4 @@
 import { InputAdornment, TextField } from '@mui/material';
-import { forwardRef } from 'react';
 
 import { DriveFileRenameOutlineOutlined, HourglassBottomOutlined } from '../icons';
 
@@ -9,8 +8,8 @@ import type { TextInputSingleLineProps } from '../../core/types';
  * Library Item Form - Single Line Text Input
  * Supports active (loading) state, by which the endAdornment icon changes
  */
-export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, ref) => {
-  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
+export const TextInputSingleLine = (props: TextInputSingleLineProps) => {
+  const { label, errorMessage, helperText, name, onBlur, onChange, ref } = props;
   const { loadingState = false } = props;
 
   const endAdornment = (
@@ -35,4 +34,4 @@ export const TextInputSingleLine = forwardRef((props: TextInputSingleLineProps, 
       slotProps={{ input: { endAdornment } }}
     />
   );
-});
+};

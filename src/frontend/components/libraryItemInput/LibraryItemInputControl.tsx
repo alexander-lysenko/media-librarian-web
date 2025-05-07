@@ -1,5 +1,3 @@
-import { forwardRef } from 'react';
-
 import { CheckBoxedInput } from './CheckBoxedInput';
 import { ColoredRatingInput } from './ColoredRatingInput';
 import { DateTimeInput } from './DateTimeInput';
@@ -20,11 +18,11 @@ export { TextInputMultiLine } from './TextInputMultiLine';
 export { TextInputSingleLine } from './TextInputSingleLine';
 export { UrlInputLine } from './UrlInputLine';
 
-type LibraryInputProps = InputCustomProps & {
+interface LibraryInputProps extends InputCustomProps {
   type: keyof typeof LibraryElementEnum;
   control: Control;
   loadingState?: boolean;
-};
+}
 
 /**
  * Auto-selects input controls into Library Item Form
@@ -32,20 +30,20 @@ type LibraryInputProps = InputCustomProps & {
  *
  * WARNING: React Hook Form must control the default values of the libraryItemInputs (both initial and pre-filled)
  */
-export const LibraryItemInputControl = forwardRef((props: LibraryInputProps, ref) => {
+export const LibraryItemInputControl = (props: LibraryInputProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { type, control, ...inputProps } = props;
 
   switch (props.type) {
     case 'line':
     default:
-      return <TextInputSingleLine {...inputProps} ref={ref} />;
+      return <TextInputSingleLine {...inputProps} />;
     case 'text':
-      return <TextInputMultiLine {...inputProps} ref={ref} />;
+      return <TextInputMultiLine {...inputProps} />;
     case 'priority':
       return <PriorityInput {...inputProps} control={control} />;
     case 'url':
-      return <UrlInputLine {...inputProps} ref={ref} />;
+      return <UrlInputLine {...inputProps} />;
     case 'checkmark':
       return <CheckBoxedInput {...inputProps} control={control} />;
     case 'date':
@@ -61,4 +59,4 @@ export const LibraryItemInputControl = forwardRef((props: LibraryInputProps, ref
     case 'rating10precision':
       return <ColoredRatingInput {...inputProps} control={control} size={10} precision={0.5} />;
   }
-});
+};

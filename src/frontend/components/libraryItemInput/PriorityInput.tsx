@@ -9,7 +9,7 @@ import type { UseControllerReturn } from 'react-hook-form';
 
 /**
  * Library Item Form - Priority Dropdown Input
- * Has 11 levels valued as range [-5, 5]. Default value is 0
+ * Has 11 levels valued as range [-5, 5]. The default value is 0
  */
 export const PriorityInput = (props: PriorityInputProps) => {
   const { t } = useTranslation();

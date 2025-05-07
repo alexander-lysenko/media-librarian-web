@@ -1,23 +1,23 @@
-import { InputAdornment, TextField, type TextFieldProps } from '@mui/material';
-import { forwardRef } from 'react';
+import { InputAdornment, TextField } from '@mui/material';
 
 import { AlternateEmailOutlined, HourglassBottomOutlined } from '../icons';
 
 import type { InputCustomProps } from '../../core/types';
+import type { TextFieldProps } from '@mui/material';
 
-type Props = InputCustomProps & {
+interface Props extends InputCustomProps {
   margin?: TextFieldProps['margin'];
   disabled?: TextFieldProps['disabled'];
   loadingState?: boolean;
   disableAutoComplete?: boolean;
-};
+}
 
 /**
  * Common input for e-mail address
  * Supports debounced validation and is able to use loading state
  */
-export const EmailInput = forwardRef((props: Props, ref) => {
-  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
+export const EmailInput = (props: Props) => {
+  const { label, errorMessage, helperText, name, onBlur, onChange, ref } = props;
   const { margin, loadingState, disableAutoComplete, autoFocus, fullWidth, disabled } = props;
 
   const endAdornment = (
@@ -44,4 +44,4 @@ export const EmailInput = forwardRef((props: Props, ref) => {
       slotProps={{ input: { endAdornment } }}
     />
   );
-});
+};

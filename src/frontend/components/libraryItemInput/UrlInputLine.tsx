@@ -1,5 +1,5 @@
 import { InputAdornment, TextField, Tooltip } from '@mui/material';
-import { forwardRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { PublicOutlined } from '../icons';
@@ -11,11 +11,11 @@ import type { ChangeEvent } from 'react';
  * Library Item Form - Single Line Text Input for URL
  * Clicking on the endAdornment icon opens the link in a new tab
  */
-export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
+export const UrlInputLine = (props: UrlInputProps) => {
   const { t } = useTranslation();
   const [stateValue, setStateValue] = useState<string>(props.value as string);
 
-  const { label, errorMessage, helperText, name, onBlur, onChange } = props;
+  const { label, errorMessage, helperText, name, onBlur, onChange, ref } = props;
   const isValid = !!stateValue && !errorMessage;
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setStateValue(event.currentTarget.value);
@@ -52,4 +52,4 @@ export const UrlInputLine = forwardRef((props: UrlInputProps, ref) => {
       slotProps={{ input: { endAdornment } }}
     />
   );
-});
+};

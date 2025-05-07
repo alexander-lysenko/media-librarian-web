@@ -1,7 +1,7 @@
 import type { LibraryElement } from './_library';
 import type { Control, UseFormRegisterReturn } from 'react-hook-form';
 
-export interface InputCustomProps extends Omit<UseFormRegisterReturn, 'ref'> {
+export interface InputCustomProps extends UseFormRegisterReturn {
   label: string;
   value?: string;
   helperText?: string;
