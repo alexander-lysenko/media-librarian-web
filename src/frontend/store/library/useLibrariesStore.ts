@@ -3,7 +3,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import type { LibrarySchema } from '../../core/types';
+import type { DataColumn, LibrarySchema } from '../../core/types';
+import { useLibraryTableStore } from './useLibraryTableStore';
 
 interface LibraryState {
   libraries: LibrarySchema[];
@@ -33,7 +34,20 @@ export const useSelectedLibraryStore = create<SelectedLibraryState>()(
   persist(
     (set, get) => ({
       selectedLibraryId: 0,
-      setSelectedLibraryId: (selectedLibraryId) => set({ selectedLibraryId }),
+      setSelectedLibraryId: (selectedLibraryId) => {
+        const libraries = useLibrariesStore.getState().libraries;
+        const selectedLibrary = libraries.find((item: LibrarySchema): boolean => item.id === selectedLibraryId);
+
+        set({ selectedLibraryId });
+
+        // Auto-select columns of the newly selected Library
+        if (selectedLibrary) {
+          const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(selectedLibrary.fields || {}).map(
+            ([label, type]) => ({ label, type }),
+          );
+          useLibraryTableStore.getState().setColumns(fieldsOfSelectedLibrary);
+        }
+      },
 
       getSelectedLibraryId: () => {
         const libraries = useLibrariesStore.getState().libraries;

@@ -1,45 +1,14 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  Container,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  styled,
-  Toolbar,
-  Typography,
-  useScrollTrigger,
-} from '@mui/material';
-import { Link } from '@tanstack/react-router';
-import { cloneElement, Fragment, type ReactNode, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { AppBar, Box, Container, Toolbar, useScrollTrigger } from '@mui/material';
+import { cloneElement } from 'react';
 
-import { AppRoutes } from '../../core/enums';
-import { MenuOutlined } from '../icons';
+import { AppLogo } from '../ui/AppLogo';
 import { NavbarProfiler } from './NavbarProfiler';
 import { NotificationsPopover } from './NotificationsPopover';
 
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 interface Props {
   children: ReactElement<{ elevation?: number }>;
-}
-
-interface NavRoute {
-  name: string;
-  route: AppRoutes;
-  isHeading?: boolean;
-}
-
-interface DrawerProps {
-  open: boolean;
-  onDrawerToggle: () => void;
-  navRoutes: NavRoute[];
 }
 
 /**
@@ -48,45 +17,23 @@ interface DrawerProps {
  * @constructor
  */
 export const AppNavbar = ({ children }: { children?: ReactNode }) => {
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-
-  const handleDrawerToggle = () => {
-    setDrawerOpen((prevState) => !prevState);
-  };
-
-  const navRoutes: NavRoute[] = [
-    { name: 'MUI', route: AppRoutes.appHome, isHeading: true },
-    { name: 'Login', route: AppRoutes.login },
-    { name: 'Sign Up', route: AppRoutes.signup },
-    { name: 'Profile', route: AppRoutes.profile },
-  ];
-
   return (
     <>
       <ElevationScroll>
         <AppBar position='fixed' sx={{ mb: 3 }}>
           <Container maxWidth='xl'>
             <Toolbar disableGutters>
-              <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
-                <IconButton size='large' onClick={handleDrawerToggle} color='inherit'>
-                  <MenuOutlined />
-                </IconButton>
+              <AppLogo />
+              <Box sx={{ display: 'inline-flex', flex: 1, justifyContent: 'flex-end' }}>
+                {/*{prettier.ignore}*/}
+                {children}
               </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
-                {navRoutes.map((item: NavRoute) => (
-                  <Button key={item.name} color='inherit' component={Link} to={item.route}>
-                    {item.isHeading ? <Typography variant='h6'>MUI</Typography> : item.name}
-                  </Button>
-                ))}
-              </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>{children}</Box>
               <NotificationsPopover />
               <NavbarProfiler />
             </Toolbar>
           </Container>
         </AppBar>
       </ElevationScroll>
-      <NavDrawer open={drawerOpen} onDrawerToggle={handleDrawerToggle} navRoutes={navRoutes} />
       <Toolbar sx={{ mb: 2 }} />
     </>
   );
@@ -101,37 +48,3 @@ const ElevationScroll = (props: Props) => {
 
   return cloneElement(children, { elevation: trigger ? 4 : 0 });
 };
-
-const NavDrawer = ({ open, onDrawerToggle, navRoutes }: DrawerProps) => {
-  return (
-    <Box component='nav'>
-      <DrawerStyled
-        open={open}
-        onClose={onDrawerToggle}
-        ModalProps={{ keepMounted: true /* Better open performance on mobile. */ }}
-        sx={{ display: { xs: 'block', sm: 'none' } }}
-      >
-        <List disablePadding>
-          {navRoutes.map((item: NavRoute) => (
-            <Fragment key={item.name}>
-              <ListItem disablePadding>
-                <ListItemButton sx={{ textAlign: 'center' }} component={Link} to={item.route} onClick={onDrawerToggle}>
-                  {item.isHeading ? (
-                    <ListItemText primary={item.name} primaryTypographyProps={{ variant: 'h6' }} />
-                  ) : (
-                    <ListItemText primary={item.name} />
-                  )}
-                </ListItemButton>
-              </ListItem>
-              {item.isHeading && <Divider />}
-            </Fragment>
-          ))}
-        </List>
-      </DrawerStyled>
-    </Box>
-  );
-};
-
-const DrawerStyled = styled(Drawer)({
-  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-});

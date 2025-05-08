@@ -53,6 +53,7 @@ import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOut
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
 import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import SendIcon from '@mui/icons-material/Send';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -121,6 +122,7 @@ export {
   RotateLeftIcon as RotateLeft,
   RotateRightIcon as RotateRight,
   SaveAsOutlinedIcon as SaveAsOutlined,
+  SearchOutlinedIcon as SearchOutlined,
   SendIcon as Send,
   StarIcon as Star,
   StarBorderIcon as StarBorder,

@@ -1,4 +1,4 @@
-import { Button, Container, Paper, styled, Typography } from '@mui/material';
+import { Button, Container, IconButton, Paper, styled, Typography } from '@mui/material';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { shallow } from 'zustand/shallow';
 import { AppNavbar, LoadingOverlayInner } from '../components';
 import { AddCircleOutlined } from '../components/icons';
 import { LibraryDrawer } from '../components/libraryItemPrint';
+import { LibrarySelector } from '../components/nav/LibrarySelector';
 import { LibraryCreateDialog, LibraryItemDialog } from '../components/modals';
 import { LibraryTable } from '../components/tables/LibraryTable';
 import { LibrariesEmptyState } from '../components/ui/LibrariesEmptyState';
@@ -18,9 +19,11 @@ import { useLibrariesGetRequest } from '../requests/libraryRequests';
 import { useLibrariesStore, useSelectedLibraryStore } from '../store/library/useLibrariesStore';
 import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
 import { useLibraryItemFormStore } from '../store/useLibraryItemFormStore';
+import { FiltersPopover } from '../components/nav/FiltersPopover';
 
 export const Route = createFileRoute(AppRoutes.appHome)({
   component: App,
+  // loader: (ctx) => ctx.queryClient.ensureQueryData({ queryKey: ['get', 'profile'], exact: true }),
 });
 
 /**
@@ -67,11 +70,13 @@ function App() {
 
   return (
     <>
-      <AppNavbar />
+      <AppNavbar>
+        <LibrarySelector />
+        <FiltersPopover />
+      </AppNavbar>
       <Container maxWidth='xl'>
         <StyledHeaderBox>
           <Typography variant='h4' noWrap children={getSelectedLibrary()?.title} />
-          {'STATUS:' + requestLibraries.status + ' ' + requestItems.status}
           <Button
             type='button'
             variant='contained'
