@@ -31,14 +31,14 @@ export const EmailInput = (props: Props) => {
       inputRef={ref}
       name={name}
       label={label}
-      helperText={errorMessage || helperText}
       error={!!errorMessage}
-      fullWidth={fullWidth ?? true}
+      helperText={errorMessage || helperText}
       size='small'
       margin={margin || 'dense'}
+      fullWidth={fullWidth ?? true}
       autoComplete={disableAutoComplete ? 'off' : 'email'}
-      autoFocus={autoFocus}
       disabled={disabled}
+      autoFocus={autoFocus}
       onChange={onChange}
       onBlur={onBlur}
       slotProps={{ input: { endAdornment } }}

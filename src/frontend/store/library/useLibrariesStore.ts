@@ -3,8 +3,9 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import type { DataColumn, LibrarySchema } from '../../core/types';
 import { useLibraryTableStore } from './useLibraryTableStore';
+
+import type { DataColumn, LibrarySchema } from '../../core/types';
 
 interface LibraryState {
   libraries: LibrarySchema[];

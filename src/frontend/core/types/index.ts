@@ -1,6 +1,7 @@
 export * from './_cropImage';
 export * from './_dataTable';
 export * from './_dialogs';
+export * from './_forms';
 export * from './_input';
 export * from './_library';
 export * from './_requests';

@@ -46,11 +46,11 @@ export const PasswordInput = (props: Props) => {
       label={label}
       error={!!errorMessage}
       helperText={errorMessage || helperText}
-      type={passVisible ? 'text' : 'password'}
       size='small'
       margin={margin || 'dense'}
       fullWidth={fullWidth ?? true}
       autoComplete='off'
+      type={passVisible ? 'text' : 'password'}
       autoFocus={autoFocus}
       onChange={onChange}
       onBlur={onBlur}

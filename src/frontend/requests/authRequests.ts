@@ -14,6 +14,7 @@ import type {
   SignupFormData,
   SignupResponse,
 } from '../core/types';
+import { useAuthCredentialsStore } from '../store/useAuthCredentialsStore';
 
 /**
  * Request to signup / register / create a user.
@@ -46,6 +47,9 @@ export const useUserSignupRequest = () => {
  * [POST] /api/v1/user/login
  */
 export const useUserLoginRequest = () => {
+  const navigate = useNavigate();
+  const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
+
   const { mutateAsync, status } = useMutation({
     mutationKey: ['post', 'user', 'login'],
     mutationFn: (data: LoginFormData): Promise<LoginResponse> => {
@@ -56,7 +60,13 @@ export const useUserLoginRequest = () => {
         credentials: 'omit',
       });
     },
-    // onSuccess & onError should be defined in the places of request's usage
+    onSuccess: (response, request) => {
+      const email = request.email;
+      const { token, redirectTo } = response;
+      setCredentials(email, token);
+      void navigate({ href: redirectTo, replace: true });
+    },
+    // onError should be defined in the places of request's usage
   });
 
   return { mutateAsync, status };

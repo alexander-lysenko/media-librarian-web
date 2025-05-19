@@ -1,65 +1,33 @@
 import { Turnstile } from '@marsidev/react-turnstile';
-import { Alert, Box, Button, Checkbox, CircularProgress, Collapse, FormControlLabel } from '@mui/material';
-import { useNavigate } from '@tanstack/react-router';
-import { useRef } from 'react';
+import { Alert, Box, Button, Checkbox, Collapse, FormControlLabel } from '@mui/material';
+import { useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { useFormValidation } from '../../hooks';
+import { emailValidationPattern } from '../../core';
 import { useUserLoginRequest } from '../../requests/authRequests';
-import { useAuthCredentialsStore } from '../../store/useAuthCredentialsStore';
 import { LoginOutlined } from '../icons';
 import { EmailInput } from '../inputs/EmailInput';
 import { PasswordInput } from '../inputs/PasswordInput';
 
-import type { LoginFormData } from '../../core/types';
+import type { FormValidationRules, LoginFormData, RegisterCaptchaProps, UseFormService } from '../../core/types';
 import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form';
+
+type FormType = LoginFormData;
 
 /**
  * Sign In (Login) Form functional component
  */
 export const LoginForm = () => {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
 
-  const setCredentials = useAuthCredentialsStore((state) => state.setCredentials);
-  const captchaRef = useRef<TurnstileInstance>(null);
-
-  const useHookForm = useForm<LoginFormData>({ mode: 'onBlur', reValidateMode: 'onChange' });
-  const { registerField } = useFormValidation('login', useHookForm);
-  const { formState, handleSubmit, setError, clearErrors, getValues, reset } = useHookForm;
-  const { errors } = formState;
-
-  const useLoginRequest = useUserLoginRequest();
-  const loading = useLoginRequest.status === 'pending';
-
-  const onValidSubmit: SubmitHandler<LoginFormData> = (data) => {
-    void useLoginRequest.mutateAsync(data, {
-      onSuccess: (response) => {
-        const { email } = getValues();
-        const { token, redirectTo } = response;
-        setCredentials(email, token);
-        reset();
-        navigate({ href: redirectTo, replace: true });
-      },
-      onError: (reason) => {
-        reset({ password: '' });
-        setError('root.serverError', { message: reason.message });
-        captchaRef.current?.reset();
-      },
-    });
-  };
-  const onInvalidSubmit: SubmitErrorHandler<LoginFormData> = () => {
-    if (errors['cf-turnstile-response']) {
-      setError('root.serverError', { message: errors['cf-turnstile-response']?.message as string });
-    }
-  };
+  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useLoginForm();
 
   return (
-    <Box component='form' noValidate onSubmit={handleSubmit(onValidSubmit, onInvalidSubmit)} sx={{ mt: 1 }}>
+    <Box component='form' noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
       <Collapse in={!!errors.root?.serverError} unmountOnExit>
-        <Alert variant='filled' severity='error' onClose={() => clearErrors('root')} sx={{ my: 2 }}>
+        <Alert variant='filled' severity='error' onClose={dismissRootError} sx={{ my: 2 }}>
           {errors.root?.serverError.message as string}
         </Alert>
       </Collapse>
@@ -79,23 +47,96 @@ export const LoginForm = () => {
       />
       <Box sx={{ textAlign: 'center', pt: 1 }}>
         <Turnstile
-          ref={captchaRef}
-          options={{ size: 'flexible', language: i18n.language }}
+          {...registerCaptcha?.()}
           siteKey={import.meta.env.VITE_CF_TURNSTILE_SITEKEY}
-          onWidgetLoad={() => registerField('cf-turnstile-response')}
-          onSuccess={(token) => useHookForm.setValue('cf-turnstile-response', token)}
-          onExpire={() => captchaRef.current?.reset()}
+          options={{ size: 'flexible', language: i18n.language }}
         />
       </Box>
-      <Button
-        type='submit'
-        fullWidth
-        variant='contained'
-        disabled={loading}
-        sx={{ mt: 3, mb: 2 }}
-        children={t('loginPage.signInBtn')}
-        endIcon={loading ? <CircularProgress size={14} /> : <LoginOutlined />}
-      />
+      <Box sx={{ mt: 3, mb: 2 }}>
+        <Button type='submit' fullWidth variant='contained' loading={isSubmitting} endIcon={<LoginOutlined />}>
+          {t('loginPage.signInBtn')}
+        </Button>
+      </Box>
     </Box>
   );
+};
+
+/**
+ * A custom React hook that provides form handling logic for a login form.
+ */
+const useLoginForm = (): UseFormService<FormType> => {
+  const { t } = useTranslation();
+
+  const captchaRef = useRef<TurnstileInstance>(null);
+
+  const useLoginRequest = useUserLoginRequest();
+  const isSubmitting = useLoginRequest.status === 'pending';
+
+  const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onChange' });
+  const { formState, register, handleSubmit } = useHookForm;
+  const { setError, clearErrors, setValue, reset, resetField } = useHookForm;
+  const { errors } = formState;
+
+  const registerField = useCallback(
+    (fieldName: keyof FormType) => {
+      const rules: Record<keyof FormType, FormValidationRules> = {
+        email: {
+          setValueAs: (value: string) => value.trim().toLowerCase(),
+          required: t('formValidation.emailRequired'),
+          pattern: {
+            value: emailValidationPattern,
+            message: t('formValidation.emailInvalid'),
+          },
+        },
+        password: {
+          required: t('formValidation.passwordRequired'),
+        },
+        rememberMe: {
+          setValueAs: (value: string) => !!value,
+        },
+        'cf-turnstile-response': {
+          required: t('formValidation.captchaRequired'),
+        },
+      };
+
+      return register(fieldName as never, rules[fieldName]);
+    },
+    [register, t],
+  );
+
+  const registerCaptcha = useCallback((): RegisterCaptchaProps => {
+    return {
+      ref: captchaRef,
+      onWidgetLoad: () => registerField('cf-turnstile-response'),
+      onSuccess: (token) => setValue('cf-turnstile-response', token),
+      onExpire: () => captchaRef.current?.reset(),
+    };
+  }, [registerField, setValue]);
+
+  const onValidSubmit: SubmitHandler<FormType> = (data) => {
+    void useLoginRequest.mutateAsync(data, {
+      onSuccess: () => {
+        reset();
+      },
+      onError: (reason) => {
+        resetField('password');
+        setError('root.serverError', { message: reason.message });
+        captchaRef.current?.reset();
+      },
+    });
+  };
+  const onInvalidSubmit: SubmitErrorHandler<FormType> = () => {
+    if (errors['cf-turnstile-response']) {
+      setError('root.serverError', { message: errors['cf-turnstile-response']?.message as string });
+    }
+  };
+
+  return {
+    registerField,
+    registerCaptcha,
+    handleSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+    isSubmitting,
+    errors,
+    dismissRootError: () => clearErrors('root'),
+  };
 };

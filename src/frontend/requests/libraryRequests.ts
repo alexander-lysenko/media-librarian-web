@@ -85,6 +85,7 @@ export const useLibraryGetRequest = (id: number) => {
 export const useLibraryCreateRequest = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const setSelectedLibraryId = useSelectedLibraryStore((state) => state.setSelectedLibraryId);
 
   const { mutateAsync, status } = useMutation({
     mutationKey: ['post', 'libraries'],
@@ -97,6 +98,7 @@ export const useLibraryCreateRequest = () => {
     },
     onSuccess: (response) => {
       void queryClient.invalidateQueries({ queryKey: ['get', 'libraries'], exact: true });
+      setSelectedLibraryId(response.data.id);
       enqueueSnack({
         type: 'success',
         message: t('notifications.libraryCreated', { title: response.data.title }),

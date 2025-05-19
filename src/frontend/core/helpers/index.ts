@@ -4,6 +4,10 @@ export * from './_cropImage';
 export * from './_dataTable';
 export * from './_formatters';
 
+export const emailValidationPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+export const urlValidationPattern =
+  /^(ht|f)tps?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,9}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/i;
+
 /**
  * Calculates rating ratio for ColoredRating component by a value and size and matches it with a color:
  * - Grey - value is "0" or null,
