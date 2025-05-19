@@ -70,9 +70,9 @@ class SqliteLibraryMeta extends Model
             InputType::URL->value => $table->string($name)->nullable(),
             InputType::CHECKBOX->value => $table->boolean($name)->nullable(),
             InputType::RATING_5->value => $table->tinyInteger($name)->unsigned()->nullable(),
-            InputType::RATING_5_PRECISION->value => $table->unsignedDecimal($name, 2, 1)->nullable(),
+            InputType::RATING_5_PRECISION->value => $table->decimal($name, 2, 1)->unsigned()->nullable(),
             InputType::RATING_10->value => $table->smallInteger($name)->unsigned()->nullable(),
-            InputType::RATING_10_PRECISION->value => $table->unsignedDecimal($name, 3, 1)->nullable(),
+            InputType::RATING_10_PRECISION->value => $table->decimal($name, 3, 1)->unsigned()->nullable(),
             InputType::PRIORITY->value => $table->tinyInteger($name)->nullable(),
         };
     }

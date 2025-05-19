@@ -145,10 +145,9 @@ class UserController extends ApiV1Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'rememberMe' => ['boolean'],
         ]);
 
-        if (Auth::guard('web')->attempt($credentials, $request->post('rememberMe', false))) {
+        if (Auth::guard('web')->attempt($credentials, $request->boolean('rememberMe'))) {
             // Auth::guard('web')->authenticate();
             $redirectTo = $request->user()->status === UserStatusEnum::ACTIVE->value ? '/app' : '/profile';
             $token = $request->user()->createToken('apiToken')->plainTextToken;
