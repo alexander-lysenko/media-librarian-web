@@ -36,7 +36,7 @@ export const SignupForm = () => {
   const { language, setLanguage } = useLanguageStore((state) => state);
   const languages = useTranslationStore((state) => state.languages);
 
-  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useSignupForm();
+  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useFormService();
 
   return (
     <Box component='form' noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -110,7 +110,7 @@ export const SignupForm = () => {
  * This hook includes form validation logic, field registration, and helper functions to manage the state of the form.
  * It handles validation for fields such as name, email, password, password confirmation, and CAPTCHA response.
  */
-const useSignupForm = (): UseFormService<FormType> => {
+const useFormService = (): UseFormService<FormType> => {
   const { t } = useTranslation();
   const captchaRef = useRef<TurnstileInstance>(null);
 
@@ -118,7 +118,7 @@ const useSignupForm = (): UseFormService<FormType> => {
   const validateEmail = useEmailValidationRequest();
   const isSubmitting = signupRequest.status === 'pending';
 
-  const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onChange' });
+  const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onBlur' });
   const { register, handleSubmit } = useHookForm;
   const { formState, setError, clearErrors, setValue, reset, getFieldState, trigger } = useHookForm;
   const { errors } = formState;
@@ -140,7 +140,6 @@ const useSignupForm = (): UseFormService<FormType> => {
           },
           validate: {
             uniqueValidation: async (value: string): Promise<ValidateResult> => {
-              // todo: make validation not triggered on blur when value is not changed
               return await validateEmail
                 .mutateAsync({ email: value })
                 .then((response) => response?.message)
@@ -166,7 +165,7 @@ const useSignupForm = (): UseFormService<FormType> => {
         passwordRepeat: {
           required: t('formValidation.passwordRepeatRequired'),
           validate: {
-            matchesPasswords: (value: string, formValues) => {
+            matchesPasswords: (value, formValues) => {
               const message = t('formValidation.passwordRepeatNotMatch');
               const { password } = formValues;
 
@@ -180,11 +179,15 @@ const useSignupForm = (): UseFormService<FormType> => {
       };
 
       const registerReturn = register(fieldName as string, rules[fieldName]);
-      if (fieldName === 'email') {
-        return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
-      }
 
-      return registerReturn;
+      switch (fieldName) {
+        case 'email':
+          return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
+        case 'password':
+          return { ...registerReturn, onChange: debounce(registerReturn.onChange, 500) };
+        default:
+          return registerReturn;
+      }
     },
     [getFieldState, register, t, trigger, validateEmail],
   );

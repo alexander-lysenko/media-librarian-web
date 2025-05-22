@@ -22,7 +22,7 @@ type FormType = LoginFormData;
 export const LoginForm = () => {
   const { t, i18n } = useTranslation();
 
-  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useLoginForm();
+  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useFormService();
 
   return (
     <Box component='form' noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -64,7 +64,7 @@ export const LoginForm = () => {
 /**
  * A custom React hook that provides form handling logic for a login form.
  */
-const useLoginForm = (): UseFormService<FormType> => {
+const useFormService = (): UseFormService<FormType> => {
   const { t } = useTranslation();
 
   const captchaRef = useRef<TurnstileInstance>(null);
@@ -72,7 +72,7 @@ const useLoginForm = (): UseFormService<FormType> => {
   const useLoginRequest = useUserLoginRequest();
   const isSubmitting = useLoginRequest.status === 'pending';
 
-  const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onChange' });
+  const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onBlur' });
   const { formState, register, handleSubmit } = useHookForm;
   const { setError, clearErrors, setValue, reset, resetField } = useHookForm;
   const { errors } = formState;
@@ -99,7 +99,7 @@ const useLoginForm = (): UseFormService<FormType> => {
         },
       };
 
-      return register(fieldName as never, rules[fieldName]);
+      return register(fieldName as string, rules[fieldName]);
     },
     [register, t],
   );

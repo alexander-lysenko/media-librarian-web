@@ -7,8 +7,12 @@ interface LibraryItemFormState {
   isEditMode: boolean;
   selectedLibraryId: number | null;
   selectedItem: LibraryItem | null;
+
   poster: string | null;
   setPoster: (poster: string | null) => void;
+  showPosterForm: boolean;
+  setShowPosterForm: (showPoster: boolean) => void;
+
   titleUniqueProcessing: boolean;
   setTitleUniqueProcessing: (value: boolean) => void;
   handleOpen: (selectedLibraryId: number, selectedItem?: LibraryItem) => void;
@@ -20,8 +24,12 @@ export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
   isEditMode: false,
   selectedLibraryId: null,
   selectedItem: null,
+
   poster: null,
   setPoster: (poster) => set({ poster }),
+  showPosterForm: false,
+  setShowPosterForm: (showPoster) => set({ showPosterForm: showPoster }),
+
   titleUniqueProcessing: false,
   setTitleUniqueProcessing: (value: boolean) => set({ titleUniqueProcessing: value }),
   handleOpen: (selectedLibraryId, selectedItem = undefined) =>
