@@ -115,7 +115,7 @@
     "libraryTitleRequired": "Придумайте название библиотеки",
     "passwordMinLength": "Минимальная длина пароля - {{n}} символов",
     "passwordRepeatNotMatch": "Пароли не совпадают",
-    "passwordRepeatRequired": "Пароль необходимо подтвердить, таковы правила",
+    "passwordRepeatRequired": "Пароль необходимо продублировать в это поле",
     "passwordRequired": "Пароль не может быть пустым",
     "urlInvalid": "Введенное значение не похоже на валидный адрес URL",
     "usernameMinLength": "Попробуйте ввести полное имя (не менее {{n}} символов)",

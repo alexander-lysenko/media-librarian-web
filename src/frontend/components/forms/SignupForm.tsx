@@ -178,7 +178,7 @@ const useFormService = (): UseFormService<FormType> => {
         },
       };
 
-      const registerReturn = register(fieldName as string, rules[fieldName]);
+      const registerReturn = register(fieldName as never, rules[fieldName]);
 
       switch (fieldName) {
         case 'email':
