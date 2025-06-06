@@ -141,7 +141,7 @@ export interface PasswordResetFormData extends FieldValues {
   token: string;
 }
 
-export interface PasswordChangeFormData {
+export interface PasswordChangeFormData extends FieldValues {
   password: string;
   newPassword: string;
   repeatPassword: string;

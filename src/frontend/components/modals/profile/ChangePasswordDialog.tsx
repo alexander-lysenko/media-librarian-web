@@ -1,36 +1,133 @@
-import { Alert, Button, CircularProgress, Collapse } from '@mui/material';
+import { Alert, Button, Collapse, debounce } from '@mui/material';
+import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { useFormValidation } from '../../../hooks';
 import { useProfileChangePasswordRequest } from '../../../requests/profileRequests';
 import { useProfileDialogsStore } from '../../../store/app/useProfileDialogsStore';
 import { DoneOutlined } from '../../icons';
 import { PasswordInput } from '../../inputs/PasswordInput';
 import { FormDialog } from '../../ui/modals/FormDialog';
 
-import type { ErrorResponse, PasswordChangeFormData } from '../../../core/types';
+import type { ErrorResponse, FormValidationRules, PasswordChangeFormData, UseFormService } from '../../../core/types';
 import type { FormDialogProps } from '../../ui/modals/FormDialog';
 import type { SyntheticEvent } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
+
+type FormType = PasswordChangeFormData;
 
 /**
  * Profile - Dialog - Change Account's Password
  */
 export const ChangePasswordDialog = () => {
   const { t } = useTranslation();
-
   const open = useProfileDialogsStore((state) => state.passwordDialogOpen);
+
+  const { registerField, handleSubmit, handleClose, isSubmitting, dismissRootError, errors } = useDialogForm();
+
+  const dialogProps: FormDialogProps = {
+    open: open,
+    maxWidth: 'xs',
+    fullScreen: false,
+    onSubmit: handleSubmit,
+    onClose: handleClose,
+  };
+
+  return (
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t('dialogs.changePasswordDialog.title')}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t('dialogs.changePasswordDialog.subtitle')}</FormDialog.Subtitle>
+        <Collapse in={!!errors.root?.serverError} unmountOnExit>
+          <Alert variant='filled' severity='error' onClose={dismissRootError} sx={{ my: 2 }}>
+            {errors.root?.serverError.message as string}
+          </Alert>
+        </Collapse>
+        <PasswordInput
+          {...registerField('password')}
+          label={t('dialogs.changePasswordDialog.passwordLabel')}
+          helperText={t('dialogs.changePasswordDialog.passwordHint') as string}
+          errorMessage={errors.password?.message as string}
+        />
+        <PasswordInput
+          {...registerField('newPassword')}
+          label={t('dialogs.changePasswordDialog.newPasswordLabel')}
+          helperText={t('dialogs.changePasswordDialog.newPasswordHint') as string}
+          errorMessage={errors.newPassword?.message as string}
+        />
+        <PasswordInput
+          {...registerField('repeatPassword')}
+          label={t('dialogs.changePasswordDialog.repeatPasswordLabel')}
+          helperText={t('dialogs.changePasswordDialog.repeatPasswordHint') as string}
+          errorMessage={errors.repeatPassword?.message as string}
+        />
+      </FormDialog.Content>
+      <FormDialog.Actions>
+        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
+        <Button
+          type='submit'
+          variant='contained'
+          loading={isSubmitting}
+          endIcon={<DoneOutlined />}
+          children={t('common.save')}
+        />
+      </FormDialog.Actions>
+    </FormDialog>
+  );
+};
+
+const useDialogForm = (): UseFormService<FormType> => {
+  const { t } = useTranslation();
   const setOpen = useProfileDialogsStore((state) => state.setPasswordDialogOpen);
 
   const changePasswordRequest = useProfileChangePasswordRequest();
   const loading = changePasswordRequest.status === 'pending';
 
-  const useHookForm = useForm<PasswordChangeFormData>({ mode: 'onBlur', reValidateMode: 'onChange' });
-  const { registerField } = useFormValidation('profile', useHookForm);
-  const { formState, reset, handleSubmit, setError, clearErrors } = useHookForm;
+  const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onBlur' });
+  const { register, formState, reset, handleSubmit, setError, clearErrors, getFieldState, trigger } = useHookForm;
 
-  const handleClose = (event: SyntheticEvent) => {
+  const registerField = useCallback(
+    (fieldName: keyof FormType) => {
+      const rules: Record<string, FormValidationRules<FormType, never>> = {
+        password: {
+          required: t('formValidation.passwordRequired'),
+        },
+        newPassword: {
+          required: t('formValidation.passwordRequired'),
+          minLength: { value: 8, message: t('formValidation.passwordMinLength', { n: 8 }) },
+          validate: {
+            matchesPasswords: () => {
+              const prevField = 'repeatPassword';
+              const { isDirty, invalid } = getFieldState(prevField);
+              if (isDirty || invalid) {
+                void trigger(prevField);
+              }
+
+              return true;
+            },
+          },
+        },
+        repeatPassword: {
+          required: t('formValidation.passwordRepeatRequired'),
+          validate: {
+            matchesPasswords: (value: string, formValues: FormType) => {
+              const message = t('formValidation.passwordRepeatNotMatch');
+              const { newPassword } = formValues;
+
+              return newPassword === value || message;
+            },
+          },
+        },
+      };
+
+      const registerReturn = register(fieldName as never, rules[fieldName]);
+
+      return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
+    },
+    [getFieldState, register, t, trigger],
+  );
+
+  const handleClose = (event: SyntheticEvent | Event) => {
     if (loading) {
       event.preventDefault();
       event.stopPropagation();
@@ -53,7 +150,7 @@ export const ChangePasswordDialog = () => {
     }
   };
 
-  const onValidSubmit: SubmitHandler<PasswordChangeFormData> = (data, event) => {
+  const onValidSubmit: SubmitHandler<FormType> = (data, event) => {
     void changePasswordRequest.mutateAsync(data, {
       onSuccess: () => {
         handleClose(event as SyntheticEvent);
@@ -62,53 +159,12 @@ export const ChangePasswordDialog = () => {
     });
   };
 
-  const dialogProps: FormDialogProps = {
-    open: open,
-    maxWidth: 'xs',
-    fullScreen: false,
-    onSubmit: handleSubmit(onValidSubmit),
-    onClose: handleClose,
+  return {
+    registerField,
+    handleSubmit: handleSubmit(onValidSubmit),
+    isSubmitting: changePasswordRequest.status === 'pending',
+    dismissRootError: () => clearErrors('root'),
+    handleClose,
+    errors: formState.errors,
   };
-
-  return (
-    <FormDialog {...dialogProps}>
-      <FormDialog.Title>{t('dialogs.changePasswordDialog.title')}</FormDialog.Title>
-      <FormDialog.Content>
-        <FormDialog.Subtitle>{t('dialogs.changePasswordDialog.subtitle')}</FormDialog.Subtitle>
-        <Collapse in={!!formState.errors.root?.serverError} unmountOnExit>
-          <Alert variant='filled' severity='error' onClose={() => clearErrors('root')} sx={{ my: 2 }}>
-            {formState.errors.root?.serverError.message as string}
-          </Alert>
-        </Collapse>
-        <PasswordInput
-          {...registerField('password')}
-          label={t('dialogs.changePasswordDialog.passwordLabel')}
-          helperText={t('dialogs.changePasswordDialog.passwordHint') as string}
-          errorMessage={formState.errors.password?.message as string}
-        />
-        <PasswordInput
-          {...registerField('newPassword')}
-          label={t('dialogs.changePasswordDialog.newPasswordLabel')}
-          helperText={t('dialogs.changePasswordDialog.newPasswordHint') as string}
-          errorMessage={formState.errors.newPassword?.message as string}
-        />
-        <PasswordInput
-          {...registerField('repeatPassword')}
-          label={t('dialogs.changePasswordDialog.repeatPasswordLabel')}
-          helperText={t('dialogs.changePasswordDialog.repeatPasswordHint') as string}
-          errorMessage={formState.errors.repeatPassword?.message as string}
-        />
-      </FormDialog.Content>
-      <FormDialog.Actions>
-        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
-        <Button
-          type='submit'
-          variant='contained'
-          disabled={loading}
-          endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
-          children={t('common.save')}
-        />
-      </FormDialog.Actions>
-    </FormDialog>
-  );
 };

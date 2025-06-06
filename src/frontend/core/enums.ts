@@ -74,27 +74,3 @@ export enum LibraryElementEnum {
   rating10precision = 'rating10precision',
   priority = 'priority',
 }
-
-/**
- * Enumeration representing the names of various registered forms used within the application.
- * Each enum member corresponds to a specific form and its associated functionality.
- * Used with react-hook-form for form validation rules and form state management.
- *
- * Members:
- * - signup: Represents the registration/signup form.
- * - login: Represents the login form for user authentication.
- * - passwordRecoveryRequest: Represents the form for requesting password recovery.
- * - passwordRecovery: Represents the form for resetting the password.
- * - libraryCreate: Represents the form for creating a library.
- * - libraryItem: Represents the form for managing or interacting with a library item.
- * - profile: Represents the form for user profile management or editing.
- */
-export enum RegisteredFormNamesEnum {
-  signup = 'signup',
-  login = 'login',
-  passwordRecoveryRequest = 'passwordRecoveryRequest',
-  passwordRecovery = 'passwordRecovery',
-  libraryCreate = 'libraryCreate',
-  libraryItem = 'libraryItem',
-  profile = 'profile',
-}

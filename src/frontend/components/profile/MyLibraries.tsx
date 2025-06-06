@@ -1,7 +1,7 @@
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-import { useLibraryActions } from '../../hooks/useLibraryActions';
+import { useLibraryActions } from '../../hooks';
 import { useLibrariesGetRequest } from '../../requests/libraryRequests';
 import { useLibrariesStore } from '../../store/library/useLibrariesStore';
 import {

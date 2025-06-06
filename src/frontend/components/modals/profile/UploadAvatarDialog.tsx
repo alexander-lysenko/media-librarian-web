@@ -1,16 +1,4 @@
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grow,
-  styled,
-} from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Box, Button, CircularProgress, Grow, styled } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,11 +8,12 @@ import { useProfilePatchRequest } from '../../../requests/profileRequests';
 import { useProfileDialogsStore } from '../../../store/app/useProfileDialogsStore';
 import { useProfileStore } from '../../../store/useProfileStore';
 import { CloseOutlined, CloudUploadOutlined, DoneOutlined } from '../../icons';
-import { ImageCrop } from '../../ui/ImageCrop';
 import { ProfileAvatar } from '../../profile/ProfileAvatar';
+import { ImageCrop } from '../../ui/ImageCrop';
+import { FormDialog } from '../../ui/modals/FormDialog';
 
 import type { CropParams } from '../../../core/types';
-import type { DialogProps } from '@mui/material';
+import type { FormDialogProps } from '../../ui/modals/FormDialog';
 import type { MutateOptions } from '@tanstack/react-query';
 import type { ChangeEvent, SyntheticEvent } from 'react';
 
@@ -111,19 +100,21 @@ export const UploadAvatarDialog = () => {
     void profileUpdateRequest.mutateAsync({ avatar }, responseEffects as never);
   };
 
-  const dialogProps: DialogProps = {
+  const dialogProps: FormDialogProps = {
     open: open,
     fullWidth: true,
     maxWidth: 'xs',
     disableRestoreFocus: true,
     slots: { transition: Grow },
     slotProps: { transition: { timeout: 120 } },
+    onClose: handleClose,
+    onSubmit: handleSubmit,
   };
 
   return (
-    <Dialog {...dialogProps} onClose={handleClose}>
-      <DialogTitle variant={'h5'}>{t('dialogs.changeAvatarDialog.title')}</DialogTitle>
-      <DialogContent sx={{ py: 1 }}>
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title variant={'h5'}>{t('dialogs.changeAvatarDialog.title')}</FormDialog.Title>
+      <FormDialog.Content sx={{ py: 1 }}>
         {!cropMode ? (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <ProfileAvatar username={profile.user.name} src={avatar || null} sx={{ height: 192, width: 192 }} />
@@ -133,7 +124,7 @@ export const UploadAvatarDialog = () => {
             <ImageCrop image={avatar ?? ''} cropSize={{ width: 256, height: 256 }} onCropUpdate={setCropOptions} />
           </Box>
         )}
-      </DialogContent>
+      </FormDialog.Content>
       {!cropMode && (
         <BottomNavigation showLabels sx={{ background: 'transparent' }}>
           <Action disabled />
@@ -150,7 +141,7 @@ export const UploadAvatarDialog = () => {
           <Action disabled />
         </BottomNavigation>
       )}
-      <DialogActions>
+      <FormDialog.Actions>
         <HiddenInput type='file' ref={hiddenFileInputRef} onChange={handleAvatar} />
         <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
         <Button
@@ -160,8 +151,8 @@ export const UploadAvatarDialog = () => {
           endIcon={loading ? <CircularProgress size={14} /> : <DoneOutlined />}
           children={t('common.save')}
         />
-      </DialogActions>
-    </Dialog>
+      </FormDialog.Actions>
+    </FormDialog>
   );
 };
 
