@@ -95,12 +95,14 @@
     }
   },
   "fileUpload": {
-    "dropFileHere": "Бросьте файл сюда",
+    "browse": "Открыть файл с устройства",
     "dragDropFileHere": "Перетащите файл сюда",
-    "browse": "Открыть файл",
-    "paste": "Из буфера",
-    "unsupportedFormat": "Формат файла не поддерживается",
-    "fileSizeExceed": "Размер файла превышает {{n}} MB"
+    "dropFileHere": "Бросьте файл сюда",
+    "fileSizeExceed": "Размер файла превышает {{n}} MB",
+    "orUseOptionsBelow": "или используйте другой вариант",
+    "paste": "Вставить из буфера обмена",
+    "pasteUrlOrContent": "Вставьте URL или картинку сюда",
+    "unsupportedFormat": "Неподдерживаемый Формат файла. Разрешенные форматы: {{formats}}"
   },
   "formValidation": {
     "captchaRequired": "Необходимо пройти проверку Captcha",

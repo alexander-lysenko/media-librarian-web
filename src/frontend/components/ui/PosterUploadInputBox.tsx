@@ -6,8 +6,7 @@ import { enqueueSnack } from '../../core/actions';
 import { CloudUploadOutlined, ContentPasteOutlined, UploadFileOutlined } from '../icons';
 import { SimpleDropzone } from './SimpleDropzone';
 
-import type { SxProps } from '@mui/system';
-import type { ChangeEvent, ClipboardEvent, DragEvent, SyntheticEvent } from 'react';
+import type { ChangeEvent, ClipboardEvent, CSSProperties, DragEvent, SyntheticEvent } from 'react';
 
 export const PosterUploadInputBox = () => {
   const { t } = useTranslation();
@@ -18,8 +17,6 @@ export const PosterUploadInputBox = () => {
 
   const handleDropEvent = (event: DragEvent<HTMLDivElement>) => {
     const file = event.dataTransfer.files[0] || event.nativeEvent.dataTransfer?.files[0];
-    // console.log(event.dataTransfer, file);
-    // console.log(event.target);
     uploadFile(file);
   };
 
@@ -34,7 +31,6 @@ export const PosterUploadInputBox = () => {
 
   const handleFromClipboard = async (event: ClipboardEvent<HTMLInputElement>) => {
     const item = event.clipboardData?.items[0];
-    console.log(item);
     if (!item) {
       return;
     }
@@ -56,14 +52,34 @@ export const PosterUploadInputBox = () => {
     }
   };
 
-  const handlePasteBtnClick = (event: SyntheticEvent) => {
-    urlTextInput.current?.focus();
-    urlTextInput.current?.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        ctrlKey: true,
-        code: 'KeyV',
-      }),
-    );
+  const handlePasteBtnClick = async (event: SyntheticEvent) => {
+    event.preventDefault();
+
+    const clipboardItems = await navigator.clipboard.read();
+    console.log(clipboardItems);
+    const firstItem = clipboardItems[0];
+
+    try {
+      // if there is an image
+      const blob = await firstItem.getType('image/png');
+      const file = new File([blob], 'image.png', { type: 'image/png' });
+
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+
+      const pasteEvent = new ClipboardEvent('paste', {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: dataTransfer,
+      });
+
+      urlTextInput.current?.focus();
+      // document.execCommand('paste', true);
+      urlTextInput.current?.dispatchEvent(pasteEvent);
+    } catch (e) {
+      /* ignore */
+      console.log(e);
+    }
   };
 
   const uploadFile = (file?: Blob) => {
@@ -73,10 +89,11 @@ export const PosterUploadInputBox = () => {
 
     const isFormatSupported = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
     const isSizeUnderLimit = file.size / 1024 / 1024 < 2;
+    const formats = ['jpeg', 'png', 'webp'].join(', ');
 
     switch (false) {
       case isFormatSupported:
-        enqueueSnack({ type: 'error', message: t('fileUpload.unsupportedFormat') });
+        enqueueSnack({ type: 'error', message: t('fileUpload.unsupportedFormat', { formats }) });
         return;
       case isSizeUnderLimit:
         enqueueSnack({ type: 'error', message: t('fileUpload.fileSizeExceed', { n: 2 }) });
@@ -153,25 +170,29 @@ export const PosterUploadInputBox = () => {
   //   </InputAdornment>
   // );
 
-  const cardMediaSx: SxProps = {
-    height: 178,
-    width: 178,
-    backgroundSize: 'contain',
-    filter: 'blur(2px)',
-  };
-
   const posterUrl = [
     'https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/2weak2slow2/phpza5oxW.jpeg',
     'https://i-a.d-cd.net/PX_ZUBJvag0Kncb8wxahJl8UAKY-1920.jpg',
   ][1];
 
+  const helperTextContent = t('Focus on the input and press Ctrl+V');
+
   return (
-    <Grid container spacing={1} flexGrow={1} height={180}>
-      <Grid size={'auto'} component={StyledPosterPreviewPaper} square={false} variant='outlined'>
-        <CardMedia sx={cardMediaSx} image={blobImage ? URL.createObjectURL(blobImage) : posterUrl} />
+    <Grid container spacing={1} flexGrow={1}>
+      <Grid size={{ xs: 12, sm: 'auto' }} component={StyledPosterPreviewPaper} square={false} variant='outlined'>
+        <StyledCardMedia
+          image={blobImage ? URL.createObjectURL(blobImage) : posterUrl}
+          style={{ '--var-poster-filter': isUploading ? 'blur(2px)' : 'none' } as CSSProperties}
+        />
         <StyledLinearProgress variant='determinate' value={67} />
       </Grid>
-      <Grid size={'grow'} component={SimpleDropzone} square={false} variant='outlined' onDrop={handleDropEvent}>
+      <Grid
+        size={{ xs: 12, sm: 'grow' }}
+        component={SimpleDropzone}
+        square={false}
+        variant='outlined'
+        onDrop={handleDropEvent}
+      >
         <DropFileBanner>
           <CloudUploadOutlined sx={{ fontSize: 48, mr: 2 }} />
           <Box display='flex' flexDirection='column'>
@@ -179,39 +200,41 @@ export const PosterUploadInputBox = () => {
               {t('fileUpload.dragDropFileHere')}
             </Typography>
             <Typography variant='subtitle2' textAlign='center'>
-              {t('commonEmbed.or')}
+              {t('fileUpload.orUseOptionsBelow')}
             </Typography>
           </Box>
         </DropFileBanner>
-        <Box display='flex' justifyContent='space-between'>
+        <HiddenFileInput type='file' ref={hiddenFileInput} onChange={handleFileBrowse} />
+        <Grid container justifyContent='center' alignItems='center' spacing={1}>
           <Button
+            fullWidth
             variant='outlined'
+            sx={{ textTransform: 'none' }}
             children={t('fileUpload.browse')}
             startIcon={<UploadFileOutlined />}
             onClick={handleBrowseClick}
           />
-          <HiddenFileInput type='file' ref={hiddenFileInput} onChange={handleFileBrowse} />
           <Button
+            fullWidth
             variant='outlined'
+            sx={{ textTransform: 'none' }}
             children={t('fileUpload.paste')}
-            endIcon={<ContentPasteOutlined />}
+            startIcon={<ContentPasteOutlined />}
             onClick={handlePasteBtnClick}
           />
-        </Box>
+        </Grid>
         <TextField
           inputRef={urlTextInput}
           size='small'
           margin='dense'
           fullWidth
-          placeholder={'Paste URL or image content'}
+          placeholder={t('fileUpload.pasteUrlOrContent')}
           error
-          helperText={
-            'Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused Connection refused '
-          }
+          helperText={helperTextContent}
           slotProps={{
             inputLabel: { shrink: true },
             formHelperText: {
-              title: 'asdasdfsdfghdfgjkgfdsafhg',
+              title: helperTextContent,
               sx: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
             },
           }}
@@ -226,7 +249,24 @@ const StyledPosterPreviewPaper = styled(Paper)({
   backgroundColor: 'transparent',
   backgroundImage: 'radial-gradient(transparent, transparent, rgba(0, 0, 0, .05))',
   position: 'relative',
+  alignContent: 'center',
 });
+
+const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
+  minHeight: 178,
+  minWidth: 178,
+  width: '100%',
+  height: '100%',
+  backgroundSize: 'contain',
+  filter: '--var-poster-filter',
+  justifySelf: 'center',
+  alignSelf: 'center',
+  borderRadius: theme.shape.borderRadius,
+  [theme.breakpoints.down('sm')]: {
+    minHeight: 320,
+    minWidth: 320,
+  },
+}));
 
 const StyledLinearProgress = styled(LinearProgress)({
   position: 'absolute',
@@ -242,6 +282,7 @@ const DropFileBanner = styled(Box)(({ theme }) => ({
   // flexDirection: "column",
   justifyContent: 'center',
   marginBottom: 8,
+  minWidth: 296,
   [theme.breakpoints.down('sm')]: {
     display: 'none',
   },

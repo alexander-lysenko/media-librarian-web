@@ -95,12 +95,14 @@
     }
   },
   "fileUpload": {
-    "dropFileHere": "Drop file here",
+    "browse": "Open a file from device",
     "dragDropFileHere": "Drag & drop file here",
-    "browse": "From Device",
-    "paste": "From clipboard",
-    "unsupportedFormat": "File format is not supported",
-    "fileSizeExceed": "File size exceeds {{n}} MB"
+    "dropFileHere": "Drop file here",
+    "fileSizeExceed": "File size exceeds {{n}} MB",
+    "orUseOptionsBelow": "or try an option below",
+    "paste": "Paste from clipboard",
+    "pasteUrlOrContent": "Paste URL or image here",
+    "unsupportedFormat": "Unsupported file format. Accepted formats are: {{formats}}"
   },
   "formValidation": {
     "captchaRequired": "Captcha verification is required",
