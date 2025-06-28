@@ -5,6 +5,7 @@
     "internalServerError": "An internal server error occurred.",
     "logout": "Log Out",
     "noNewNotifications": "You've all caught up!",
+    "openFiltersMenu": "Open Filters Menu",
     "openProfileMenu": "Open Profile Menu",
     "profile": "Profile",
     "uiTheme": "Interface Theme",
@@ -101,7 +102,8 @@
     "fileSizeExceed": "File size exceeds {{n}} MB",
     "orUseOptionsBelow": "or try an option below",
     "paste": "Paste from clipboard",
-    "pasteUrlOrContent": "Paste URL or image here",
+    "textInputHelperText": "Focus on the input and press Ctrl+V",
+    "textInputPlaceholder": "Paste URL or image here",
     "unsupportedFormat": "Unsupported file format. Accepted formats are: {{formats}}"
   },
   "formValidation": {

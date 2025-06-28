@@ -53,6 +53,7 @@ export const LibraryItemDialog = () => {
     paperSx: { minHeight: { sm: 'calc(100% - 128px)' } },
     onSubmit: handleSubmit,
     onKeyDown: handleSubmitByCtrlEnter,
+    keepMounted: false,
   };
 
   return (
@@ -90,6 +91,7 @@ export const LibraryItemDialog = () => {
           type='submit'
           variant='contained'
           loading={isSubmitting}
+          loadingPosition='end'
           endIcon={<SaveAsOutlined />}
           children={isEditMode ? t('common.update') : t('common.create')}
         />
@@ -147,6 +149,7 @@ const useDialogForm = (): UseFormService<FormType> & FormEvents & { control: Con
   const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onBlur' });
   const { register, formState, reset, handleSubmit, control } = useHookForm;
 
+  console.log('FormState', formState);
   const registerField = useCallback(
     (fieldName: keyof FormType, ruleName?: string) => {
       const rules: Record<string, FormValidationRules<FormType, never>> = {
@@ -189,6 +192,7 @@ const useDialogForm = (): UseFormService<FormType> & FormEvents & { control: Con
   );
 
   const onValidSubmit: SubmitHandler<FormType> = (data, event) => {
+    console.log('On valid submit', data, event);
     const id = selectedLibraryId as number;
     const item = selectedItem?.id as number;
     const requestData: LibraryItemFormData = {
@@ -205,6 +209,11 @@ const useDialogForm = (): UseFormService<FormType> & FormEvents & { control: Con
     } else {
       void createLibraryItemRequest.mutateAsync({ id, data: requestData }, responseEffects as never);
     }
+  };
+
+  const onInvalidSubmit = (errors: Record<string, any>) => {
+    console.log('On invalid submit', errors);
+    console.log(formState);
   };
 
   const handleSubmitByCtrlEnter = (e: KeyboardEvent) => {
@@ -233,13 +242,14 @@ const useDialogForm = (): UseFormService<FormType> & FormEvents & { control: Con
       const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
       const dataValues = pick(selectedItem, Object.keys(selectedLibrary?.fields ?? {}));
       const formValues = defaults(dataValues, formDefaultValues);
+      console.log('Form values', formValues);
       reset(formValues, { keepDirtyValues: true });
     }
   }, [open, reset, selectedItem, selectedLibrary]);
 
   return {
     registerField,
-    handleSubmit: handleSubmit(onValidSubmit),
+    handleSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
     isSubmitting: createLibraryItemRequest.status === 'pending' || updateLibraryItemRequest.status === 'pending',
     control,
     errors: formState.errors,

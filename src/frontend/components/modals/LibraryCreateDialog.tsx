@@ -1,5 +1,5 @@
 import { Box, Button, debounce, Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useCallback } from 'react';
+import { type KeyboardEvent, useCallback } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +20,10 @@ import type { SubmitHandler, ValidateResult } from 'react-hook-form';
 
 type FormType = LibraryFormData;
 
+interface FormEvents {
+  handleSubmitByCtrlEnter: (e: KeyboardEvent) => void;
+}
+
 /**
  * A dialog component for creating new libraries with customizable fields.
  * Provides a form interface where users can:
@@ -37,13 +41,14 @@ export const LibraryCreateDialog = () => {
 
   const formService = useDialogForm();
   const { registerField, errors, isSubmitting, dynamicFields, appendField, removeField } = formService;
-  const { handleSubmit, handleClose } = formService;
+  const { handleSubmit, handleSubmitByCtrlEnter, handleClose } = formService;
 
   const dialogProps: FormDialogProps = {
     open,
     paperSx: { minHeight: { sm: 'calc(100% - 128px)' } },
     onSubmit: handleSubmit,
     onClose: handleClose,
+    onKeyDown: handleSubmitByCtrlEnter,
   };
 
   return (
@@ -84,6 +89,7 @@ export const LibraryCreateDialog = () => {
           type='submit'
           variant='contained'
           loading={isSubmitting || titleUniqueProcessing}
+          loadingPosition='end'
           endIcon={<SaveAsOutlined />}
           children={t('common.create')}
         />
@@ -95,7 +101,7 @@ export const LibraryCreateDialog = () => {
 /**
  * A custom hook that manages the form state and operations for the Library creation dialog.
  */
-const useDialogForm = (): UseFormService<FormType> & UseFieldArrayService<FormType> => {
+const useDialogForm = (): UseFormService<FormType> & FormEvents & UseFieldArrayService<FormType> => {
   const { t } = useTranslation();
   const setOpen = useLibraryCreateFormStore((state) => state.setOpen);
 
@@ -103,14 +109,12 @@ const useDialogForm = (): UseFormService<FormType> & UseFieldArrayService<FormTy
   const validateLibraryTitle = useLibraryTitleValidationRequest();
 
   // HOOK FORM
-  const { register, formState, setError, reset, handleSubmit, control, watch, clearErrors } = useForm<FormType>({
+  const { register, formState, setError, reset, handleSubmit, control, clearErrors } = useForm<FormType>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: { title: '', fields: [{ name: '', type: 'line' }] },
   });
   const { fields, append, remove } = useFieldArray({ control, name: 'fields' });
-  console.log(fields);
-  // const watchingFields = watch('fields');
 
   const registerField = useCallback(
     (fieldName: keyof FormType, ruleName?: string) => {
@@ -164,17 +168,17 @@ const useDialogForm = (): UseFormService<FormType> & UseFieldArrayService<FormTy
       return false;
     }
 
+    clearErrors();
     reset();
     setOpen(false);
   };
 
   const handleAddNewField = () => append({ name: '', type: LibraryElementEnum.line }, { shouldFocus: true });
 
-  const onValidSubmit: SubmitHandler<LibraryFormData> = async (data) => {
+  const onValidSubmit: SubmitHandler<LibraryFormData> = async (data, event) => {
     const responseEffects: MutateOptions = {
       onSuccess: () => {
-        reset();
-        setOpen(false);
+        handleClose(event as SyntheticEvent, 'submit');
       },
       onError: (reason) => {
         setError('root.serverError', { message: `${reason.code} ${reason.message}` });
@@ -184,15 +188,26 @@ const useDialogForm = (): UseFormService<FormType> & UseFieldArrayService<FormTy
     void libraryCreateRequest.mutateAsync({ data }, responseEffects as never);
   };
 
+  const handleSubmitByCtrlEnter = (e: KeyboardEvent) => {
+    const target = e.target as HTMLInputElement;
+    if (e.code === 'Enter' && !['TEXTAREA'].includes(target.tagName)) {
+      e.preventDefault();
+    }
+    if (e.code === 'Enter' && e.ctrlKey) {
+      handleSubmit(onValidSubmit)();
+    }
+  };
+
   return {
     registerField,
     handleSubmit: handleSubmit(onValidSubmit),
     isSubmitting: libraryCreateRequest.status === 'pending',
-    dismissRootError: () => clearErrors('root'),
     errors: formState.errors,
+    dismissRootError: () => clearErrors('root'),
     handleClose,
     dynamicFields: fields,
     appendField: handleAddNewField,
     removeField: remove,
+    handleSubmitByCtrlEnter,
   };
 };

@@ -55,7 +55,7 @@ class ValidateLibraryItemNameRequest extends FormRequest
 
         // Get the metadata of a Library
         /** @var SqliteLibraryMeta $libraryTable */
-        $libraryTable = SqliteLibraryMeta::query()->find($idValidated['id'])?->firstOrFail();
+        $libraryTable = SqliteLibraryMeta::query()->findOrFail($idValidated['id']);
 
         // Prepare the name of the first field
         $libraryTableMeta = json_decode($libraryTable->meta, true);

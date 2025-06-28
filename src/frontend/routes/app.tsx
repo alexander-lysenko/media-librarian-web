@@ -1,4 +1,4 @@
-import { Button, Container, IconButton, Paper, styled, Typography } from '@mui/material';
+import { Button, Container, Paper, styled, Typography } from '@mui/material';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,8 +7,9 @@ import { shallow } from 'zustand/shallow';
 import { AppNavbar, LoadingOverlayInner } from '../components';
 import { AddCircleOutlined } from '../components/icons';
 import { LibraryDrawer } from '../components/libraryItemPrint';
-import { LibrarySelector } from '../components/nav/LibrarySelector';
 import { LibraryCreateDialog, LibraryItemDialog } from '../components/modals';
+import { FiltersPopover } from '../components/nav/FiltersPopover';
+import { LibrarySelector } from '../components/nav/LibrarySelector';
 import { LibraryTable } from '../components/tables/LibraryTable';
 import { LibrariesEmptyState } from '../components/ui/LibrariesEmptyState';
 import { LibrariesErrorState } from '../components/ui/LibrariesErrorState';
@@ -19,7 +20,6 @@ import { useLibrariesGetRequest } from '../requests/libraryRequests';
 import { useLibrariesStore, useSelectedLibraryStore } from '../store/library/useLibrariesStore';
 import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
 import { useLibraryItemFormStore } from '../store/useLibraryItemFormStore';
-import { FiltersPopover } from '../components/nav/FiltersPopover';
 
 export const Route = createFileRoute(AppRoutes.appHome)({
   component: App,

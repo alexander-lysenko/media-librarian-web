@@ -175,7 +175,7 @@ export const PosterUploadInputBox = () => {
     'https://i-a.d-cd.net/PX_ZUBJvag0Kncb8wxahJl8UAKY-1920.jpg',
   ][1];
 
-  const helperTextContent = t('Focus on the input and press Ctrl+V');
+  const helperTextContent = t('fileUpload.textInputHelperText');
 
   return (
     <Grid container spacing={1} flexGrow={1}>
@@ -228,7 +228,7 @@ export const PosterUploadInputBox = () => {
           size='small'
           margin='dense'
           fullWidth
-          placeholder={t('fileUpload.pasteUrlOrContent')}
+          placeholder={t('fileUpload.textInputPlaceholder')}
           error
           helperText={helperTextContent}
           slotProps={{

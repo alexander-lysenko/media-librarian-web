@@ -54,6 +54,7 @@ export const useLibrariesGetRequest = () => {
         break;
       }
       case 'error':
+        setLibraries([]);
         enqueueSnack({ type: 'error', message: `${error.code} ${error.message}` });
         break;
     }
@@ -96,8 +97,8 @@ export const useLibraryCreateRequest = () => {
         body: JSON.stringify(data),
       });
     },
-    onSuccess: (response) => {
-      void queryClient.invalidateQueries({ queryKey: ['get', 'libraries'], exact: true });
+    onSuccess: async (response) => {
+      await queryClient.invalidateQueries({ queryKey: ['get', 'libraries'], exact: true });
       setSelectedLibraryId(response.data.id);
       enqueueSnack({
         type: 'success',

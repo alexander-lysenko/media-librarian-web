@@ -5,6 +5,7 @@
     "internalServerError": "Произошла внутренняя ошибка сервера.",
     "logout": "Выйти из аккаунта",
     "noNewNotifications": "Тишь да гладь, ничего нового",
+    "openFiltersMenu": "Открыть меню фильтров",
     "openProfileMenu": "Открыть меню профиля",
     "profile": "Профиль",
     "uiTheme": "Тема оформления",
@@ -101,7 +102,8 @@
     "fileSizeExceed": "Размер файла превышает {{n}} MB",
     "orUseOptionsBelow": "или используйте другой вариант",
     "paste": "Вставить из буфера обмена",
-    "pasteUrlOrContent": "Вставьте URL или картинку сюда",
+    "textInputHelperText": "Кликните в это поле и нажмите Ctrl+V",
+    "textInputPlaceholder": "Вставьте URL или картинку сюда",
     "unsupportedFormat": "Неподдерживаемый Формат файла. Разрешенные форматы: {{formats}}"
   },
   "formValidation": {

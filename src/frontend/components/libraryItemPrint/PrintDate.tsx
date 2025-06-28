@@ -14,7 +14,7 @@ export const PrintDate = memo(({ format, value }: DateFieldProps) => {
   const locale = useLanguageStore((state) => state.getLanguage());
   const outputFormat: Record<DateFieldProps['format'], string> = {
     date: 'LL',
-    datetime: 'll LTS',
+    datetime: 'll HH:mm:ss',
   };
 
   return dayjs(value).locale(locale).format(outputFormat[format]) as unknown as ReactElement;
