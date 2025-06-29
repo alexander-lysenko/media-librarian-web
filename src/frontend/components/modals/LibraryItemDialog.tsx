@@ -1,13 +1,12 @@
-import { Box, Button, debounce } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import dayjs from 'dayjs';
 import { defaults, pick } from 'lodash-es';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { urlValidationPattern } from '../../core';
+import { useLibraryItemFormValidation } from '../../hooks/validations/useLibraryItemFormValidation';
 import { useLibraryItemPostRequest, useLibraryItemPutRequest } from '../../requests/libraryItemRequests';
-import { useItemTitleValidationRequest } from '../../requests/validationRequests';
 import { useSelectedLibraryStore } from '../../store/library/useLibrariesStore';
 import { useLibraryItemFormStore } from '../../store/useLibraryItemFormStore';
 import { AddCircleOutlined, ArrowDropDownOutlined, ArrowDropUpOutlined, SaveAsOutlined } from '../icons';
@@ -15,24 +14,11 @@ import { LibraryItemInputControl } from '../libraryItemInput/LibraryItemInputCon
 import { FormDialog } from '../ui/modals/FormDialog';
 import { PosterUploadInputBox } from '../ui/PosterUploadInputBox';
 
-import type {
-  FormValidationRules,
-  LibraryElement,
-  LibraryFields,
-  LibraryItemFormData,
-  LibraryItemFormValues,
-  UseFormService,
-} from '../../core/types';
+import type { LibraryElement, LibraryFields, LibraryItemFormData, LibraryItemFormValues } from '../../core/types';
 import type { FormDialogProps } from '../ui/modals/FormDialog';
 import type { MutateOptions } from '@tanstack/react-query';
 import type { KeyboardEvent, SyntheticEvent } from 'react';
-import type { Control, SubmitHandler, ValidateResult } from 'react-hook-form';
-
-type FormType = LibraryItemFormValues;
-
-interface FormEvents {
-  handleSubmitByCtrlEnter: (e: KeyboardEvent) => void;
-}
+import type { SubmitHandler } from 'react-hook-form';
 
 /**
  * Modal Dialog to Add New Item / Update Existing Item in a Library
@@ -41,19 +27,90 @@ export const LibraryItemDialog = () => {
   const { t } = useTranslation();
 
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
-  const { open, isEditMode, titleUniqueProcessing } = useLibraryItemFormStore((state) => state);
+  // const open = useLibraryItemFormStore((state) => state.open);
+  // const setOpen = useLibraryItemFormStore((state) => state.setOpen);
+  // const isEditMode = useLibraryItemFormStore((state) => state.isEditMode);
+  // const handleClose = useLibraryItemFormStore((state) => state.handleClose);
+  // const showPosterForm = useLibraryItemFormStore((state) => state.showPosterForm);
+  // const setShowPosterForm = useLibraryItemFormStore((state) => state.setShowPosterForm);
+  // const titleUniqueProcessing = useLibraryItemFormStore((state) => state.titleUniqueProcessing);
+
+  const { open, handleClose, isEditMode } = useLibraryItemFormStore((state) => state);
+  const { selectedItem, titleUniqueProcessing } = useLibraryItemFormStore((state) => state);
   const { showPosterForm, setShowPosterForm } = useLibraryItemFormStore((state) => state);
 
-  const formService = useDialogForm();
-  const { registerField, errors, isSubmitting, control } = formService;
-  const { handleSubmit, handleSubmitByCtrlEnter, handleClose } = formService;
+  const createLibraryItemRequest = useLibraryItemPostRequest();
+  const updateLibraryItemRequest = useLibraryItemPutRequest();
+
+  const isSubmitting = createLibraryItemRequest.status === 'pending' || updateLibraryItemRequest.status === 'pending';
+
+  const useHookForm = useForm<LibraryItemFormValues>({ mode: 'onBlur', reValidateMode: 'onBlur' });
+  const { register, formState, reset, handleSubmit, control, getValues } = useHookForm;
+
+  const { registerField } = useLibraryItemFormValidation(register);
+
+  const onValidSubmit: SubmitHandler<LibraryItemFormValues> = (data, event) => {
+    console.log('On valid submit', data, event);
+    const id = selectedLibrary?.id as number;
+    const item = selectedItem?.id as number;
+    const requestData: LibraryItemFormData = {
+      contents: data,
+      // poster: poster ?? "",
+    };
+
+    const responseEffects: MutateOptions = {
+      onSuccess: () => handleCloseWithReset(event as SyntheticEvent),
+    };
+
+    if (isEditMode) {
+      void updateLibraryItemRequest.mutateAsync({ id, item, data: requestData }, responseEffects as never);
+    } else {
+      void createLibraryItemRequest.mutateAsync({ id, data: requestData }, responseEffects as never);
+    }
+  };
+
+  const onInvalidSubmit = (errors: Record<string, unknown>) => {
+    console.log('On invalid submit', errors);
+    console.log(formState);
+  };
+
+  const handleSubmitByCtrlEnter = (e: KeyboardEvent) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+    if (e.code === 'Enter' && !['TEXTAREA'].includes(target.tagName)) {
+      e.preventDefault();
+    }
+    if (e.code === 'Enter' && e.ctrlKey) {
+      handleSubmit(onValidSubmit)();
+    }
+  };
+
+  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+      event.preventDefault();
+      return false;
+    }
+
+    reset();
+    handleClose();
+  };
+
+  useEffect(() => {
+    if (open) {
+      const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
+      const dataValues = pick(selectedItem, Object.keys(selectedLibrary?.fields ?? {}));
+      const formValues = defaults(dataValues, formDefaultValues);
+      console.log('Form values', formValues);
+      console.log('getValues', getValues());
+      reset(formValues, { keepDirtyValues: true });
+      // reset(formValues);
+    }
+  }, [open, reset, selectedItem, selectedLibrary]);
 
   const dialogProps: FormDialogProps = {
     open: open,
     paperSx: { minHeight: { sm: 'calc(100% - 128px)' } },
-    onSubmit: handleSubmit,
+    onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
     onKeyDown: handleSubmitByCtrlEnter,
-    keepMounted: false,
   };
 
   return (
@@ -69,7 +126,7 @@ export const LibraryItemDialog = () => {
             type={type as LibraryElement}
             label={label}
             control={control}
-            errorMessage={errors?.[label]?.message as string}
+            errorMessage={formState.errors?.[label]?.message as string}
             loadingState={index === 0 ? titleUniqueProcessing : false}
           />
         ))}
@@ -124,136 +181,4 @@ const initFormDefaultValues = (fields?: LibraryFields) => {
     return acc;
   };
   return Object.entries(fields || {}).reduce(reducer, {});
-};
-
-/**
- * A custom hook that manages the dialog form for creating or updating a Library Items.
- *
- * This hook provides functionality to handle form submission, validation, and interaction
- * with the backend for either creating or updating a library item.
- * It also handles resetting form data and managing submission states.
- */
-const useDialogForm = (): UseFormService<FormType> & FormEvents & { control: Control<FormType> } => {
-  const { t } = useTranslation();
-
-  const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
-
-  const { handleClose, selectedLibraryId, selectedItem } = useLibraryItemFormStore((state) => state);
-  const { open, isEditMode } = useLibraryItemFormStore((state) => state);
-  const { setShowPosterForm } = useLibraryItemFormStore((state) => state);
-
-  const createLibraryItemRequest = useLibraryItemPostRequest();
-  const updateLibraryItemRequest = useLibraryItemPutRequest();
-  const validateItemTitle = useItemTitleValidationRequest();
-
-  const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onBlur' });
-  const { register, formState, reset, handleSubmit, control } = useHookForm;
-
-  console.log('FormState', formState);
-  const registerField = useCallback(
-    (fieldName: keyof FormType, ruleName?: string) => {
-      const rules: Record<string, FormValidationRules<FormType, never>> = {
-        title: {
-          setValueAs: (value: string) => value?.trim(),
-          required: t('formValidation.entryTitleRequired'),
-          validate: {
-            uniqueValidation: async (value: string): Promise<ValidateResult> => {
-              return await validateItemTitle
-                .mutateAsync({ title: value, item: isEditMode ? selectedItem?.id : undefined })
-                .then((response) => response?.message)
-                .catch((error) => error.message);
-            },
-          },
-        },
-        line: {
-          setValueAs: (value: string) => (value ?? '').trim(),
-        },
-        text: {
-          setValueAs: (value: string) => (value ?? '').trim(),
-        },
-        url: {
-          setValueAs: (value: string) => (value ?? '').trim(),
-          pattern: {
-            value: urlValidationPattern,
-            message: t('formValidation.urlInvalid'),
-          },
-        },
-      };
-
-      const registerReturn = register(fieldName as never, rules[ruleName ?? fieldName]);
-
-      if (ruleName === 'title') {
-        return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
-      } else {
-        return registerReturn;
-      }
-    },
-    [isEditMode, register, selectedItem?.id, t, validateItemTitle],
-  );
-
-  const onValidSubmit: SubmitHandler<FormType> = (data, event) => {
-    console.log('On valid submit', data, event);
-    const id = selectedLibraryId as number;
-    const item = selectedItem?.id as number;
-    const requestData: LibraryItemFormData = {
-      contents: data,
-      // poster: poster ?? "",
-    };
-
-    const responseEffects: MutateOptions = {
-      onSuccess: () => handleCloseWithReset(event as SyntheticEvent),
-    };
-
-    if (isEditMode) {
-      void updateLibraryItemRequest.mutateAsync({ id, item, data: requestData }, responseEffects as never);
-    } else {
-      void createLibraryItemRequest.mutateAsync({ id, data: requestData }, responseEffects as never);
-    }
-  };
-
-  const onInvalidSubmit = (errors: Record<string, any>) => {
-    console.log('On invalid submit', errors);
-    console.log(formState);
-  };
-
-  const handleSubmitByCtrlEnter = (e: KeyboardEvent) => {
-    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-    if (e.code === 'Enter' && !['TEXTAREA'].includes(target.tagName)) {
-      e.preventDefault();
-    }
-    if (e.code === 'Enter' && e.ctrlKey) {
-      handleSubmit(onValidSubmit)();
-    }
-  };
-
-  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
-      event.preventDefault();
-      return false;
-    }
-
-    reset();
-    setShowPosterForm(false);
-    handleClose();
-  };
-
-  useEffect(() => {
-    if (open) {
-      const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
-      const dataValues = pick(selectedItem, Object.keys(selectedLibrary?.fields ?? {}));
-      const formValues = defaults(dataValues, formDefaultValues);
-      console.log('Form values', formValues);
-      reset(formValues, { keepDirtyValues: true });
-    }
-  }, [open, reset, selectedItem, selectedLibrary]);
-
-  return {
-    registerField,
-    handleSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
-    isSubmitting: createLibraryItemRequest.status === 'pending' || updateLibraryItemRequest.status === 'pending',
-    control,
-    errors: formState.errors,
-    handleClose: handleCloseWithReset,
-    handleSubmitByCtrlEnter,
-  };
 };

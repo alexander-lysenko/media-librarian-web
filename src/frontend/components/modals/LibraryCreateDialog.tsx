@@ -1,28 +1,22 @@
-import { Box, Button, debounce, Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { type KeyboardEvent, useCallback } from 'react';
+import { Box, Button, Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { type KeyboardEvent } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { LibraryElementEnum } from '../../core/enums';
+import { useLibraryCreateFormValidation } from '../../hooks/validations/useLibraryCreateFormValidation';
 import { useLibraryCreateRequest } from '../../requests/libraryRequests';
-import { useLibraryTitleValidationRequest } from '../../requests/validationRequests';
 import { useLibraryCreateFormStore } from '../../store/useLibraryCreateFormStore';
 import { AddCircleOutlined, DriveFileRenameOutlineOutlined, HourglassBottomOutlined, SaveAsOutlined } from '../icons';
 import { LibraryFieldTemplate } from '../inputs/LibraryFieldTemplate';
 import { TextInput } from '../inputs/TextInput';
 import { FormDialog } from '../ui/modals/FormDialog';
 
-import type { FormValidationRules, LibraryFormData, UseFieldArrayService, UseFormService } from '../../core/types';
+import type { LibraryFormData } from '../../core/types';
 import type { FormDialogProps } from '../ui/modals/FormDialog';
 import type { MutateOptions } from '@tanstack/react-query';
 import type { SyntheticEvent } from 'react';
-import type { SubmitHandler, ValidateResult } from 'react-hook-form';
-
-type FormType = LibraryFormData;
-
-interface FormEvents {
-  handleSubmitByCtrlEnter: (e: KeyboardEvent) => void;
-}
+import type { SubmitHandler } from 'react-hook-form';
 
 /**
  * A dialog component for creating new libraries with customizable fields.
@@ -33,133 +27,22 @@ interface FormEvents {
  */
 export const LibraryCreateDialog = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
 
   const open = useLibraryCreateFormStore((state) => state.open);
+  const setOpen = useLibraryCreateFormStore((state) => state.setOpen);
   const titleUniqueProcessing = useLibraryCreateFormStore((state) => state.titleUniqueProcessing);
 
-  const formService = useDialogForm();
-  const { registerField, errors, isSubmitting, dynamicFields, appendField, removeField } = formService;
-  const { handleSubmit, handleSubmitByCtrlEnter, handleClose } = formService;
-
-  const dialogProps: FormDialogProps = {
-    open,
-    paperSx: { minHeight: { sm: 'calc(100% - 128px)' } },
-    onSubmit: handleSubmit,
-    onClose: handleClose,
-    onKeyDown: handleSubmitByCtrlEnter,
-  };
-
-  return (
-    <FormDialog {...dialogProps}>
-      <FormDialog.Title>{t('libraryCreate.title')}</FormDialog.Title>
-      <FormDialog.Content dividers>
-        <TextInput
-          {...registerField('title')}
-          label={t('libraryCreate.libraryTitle')}
-          errorMessage={errors.title?.message as string}
-          margin='none'
-          icon={titleUniqueProcessing ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
-        />
-        <Typography variant='subtitle1' children={t('libraryCreate.fieldsSet')} mt={1} />
-        <Divider sx={{ mb: 0.5 }} />
-        {dynamicFields.map((_field, index) => {
-          return (
-            <LibraryFieldTemplate
-              key={index}
-              index={index}
-              registerField={registerField as never}
-              errors={errors}
-              onRemove={() => removeField(index)}
-            />
-          );
-        })}
-      </FormDialog.Content>
-      <FormDialog.Actions>
-        <Button
-          variant='outlined'
-          onClick={appendField as never}
-          startIcon={<AddCircleOutlined />}
-          children={fullScreen ? t('libraryCreate.field') : t('libraryCreate.addNewField')}
-        />
-        <Box flex='1 0 auto' />
-        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
-        <Button
-          type='submit'
-          variant='contained'
-          loading={isSubmitting || titleUniqueProcessing}
-          loadingPosition='end'
-          endIcon={<SaveAsOutlined />}
-          children={t('common.create')}
-        />
-      </FormDialog.Actions>
-    </FormDialog>
-  );
-};
-
-/**
- * A custom hook that manages the form state and operations for the Library creation dialog.
- */
-const useDialogForm = (): UseFormService<FormType> & FormEvents & UseFieldArrayService<FormType> => {
-  const { t } = useTranslation();
-  const setOpen = useLibraryCreateFormStore((state) => state.setOpen);
-
   const libraryCreateRequest = useLibraryCreateRequest();
-  const validateLibraryTitle = useLibraryTitleValidationRequest();
 
   // HOOK FORM
-  const { register, formState, setError, reset, handleSubmit, control, clearErrors } = useForm<FormType>({
+  const { register, formState, setError, reset, handleSubmit, control, clearErrors } = useForm<LibraryFormData>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: { title: '', fields: [{ name: '', type: 'line' }] },
   });
   const { fields, append, remove } = useFieldArray({ control, name: 'fields' });
-
-  const registerField = useCallback(
-    (fieldName: keyof FormType, ruleName?: string) => {
-      const rules: Record<string, FormValidationRules<FormType, never>> = {
-        title: {
-          setValueAs: (value: string) => value.trim(),
-          required: t('formValidation.libraryTitleRequired'),
-          validate: {
-            uniqueValidation: async (value: string): Promise<ValidateResult> => {
-              return await validateLibraryTitle
-                .mutateAsync({ title: value })
-                .then((response) => response?.message)
-                .catch((error) => error.message);
-            },
-          },
-        },
-        name: {
-          setValueAs: (value: string) => value.trim(),
-          required: t('formValidation.libraryFiledNameRequired'),
-          validate: {
-            distinct: (value: string, formValues: FormType) => {
-              const message = t('formValidation.libraryFiledNameDistinct');
-              const coincidences = formValues.fields.filter(
-                (item: { name: string; type: string }) => item.name === value,
-              );
-
-              return coincidences.length <= 1 || message;
-            },
-          },
-        },
-        type: {
-          required: true,
-        },
-      };
-
-      const registerReturn = register(fieldName as never, rules[ruleName ?? fieldName]);
-
-      if (fieldName === 'title') {
-        return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
-      } else {
-        return registerReturn;
-      }
-    },
-    [register, t, validateLibraryTitle],
-  );
+  const { registerField } = useLibraryCreateFormValidation(register);
 
   // EVENTS
   const handleClose = (event: SyntheticEvent | Event, reason?: string) => {
@@ -193,21 +76,63 @@ const useDialogForm = (): UseFormService<FormType> & FormEvents & UseFieldArrayS
     if (e.code === 'Enter' && !['TEXTAREA'].includes(target.tagName)) {
       e.preventDefault();
     }
+
     if (e.code === 'Enter' && e.ctrlKey) {
       handleSubmit(onValidSubmit)();
     }
   };
 
-  return {
-    registerField,
-    handleSubmit: handleSubmit(onValidSubmit),
-    isSubmitting: libraryCreateRequest.status === 'pending',
-    errors: formState.errors,
-    dismissRootError: () => clearErrors('root'),
-    handleClose,
-    dynamicFields: fields,
-    appendField: handleAddNewField,
-    removeField: remove,
-    handleSubmitByCtrlEnter,
+  const dialogProps: FormDialogProps = {
+    open,
+    paperSx: { minHeight: { sm: 'calc(100% - 128px)' } },
+    onSubmit: handleSubmit(onValidSubmit),
+    onClose: handleClose,
+    onKeyDown: handleSubmitByCtrlEnter,
   };
+
+  return (
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t('libraryCreate.title')}</FormDialog.Title>
+      <FormDialog.Content dividers>
+        <TextInput
+          {...registerField('title')}
+          label={t('libraryCreate.libraryTitle')}
+          errorMessage={formState.errors.title?.message as string}
+          margin='none'
+          icon={titleUniqueProcessing ? <HourglassBottomOutlined /> : <DriveFileRenameOutlineOutlined />}
+        />
+        <Typography variant='subtitle1' children={t('libraryCreate.fieldsSet')} mt={1} />
+        <Divider sx={{ mb: 0.5 }} />
+        {fields.map((_field, index) => {
+          return (
+            <LibraryFieldTemplate
+              key={index}
+              index={index}
+              registerField={registerField}
+              errors={formState.errors}
+              onRemove={() => remove(index)}
+            />
+          );
+        })}
+      </FormDialog.Content>
+      <FormDialog.Actions>
+        <Button
+          variant='outlined'
+          onClick={handleAddNewField}
+          startIcon={<AddCircleOutlined />}
+          children={fullScreen ? t('libraryCreate.field') : t('libraryCreate.addNewField')}
+        />
+        <Box flex='1 0 auto' />
+        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
+        <Button
+          type='submit'
+          variant='contained'
+          loading={libraryCreateRequest.status === 'pending' || titleUniqueProcessing}
+          loadingPosition='end'
+          endIcon={<SaveAsOutlined />}
+          children={t('common.create')}
+        />
+      </FormDialog.Actions>
+    </FormDialog>
+  );
 };

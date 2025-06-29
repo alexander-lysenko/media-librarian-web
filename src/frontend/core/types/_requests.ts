@@ -40,15 +40,12 @@ export interface HttpResponseEvents<ResponseType = never> {
   beforeSend?: () => void;
 
   /** The payload to be executed when the request is successfully fulfilled */
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   onSuccess?: (response: ResponseType) => ResponseType | void;
 
   /** The payload to be executed when the request is rejected or unsuccessfully fulfilled */
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   onReject?: (reason: ErrorResponse | never) => PromiseLike<ErrorResponse> | never | void;
 
   /** The payload to be executed when the request is failed */
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   onError?: (reason: ErrorResponse | never) => PromiseLike<ErrorResponse> | never | void;
 
   /** The payload to be executed when the request is completed regardless of its status */

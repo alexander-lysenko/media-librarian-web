@@ -14,7 +14,7 @@ import type {
 } from 'react-hook-form';
 
 export interface UseFormService<Form extends FieldValues = FieldValues> {
-  registerField: (fieldName: keyof Form, ruleName?: string) => UseFormRegisterReturn<FieldPath<Form>>;
+  registerField: (fieldName: string, ruleName?: string) => UseFormRegisterReturn<FieldPath<Form>>;
   handleSubmit: (e?: BaseSyntheticEvent) => Promise<void>;
   errors: UseFormReturn<Form>['formState']['errors'];
   isSubmitting: boolean;
@@ -33,7 +33,7 @@ export interface UseFieldArrayService<Form extends FieldValues = FieldValues> {
 
 export type FormValidationRules<
   Form extends FieldValues = FieldValues,
-  FieldName extends FieldPath<Form> = Path<Form>,
+  FieldName extends FieldPath<Form> = FieldPath<Form>,
 > = RegisterOptions<Form, FieldName>;
 
 export type RegisterCallback<Form extends FieldValues> = // prettier-ignore
