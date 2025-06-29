@@ -8,118 +8,50 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as SignupRouteImport } from './routes/signup';
+import { Route as ProfileRouteImport } from './routes/profile';
+import { Route as PasswordResetRouteImport } from './routes/password-reset';
+import { Route as LoginRouteImport } from './routes/login';
+import { Route as EmailConfirmationRouteImport } from './routes/email-confirmation';
+import { Route as AppRouteImport } from './routes/app';
+import { Route as IndexRouteImport } from './routes/index';
 
-import { Route as rootRoute } from './routes/__root';
-import { Route as SignupImport } from './routes/signup';
-import { Route as ProfileImport } from './routes/profile';
-import { Route as PasswordResetImport } from './routes/password-reset';
-import { Route as LoginImport } from './routes/login';
-import { Route as EmailConfirmationImport } from './routes/email-confirmation';
-import { Route as AppImport } from './routes/app';
-import { Route as IndexImport } from './routes/index';
-
-// Create/Update Routes
-
-const SignupRoute = SignupImport.update({
+const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const ProfileRoute = ProfileImport.update({
+const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const PasswordResetRoute = PasswordResetImport.update({
+const PasswordResetRoute = PasswordResetRouteImport.update({
   id: '/password-reset',
   path: '/password-reset',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const LoginRoute = LoginImport.update({
+const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const EmailConfirmationRoute = EmailConfirmationImport.update({
+const EmailConfirmationRoute = EmailConfirmationRouteImport.update({
   id: '/email-confirmation',
   path: '/email-confirmation',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const AppRoute = AppImport.update({
+const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/app': {
-      id: '/app';
-      path: '/app';
-      fullPath: '/app';
-      preLoaderRoute: typeof AppImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/email-confirmation': {
-      id: '/email-confirmation';
-      path: '/email-confirmation';
-      fullPath: '/email-confirmation';
-      preLoaderRoute: typeof EmailConfirmationImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/login': {
-      id: '/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof LoginImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/password-reset': {
-      id: '/password-reset';
-      path: '/password-reset';
-      fullPath: '/password-reset';
-      preLoaderRoute: typeof PasswordResetImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/profile': {
-      id: '/profile';
-      path: '/profile';
-      fullPath: '/profile';
-      preLoaderRoute: typeof ProfileImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/signup': {
-      id: '/signup';
-      path: '/signup';
-      fullPath: '/signup';
-      preLoaderRoute: typeof SignupImport;
-      parentRoute: typeof rootRoute;
-    };
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
@@ -130,7 +62,6 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute;
   '/signup': typeof SignupRoute;
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/app': typeof AppRoute;
@@ -140,9 +71,8 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute;
   '/signup': typeof SignupRoute;
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
+  __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
   '/app': typeof AppRoute;
   '/email-confirmation': typeof EmailConfirmationRoute;
@@ -151,16 +81,36 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute;
   '/signup': typeof SignupRoute;
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/app' | '/email-confirmation' | '/login' | '/password-reset' | '/profile' | '/signup';
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/email-confirmation'
+    | '/login'
+    | '/password-reset'
+    | '/profile'
+    | '/signup';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/app' | '/email-confirmation' | '/login' | '/password-reset' | '/profile' | '/signup';
-  id: '__root__' | '/' | '/app' | '/email-confirmation' | '/login' | '/password-reset' | '/profile' | '/signup';
+  to:
+    | '/'
+    | '/app'
+    | '/email-confirmation'
+    | '/login'
+    | '/password-reset'
+    | '/profile'
+    | '/signup';
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/email-confirmation'
+    | '/login'
+    | '/password-reset'
+    | '/profile'
+    | '/signup';
   fileRoutesById: FileRoutesById;
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   AppRoute: typeof AppRoute;
@@ -169,6 +119,60 @@ export interface RootRouteChildren {
   PasswordResetRoute: typeof PasswordResetRoute;
   ProfileRoute: typeof ProfileRoute;
   SignupRoute: typeof SignupRoute;
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup';
+      path: '/signup';
+      fullPath: '/signup';
+      preLoaderRoute: typeof SignupRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/profile': {
+      id: '/profile';
+      path: '/profile';
+      fullPath: '/profile';
+      preLoaderRoute: typeof ProfileRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/password-reset': {
+      id: '/password-reset';
+      path: '/password-reset';
+      fullPath: '/password-reset';
+      preLoaderRoute: typeof PasswordResetRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/login': {
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/email-confirmation': {
+      id: '/email-confirmation';
+      path: '/email-confirmation';
+      fullPath: '/email-confirmation';
+      preLoaderRoute: typeof EmailConfirmationRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/app': {
+      id: '/app';
+      path: '/app';
+      fullPath: '/app';
+      preLoaderRoute: typeof AppRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/': {
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -180,45 +184,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
 };
-
-export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/app",
-        "/email-confirmation",
-        "/login",
-        "/password-reset",
-        "/profile",
-        "/signup"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/app": {
-      "filePath": "app.tsx"
-    },
-    "/email-confirmation": {
-      "filePath": "email-confirmation.tsx"
-    },
-    "/login": {
-      "filePath": "login.tsx"
-    },
-    "/password-reset": {
-      "filePath": "password-reset.tsx"
-    },
-    "/profile": {
-      "filePath": "profile.tsx"
-    },
-    "/signup": {
-      "filePath": "signup.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>();

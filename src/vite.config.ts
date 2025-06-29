@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig, loadEnv } from 'vite';
 
 // @ts-ignore
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 
 import type { ManualChunksOption } from 'rollup';
 
@@ -29,7 +29,7 @@ export default defineConfig(({ command, mode }) => {
     publicDir: 'fake_dir_so_nothing_gets_copied',
     envDir: command === 'serve' ? '../' : './',
     plugins: [
-      TanStackRouterVite({
+      tanstackRouter({
         target: 'react',
         autoCodeSplitting: true,
         routesDirectory: './frontend/routes',
@@ -46,7 +46,7 @@ export default defineConfig(({ command, mode }) => {
       // sourcemap: true,
       outDir: 'public/build',
       rollupOptions: {
-        input: ['frontend/index.ts'],
+        input: ['./frontend/index.ts'],
         // preserveEntrySignatures: "exports-only",
         output: {
           // preserveModules: true,

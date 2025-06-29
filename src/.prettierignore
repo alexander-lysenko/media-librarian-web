@@ -1,2 +1,3 @@
 # Ignore artifacts:
 public/build
+frontend/routeTree.gen.ts

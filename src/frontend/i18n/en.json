@@ -121,6 +121,7 @@
     "passwordRepeatNotMatch": "Passwords do not match",
     "passwordRepeatRequired": "Please enter your password in this field again",
     "passwordRequired": "Password cannot be blank",
+    "unknownError": "An unknown server error occurred",
     "urlInvalid": "Seems like the value is not a valid URL address",
     "usernameMinLength": "Expected a full Personal Name (min {{n}} symbols)",
     "usernameRequired": "Personal Name is required"
