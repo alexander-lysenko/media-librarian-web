@@ -5,7 +5,6 @@ import type { LibraryItem } from '../core/types';
 interface LibraryItemFormState {
   open: boolean;
   isEditMode: boolean;
-  selectedLibraryId: number | null;
   selectedItem: LibraryItem | null;
 
   poster: string | null;
@@ -15,14 +14,13 @@ interface LibraryItemFormState {
 
   titleUniqueProcessing: boolean;
   setTitleUniqueProcessing: (value: boolean) => void;
-  handleOpen: (selectedLibraryId: number, selectedItem?: LibraryItem) => void;
+  handleOpen: (selectedItem?: LibraryItem) => void;
   handleClose: VoidFunction;
 }
 
 export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
   open: false,
   isEditMode: false,
-  selectedLibraryId: null,
   selectedItem: null,
 
   poster: null,
@@ -32,19 +30,17 @@ export const useLibraryItemFormStore = create<LibraryItemFormState>((set) => ({
 
   titleUniqueProcessing: false,
   setTitleUniqueProcessing: (value: boolean) => set({ titleUniqueProcessing: value }),
-  handleOpen: (selectedLibraryId, selectedItem = undefined) =>
+  handleOpen: (selectedItem = undefined) =>
     set({
       open: true,
-      selectedLibraryId,
       selectedItem: selectedItem ?? null,
       isEditMode: !!selectedItem,
     }),
   handleClose: () =>
     set({
       open: false,
-      selectedLibraryId: null,
       poster: null,
-      selectedItem: null,
       isEditMode: false,
+      showPosterForm: false,
     }),
 }));

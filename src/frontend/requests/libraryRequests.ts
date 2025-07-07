@@ -9,13 +9,7 @@ import { useLibrariesStore, useSelectedLibraryStore } from '../store/library/use
 import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
 import { useProfileStore } from '../store/useProfileStore';
 
-import type {
-  CreateLibraryResponse,
-  DataColumn,
-  GetLibrariesResponse,
-  LibraryFormData,
-  PatchLibraryResponse,
-} from '../core/types';
+import type { CreateLibraryResponse, GetLibrariesResponse, LibraryFormData, PatchLibraryResponse } from '../core/types';
 
 interface LibraryId {
   id: number;
@@ -26,7 +20,7 @@ interface LibraryData {
 }
 
 /**
- * Request to get the schema of all available libraries
+ * Request to get the schema of all available Libraries
  * [GET] /api/v1/libraries
  */
 export const useLibrariesGetRequest = () => {
@@ -46,9 +40,8 @@ export const useLibrariesGetRequest = () => {
     switch (status) {
       case 'success': {
         setLibraries(data);
-        const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(getSelectedLibrary()?.fields || {}).map(
-          ([label, type]) => ({ label, type }),
-        );
+        const fieldsOfSelectedLibrary = Object.entries(getSelectedLibrary()?.fields || {}) // prettier-ignore
+          .map(([label, type]) => ({ label, type }));
 
         setColumns(fieldsOfSelectedLibrary);
         break;
@@ -58,13 +51,14 @@ export const useLibrariesGetRequest = () => {
         enqueueSnack({ type: 'error', message: `${error.code} ${error.message}` });
         break;
     }
-  }, [getSelectedLibrary, data, status, setColumns, setLibraries, error]);
+  }, [setLibraries, error, status, data, getSelectedLibrary, setColumns]);
 
   return { refetch, status };
 };
 
+// noinspection JSUnusedGlobalSymbols
 /**
- * Request to get the schema of a specific library by its ID
+ * Request to get the schema of a specific Library by its ID
  * [GET] /api/v1/libraries/{id}
  */
 export const useLibraryGetRequest = (id: number) => {
@@ -80,12 +74,13 @@ export const useLibraryGetRequest = (id: number) => {
 };
 
 /**
- * Request to create a library
+ * Request to create a Library
  * [POST] /api/v1/libraries
  */
 export const useLibraryCreateRequest = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const appendLibrary = useLibrariesStore((state) => state.appendLibrary);
   const setSelectedLibraryId = useSelectedLibraryStore((state) => state.setSelectedLibraryId);
 
   const { mutateAsync, status } = useMutation({
@@ -98,12 +93,13 @@ export const useLibraryCreateRequest = () => {
       });
     },
     onSuccess: async (response) => {
-      await queryClient.invalidateQueries({ queryKey: ['get', 'libraries'], exact: true });
+      appendLibrary(response.data);
       setSelectedLibraryId(response.data.id);
       enqueueSnack({
         type: 'success',
         message: t('notifications.libraryCreated', { title: response.data.title }),
       });
+      await queryClient.invalidateQueries({ queryKey: ['get', 'libraries'], exact: true });
     },
   });
 
@@ -111,7 +107,7 @@ export const useLibraryCreateRequest = () => {
 };
 
 /**
- * Request to delete a library
+ * Request to delete a Library
  * [DELETE] /api/v1/libraries/{id}
  */
 export const useLibraryDeleteRequest = () => {
@@ -137,7 +133,7 @@ export const useLibraryDeleteRequest = () => {
 };
 
 /**
- * Request to clean a library (delete all items from a library but not the library itself)
+ * Request to clean a Library (delete all items from a Library but not the Library itself)
  * [PATCH] /api/v1/libraries/{id}
  */
 export const useLibraryCleanupRequest = () => {

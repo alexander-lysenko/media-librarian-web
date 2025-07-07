@@ -3,20 +3,19 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { useLibraryTableStore } from './useLibraryTableStore';
-
-import type { DataColumn, LibrarySchema } from '../../core/types';
+import type { LibrarySchema } from '../../core/types';
 
 interface LibraryState {
   libraries: LibrarySchema[];
   setLibraries: (libraries: LibrarySchema[]) => void;
+  appendLibrary: (library: LibrarySchema) => void;
 }
 
 interface SelectedLibraryState {
   selectedLibraryId: number;
-  getSelectedLibrary: () => LibrarySchema | undefined;
-  getSelectedLibraryId: () => number;
   setSelectedLibraryId: (selectedLibraryId: number) => void;
+
+  getSelectedLibrary: () => LibrarySchema | undefined;
 }
 
 /**
@@ -25,6 +24,10 @@ interface SelectedLibraryState {
 export const useLibrariesStore = create<LibraryState>((set) => ({
   libraries: [],
   setLibraries: (libraries) => set({ libraries }),
+  appendLibrary: (library) =>
+    set((state) => {
+      return { libraries: [...state.libraries, library] };
+    }),
 }));
 
 /**
@@ -36,31 +39,24 @@ export const useSelectedLibraryStore = create<SelectedLibraryState>()(
     (set, get) => ({
       selectedLibraryId: 0,
       setSelectedLibraryId: (selectedLibraryId) => {
-        const libraries = useLibrariesStore.getState().libraries;
-        const selectedLibrary = libraries.find((item: LibrarySchema): boolean => item.id === selectedLibraryId);
-
         set({ selectedLibraryId });
-
-        // Auto-select columns of the newly selected Library
-        if (selectedLibrary) {
-          const fieldsOfSelectedLibrary: DataColumn[] = Object.entries(selectedLibrary.fields || {}).map(
-            ([label, type]) => ({ label, type }),
-          );
-          useLibraryTableStore.getState().setColumns(fieldsOfSelectedLibrary);
-        }
       },
 
-      getSelectedLibraryId: () => {
-        const libraries = useLibrariesStore.getState().libraries;
-        const storedId = get().selectedLibraryId;
-
-        return libraries.find((item: LibrarySchema): boolean => item.id === storedId)?.id ?? libraries[0]?.id ?? 0;
-      },
       getSelectedLibrary: (): LibrarySchema | undefined => {
         const libraries = useLibrariesStore.getState().libraries;
         const selectedId = get().selectedLibraryId;
 
-        return libraries.find((item: LibrarySchema): boolean => item.id === selectedId) ?? libraries[0];
+        if (libraries.length === 0) return undefined;
+
+        const library = libraries.find((item: LibrarySchema): boolean => item.id === selectedId) ?? libraries[0];
+        if (libraries.length && !!selectedId && library.id !== selectedId) {
+          // eslint-disable-next-line no-console
+          console.warn('Previously selected library was not found, so the first one has been selected.');
+
+          // set({ selectedLibraryId: library.id });
+        }
+
+        return library;
       },
     }),
     {

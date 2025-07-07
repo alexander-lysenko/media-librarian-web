@@ -1,6 +1,6 @@
 import { Button, Container, Paper, styled, Typography } from '@mui/material';
 import { createFileRoute } from '@tanstack/react-router';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { shallow } from 'zustand/shallow';
 
@@ -19,6 +19,7 @@ import { useLibraryAllItemsGetRequest } from '../requests/libraryItemRequests';
 import { useLibrariesGetRequest } from '../requests/libraryRequests';
 import { useLibrariesStore, useSelectedLibraryStore } from '../store/library/useLibrariesStore';
 import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
+import { useLibraryCreateFormStore } from '../store/useLibraryCreateFormStore';
 import { useLibraryItemFormStore } from '../store/useLibraryItemFormStore';
 
 export const Route = createFileRoute(AppRoutes.appHome)({
@@ -37,19 +38,13 @@ function App() {
   const libraries = useLibrariesStore((state) => state.libraries);
   const initSelectedLibraryId = useSelectedLibraryStore((state) => state.selectedLibraryId);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
+
+  const isLibraryDialogOpen = useLibraryCreateFormStore((state) => state.open);
+  const isItemDialogOpen = useLibraryItemFormStore((state) => state.open);
   const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
 
   const requestLibraries = useLibrariesGetRequest();
   const requestItems = useLibraryAllItemsGetRequest();
-
-  const handleItemCreate = useCallback(() => {
-    const selectedLibraryId = getSelectedLibrary()?.id;
-    if (!selectedLibraryId) {
-      return false;
-    }
-
-    openItemDialog(selectedLibraryId);
-  }, [getSelectedLibrary, openItemDialog]);
 
   useEffect(() => {
     if (initSelectedLibraryId === 0) {
@@ -81,7 +76,7 @@ function App() {
             type='button'
             variant='contained'
             startIcon={<AddCircleOutlined />}
-            onClick={handleItemCreate}
+            onClick={() => openItemDialog()}
             disabled={!getSelectedLibrary()?.id}
             children={t('libraryItem.title.create')}
           />
@@ -99,8 +94,8 @@ function App() {
         </Paper>
       </Container>
       <LibraryDrawer />
-      <LibraryItemDialog />
-      <LibraryCreateDialog />
+      {isItemDialogOpen && <LibraryItemDialog />}
+      {isLibraryDialogOpen && <LibraryCreateDialog />}
     </>
   );
 }
