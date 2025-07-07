@@ -1,5 +1,6 @@
 import { Divider, Grid, IconButton, ListItemIcon, Menu, MenuItem, Paper, Typography } from '@mui/material';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useLibrariesStore, useSelectedLibraryStore } from '../../store/library/useLibrariesStore';
 import { useLibraryCreateFormStore } from '../../store/useLibraryCreateFormStore';
@@ -9,6 +10,8 @@ import type { MenuProps } from '@mui/material';
 import type { MouseEvent } from 'react';
 
 export const LibrarySelector = () => {
+  const { t } = useTranslation();
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const libraries = useLibrariesStore((state) => state.libraries);
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
@@ -77,7 +80,7 @@ export const LibrarySelector = () => {
           <ListItemIcon>
             <CreateNewFolderOutlined />
           </ListItemIcon>
-          {'New Library'}
+          {t('myLibraries.createLibrary')}
         </MenuItem>
       </Menu>
     </Paper>

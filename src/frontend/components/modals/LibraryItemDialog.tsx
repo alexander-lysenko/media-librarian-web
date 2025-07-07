@@ -47,7 +47,7 @@ export const LibraryItemDialog = () => {
   const useHookForm = useForm<LibraryItemFormValues>({ mode: 'onBlur', reValidateMode: 'onBlur' });
   const { register, formState, reset, handleSubmit, control, getValues } = useHookForm;
 
-  const { registerField } = useLibraryItemFormValidation(register);
+  const { registerField } = useLibraryItemFormValidation(register, selectedItem?.id);
 
   const onValidSubmit: SubmitHandler<LibraryItemFormValues> = (data, event) => {
     console.log('On valid submit', data, event);
