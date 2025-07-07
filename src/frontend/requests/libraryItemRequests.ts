@@ -40,6 +40,7 @@ export const useLibraryAllItemsGetRequest = () => {
       return createFetch({
         url: bindPathParams(libraryItemsEndpoint, { id: selectedLibraryId as number }),
         method: 'GET',
+        cache: 'no-cache',
       });
     },
   });

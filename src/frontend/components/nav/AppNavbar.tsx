@@ -1,6 +1,7 @@
-import { AppBar, Box, Container, Toolbar, useScrollTrigger } from '@mui/material';
+import { AppBar, Box, Container, Skeleton, Toolbar, useScrollTrigger } from '@mui/material';
 import { cloneElement } from 'react';
 
+import { useProfileGetRequest } from '../../requests/profileRequests';
 import { AppLogo } from '../ui/AppLogo';
 import { NavbarProfiler } from './NavbarProfiler';
 import { NotificationsPopover } from './NotificationsPopover';
@@ -17,6 +18,8 @@ interface Props {
  * @constructor
  */
 export const AppNavbar = ({ children }: { children?: ReactNode }) => {
+  const request = useProfileGetRequest();
+
   return (
     <>
       <ElevationScroll>
@@ -29,7 +32,7 @@ export const AppNavbar = ({ children }: { children?: ReactNode }) => {
                 {children}
               </Box>
               <NotificationsPopover />
-              <NavbarProfiler />
+              {request.status === 'success' ? <NavbarProfiler /> : <ProfileSkeleton />}
             </Toolbar>
           </Container>
         </AppBar>
@@ -47,4 +50,8 @@ const ElevationScroll = (props: Props) => {
   });
 
   return cloneElement(children, { elevation: trigger ? 4 : 0 });
+};
+
+const ProfileSkeleton = () => {
+  return <Skeleton variant='circular' width={40} height={40} sx={{ ml: 1 }} />;
 };

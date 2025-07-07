@@ -31,7 +31,7 @@ export const useLibraryItemActions = () => {
       return false;
     }
 
-    useLibraryItemFormStore.getState().handleOpen(selectedLibraryId);
+    useLibraryItemFormStore.getState().handleOpen();
   }, [getSelectedLibrary]);
 
   /**
@@ -47,7 +47,7 @@ export const useLibraryItemActions = () => {
       { id: selectedLibraryId, item: selectedItemId },
       {
         onSuccess: (response) => {
-          useLibraryItemFormStore.getState().handleOpen(selectedLibraryId, response.item);
+          useLibraryItemFormStore.getState().handleOpen(response.item);
         },
       },
     );

@@ -53,6 +53,21 @@ function App() {
   }, [getSelectedLibrary, initSelectedLibraryId, t]);
 
   useEffect(() => {
+    const unsubscribe = useSelectedLibraryStore.subscribe(
+      (state) => [state.selectedLibraryId],
+      () => {
+        const fieldsOfSelectedLibrary = Object.entries(getSelectedLibrary()?.fields || {}) // prettier-ignore
+          .map(([label, type]) => ({ label, type }));
+        useLibraryTableStore.setState({ columns: fieldsOfSelectedLibrary, page: 0, sort: undefined });
+      },
+      { equalityFn: shallow },
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, [getSelectedLibrary]);
+
+  useEffect(() => {
     const unsubscribe = useLibraryTableStore.subscribe(
       (state) => [state.sort, state.page, state.rowsPerPage],
       () => requestItems.refetch(),

@@ -1,7 +1,7 @@
 // noinspection IdentifierGrammar
 
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { createJSONStorage, persist, subscribeWithSelector } from 'zustand/middleware';
 
 import type { LibrarySchema } from '../../core/types';
 
@@ -35,33 +35,35 @@ export const useLibrariesStore = create<LibraryState>((set) => ({
  * Includes the payload to store/restore the ID of the selected Library using local storage
  */
 export const useSelectedLibraryStore = create<SelectedLibraryState>()(
-  persist(
-    (set, get) => ({
-      selectedLibraryId: 0,
-      setSelectedLibraryId: (selectedLibraryId) => {
-        set({ selectedLibraryId });
+  subscribeWithSelector(
+    persist(
+      (set, get) => ({
+        selectedLibraryId: 0,
+        setSelectedLibraryId: (selectedLibraryId) => {
+          set({ selectedLibraryId });
+        },
+
+        getSelectedLibrary: (): LibrarySchema | undefined => {
+          const libraries = useLibrariesStore.getState().libraries;
+          const selectedId = get().selectedLibraryId;
+
+          if (libraries.length === 0) return undefined;
+
+          const library = libraries.find((item: LibrarySchema): boolean => item.id === selectedId) ?? libraries[0];
+          if (libraries.length && !!selectedId && library.id !== selectedId) {
+            // eslint-disable-next-line no-console
+            console.warn('Previously selected library was not found, so the first one has been selected.');
+
+            // set({ selectedLibraryId: library.id });
+          }
+
+          return library;
+        },
+      }),
+      {
+        name: 'selectedLibrary', // unique name
+        storage: createJSONStorage(() => localStorage),
       },
-
-      getSelectedLibrary: (): LibrarySchema | undefined => {
-        const libraries = useLibrariesStore.getState().libraries;
-        const selectedId = get().selectedLibraryId;
-
-        if (libraries.length === 0) return undefined;
-
-        const library = libraries.find((item: LibrarySchema): boolean => item.id === selectedId) ?? libraries[0];
-        if (libraries.length && !!selectedId && library.id !== selectedId) {
-          // eslint-disable-next-line no-console
-          console.warn('Previously selected library was not found, so the first one has been selected.');
-
-          // set({ selectedLibraryId: library.id });
-        }
-
-        return library;
-      },
-    }),
-    {
-      name: 'selectedLibrary', // unique name
-      storage: createJSONStorage(() => localStorage),
-    },
+    ),
   ),
 );
