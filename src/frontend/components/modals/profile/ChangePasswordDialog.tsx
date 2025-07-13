@@ -26,6 +26,7 @@ export const ChangePasswordDialog = () => {
   const { registerField, handleSubmit, handleClose, isSubmitting, dismissRootError, errors } = useDialogForm();
 
   const dialogProps: FormDialogProps = {
+    id: 'change-password',
     open: open,
     maxWidth: 'xs',
     fullScreen: false,

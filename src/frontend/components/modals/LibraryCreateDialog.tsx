@@ -30,7 +30,7 @@ export const LibraryCreateDialog = () => {
   const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
 
   const open = useLibraryCreateFormStore((state) => state.open);
-  const setOpen = useLibraryCreateFormStore((state) => state.setOpen);
+  const closeDialog = useLibraryCreateFormStore((state) => state.handleClose);
   const titleUniqueProcessing = useLibraryCreateFormStore((state) => state.titleUniqueProcessing);
 
   const libraryCreateRequest = useLibraryCreateRequest();
@@ -53,7 +53,7 @@ export const LibraryCreateDialog = () => {
 
     clearErrors();
     reset();
-    setOpen(false);
+    closeDialog();
   };
 
   const handleAddNewField = () => append({ name: '', type: LibraryElementEnum.line }, { shouldFocus: true });
@@ -77,12 +77,13 @@ export const LibraryCreateDialog = () => {
       e.preventDefault();
     }
 
-    if (e.code === 'Enter' && e.ctrlKey) {
+    if (e.code === 'Enter' && (e.ctrlKey || e.metaKey)) {
       handleSubmit(onValidSubmit)();
     }
   };
 
   const dialogProps: FormDialogProps = {
+    id: 'create-library',
     open,
     paperSx: { minHeight: { sm: 'calc(100% - 128px)' } },
     onSubmit: handleSubmit(onValidSubmit),

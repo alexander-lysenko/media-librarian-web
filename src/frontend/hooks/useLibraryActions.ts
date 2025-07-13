@@ -13,13 +13,11 @@ import type { LibraryFormData } from '../core/types';
 
 export const useLibraryActions = () => {
   const { t } = useTranslation();
-  const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
+  const openLibraryDialog = useLibraryCreateFormStore((state) => state.handleOpen);
 
   const libraryCreateRequest = useLibraryCreateRequest();
   const libraryDeleteRequest = useLibraryDeleteRequest();
   const libraryCleanupRequest = useLibraryCleanupRequest();
-
-  const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
 
   const handleCreateLibrary = useCallback((data: LibraryFormData) => {}, []);
 
@@ -59,7 +57,7 @@ export const useLibraryActions = () => {
     createLibrary: handleCreateLibrary,
     cleanupLibrary: handleCleanupLibrary,
     deleteLibrary: handleDeleteLibrary,
-    openLibraryForm: handleOpenLibraryDialog,
+    openLibraryForm: openLibraryDialog,
     isLibraryCreating: libraryCreateRequest.status === 'pending',
   };
 };

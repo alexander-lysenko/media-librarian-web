@@ -19,7 +19,6 @@ import { useLibraryAllItemsGetRequest } from '../requests/libraryItemRequests';
 import { useLibrariesGetRequest } from '../requests/libraryRequests';
 import { useLibrariesStore, useSelectedLibraryStore } from '../store/library/useLibrariesStore';
 import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
-import { useLibraryCreateFormStore } from '../store/useLibraryCreateFormStore';
 import { useLibraryItemFormStore } from '../store/useLibraryItemFormStore';
 
 export const Route = createFileRoute(AppRoutes.appHome)({
@@ -39,8 +38,6 @@ function App() {
   const initSelectedLibraryId = useSelectedLibraryStore((state) => state.selectedLibraryId);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
 
-  const isLibraryDialogOpen = useLibraryCreateFormStore((state) => state.open);
-  const isItemDialogOpen = useLibraryItemFormStore((state) => state.open);
   const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
 
   const requestLibraries = useLibrariesGetRequest();
@@ -109,8 +106,8 @@ function App() {
         </Paper>
       </Container>
       <LibraryDrawer />
-      {isItemDialogOpen && <LibraryItemDialog />}
-      {isLibraryDialogOpen && <LibraryCreateDialog />}
+      <LibraryItemDialog />
+      <LibraryCreateDialog />
     </>
   );
 }

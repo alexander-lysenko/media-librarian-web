@@ -36,7 +36,7 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
   const { handleSubmit, handleClose } = formService;
 
   return (
-    <FormDialog open={open} fullWidth onSubmit={handleSubmit} onClose={handleClose}>
+    <FormDialog id='password-recover' open={open} fullWidth onSubmit={handleSubmit} onClose={handleClose}>
       <FormDialog.Title>{t('passwordRecovery.title')}</FormDialog.Title>
       <FormDialog.Content>
         <FormDialog.Subtitle>{t('passwordRecovery.subtitle')}</FormDialog.Subtitle>

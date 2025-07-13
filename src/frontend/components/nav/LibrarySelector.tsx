@@ -16,7 +16,7 @@ export const LibrarySelector = () => {
   const libraries = useLibrariesStore((state) => state.libraries);
   const selectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary());
   const setSelectedLibraryId = useSelectedLibraryStore((state) => state.setSelectedLibraryId);
-  const setDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
+  const openLibraryDialog = useLibraryCreateFormStore((state) => state.handleOpen);
 
   const handleItemClick = (_: MouseEvent<HTMLElement>, id: number) => {
     setAnchorEl(null);
@@ -29,7 +29,7 @@ export const LibrarySelector = () => {
 
   const handleCreate = () => {
     setAnchorEl(null);
-    setDialogOpen(true);
+    openLibraryDialog();
   };
 
   const menuProps: MenuProps = {

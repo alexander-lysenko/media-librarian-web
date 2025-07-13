@@ -30,6 +30,7 @@ export const ChangeUsernameDialog = () => {
   const { registerField, handleSubmit, handleClose, isSubmitting, errors } = useDialogForm();
 
   const dialogProps: FormDialogProps = {
+    id: 'change-username',
     open: open,
     maxWidth: 'xs',
     fullScreen: false,

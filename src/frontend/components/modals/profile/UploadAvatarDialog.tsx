@@ -42,7 +42,9 @@ export const UploadAvatarDialog = () => {
 
   const resetAvatar = () => {
     setAvatar(profile.user.avatar);
-    (hiddenFileInputRef.current as HTMLInputElement).value = '';
+    if (hiddenFileInputRef.current) {
+      (hiddenFileInputRef.current as HTMLInputElement).value = '';
+    }
   };
 
   const handleClose = (event: SyntheticEvent) => {
@@ -101,6 +103,7 @@ export const UploadAvatarDialog = () => {
   };
 
   const dialogProps: FormDialogProps = {
+    id: 'upload-avatar',
     open: open,
     fullWidth: true,
     maxWidth: 'xs',

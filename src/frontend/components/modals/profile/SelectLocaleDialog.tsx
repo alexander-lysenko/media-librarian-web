@@ -34,7 +34,7 @@ export const SelectLocaleDialog = () => {
     setOpen(false);
   };
 
-  const handleItemClick = (locale: Language) => {
+  const handleItemClick = (event: SyntheticEvent, locale: Language) => {
     void profileUpdateRequest.mutateAsync(
       { locale },
       {
@@ -43,7 +43,7 @@ export const SelectLocaleDialog = () => {
           enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
         },
         onSettled: () => {
-          setOpen(false);
+          handleClose(event);
         },
       },
     );
@@ -54,7 +54,7 @@ export const SelectLocaleDialog = () => {
       <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeLocaleDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(languages).map(([key, label]) => (
-          <ListItemButton key={key} disabled={loading} onClick={() => handleItemClick(key as Language)}>
+          <ListItemButton key={key} disabled={loading} onClick={(e) => handleItemClick(e, key as Language)}>
             <ListItemAvatar>
               <Avatar>{key}</Avatar>
             </ListItemAvatar>

@@ -79,7 +79,7 @@ export const LibraryItemDialog = () => {
     if (e.code === 'Enter' && !['TEXTAREA'].includes(target.tagName)) {
       e.preventDefault();
     }
-    if (e.code === 'Enter' && e.ctrlKey) {
+    if (e.code === 'Enter' && (e.ctrlKey || e.metaKey)) {
       handleSubmit(onValidSubmit)();
     }
   };
@@ -99,18 +99,17 @@ export const LibraryItemDialog = () => {
       const formDefaultValues = initFormDefaultValues(selectedLibrary?.fields);
       const dataValues = pick(selectedItem, Object.keys(selectedLibrary?.fields ?? {}));
       const formValues = defaults(dataValues, formDefaultValues);
-      console.log('Form values', formValues);
-      console.log('getValues', getValues());
       reset(formValues, { keepDirtyValues: true });
-      // reset(formValues);
     }
-  }, [open, reset, selectedItem, selectedLibrary]);
+  }, [getValues, open, reset, selectedItem, selectedLibrary]);
 
   const dialogProps: FormDialogProps = {
+    id: selectedItem?.id ? 'edit-item' : 'create-item',
     open: open,
     paperSx: { minHeight: { sm: 'calc(100% - 128px)' } },
     onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
     onKeyDown: handleSubmitByCtrlEnter,
+    onClose: handleCloseWithReset,
   };
 
   return (

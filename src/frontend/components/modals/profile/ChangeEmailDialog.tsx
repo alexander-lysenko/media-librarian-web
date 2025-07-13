@@ -32,6 +32,7 @@ export const ChangeEmailDialog = () => {
   const { registerField, handleSubmit, handleClose, isSubmitting, dismissRootError, errors } = useDialogForm();
 
   const dialogProps: FormDialogProps = {
+    id: 'change-email',
     open: open,
     maxWidth: 'xs',
     fullScreen: false,

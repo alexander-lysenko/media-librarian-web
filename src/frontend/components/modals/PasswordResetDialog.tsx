@@ -33,6 +33,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const { registerField, handleSubmit, handleClose, errors, dismissRootError, isSubmitting } = formService;
 
   const dialogProps: FormDialogProps = {
+    id: 'password-reset',
     open: open,
     onSubmit: handleSubmit,
     onClose: handleClose,

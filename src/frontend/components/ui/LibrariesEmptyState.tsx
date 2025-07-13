@@ -6,8 +6,7 @@ import { InboxOutlined } from '../icons';
 
 export const LibrariesEmptyState = () => {
   const { t } = useTranslation();
-  const setLibraryDialogOpen = useLibraryCreateFormStore((state) => state.setOpen);
-  const handleOpenLibraryDialog = () => setLibraryDialogOpen(true);
+  const openLibraryDialog = useLibraryCreateFormStore((state) => state.handleOpen);
 
   return (
     <Wrapper sx={{ p: 2 }}>
@@ -15,7 +14,7 @@ export const LibrariesEmptyState = () => {
       <Typography variant='body2' textAlign='center' sx={{ mb: 1.5 }}>
         {t('myLibraries.noLibraries')}
       </Typography>
-      <Button variant='outlined' children={t('myLibraries.createLibrary')} onClick={handleOpenLibraryDialog} />
+      <Button variant='outlined' children={t('myLibraries.createLibrary')} onClick={openLibraryDialog} />
     </Wrapper>
   );
 };

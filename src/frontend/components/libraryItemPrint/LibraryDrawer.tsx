@@ -1,6 +1,6 @@
 import { Box, Container, Divider, Drawer, IconButton, styled } from '@mui/material';
 import { BottomNavigation, BottomNavigationAction, List, ListItem, ListItemText } from '@mui/material';
-import { memo, useEffect } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useLibraryItemActions } from '../../hooks';
@@ -31,14 +31,20 @@ export const LibraryDrawer = () => {
 
   const { handleItemEdit, handleItemDelete } = useLibraryItemActions();
 
-  const handleClose = (event: KeyboardEvent | MouseEvent) => {
-    if (event.type === 'keydown' && ['Tab', 'Shift'].includes((event as KeyboardEvent).key)) {
-      return;
-    }
+  const handleClose = useCallback(
+    (event: KeyboardEvent | MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-    setOpen(false);
-    setSelectedItemId(null);
-  };
+      if (event.type === 'keydown' && ['Tab', 'Shift'].includes((event as KeyboardEvent).key)) {
+        return;
+      }
+
+      setOpen(false);
+      setSelectedItemId(null);
+    },
+    [setOpen, setSelectedItemId],
+  );
 
   useEffect(() => {
     const handleEscapeClose = (event: KeyboardEvent) => {

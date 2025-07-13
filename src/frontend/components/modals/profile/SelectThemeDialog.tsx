@@ -46,7 +46,7 @@ export const SelectThemeDialog = () => {
     setOpen(false);
   };
 
-  const handleItemClick = (theme: PaletteMode) => {
+  const handleItemClick = (event: SyntheticEvent, theme: PaletteMode) => {
     void profileUpdateRequest.mutateAsync(
       { theme },
       {
@@ -55,7 +55,7 @@ export const SelectThemeDialog = () => {
           enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
         },
         onSettled: () => {
-          setOpen(false);
+          handleClose(event);
         },
       },
     );
@@ -66,7 +66,7 @@ export const SelectThemeDialog = () => {
       <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeThemeDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(colors).map(([key, color]) => (
-          <ListItemButton key={key} disabled={loading} onClick={() => handleItemClick(key as PaletteMode)}>
+          <ListItemButton key={key} disabled={loading} onClick={(e) => handleItemClick(e, key as PaletteMode)}>
             <ListItemAvatar>
               <Avatar sx={{ backgroundColor: color.background, color: color.highlight }}>
                 <ImageOutlined />

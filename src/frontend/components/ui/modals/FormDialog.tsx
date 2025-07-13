@@ -3,18 +3,25 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  type DialogContentTextProps,
   DialogTitle,
   Grow,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { type FormEventHandler, type KeyboardEventHandler } from 'react';
 
-import type { DialogActionsProps, DialogContentProps, DialogProps, DialogTitleProps, ModalProps } from '@mui/material';
+import type {
+  DialogActionsProps,
+  DialogContentProps,
+  DialogContentTextProps,
+  DialogProps,
+  DialogTitleProps,
+  ModalProps,
+} from '@mui/material';
 import type { SxProps } from '@mui/system';
-import type { FormEventHandler, KeyboardEventHandler } from 'react';
 
 export interface FormDialogProps extends DialogProps {
+  id: string;
   onSubmit: FormEventHandler<HTMLDivElement>;
   onClose?: ModalProps['onClose'];
   paperSx?: SxProps;
