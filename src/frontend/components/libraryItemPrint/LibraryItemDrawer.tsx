@@ -4,6 +4,7 @@ import { memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useLibraryItemActions } from '../../hooks';
+import { useCloseOnPopState } from '../../hooks/useCloseOnPopState';
 import { usePreviewDrawerStore } from '../../store/app/usePreviewDrawerStore';
 import { useLibraryTableStore } from '../../store/library/useLibraryTableStore';
 import { CloseOutlined, DeleteOutlined, EditNoteOutlined } from '../icons';
@@ -20,7 +21,7 @@ import type { MouseEventHandler, ReactElement } from 'react';
 /**
  * A right-side drawer displaying the entire item selected from a Library
  */
-export const LibraryDrawer = () => {
+export const LibraryItemDrawer = () => {
   const { t } = useTranslation();
 
   const { open, setOpen, selectedItemId, setSelectedItemId } = usePreviewDrawerStore();
@@ -57,6 +58,8 @@ export const LibraryDrawer = () => {
 
     return () => window.removeEventListener('keydown', handleEscapeClose);
   }, [setOpen, setSelectedItemId]);
+
+  useCloseOnPopState({ id: 'library-item-drawer', open, onClose: handleClose as never });
 
   const drawerProps: DrawerProps = {
     open,

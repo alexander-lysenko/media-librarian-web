@@ -1,4 +1,4 @@
-export { LibraryDrawer } from './LibraryDrawer';
+export { LibraryItemDrawer } from './LibraryItemDrawer';
 export { PosterBox } from './PosterBox';
 export { PrintDate } from './PrintDate';
 export { PrintPriority } from './PrintPriority';

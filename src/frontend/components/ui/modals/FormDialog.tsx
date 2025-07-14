@@ -1,12 +1,12 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from '@mui/material';
 import { useMediaQuery, useTheme } from '@mui/material';
-import { type FormEventHandler, type KeyboardEventHandler, type SyntheticEvent } from 'react';
 
 import { useCloseOnPopState } from '../../../hooks/useCloseOnPopState';
 
 import type { DialogActionsProps, DialogContentProps, DialogContentTextProps, DialogTitleProps } from '@mui/material';
 import type { DialogProps } from '@mui/material';
 import type { SxProps } from '@mui/system';
+import type { FormEventHandler, KeyboardEventHandler, SyntheticEvent } from 'react';
 
 export interface FormDialogProps extends DialogProps {
   id: string;
@@ -16,11 +16,13 @@ export interface FormDialogProps extends DialogProps {
   onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
 }
 
-const DialogWrapper = ({ children, onClose, onSubmit, onKeyDown, paperSx, ...props }: FormDialogProps) => {
+const DialogWrapper = ({ open, onClose, onSubmit, onKeyDown, paperSx, ...props }: FormDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  useCloseOnPopState({ id: props.id, open, onClose: onClose as never });
 
   const dialogProps: DialogProps = {
+    open: open,
     fullScreen: props.fullScreen ?? fullScreen,
     fullWidth: true,
     scroll: 'paper',
@@ -39,11 +41,9 @@ const DialogWrapper = ({ children, onClose, onSubmit, onKeyDown, paperSx, ...pro
     ...props,
   };
 
-  const { onCloseWithPopstate } = useCloseOnPopState({ id: props.id, open, onClose: onClose });
-
   return (
-    <Dialog {...dialogProps} onClose={onCloseWithPopstate}>
-      {children}
+    <Dialog {...dialogProps} onClose={onClose}>
+      {props.children}
     </Dialog>
   );
 };

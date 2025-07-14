@@ -52,9 +52,6 @@ export const useProfilePatchRequest = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['get', 'profile'] });
     },
-    onError: (reason) => {
-      enqueueSnack({ message: reason.message, type: 'error' });
-    },
   });
 
   return { mutateAsync, status, data, error };

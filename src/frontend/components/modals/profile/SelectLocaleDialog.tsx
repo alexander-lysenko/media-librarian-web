@@ -42,6 +42,9 @@ export const SelectLocaleDialog = () => {
           setLanguage(response.user.locale);
           enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
         },
+        onError: (reason) => {
+          enqueueSnack({ message: reason.message, type: 'error' });
+        },
         onSettled: () => {
           handleClose(event);
         },
@@ -50,7 +53,7 @@ export const SelectLocaleDialog = () => {
   };
 
   return (
-    <SimpleDialog id='select-locale-dialog' open={open} onClose={handleClose}>
+    <SimpleDialog id='select-locale' open={open} onClose={handleClose}>
       <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeLocaleDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(languages).map(([key, label]) => (

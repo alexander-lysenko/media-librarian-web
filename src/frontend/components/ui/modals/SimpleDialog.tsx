@@ -12,6 +12,8 @@ export interface SimpleDialogProps extends DialogProps {
 }
 
 const DialogWrapper = ({ open, children, onClose, ...props }: SimpleDialogProps) => {
+  useCloseOnPopState({ id: props.id, open, onClose: onClose as never });
+
   const dialogProps: DialogProps = {
     open: open,
     fullWidth: true,
@@ -22,10 +24,8 @@ const DialogWrapper = ({ open, children, onClose, ...props }: SimpleDialogProps)
     ...props,
   };
 
-  const { onCloseWithPopstate } = useCloseOnPopState({ id: props.id, open, onClose: onClose });
-
   return (
-    <Dialog {...dialogProps} onClose={onCloseWithPopstate}>
+    <Dialog {...dialogProps} onClose={onClose}>
       {children}
     </Dialog>
   );

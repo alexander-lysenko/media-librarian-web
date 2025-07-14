@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, debounce, TextField, useMediaQuery, useTheme } from '@mui/material';
+import { Alert, Box, Button, Collapse, TextField, useMediaQuery, useTheme } from '@mui/material';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -13,8 +13,6 @@ import type { FormValidationRules, PasswordResetFormData } from '../../core/type
 import type { FormDialogProps } from '../ui/modals/FormDialog';
 import type { SyntheticEvent } from 'react';
 import type { FieldValues, SubmitHandler } from 'react-hook-form';
-
-type FormType = PasswordResetFormData;
 
 interface Props {
   open: boolean;
@@ -31,7 +29,6 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
 
   const queryParams = new URLSearchParams(location.search);
   const passwordResetRequest = usePasswordResetRequest();
-  const isSubmitting = passwordResetRequest.status === 'pending';
 
   const useHookForm = useForm<PasswordResetFormData>({
     mode: 'onBlur',
@@ -49,8 +46,8 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const { errors } = formState;
 
   const registerField = useCallback(
-    (fieldName: keyof FormType, ruleName?: string) => {
-      const rules: Record<string, FormValidationRules<FormType>> = {
+    (fieldName: string) => {
+      const rules: Record<string, FormValidationRules> = {
         email: {
           required: true,
         },
@@ -82,13 +79,7 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
         },
       };
 
-      const registerReturn = register(fieldName as never, rules[ruleName ?? fieldName]);
-
-      if (fieldName === 'title') {
-        return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
-      } else {
-        return registerReturn;
-      }
+      return register(fieldName, rules[fieldName]);
     },
     [getFieldState, register, t, trigger],
   );
@@ -163,7 +154,8 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
           type='submit'
           variant='contained'
           fullWidth={fullScreen}
-          loading={isSubmitting}
+          loading={passwordResetRequest.status === 'pending'}
+          loadingPosition='end'
           endIcon={<LockReset />}
           children={t('common.save')}
         />

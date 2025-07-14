@@ -54,6 +54,9 @@ export const SelectThemeDialog = () => {
           setThemeMode(response.user.theme as PaletteMode);
           enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
         },
+        onError: (reason) => {
+          enqueueSnack({ message: reason.message, type: 'error' });
+        },
         onSettled: () => {
           handleClose(event);
         },
@@ -62,7 +65,7 @@ export const SelectThemeDialog = () => {
   };
 
   return (
-    <SimpleDialog id='select-theme-dialog' open={open} onClose={handleClose}>
+    <SimpleDialog id='select-theme' open={open} onClose={handleClose}>
       <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeThemeDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(colors).map(([key, color]) => (

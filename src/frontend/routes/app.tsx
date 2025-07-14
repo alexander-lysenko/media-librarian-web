@@ -6,7 +6,7 @@ import { shallow } from 'zustand/shallow';
 
 import { AppNavbar, LoadingOverlayInner } from '../components';
 import { AddCircleOutlined } from '../components/icons';
-import { LibraryDrawer } from '../components/libraryItemPrint';
+import { LibraryItemDrawer } from '../components/libraryItemPrint';
 import { LibraryCreateDialog, LibraryItemDialog } from '../components/modals';
 import { FiltersPopover } from '../components/nav/FiltersPopover';
 import { LibrarySelector } from '../components/nav/LibrarySelector';
@@ -105,7 +105,7 @@ function App() {
           )}
         </Paper>
       </Container>
-      <LibraryDrawer />
+      <LibraryItemDrawer />
       <LibraryItemDialog />
       <LibraryCreateDialog />
     </>

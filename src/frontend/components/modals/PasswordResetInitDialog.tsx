@@ -33,14 +33,13 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const passwordRecoveryRequest = usePasswordRecoveryRequest();
-  const isSubmitting = passwordRecoveryRequest.status === 'pending';
 
   const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onChange' });
   const { register, formState, reset, handleSubmit, setValue, setError, clearErrors } = useHookForm;
   const { errors } = formState;
 
   const registerField = useCallback(
-    (fieldName: keyof FormType) => {
+    (fieldName: string) => {
       const rules: Record<string, FormValidationRules<FormType>> = {
         email: {
           setValueAs: (value: string) => value.trim().toLowerCase(),
@@ -52,7 +51,7 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
         },
       };
 
-      return register(fieldName as never, rules[fieldName]);
+      return register(fieldName, rules[fieldName]);
     },
     [register, t],
   );
@@ -129,9 +128,14 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
         <Button variant='text' onClick={handleClose}>
           {t('common.cancel')}
         </Button>
-        <Button type='submit' variant='contained' loading={isSubmitting} endIcon={<Send />}>
-          {t('common.submit')}
-        </Button>
+        <Button
+          type='submit'
+          variant='contained'
+          loading={passwordRecoveryRequest.status === 'pending'}
+          loadingPosition='end'
+          endIcon={<Send />}
+          children={t('common.submit')}
+        />
       </FormDialog.Actions>
     </FormDialog>
   );
