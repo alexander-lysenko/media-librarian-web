@@ -73,41 +73,39 @@ export const LibraryDrawer = () => {
   return (
     <Drawer {...drawerProps}>
       <CloseButton onClose={handleClose as unknown as MouseEventHandler} />
-      <Box sx={{ overflowY: 'auto' }}>
-        <PosterBox
-          title={item?.[columns[0].label] as string}
-          src='https://source.unsplash.com/wMkaMXTJjlQ'
-          height={360}
-        />
-        <Divider />
-        <BottomNavigation showLabels sx={{ background: 'transparent' }}>
-          <Action
-            label={t('libraryItem.updateThisEntry')}
-            icon={<EditNoteOutlined />}
-            onClick={handleItemEdit}
-            sx={{ color: (theme) => theme.palette.info[theme.palette.mode] }}
-          />
-          <Action
-            label={t('libraryItem.deleteThisEntry')}
-            icon={<DeleteOutlined />}
-            onClick={handleItemDelete}
-            sx={{ color: (theme) => theme.palette.error[theme.palette.mode] }}
-          />
-        </BottomNavigation>
-        <Divider />
-        <Container>
-          <List dense disablePadding>
-            {columns.slice(1).map((column) => (
-              <ListItem key={column.label} disableGutters>
-                <ListItemText
-                  primary={column.label}
-                  secondary={<ItemCellContents type={column.type} value={item?.[column.label] as never} />}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Container>
-      </Box>
+      {selectedItemId && (
+        <Box sx={{ overflowY: 'auto' }}>
+          <PosterBox title={item?.[columns[0].label] as string} src={'item.poster.url'} height={360} />
+          <Divider />
+          <BottomNavigation showLabels sx={{ background: 'transparent' }}>
+            <Action
+              label={t('libraryItem.updateThisEntry')}
+              icon={<EditNoteOutlined />}
+              onClick={handleItemEdit}
+              sx={{ color: (theme) => theme.palette.info[theme.palette.mode] }}
+            />
+            <Action
+              label={t('libraryItem.deleteThisEntry')}
+              icon={<DeleteOutlined />}
+              onClick={handleItemDelete}
+              sx={{ color: (theme) => theme.palette.error[theme.palette.mode] }}
+            />
+          </BottomNavigation>
+          <Divider />
+          <Container>
+            <List dense disablePadding>
+              {columns.slice(1).map((column) => (
+                <ListItem key={column.label} disableGutters>
+                  <ListItemText
+                    primary={column.label}
+                    secondary={<ItemCellContents type={column.type} value={item?.[column.label] as never} />}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Container>
+        </Box>
+      )}
     </Drawer>
   );
 };

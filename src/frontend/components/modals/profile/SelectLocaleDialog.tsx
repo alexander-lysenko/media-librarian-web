@@ -50,7 +50,7 @@ export const SelectLocaleDialog = () => {
   };
 
   return (
-    <SimpleDialog open={open} onClose={handleClose}>
+    <SimpleDialog id='select-locale-dialog' open={open} onClose={handleClose}>
       <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeLocaleDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(languages).map(([key, label]) => (

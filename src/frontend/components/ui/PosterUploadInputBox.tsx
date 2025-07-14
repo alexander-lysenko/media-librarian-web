@@ -1,4 +1,5 @@
-import { Box, Button, CardMedia, Grid, LinearProgress, Paper, styled, TextField, Typography } from '@mui/material';
+import { Box, Button, CardMedia, Grid, Paper, styled, Typography } from '@mui/material';
+import { LinearProgress, TextField, useTheme } from '@mui/material';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,6 +11,8 @@ import type { ChangeEvent, ClipboardEvent, CSSProperties, DragEvent, SyntheticEv
 
 export const PosterUploadInputBox = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   const [blobImage, setBlobImage] = useState<Blob | null>(null);
   const [isUploading, setUploading] = useState<boolean>(false);
   const hiddenFileInput = useRef<HTMLInputElement>(null);
@@ -170,10 +173,8 @@ export const PosterUploadInputBox = () => {
   //   </InputAdornment>
   // );
 
-  const posterUrl = [
-    'https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/2weak2slow2/phpza5oxW.jpeg',
-    'https://i-a.d-cd.net/PX_ZUBJvag0Kncb8wxahJl8UAKY-1920.jpg',
-  ][1];
+  const originUrl = new URL(import.meta.url);
+  const posterUrl = new URL(`/icons/no-poster-${theme.palette.mode}.svg`, originUrl.origin).toString();
 
   const helperTextContent = t('fileUpload.textInputHelperText');
 

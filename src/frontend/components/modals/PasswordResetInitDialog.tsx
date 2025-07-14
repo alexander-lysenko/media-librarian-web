@@ -9,16 +9,16 @@ import { enqueueSnack } from '../../core/actions';
 import { usePasswordRecoveryRequest } from '../../requests/authRequests';
 import { Send } from '../icons';
 import { EmailInput } from '../inputs/EmailInput';
-import { FormDialog } from '../ui/modals/FormDialog';
+import { FormDialog, type FormDialogProps } from '../ui/modals/FormDialog';
 
-import type { FormValidationRules, RegisterCaptchaProps, UseFormService } from '../../core/types';
+import type { FormValidationRules, RegisterCaptchaProps } from '../../core/types';
 import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import type { SyntheticEvent } from 'react';
 import type { FieldValues, SubmitErrorHandler, SubmitHandler } from 'react-hook-form';
 
 interface Props {
   open: boolean;
-  onClose: (event: SyntheticEvent | Event, reason?: string) => void;
+  onClose: (event: SyntheticEvent, reason?: string) => void;
 }
 
 interface FormType extends FieldValues {
@@ -30,48 +30,6 @@ interface FormType extends FieldValues {
  */
 export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
   const { t, i18n } = useTranslation();
-
-  const formService = useDialogForm({ onClose });
-  const { registerField, registerCaptcha, isSubmitting, errors, dismissRootError } = formService;
-  const { handleSubmit, handleClose } = formService;
-
-  return (
-    <FormDialog id='password-recover' open={open} fullWidth onSubmit={handleSubmit} onClose={handleClose}>
-      <FormDialog.Title>{t('passwordRecovery.title')}</FormDialog.Title>
-      <FormDialog.Content>
-        <FormDialog.Subtitle>{t('passwordRecovery.subtitle')}</FormDialog.Subtitle>
-        <Collapse in={!!errors.root?.serverError} unmountOnExit>
-          <Alert variant='filled' severity='error' onClose={dismissRootError} sx={{ my: 2 }}>
-            {errors.root?.serverError.message as string}
-          </Alert>
-        </Collapse>
-        <EmailInput
-          {...registerField('email')}
-          label={t('loginPage.email')}
-          errorMessage={errors.email?.message as string}
-        />
-        <Box sx={{ textAlign: 'center', pt: 1 }}>
-          <Turnstile
-            {...registerCaptcha?.()}
-            siteKey={import.meta.env.VITE_CF_TURNSTILE_SITEKEY}
-            options={{ size: 'flexible', language: i18n.language }}
-          />
-        </Box>
-      </FormDialog.Content>
-      <FormDialog.Actions>
-        <Button variant='text' onClick={handleClose}>
-          {t('common.cancel')}
-        </Button>
-        <Button type='submit' variant='contained' loading={isSubmitting} endIcon={<Send />}>
-          {t('common.submit')}
-        </Button>
-      </FormDialog.Actions>
-    </FormDialog>
-  );
-};
-
-const useDialogForm = ({ onClose }: Pick<Props, 'onClose'>): UseFormService<FormType> => {
-  const { t } = useTranslation();
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const passwordRecoveryRequest = usePasswordRecoveryRequest();
@@ -111,7 +69,7 @@ const useDialogForm = ({ onClose }: Pick<Props, 'onClose'>): UseFormService<Form
   const onValidSubmit: SubmitHandler<FormType> = (data, event) => {
     void passwordRecoveryRequest.mutateAsync(data, {
       onSuccess: () => {
-        handleCloseWithReset(event as SyntheticEvent);
+        handleClose(event as SyntheticEvent);
         enqueueSnack({ type: 'success', message: t('passwordRecovery.emailSent') });
       },
       onError: (reason) => {
@@ -126,7 +84,7 @@ const useDialogForm = ({ onClose }: Pick<Props, 'onClose'>): UseFormService<Form
     }
   };
 
-  const handleCloseWithReset = (event: SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (event: SyntheticEvent, reason?: string) => {
     if (reason === 'backdropClick') {
       event.preventDefault();
       return false;
@@ -136,12 +94,45 @@ const useDialogForm = ({ onClose }: Pick<Props, 'onClose'>): UseFormService<Form
     onClose(event, reason);
   };
 
-  return {
-    registerField,
-    registerCaptcha,
-    handleSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
-    isSubmitting,
-    errors,
-    dismissRootError: () => clearErrors('root'),
+  const dialogProps: FormDialogProps = {
+    id: 'password-recovery',
+    open,
+    fullWidth: true,
+    onSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
+    onClose: handleClose,
   };
+
+  return (
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t('passwordRecovery.title')}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t('passwordRecovery.subtitle')}</FormDialog.Subtitle>
+        <Collapse in={!!errors.root?.serverError} unmountOnExit>
+          <Alert variant='filled' severity='error' onClose={() => clearErrors('root')} sx={{ my: 2 }}>
+            {errors.root?.serverError.message as string}
+          </Alert>
+        </Collapse>
+        <EmailInput
+          {...registerField('email')}
+          label={t('loginPage.email')}
+          errorMessage={errors.email?.message as string}
+        />
+        <Box sx={{ textAlign: 'center', pt: 1 }}>
+          <Turnstile
+            {...registerCaptcha?.()}
+            siteKey={import.meta.env.VITE_CF_TURNSTILE_SITEKEY}
+            options={{ size: 'flexible', language: i18n.language }}
+          />
+        </Box>
+      </FormDialog.Content>
+      <FormDialog.Actions>
+        <Button variant='text' onClick={handleClose}>
+          {t('common.cancel')}
+        </Button>
+        <Button type='submit' variant='contained' loading={isSubmitting} endIcon={<Send />}>
+          {t('common.submit')}
+        </Button>
+      </FormDialog.Actions>
+    </FormDialog>
+  );
 };

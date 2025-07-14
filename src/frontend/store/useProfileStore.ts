@@ -44,7 +44,7 @@ export const useProfileStore = create<ProfileState>((set) => ({
       email: 'this.email.address.does.not.exist@example.com',
       locale: 'en',
       theme: 'light',
-      avatar: 'https://source.unsplash.com/dFnoVmpiGY/240x240',
+      avatar: null,
     },
     stats: {
       status: 'BANNED',

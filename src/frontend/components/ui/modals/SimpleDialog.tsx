@@ -1,14 +1,17 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grow } from '@mui/material';
 
-import type {
-  DialogActionsProps,
-  DialogContentProps,
-  DialogContentTextProps,
-  DialogProps,
-  DialogTitleProps,
-} from '@mui/material';
+import { useCloseOnPopState } from '../../../hooks/useCloseOnPopState';
 
-const DialogWrapper = ({ open, children, onClose, ...props }: DialogProps) => {
+import type { DialogActionsProps, DialogContentProps, DialogContentTextProps, DialogTitleProps } from '@mui/material';
+import type { DialogProps } from '@mui/material';
+import type { SyntheticEvent } from 'react';
+
+export interface SimpleDialogProps extends DialogProps {
+  id: string;
+  onClose: (event: SyntheticEvent, reason?: string) => void;
+}
+
+const DialogWrapper = ({ open, children, onClose, ...props }: SimpleDialogProps) => {
   const dialogProps: DialogProps = {
     open: open,
     fullWidth: true,
@@ -19,8 +22,10 @@ const DialogWrapper = ({ open, children, onClose, ...props }: DialogProps) => {
     ...props,
   };
 
+  const { onCloseWithPopstate } = useCloseOnPopState({ id: props.id, open, onClose: onClose });
+
   return (
-    <Dialog {...dialogProps} onClose={onClose}>
+    <Dialog {...dialogProps} onClose={onCloseWithPopstate}>
       {children}
     </Dialog>
   );

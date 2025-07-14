@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
+import { useCloseOnPopState } from '../../../hooks/useCloseOnPopState';
 import { useProfileChangePasswordRequest } from '../../../requests/profileRequests';
 import { useProfileDialogsStore } from '../../../store/app/useProfileDialogsStore';
 import { DoneOutlined } from '../../icons';
@@ -79,6 +80,7 @@ export const ChangePasswordDialog = () => {
 
 const useDialogForm = (): UseFormService<FormType> => {
   const { t } = useTranslation();
+  const open = useProfileDialogsStore((state) => state.passwordDialogOpen);
   const setOpen = useProfileDialogsStore((state) => state.setPasswordDialogOpen);
 
   const changePasswordRequest = useProfileChangePasswordRequest();
@@ -138,6 +140,8 @@ const useDialogForm = (): UseFormService<FormType> => {
     setOpen(false);
   };
 
+  const { onCloseWithPopstate } = useCloseOnPopState({ id: 'change-password-dialog', open, onClose: handleClose });
+
   const onErrorResponse = (reason: ErrorResponse) => {
     setError('root.serverError', { message: reason.message });
     if (reason.errors?.['password']) {
@@ -154,7 +158,7 @@ const useDialogForm = (): UseFormService<FormType> => {
   const onValidSubmit: SubmitHandler<FormType> = (data, event) => {
     void changePasswordRequest.mutateAsync(data, {
       onSuccess: () => {
-        handleClose(event as SyntheticEvent);
+        onCloseWithPopstate(event as SyntheticEvent);
       },
       onError: onErrorResponse,
     });
@@ -165,7 +169,7 @@ const useDialogForm = (): UseFormService<FormType> => {
     handleSubmit: handleSubmit(onValidSubmit),
     isSubmitting: changePasswordRequest.status === 'pending',
     dismissRootError: () => clearErrors('root'),
-    handleClose,
+    handleClose: onCloseWithPopstate,
     errors: formState.errors,
   };
 };

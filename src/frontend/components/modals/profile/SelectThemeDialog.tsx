@@ -41,7 +41,7 @@ export const SelectThemeDialog = () => {
     if (loading) {
       event.preventDefault();
       event.stopPropagation();
-      return false;
+      return;
     }
     setOpen(false);
   };
@@ -62,7 +62,7 @@ export const SelectThemeDialog = () => {
   };
 
   return (
-    <SimpleDialog open={open} onClose={handleClose}>
+    <SimpleDialog id='select-theme-dialog' open={open} onClose={handleClose}>
       <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeThemeDialog.title')}</SimpleDialog.Title>
       <List>
         {Object.entries(colors).map(([key, color]) => (

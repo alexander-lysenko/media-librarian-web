@@ -9,7 +9,8 @@ interface DrawerOpenState {
 
 export const usePreviewDrawerStore = create<DrawerOpenState>((set) => ({
   open: false,
-  setOpen: (open: boolean) => set(() => ({ open })),
+  setOpen: (open: boolean) => set({ open }),
+
   selectedItemId: null,
   setSelectedItemId: (selectedItemId: number | null) => set({ selectedItemId, open: !!selectedItemId }),
 }));
