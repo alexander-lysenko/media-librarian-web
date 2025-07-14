@@ -1,15 +1,6 @@
-import {
-  Button,
-  Chip,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grow,
-} from '@mui/material';
-import { useState } from 'react';
+import { Button, Chip, CircularProgress, Grow } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useConfirmDialogStore } from '../../../store/app/useConfirmDialogStore';
@@ -41,6 +32,7 @@ export const ConfirmDialog = () => {
     await onConfirm?.(event);
     setLoading(false);
     setOpen(false);
+    window.history.back();
   };
 
   const handleCancel: MouseEventHandler = async (event, reason?: string) => {
@@ -50,7 +42,20 @@ export const ConfirmDialog = () => {
     }
     await onCancel?.(event);
     setOpen(false);
+    window.history.back();
   };
+
+  useEffect(() => {
+    const handlePreventPopstate = () => {
+      open && window.history.pushState({}, '', window.location.href);
+    };
+
+    handlePreventPopstate();
+    window.addEventListener('popstate', handlePreventPopstate);
+    return () => {
+      window.removeEventListener('popstate', handlePreventPopstate);
+    };
+  }, [open]);
 
   const dialogProps: DialogProps = {
     open,
