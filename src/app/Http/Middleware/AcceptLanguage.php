@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 /**
- * Catch 'Accept-Language' HTTP header to set application locale according to its value
+ * Catch 'Accept-Language' HTTP header to set the application locale according to its value
  *
  * @link https://github.com/orkhanahmadov/laravel-accept-language-middleware
  */
