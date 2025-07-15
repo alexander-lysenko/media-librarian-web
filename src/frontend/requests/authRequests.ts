@@ -6,15 +6,10 @@ import { createFetch } from '../core';
 import { enqueueSnack } from '../core/actions';
 import { AppRoutes } from '../core/enums';
 import { userLoginEndpoint, userPasswordResetEndpoint, userSignupEndpoint } from '../core/links';
-
-import type {
-  LoginFormData,
-  LoginResponse,
-  PasswordResetFormData,
-  SignupFormData,
-  SignupResponse,
-} from '../core/types';
 import { useAuthCredentialsStore } from '../store/useAuthCredentialsStore';
+
+import type { LoginResponse, SignupResponse } from '../core/types';
+import type { LoginFormData, PasswordResetFormData, SignupFormData } from '../core/types';
 
 /**
  * Request to signup / register / create a user.

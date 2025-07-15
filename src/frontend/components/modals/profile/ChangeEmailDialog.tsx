@@ -34,7 +34,7 @@ export const ChangeEmailDialog = () => {
   const { register, formState, reset, handleSubmit, setError, clearErrors } = useForm<FormType>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
-    values: { email: profile.user.email },
+    values: { email: profile?.user?.email ?? '' },
   });
   const { registerField } = useChangeEmailFormValidation(register);
   const { errors } = formState;

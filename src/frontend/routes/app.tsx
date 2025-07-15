@@ -37,6 +37,7 @@ function App() {
   const libraries = useLibrariesStore((state) => state.libraries);
   const initSelectedLibraryId = useSelectedLibraryStore((state) => state.selectedLibraryId);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
+  const setSelectedLibraryId = useSelectedLibraryStore((state) => state.setSelectedLibraryId);
 
   const openItemDialog = useLibraryItemFormStore((state) => state.handleOpen);
 
@@ -44,10 +45,11 @@ function App() {
   const requestItems = useLibraryAllItemsGetRequest();
 
   useEffect(() => {
-    if (initSelectedLibraryId === 0) {
+    if (requestLibraries.status === 'success' && libraries.length && initSelectedLibraryId === 0) {
       enqueueSnack({ type: 'warning', message: t('notifications.libraryNotFound') });
+      setSelectedLibraryId(getSelectedLibrary()?.id || 0);
     }
-  }, [getSelectedLibrary, initSelectedLibraryId, t]);
+  }, [getSelectedLibrary, initSelectedLibraryId, libraries.length, requestLibraries.status, setSelectedLibraryId, t]);
 
   useEffect(() => {
     const unsubscribe = useSelectedLibraryStore.subscribe(

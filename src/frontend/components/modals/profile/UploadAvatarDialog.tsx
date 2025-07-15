@@ -37,11 +37,11 @@ export const UploadAvatarDialog = () => {
   const [cropOptions, setCropOptions] = useState<CropParams>();
 
   useEffect(() => {
-    setAvatar(profile.user.avatar);
-  }, [profile.user.avatar]);
+    setAvatar(profile?.user?.avatar);
+  }, [profile]);
 
   const resetAvatar = () => {
-    setAvatar(profile.user.avatar);
+    setAvatar(profile?.user?.avatar);
     if (hiddenFileInputRef.current) {
       (hiddenFileInputRef.current as HTMLInputElement).value = '';
     }
@@ -77,7 +77,7 @@ export const UploadAvatarDialog = () => {
   };
 
   const handleSubmit = async (event: SyntheticEvent) => {
-    if (avatar === profile.user.avatar) {
+    if (avatar === profile?.user?.avatar) {
       handleClose(event);
       return false;
     }
@@ -120,7 +120,7 @@ export const UploadAvatarDialog = () => {
       <FormDialog.Content sx={{ py: 1 }}>
         {!cropMode ? (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <ProfileAvatar username={profile.user.name} src={avatar || null} sx={{ height: 192, width: 192 }} />
+            <ProfileAvatar username={profile?.user?.name ?? ''} src={avatar || null} sx={{ height: 192, width: 192 }} />
           </Box>
         ) : (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>

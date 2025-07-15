@@ -33,7 +33,7 @@ export const ChangeUsernameDialog = () => {
   const { register, formState, handleSubmit, reset, setError, clearErrors } = useForm<FormType>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
-    values: { username: profile.user.name },
+    values: { username: profile?.user?.name ?? '' },
   });
 
   const rules: RegisterOptions<FormType> = {

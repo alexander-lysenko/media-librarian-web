@@ -27,7 +27,7 @@ import type { MouseEvent } from 'react';
  */
 export const NavbarProfiler = () => {
   const { t } = useTranslation();
-  const { name: username, email, avatar } = useProfileStore((state) => state.profile.user);
+  const profile = useProfileStore((state) => state.profile);
   const { mode: themeMode, setMode: setThemeMode } = useThemeStore((state) => state);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -52,7 +52,9 @@ export const NavbarProfiler = () => {
     <>
       <Tooltip arrow title={t('app.openProfileMenu')}>
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 1 }}>
-          <ProfileAvatar username={username} alt={username} src={avatar} />
+          {profile?.user && (
+            <ProfileAvatar username={profile.user.name} alt={profile.user.name} src={profile.user.avatar} />
+          )}
         </IconButton>
       </Tooltip>
       <Menu
@@ -67,14 +69,16 @@ export const NavbarProfiler = () => {
         onClose={handleCloseUserMenu}
       >
         <ListItem dense>
-          <ListItemText disableTypography sx={{ my: 0 }}>
-            <Typography variant='subtitle1' sx={{ fontWeight: 'bold', lineHeight: 1.5 }} noWrap>
-              {username}
-            </Typography>
-            <Typography variant='subtitle2' sx={{ fontWeight: 'regular' }} noWrap>
-              {email}
-            </Typography>
-          </ListItemText>
+          {profile?.user && (
+            <ListItemText disableTypography sx={{ my: 0 }}>
+              <Typography variant='subtitle1' sx={{ fontWeight: 'bold', lineHeight: 1.5 }} noWrap>
+                {profile.user.name}
+              </Typography>
+              <Typography variant='subtitle2' sx={{ fontWeight: 'regular' }} noWrap>
+                {profile.user.email}
+              </Typography>
+            </ListItemText>
+          )}
         </ListItem>
         <Divider variant='middle' sx={{ my: 1 }} />
         <MenuItem key='toUiTheme' onClick={handleUiTheme}>

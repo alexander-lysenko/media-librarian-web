@@ -31,7 +31,9 @@ export const createFetch = async <ResponseType = undefined>(fetchConfig: Request
     referrerPolicy: 'no-referrer',
   });
 
-  request.headers.set('Accept', 'application/json, text/plain, */*');
+  if (!request.headers.get('Accept')) {
+    request.headers.set('Accept', 'application/json, text/plain, */*');
+  }
 
   if (['POST', 'PUT', 'PATCH'].includes(request.method) && !!config.body) {
     request.headers.set('Content-Type', 'application/json');
@@ -47,11 +49,15 @@ export const createFetch = async <ResponseType = undefined>(fetchConfig: Request
         if (response.status === 204) {
           return Promise.resolve(undefined as never);
         }
+
+        const data = await response[responseType]();
         if ([4, 5].includes(Math.floor(response.status / 100))) {
-          return Promise.reject(await response[responseType]());
+          return responseType === 'json'
+            ? Promise.reject({ ...data, code: response.status.toString() })
+            : Promise.reject(data);
         }
 
-        return response[responseType]();
+        return data;
       },
       (reject) => reject,
     )

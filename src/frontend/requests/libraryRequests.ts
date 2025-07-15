@@ -27,13 +27,13 @@ export const useLibrariesGetRequest = () => {
   const setLibraries = useLibrariesStore((state) => state.setLibraries);
   const setColumns = useLibraryTableStore((state) => state.setColumns);
   const getSelectedLibrary = useSelectedLibraryStore((state) => state.getSelectedLibrary);
-  const profileLoaded = useProfileStore((state) => state.profile.user.id !== undefined);
+  const profileLoaded = useProfileStore((state) => state.profile?.user?.id !== undefined);
 
   const { refetch, status, data, error } = useQuery({
     queryKey: ['get', 'libraries'],
     queryFn: (): Promise<GetLibrariesResponse> => createFetch({ url: librariesEndpoint, method: 'GET' }),
     select: (response) => response.data,
-    enabled: profileLoaded || true, // todo: fix it
+    enabled: profileLoaded,
   });
 
   useEffect(() => {

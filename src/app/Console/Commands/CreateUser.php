@@ -37,11 +37,11 @@ class CreateUser extends Command
         $this->comment("YOU'VE BEEN WARNED!");
         $this->comment('=========================');
 
-        // Enter username, if not present via command line option
+        // Enter username, if not present in command parameters
         $name = $this->option('name') ?: $this->ask('Please enter a username');
-        // Enter email, if not present via command line option
+        // Enter email, if not present in command parameters
         $email = $this->option('email') ?: $this->ask('Please enter an e-mail');
-        // Enter password securely, if not present via command line option
+        // Enter password securely, if not present in command parameters
         $password = $this->option('password') ?: $this->secret('Please enter a new password');
 
         $this->line('Collected all the necessary data. Processing...', verbosity: 'v');

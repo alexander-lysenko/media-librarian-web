@@ -83,7 +83,7 @@ function Profile() {
       <AppNavbar />
       <Container maxWidth='xl'>
         <CollapsiblePaperCard title={t('profile.basicDetails')} itemIcon={PermContactCalendarOutlined}>
-          {getProfileRequest.status === 'success' ? (
+          {getProfileRequest.status === 'success' && profile?.user ? (
             <Grid container columnSpacing={2}>
               <Grid id='profiler' size={{ xs: 12, md: 4 }} sx={{ maxWidth: { md: 320 } }}>
                 <Profiler username={profile.user.name} email={profile.user.email} avatar={profile.user.avatar} />
@@ -189,8 +189,8 @@ const Profiler = ({ username, email, avatar }: { username: string; email: string
 const ProfileActions = () => {
   const { t } = useTranslation();
 
-  const { name: username, email, locale, theme } = useProfileStore((state) => state.profile.user);
-  const language = useTranslationStore().languages[locale];
+  const profile = useProfileStore((state) => state.profile);
+  const language = useTranslationStore().languages[profile?.user?.locale ?? 'en'];
 
   const setUsernameDialogOpen = useProfileDialogsStore((state) => state.setUsernameDialogOpen);
   const setEmailDialogOpen = useProfileDialogsStore((state) => state.setEmailDialogOpen);
@@ -204,6 +204,10 @@ const ProfileActions = () => {
   const openThemeDialog = () => setThemeDialogOpen(true);
   const openLocaleDialog = () => setLocaleDialogOpen(true);
 
+  if (!profile?.user) {
+    return '';
+  }
+
   return (
     <List dense disablePadding component='div'>
       <ListSubheader disableSticky component='div' children={t('profile.preferences')} />
@@ -212,8 +216,8 @@ const ProfileActions = () => {
         <ListItemIcon children={<BadgeOutlined />} />
         <ListItemText
           primary={t('profile.preferencesEnum.username')}
-          title={username}
-          secondary={username}
+          title={profile.user.name}
+          secondary={profile.user.name}
           slotProps={{ secondary: { noWrap: true } }}
         />
       </ListItemButton>
@@ -221,8 +225,8 @@ const ProfileActions = () => {
         <ListItemIcon children={<EmailOutlined />} />
         <ListItemText
           primary={t('profile.preferencesEnum.email')}
-          title={email}
-          secondary={email}
+          title={profile.user.email}
+          secondary={profile.user.email}
           slotProps={{ secondary: { noWrap: true } }}
         />
       </ListItemButton>
@@ -232,7 +236,7 @@ const ProfileActions = () => {
       </ListItemButton>
       <ListItemButton divider onClick={openThemeDialog}>
         <ListItemIcon children={<LightModeOutlined />} />
-        <ListItemText primary={t('profile.preferencesEnum.theme')} secondary={t(`theme.${theme}`)} />
+        <ListItemText primary={t('profile.preferencesEnum.theme')} secondary={t(`theme.${profile.user.theme}`)} />
       </ListItemButton>
       <ListItemButton onClick={openLocaleDialog}>
         <ListItemIcon children={<TranslateOutlined />} />
@@ -245,8 +249,7 @@ const ProfileActions = () => {
 const ProfileStats = () => {
   const { t } = useTranslation();
 
-  const { status, emailVerifiedAt, createdAt } = useProfileStore((state) => state.profile.stats);
-  const { librariesTotal, itemsTotal } = useProfileStore((state) => state.profile.stats);
+  const profile = useProfileStore((state) => state.profile);
   const locale = useLanguageStore((state) => state.getLanguage());
 
   const accountStatusIcon: Record<AccountStatusEnum, ReactNode> = {
@@ -256,23 +259,27 @@ const ProfileStats = () => {
     [AccountStatusEnum.DELETED]: <HighlightOffOutlined />,
   };
 
+  if (!profile?.stats) {
+    return '';
+  }
+
   return (
     <List dense disablePadding component='div'>
       <ListSubheader disableSticky component='div' children={t('profile.aboutThisProfile')} />
       <Divider />
       <ListItem>
-        <ListItemIcon>{accountStatusIcon[status]}</ListItemIcon>
+        <ListItemIcon>{accountStatusIcon[profile?.stats?.status ?? 'CREATED']}</ListItemIcon>
         <ListItemText
           primary={t('profile.detailsEnum.accountStatus')}
-          secondary={t(`profile.accountStatusEnum.${status}`)}
+          secondary={t(`profile.accountStatusEnum.${profile?.stats?.status ?? 'CREATED'}`)}
         />
       </ListItem>
       <DividerTransparent />
       <ListItem>
-        <ListItemIcon>{emailVerifiedAt ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
+        <ListItemIcon>{profile.stats.emailVerifiedAt ? <MarkEmailReadOutlined /> : <MarkEmailUnreadOutlined />}</ListItemIcon>
         <ListItemText
           primary={t('profile.detailsEnum.emailStatus')}
-          secondary={t(`profile.emailVerifiedEnum.${emailVerifiedAt ? 'verified' : 'unverified'}`)}
+          secondary={t(`profile.emailVerifiedEnum.${profile.stats.emailVerifiedAt ? 'verified' : 'unverified'}`)}
         />
       </ListItem>
       <DividerTransparent />
@@ -280,18 +287,18 @@ const ProfileStats = () => {
         <ListItemIcon children={<CalendarMonthOutlined />} />
         <ListItemText
           primary={t('profile.detailsEnum.registrationDate')}
-          secondary={dayjs(createdAt).locale(locale).format('LL')}
+          secondary={dayjs(profile.stats.createdAt).locale(locale).format('LL')}
         />
       </ListItem>
       <DividerTransparent />
       <ListItem>
         <ListItemIcon>{<LibraryBooksOutlined />}</ListItemIcon>
-        <ListItemText primary={t('profile.detailsEnum.librariesCount')} secondary={librariesTotal} />
+        <ListItemText primary={t('profile.detailsEnum.librariesCount')} secondary={profile.stats.librariesTotal} />
       </ListItem>
       <DividerTransparent />
       <ListItem>
         <ListItemIcon>{<GridViewOutlined />}</ListItemIcon>
-        <ListItemText primary={t('profile.detailsEnum.itemsTotalCount')} secondary={itemsTotal} />
+        <ListItemText primary={t('profile.detailsEnum.itemsTotalCount')} secondary={profile.stats.itemsTotal} />
       </ListItem>
       <DividerTransparent />
     </List>

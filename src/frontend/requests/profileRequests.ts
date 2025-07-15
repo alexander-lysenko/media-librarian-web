@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { createFetch } from '../core';
 import { enqueueSnack } from '../core/actions';
+import { AppRoutes } from '../core/enums';
 import { changePasswordEndpoint, profileEndpoint } from '../core/links';
 import { useProfileStore } from '../store/useProfileStore';
 
@@ -17,6 +19,7 @@ type GetProfileResponse = ProfileData;
  * [GET] /api/v1/profile
  */
 export const useProfileGetRequest = () => {
+  const navigate = useNavigate();
   const setProfile = useProfileStore((state) => state.setProfile);
 
   const { refetch, status, data, error } = useQuery({
@@ -28,7 +31,12 @@ export const useProfileGetRequest = () => {
     if (status === 'success') {
       setProfile(data);
     }
-  }, [data, status, setProfile]);
+    if (status === 'error' && error.code === '401') {
+      enqueueSnack({ type: 'error', message: error.message });
+
+      void navigate({ href: AppRoutes.login, replace: true });
+    }
+  }, [data, status, setProfile, error, navigate]);
 
   return { refetch, status, data, error };
 };
