@@ -24,9 +24,54 @@ interface FormType extends FieldValues {
  */
 export const ChangeEmailDialog = () => {
   const { t } = useTranslation();
-
-  const profile = useProfileStore((state) => state.profile);
   const open = useProfileDialogsStore((state) => state.emailDialogOpen);
+
+  const { registerField, errors, dismissRootError, isSubmitting, handleSubmit, handleClose } = useChangeEmailForm();
+
+  const dialogProps: FormDialogProps = {
+    id: 'change-email',
+    open: open,
+    maxWidth: 'xs',
+    fullScreen: false,
+    onSubmit: handleSubmit,
+    onClose: handleClose,
+  };
+
+  return (
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t('dialogs.changeEmailDialog.title')}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t('dialogs.changeEmailDialog.subtitle')}</FormDialog.Subtitle>
+        <Collapse in={!!errors.root?.serverError} unmountOnExit>
+          <Alert variant='filled' severity='error' onClose={dismissRootError} sx={{ my: 2 }}>
+            {errors.root?.serverError.message as string}
+          </Alert>
+        </Collapse>
+        <EmailInput
+          {...registerField('email')}
+          autoFocus
+          label={t('dialogs.changeEmailDialog.label')}
+          errorMessage={errors?.email?.message as string}
+        />
+      </FormDialog.Content>
+      <FormDialog.Actions>
+        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
+        <Button
+          type='submit'
+          variant='contained'
+          loading={isSubmitting}
+          loadingPosition='end'
+          endIcon={<DoneOutlined />}
+          children={t('common.save')}
+        />
+      </FormDialog.Actions>
+    </FormDialog>
+  );
+};
+
+const useChangeEmailForm = () => {
+  const { t } = useTranslation();
+  const profile = useProfileStore((state) => state.profile);
   const setOpen = useProfileDialogsStore((state) => state.setEmailDialogOpen);
 
   const profileUpdateRequest = useProfilePatchRequest();
@@ -37,7 +82,6 @@ export const ChangeEmailDialog = () => {
     values: { email: profile?.user?.email ?? '' },
   });
   const { registerField } = useChangeEmailFormValidation(register);
-  const { errors } = formState;
 
   const handleClose = (event: SyntheticEvent | Event) => {
     if (profileUpdateRequest.status === 'pending') {
@@ -64,43 +108,12 @@ export const ChangeEmailDialog = () => {
     );
   };
 
-  const dialogProps: FormDialogProps = {
-    id: 'change-email',
-    open: open,
-    maxWidth: 'xs',
-    fullScreen: false,
-    onSubmit: handleSubmit(onValidSubmit),
-    onClose: handleClose,
+  return {
+    registerField,
+    handleSubmit: handleSubmit(onValidSubmit),
+    isSubmitting: profileUpdateRequest.status === 'pending',
+    errors: formState.errors,
+    dismissRootError: () => clearErrors('root'),
+    handleClose,
   };
-
-  return (
-    <FormDialog {...dialogProps}>
-      <FormDialog.Title>{t('dialogs.changeEmailDialog.title')}</FormDialog.Title>
-      <FormDialog.Content>
-        <FormDialog.Subtitle>{t('dialogs.changeEmailDialog.subtitle')}</FormDialog.Subtitle>
-        <Collapse in={!!errors.root?.serverError} unmountOnExit>
-          <Alert variant='filled' severity='error' onClose={() => clearErrors('root')} sx={{ my: 2 }}>
-            {errors.root?.serverError.message as string}
-          </Alert>
-        </Collapse>
-        <EmailInput
-          {...registerField('email')}
-          autoFocus
-          label={t('dialogs.changeEmailDialog.label')}
-          errorMessage={errors?.email?.message as string}
-        />
-      </FormDialog.Content>
-      <FormDialog.Actions>
-        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
-        <Button
-          type='submit'
-          variant='contained'
-          loading={profileUpdateRequest.status === 'pending'}
-          loadingPosition='end'
-          endIcon={<DoneOutlined />}
-          children={t('common.save')}
-        />
-      </FormDialog.Actions>
-    </FormDialog>
-  );
 };

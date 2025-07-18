@@ -1,4 +1,5 @@
 import { Alert, Button, Collapse } from '@mui/material';
+import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -10,9 +11,10 @@ import { BadgeOutlined, DoneOutlined } from '../../icons';
 import { TextInput } from '../../inputs/TextInput';
 import { FormDialog } from '../../ui/modals/FormDialog';
 
+import type { FormValidationRules } from '../../../core/types';
 import type { FormDialogProps } from '../../ui/modals/FormDialog';
 import type { SyntheticEvent } from 'react';
-import type { FieldValues, RegisterOptions, SubmitHandler } from 'react-hook-form';
+import type { FieldValues, SubmitHandler } from 'react-hook-form';
 
 interface FormType extends FieldValues {
   username: string;
@@ -23,9 +25,59 @@ interface FormType extends FieldValues {
  */
 export const ChangeUsernameDialog = () => {
   const { t } = useTranslation();
-
-  const profile = useProfileStore((state) => state.profile);
   const open = useProfileDialogsStore((state) => state.usernameDialogOpen);
+
+  const { registerField, errors, dismissRootError, isSubmitting, handleSubmit, handleClose } = useChangeUsernameForm();
+
+  const dialogProps: FormDialogProps = {
+    id: 'change-username',
+    open: open,
+    maxWidth: 'xs',
+    fullScreen: false,
+    onSubmit: handleSubmit,
+    onClose: handleClose,
+  };
+
+  return (
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t('dialogs.changeUsernameDialog.title')}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t('dialogs.changeUsernameDialog.subtitle')}</FormDialog.Subtitle>
+        <Collapse in={!!errors.root?.serverError} unmountOnExit>
+          <Alert variant='filled' severity='error' onClose={dismissRootError} sx={{ my: 2 }}>
+            {errors.root?.serverError.message as string}
+          </Alert>
+        </Collapse>
+        <TextInput
+          {...registerField('username')}
+          autoFocus
+          autoComplete='name'
+          label={t('dialogs.changeUsernameDialog.label')}
+          errorMessage={errors?.username?.message as string}
+          icon={<BadgeOutlined />}
+        />
+      </FormDialog.Content>
+      <FormDialog.Actions>
+        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
+        <Button
+          type='submit'
+          variant='contained'
+          loading={isSubmitting}
+          loadingPosition='end'
+          endIcon={<DoneOutlined />}
+          children={t('common.save')}
+        />
+      </FormDialog.Actions>
+    </FormDialog>
+  );
+};
+
+/**
+ * A custom React hook that manages the state and logic for a form to change the username of a user's profile.
+ */
+const useChangeUsernameForm = () => {
+  const { t } = useTranslation();
+  const profile = useProfileStore((state) => state.profile);
   const setOpen = useProfileDialogsStore((state) => state.setUsernameDialogOpen);
 
   const profileUpdateRequest = useProfilePatchRequest();
@@ -36,11 +88,19 @@ export const ChangeUsernameDialog = () => {
     values: { username: profile?.user?.name ?? '' },
   });
 
-  const rules: RegisterOptions<FormType> = {
-    setValueAs: (value: string) => value?.trim(),
-    required: t('formValidation.usernameRequired'),
-    minLength: { value: 3, message: t('formValidation.usernameMinLength', { n: 3 }) },
-  };
+  // prettier-ignore
+  const rules = useMemo((): Record<keyof FormType, FormValidationRules<FormType>> => ({
+    username: {
+      setValueAs: (value: string) => value?.trim(),
+      required: t('formValidation.usernameRequired'),
+      minLength: { value: 3, message: t('formValidation.usernameMinLength', { n: 3 }) },
+    },
+  }), [t]);
+
+  const registerField = useCallback(
+    (fieldName: keyof FormType) => register(fieldName as string, rules[fieldName]),
+    [register, rules],
+  );
 
   const handleClose = (event: SyntheticEvent | Event) => {
     if (profileUpdateRequest.status === 'pending') {
@@ -73,45 +133,12 @@ export const ChangeUsernameDialog = () => {
     );
   };
 
-  const dialogProps: FormDialogProps = {
-    id: 'change-username',
-    open: open,
-    maxWidth: 'xs',
-    fullScreen: false,
-    onSubmit: handleSubmit(onValidSubmit),
-    onClose: handleClose,
+  return {
+    registerField,
+    handleSubmit: handleSubmit(onValidSubmit),
+    isSubmitting: profileUpdateRequest.status === 'pending',
+    dismissRootError: () => clearErrors('root'),
+    errors: formState.errors,
+    handleClose,
   };
-
-  return (
-    <FormDialog {...dialogProps}>
-      <FormDialog.Title>{t('dialogs.changeUsernameDialog.title')}</FormDialog.Title>
-      <FormDialog.Content>
-        <FormDialog.Subtitle>{t('dialogs.changeUsernameDialog.subtitle')}</FormDialog.Subtitle>
-        <Collapse in={!!formState.errors.root?.serverError} unmountOnExit>
-          <Alert variant='filled' severity='error' onClose={() => clearErrors('root')} sx={{ my: 2 }}>
-            {formState.errors.root?.serverError.message as string}
-          </Alert>
-        </Collapse>
-        <TextInput
-          {...register('username', rules)}
-          autoFocus
-          autoComplete='name'
-          label={t('dialogs.changeUsernameDialog.label')}
-          errorMessage={formState.errors?.username?.message as string}
-          icon={<BadgeOutlined />}
-        />
-      </FormDialog.Content>
-      <FormDialog.Actions>
-        <Button variant='text' onClick={handleClose} children={t('common.cancel')} />
-        <Button
-          type='submit'
-          variant='contained'
-          loading={profileUpdateRequest.status === 'pending'}
-          loadingPosition='end'
-          endIcon={<DoneOutlined />}
-          children={t('common.save')}
-        />
-      </FormDialog.Actions>
-    </FormDialog>
-  );
 };

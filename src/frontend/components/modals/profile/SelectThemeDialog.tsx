@@ -17,14 +17,33 @@ import type { SyntheticEvent } from 'react';
  */
 export const SelectThemeDialog = () => {
   const { t } = useTranslation();
+  const { colors, open, isSubmitting, handleItemClick, handleClose } = useDialogHandler();
+
+  return (
+    <SimpleDialog id='select-theme' open={open} onClose={handleClose}>
+      <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeThemeDialog.title')}</SimpleDialog.Title>
+      <List>
+        {Object.entries(colors).map(([key, color]) => (
+          <ListItemButton key={key} disabled={isSubmitting} onClick={(e) => handleItemClick(e, key as PaletteMode)}>
+            <ListItemAvatar>
+              <Avatar sx={{ backgroundColor: color.background, color: color.highlight }}>
+                <ImageOutlined />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={t(`theme.${key}`)} />
+          </ListItemButton>
+        ))}
+      </List>
+    </SimpleDialog>
+  );
+};
+
+const useDialogHandler = () => {
+  const { t } = useTranslation();
 
   const { setMode: setThemeMode } = useThemeStore((state) => state);
-
   const open = useProfileDialogsStore((state) => state.themeDialogOpen);
   const setOpen = useProfileDialogsStore((state) => state.setThemeDialogOpen);
-
-  const profileUpdateRequest = useProfilePatchRequest();
-  const loading = profileUpdateRequest.status === 'pending';
 
   const colors: Record<PaletteMode, { background: string; highlight: string }> = {
     light: {
@@ -37,8 +56,11 @@ export const SelectThemeDialog = () => {
     },
   };
 
+  const profileUpdateRequest = useProfilePatchRequest();
+  const isSubmitting = profileUpdateRequest.status === 'pending';
+
   const handleClose = (event: SyntheticEvent) => {
-    if (loading) {
+    if (isSubmitting) {
       event.preventDefault();
       event.stopPropagation();
       return;
@@ -64,21 +86,5 @@ export const SelectThemeDialog = () => {
     );
   };
 
-  return (
-    <SimpleDialog id='select-theme' open={open} onClose={handleClose}>
-      <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeThemeDialog.title')}</SimpleDialog.Title>
-      <List>
-        {Object.entries(colors).map(([key, color]) => (
-          <ListItemButton key={key} disabled={loading} onClick={(e) => handleItemClick(e, key as PaletteMode)}>
-            <ListItemAvatar>
-              <Avatar sx={{ backgroundColor: color.background, color: color.highlight }}>
-                <ImageOutlined />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={t(`theme.${key}`)} />
-          </ListItemButton>
-        ))}
-      </List>
-    </SimpleDialog>
-  );
+  return { colors, open, isSubmitting, handleItemClick, handleClose };
 };

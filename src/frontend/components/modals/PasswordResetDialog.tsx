@@ -27,6 +27,70 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const passwordResetFormHook = usePasswordResetForm(onClose);
+  const { registerField, isSubmitting, errors, dismissRootError, handleSubmit, handleClose } = passwordResetFormHook;
+
+  const dialogProps: FormDialogProps = {
+    id: 'password-reset',
+    open: open,
+    onSubmit: handleSubmit,
+    onClose: handleClose,
+  };
+
+  return (
+    <FormDialog {...dialogProps}>
+      <FormDialog.Title>{t('passwordReset.title')}</FormDialog.Title>
+      <FormDialog.Content>
+        <FormDialog.Subtitle>{t('passwordReset.subtitle')}</FormDialog.Subtitle>
+        <Collapse in={!!errors.root?.serverError} unmountOnExit>
+          <Alert variant='filled' severity='error' onClose={dismissRootError} sx={{ my: 2 }}>
+            {errors.root?.serverError.message as string}
+          </Alert>
+        </Collapse>
+        <TextField type={'hidden'} {...registerField('token')} sx={{ visibility: 'hidden', display: 'none' }} />
+        <TextInput
+          {...registerField('email')}
+          label={t('passwordReset.email') as string}
+          helperText={t('passwordReset.emailHint') as string}
+          errorMessage={errors.email?.message as string}
+          disabled
+          icon={<AlternateEmailOutlined />}
+        />
+        <PasswordInput
+          {...registerField('newPassword')}
+          label={t('dialogs.changePasswordDialog.newPasswordLabel') as string}
+          helperText={t('dialogs.changePasswordDialog.newPasswordHint') as string}
+          errorMessage={errors.newPassword?.message as string}
+        />
+        <PasswordInput
+          {...registerField('repeatPassword')}
+          label={t('dialogs.changePasswordDialog.repeatPasswordLabel') as string}
+          helperText={t('dialogs.changePasswordDialog.repeatPasswordHint') as string}
+          errorMessage={errors.repeatPassword?.message as string}
+        />
+      </FormDialog.Content>
+      <FormDialog.Actions>
+        <Button variant='text' fullWidth={fullScreen} onClick={handleClose}>
+          {t('passwordReset.backToSignIn')}
+        </Button>
+        <Box sx={{ flex: '1' }}></Box>
+        <Button
+          type='submit'
+          variant='contained'
+          fullWidth={fullScreen}
+          loading={isSubmitting}
+          loadingPosition='end'
+          endIcon={<LockReset />}
+          children={t('common.save')}
+        />
+      </FormDialog.Actions>
+    </FormDialog>
+  );
+};
+
+const usePasswordResetForm = (onClose: Props['onClose']) => {
+  const { t } = useTranslation();
+
   const queryParams = new URLSearchParams(location.search);
   const passwordResetRequest = usePasswordResetRequest();
 
@@ -43,7 +107,6 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   });
 
   const { register, formState, reset, handleSubmit, setError, clearErrors, getFieldState, trigger } = useHookForm;
-  const { errors } = formState;
 
   const registerField = useCallback(
     (fieldName: string) => {
@@ -106,60 +169,12 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
     });
   };
 
-  const dialogProps: FormDialogProps = {
-    id: 'password-reset',
-    open: open,
-    onSubmit: handleSubmit(onValidSubmit),
-    onClose: handleClose,
+  return {
+    registerField,
+    handleSubmit: handleSubmit(onValidSubmit),
+    isSubmitting: passwordResetRequest.status === 'pending',
+    dismissRootError: () => clearErrors('root'),
+    errors: formState.errors,
+    handleClose,
   };
-
-  return (
-    <FormDialog {...dialogProps}>
-      <FormDialog.Title>{t('passwordReset.title')}</FormDialog.Title>
-      <FormDialog.Content>
-        <FormDialog.Subtitle>{t('passwordReset.subtitle')}</FormDialog.Subtitle>
-        <Collapse in={!!errors.root?.serverError} unmountOnExit>
-          <Alert variant='filled' severity='error' onClose={() => clearErrors('root')} sx={{ my: 2 }}>
-            {errors.root?.serverError.message as string}
-          </Alert>
-        </Collapse>
-        <TextField type={'hidden'} {...registerField('token')} sx={{ visibility: 'hidden', display: 'none' }} />
-        <TextInput
-          {...registerField('email')}
-          label={t('passwordReset.email') as string}
-          helperText={t('passwordReset.emailHint') as string}
-          errorMessage={errors.email?.message as string}
-          disabled
-          icon={<AlternateEmailOutlined />}
-        />
-        <PasswordInput
-          {...registerField('newPassword')}
-          label={t('dialogs.changePasswordDialog.newPasswordLabel') as string}
-          helperText={t('dialogs.changePasswordDialog.newPasswordHint') as string}
-          errorMessage={errors.newPassword?.message as string}
-        />
-        <PasswordInput
-          {...registerField('repeatPassword')}
-          label={t('dialogs.changePasswordDialog.repeatPasswordLabel') as string}
-          helperText={t('dialogs.changePasswordDialog.repeatPasswordHint') as string}
-          errorMessage={errors.repeatPassword?.message as string}
-        />
-      </FormDialog.Content>
-      <FormDialog.Actions>
-        <Button variant='text' fullWidth={fullScreen} onClick={handleClose}>
-          {t('passwordReset.backToSignIn')}
-        </Button>
-        <Box sx={{ flex: '1' }}></Box>
-        <Button
-          type='submit'
-          variant='contained'
-          fullWidth={fullScreen}
-          loading={passwordResetRequest.status === 'pending'}
-          loadingPosition='end'
-          endIcon={<LockReset />}
-          children={t('common.save')}
-        />
-      </FormDialog.Actions>
-    </FormDialog>
-  );
 };

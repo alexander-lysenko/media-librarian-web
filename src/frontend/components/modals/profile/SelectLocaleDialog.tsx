@@ -15,6 +15,30 @@ import type { SyntheticEvent } from 'react';
  */
 export const SelectLocaleDialog = () => {
   const { t } = useTranslation();
+  const { languages, open, isSubmitting, handleItemClick, handleClose } = useDialogHandler();
+
+  return (
+    <SimpleDialog id='select-locale' open={open} onClose={handleClose}>
+      <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeLocaleDialog.title')}</SimpleDialog.Title>
+      <List>
+        {Object.entries(languages).map(([key, label]) => (
+          <ListItemButton key={key} disabled={isSubmitting} onClick={(e) => handleItemClick(e, key as Language)}>
+            <ListItemAvatar>
+              <Avatar>{key}</Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={label} />
+          </ListItemButton>
+        ))}
+      </List>
+      <SimpleDialog.Content sx={{ pt: 1 }}>
+        <Typography variant='body2'>{'More languages coming soon'}</Typography>
+      </SimpleDialog.Content>
+    </SimpleDialog>
+  );
+};
+
+const useDialogHandler = () => {
+  const { t } = useTranslation();
 
   const languages = useTranslationStore((state) => state.languages);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
@@ -23,10 +47,10 @@ export const SelectLocaleDialog = () => {
   const setOpen = useProfileDialogsStore((state) => state.setLocaleDialogOpen);
 
   const profileUpdateRequest = useProfilePatchRequest();
-  const loading = profileUpdateRequest.status === 'pending';
+  const isSubmitting = profileUpdateRequest.status === 'pending';
 
   const handleClose = (event: SyntheticEvent) => {
-    if (loading) {
+    if (isSubmitting) {
       event.preventDefault();
       event.stopPropagation();
       return false;
@@ -42,32 +66,11 @@ export const SelectLocaleDialog = () => {
           setLanguage(response.user.locale);
           enqueueSnack({ message: t('common.changesSaved'), type: 'success' });
         },
-        onError: (reason) => {
-          enqueueSnack({ message: reason.message, type: 'error' });
-        },
-        onSettled: () => {
-          handleClose(event);
-        },
+        onError: (reason) => enqueueSnack({ message: reason.message, type: 'error' }),
+        onSettled: () => handleClose(event),
       },
     );
   };
 
-  return (
-    <SimpleDialog id='select-locale' open={open} onClose={handleClose}>
-      <SimpleDialog.Title sx={{ pb: 0 }}>{t('dialogs.changeLocaleDialog.title')}</SimpleDialog.Title>
-      <List>
-        {Object.entries(languages).map(([key, label]) => (
-          <ListItemButton key={key} disabled={loading} onClick={(e) => handleItemClick(e, key as Language)}>
-            <ListItemAvatar>
-              <Avatar>{key}</Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={label} />
-          </ListItemButton>
-        ))}
-      </List>
-      <SimpleDialog.Content sx={{ pt: 1 }}>
-        <Typography variant='body2'>{'More languages coming soon'}</Typography>
-      </SimpleDialog.Content>
-    </SimpleDialog>
-  );
+  return { languages, open, isSubmitting, handleItemClick, handleClose };
 };

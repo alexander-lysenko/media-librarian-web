@@ -1,6 +1,6 @@
 import { Turnstile } from '@marsidev/react-turnstile';
 import { Alert, Box, Button, Checkbox, Collapse, FormControlLabel } from '@mui/material';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -10,7 +10,7 @@ import { LoginOutlined } from '../icons';
 import { EmailInput } from '../inputs/EmailInput';
 import { PasswordInput } from '../inputs/PasswordInput';
 
-import type { FormValidationRules, LoginFormData, RegisterCaptchaProps, UseFormService } from '../../core/types';
+import type { FormValidationRules, LoginFormData, RegisterCaptchaProps } from '../../core/types';
 import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form';
 
@@ -22,7 +22,7 @@ type FormType = LoginFormData;
 export const LoginForm = () => {
   const { t, i18n } = useTranslation();
 
-  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useFormService();
+  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useLoginForm();
 
   return (
     <Box component='form' noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -64,44 +64,42 @@ export const LoginForm = () => {
 /**
  * A custom React hook that provides form handling logic for a login form.
  */
-const useFormService = (): UseFormService<FormType> => {
+const useLoginForm = () => {
   const { t } = useTranslation();
-
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const useLoginRequest = useUserLoginRequest();
-  const isSubmitting = useLoginRequest.status === 'pending';
 
   const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onBlur' });
   const { formState, register, handleSubmit } = useHookForm;
   const { setError, clearErrors, setValue, reset, resetField } = useHookForm;
   const { errors } = formState;
 
-  const registerField = useCallback(
-    (fieldName: keyof FormType) => {
-      const rules: Record<keyof FormType, FormValidationRules> = {
-        email: {
-          setValueAs: (value: string) => value.trim().toLowerCase(),
-          required: t('formValidation.emailRequired'),
-          pattern: {
-            value: emailValidationPattern,
-            message: t('formValidation.emailInvalid'),
-          },
+  // prettier-ignore
+  const rules = useMemo((): Record<keyof FormType, FormValidationRules> => ({
+      email: {
+        setValueAs: (value: string) => value.trim().toLowerCase(),
+        required: t('formValidation.emailRequired'),
+        pattern: {
+          value: emailValidationPattern,
+          message: t('formValidation.emailInvalid'),
         },
-        password: {
-          required: t('formValidation.passwordRequired'),
-        },
-        rememberMe: {
-          setValueAs: (value: string) => !!value,
-        },
-        'cf-turnstile-response': {
-          required: t('formValidation.captchaRequired'),
-        },
-      };
+      },
+      password: {
+        required: t('formValidation.passwordRequired'),
+      },
+      rememberMe: {
+        setValueAs: (value: string) => !!value,
+      },
+      'cf-turnstile-response': {
+        required: t('formValidation.captchaRequired'),
+      },
+    }), [t],
+  );
 
-      return register(fieldName as string, rules[fieldName]);
-    },
-    [register, t],
+  const registerField = useCallback(
+    (fieldName: keyof FormType) => register(fieldName as string, rules[fieldName]),
+    [register, rules],
   );
 
   const registerCaptcha = useCallback((): RegisterCaptchaProps => {
@@ -125,6 +123,7 @@ const useFormService = (): UseFormService<FormType> => {
       },
     });
   };
+
   const onInvalidSubmit: SubmitErrorHandler<FormType> = () => {
     if (errors['cf-turnstile-response']) {
       setError('root.serverError', { message: errors['cf-turnstile-response']?.message as string });
@@ -135,7 +134,7 @@ const useFormService = (): UseFormService<FormType> => {
     registerField,
     registerCaptcha,
     handleSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
-    isSubmitting,
+    isSubmitting: useLoginRequest.status === 'pending',
     errors,
     dismissRootError: () => clearErrors('root'),
   };

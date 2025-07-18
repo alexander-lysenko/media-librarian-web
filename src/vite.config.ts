@@ -13,8 +13,10 @@ const combineManualChunks: ManualChunksOption = (id) => {
     // return id;
     // return "mui";
     case id.includes('node_modules/'):
-      // return id.toString().split("node_modules/")[1].split("/")[0].toString();
-      return 'vendor';
+      return id.toString().split("node_modules/")[1].split("/")[0].toString();
+      // return 'vendor';
+    default:
+      return 'index';
   }
 };
 

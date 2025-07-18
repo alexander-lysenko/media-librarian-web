@@ -1,7 +1,7 @@
 import { Turnstile } from '@marsidev/react-turnstile';
 import { Alert, Box, Button, Collapse } from '@mui/material';
 import { debounce } from '@mui/material';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -17,7 +17,7 @@ import { PasswordInput } from '../inputs/PasswordInput';
 import { SelectInput } from '../inputs/SelectInput';
 import { TextInput } from '../inputs/TextInput';
 
-import type { FormValidationRules, RegisterCaptchaProps, SignupFormData, UseFormService } from '../../core/types';
+import type { FormValidationRules, RegisterCaptchaProps, SignupFormData } from '../../core/types';
 import type { Language } from '../../store/system/useTranslationStore';
 import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import type { PaletteMode } from '@mui/material';
@@ -36,7 +36,7 @@ export const SignupForm = () => {
   const { language, setLanguage } = useLanguageStore((state) => state);
   const languages = useTranslationStore((state) => state.languages);
 
-  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useFormService();
+  const { registerField, registerCaptcha, handleSubmit, errors, dismissRootError, isSubmitting } = useSignupForm();
 
   return (
     <Box component='form' noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -110,87 +110,85 @@ export const SignupForm = () => {
  * This hook includes form validation logic, field registration, and helper functions to manage the state of the form.
  * It handles validation for fields such as name, email, password, password confirmation, and CAPTCHA response.
  */
-const useFormService = (): UseFormService<FormType> => {
+const useSignupForm = () => {
   const { t } = useTranslation();
   const captchaRef = useRef<TurnstileInstance>(null);
 
   const signupRequest = useUserSignupRequest();
   const validateEmail = useEmailValidationRequest();
-  const isSubmitting = signupRequest.status === 'pending';
 
   const useHookForm = useForm<FormType>({ mode: 'onBlur', reValidateMode: 'onBlur' });
   const { register, handleSubmit } = useHookForm;
   const { formState, setError, clearErrors, setValue, reset, getFieldState, trigger } = useHookForm;
   const { errors } = formState;
 
-  const registerField = useCallback(
-    (fieldName: keyof FormType) => {
-      const rules: Record<keyof FormType, FormValidationRules> = {
-        name: {
-          setValueAs: (value: string) => value.trim(),
-          required: t('formValidation.usernameRequired'),
-          minLength: { value: 3, message: t('formValidation.usernameMinLength', { n: 3 }) },
-        },
-        email: {
-          setValueAs: (value: string) => value.trim().toLowerCase(),
-          required: t('formValidation.emailRequired'),
-          pattern: {
-            value: emailValidationPattern,
-            message: t('formValidation.emailInvalid'),
-          },
-          validate: {
-            uniqueValidation: async (value: string): Promise<ValidateResult> => {
-              return await validateEmail
-                .mutateAsync({ email: value })
-                .then((response) => response?.message)
-                .catch((error) => error.message);
-            },
-          },
-        },
-        password: {
-          required: t('formValidation.passwordRequired'),
-          minLength: { value: 8, message: t('formValidation.passwordMinLength', { n: 8 }) },
-          validate: {
-            matchesPasswords: () => {
-              const prevField = 'passwordRepeat';
-              const { isDirty, invalid } = getFieldState(prevField);
-              if (isDirty || invalid) {
-                trigger(prevField).then(() => true);
-              }
-
-              return true;
-            },
-          },
-        },
-        passwordRepeat: {
-          required: t('formValidation.passwordRepeatRequired'),
-          validate: {
-            matchesPasswords: (value, formValues) => {
-              const message = t('formValidation.passwordRepeatNotMatch');
-              const { password } = formValues;
-
-              return password === value || message;
-            },
-          },
-        },
-        'cf-turnstile-response': {
-          required: t('formValidation.captchaRequired'),
-        },
-      };
-
-      const registerReturn = register(fieldName as never, rules[fieldName]);
-
-      switch (fieldName) {
-        case 'email':
-          return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
-        case 'password':
-          return { ...registerReturn, onChange: debounce(registerReturn.onChange, 500) };
-        default:
-          return registerReturn;
-      }
+  // prettier-ignore
+  const rules = useMemo((): Record<keyof FormType, FormValidationRules> => ({
+    name: {
+      setValueAs: (value: string) => value.trim(),
+      required: t('formValidation.usernameRequired'),
+      minLength: { value: 3, message: t('formValidation.usernameMinLength', { n: 3 }) },
     },
-    [getFieldState, register, t, trigger, validateEmail],
-  );
+    email: {
+      setValueAs: (value: string) => value.trim().toLowerCase(),
+      required: t('formValidation.emailRequired'),
+      pattern: {
+        value: emailValidationPattern,
+        message: t('formValidation.emailInvalid'),
+      },
+      validate: {
+        uniqueValidation: async (value: string): Promise<ValidateResult> => {
+          return await validateEmail
+            .mutateAsync({ email: value })
+            .then((response) => response?.message)
+            .catch((error) => error.message);
+        },
+      },
+    },
+    password: {
+      required: t('formValidation.passwordRequired'),
+      minLength: { value: 8, message: t('formValidation.passwordMinLength', { n: 8 }) },
+      validate: {
+        matchesPasswords: () => {
+          const prevField = 'passwordRepeat';
+          const { isDirty, invalid } = getFieldState(prevField);
+          if (isDirty || invalid) {
+            trigger(prevField).then(() => true);
+          }
+
+          return true;
+        },
+      },
+    },
+    passwordRepeat: {
+      required: t('formValidation.passwordRepeatRequired'),
+      validate: {
+        matchesPasswords: (value, formValues) => {
+          const message = t('formValidation.passwordRepeatNotMatch');
+          const { password } = formValues;
+
+          return password === value || message;
+        },
+      },
+    },
+    'cf-turnstile-response': {
+      required: t('formValidation.captchaRequired'),
+    },
+  }), [getFieldState, t, trigger, validateEmail]);
+
+  // prettier-ignore
+  const registerField = useCallback((fieldName: keyof FormType) => {
+    const registerReturn = register(fieldName as never, rules[fieldName]);
+
+    switch (fieldName) {
+      case 'email':
+        return { ...registerReturn, onChange: debounce(registerReturn.onChange, 1000) };
+      case 'password':
+        return { ...registerReturn, onChange: debounce(registerReturn.onChange, 500) };
+      default:
+        return registerReturn;
+    }
+  }, [register, rules]);
 
   const registerCaptcha = useCallback((): RegisterCaptchaProps => {
     return {
@@ -221,7 +219,7 @@ const useFormService = (): UseFormService<FormType> => {
     registerField,
     registerCaptcha,
     handleSubmit: handleSubmit(onValidSubmit, onInvalidSubmit),
-    isSubmitting,
+    isSubmitting: signupRequest.status === 'pending',
     errors,
     dismissRootError: () => clearErrors('root'),
   };
