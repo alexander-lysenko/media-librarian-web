@@ -12,6 +12,7 @@ use App\Http\Requests\V1\LibraryPaginatedRequest;
 use App\Http\Resources\LibraryItemResource;
 use App\Models\LibrarySearch;
 use App\Models\SqliteLibraryMeta;
+use App\Services\PosterUploadService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -179,61 +180,6 @@ class LibraryItemController extends ApiV1Controller
         return $resource->response();
     }
 
-    #[OA\Post(
-        path: '/api/v1/libraries/{id}/items',
-        operationId: 'items-create',
-        description: "Add a new Item into the specified Library.\n\n" .
-        ' The structure of the new Item must match the structure of the Library that a new Item is created into.',
-        summary: 'Add a New Item Into a Library',
-        security: self::SECURITY_SCHEME_BEARER,
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: [
-                new OA\JsonContent(properties: [
-                    new OA\Property(property: 'contents', ref: self::SCHEMA_LIBRARY_ENTRY_REQUEST_REF),
-                    new OA\Property(
-                        property: 'poster',
-                        description: "Attach a poster (in Base64 string format).\n\n" .
-                        'To convert an image into base64 (for development purposes), ' .
-                        'you can use this service: https://www.base64-image.de/',
-                        type: 'string',
-                        format: 'base64',
-                        example: null
-                    ),
-                ]),
-            ]
-        ),
-        tags: ['items'],
-        parameters: [new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF)],
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: 'Created',
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'item', ref: self::SCHEMA_LIBRARY_ENTRY_REF),
-                    new OA\Property(property: 'poster', type: 'string', example: null),
-                ])
-            ),
-            new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
-            new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
-            new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
-        ]
-    )]
-    public function create(LibraryItemCreateRequest $request): JsonResponse
-    {
-        $contents = $request->contents;
-        $id = SqliteLibraryMeta::getLibraryTableQuery($request->id)->insertGetId($contents);
-        // todo: implement file uploading
-
-        $insertedItem = array_merge(['id' => $id], $contents);
-        $resource = new LibraryItemResource($insertedItem);
-
-        // todo: upload poster and return its URL
-        $resource->with['poster'] = null;
-
-        return $resource->response()->setStatusCode(201);
-    }
-
     #[OA\Get(
         path: '/api/v1/libraries/{id}/items/{item}',
         operationId: 'items-view',
@@ -273,6 +219,61 @@ class LibraryItemController extends ApiV1Controller
         return $resource->response();
     }
 
+    #[OA\Post(
+        path: '/api/v1/libraries/{id}/items',
+        operationId: 'items-create',
+        description: "Add a new Item into the specified Library.\n\n" .
+        ' The structure of the new Item must match the structure of the Library that a new Item is created into.',
+        summary: 'Add a New Item Into a Library',
+        security: self::SECURITY_SCHEME_BEARER,
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\JsonContent(properties: [
+                    new OA\Property(property: 'contents', ref: self::SCHEMA_LIBRARY_ENTRY_REQUEST_REF),
+                    new OA\Property(
+                        property: 'posterUUID',
+                        description: "Attach a poster by providing UUID of pre-uploaded image.\n\n" .
+                        "Use `/api/v1/posters` endpoint to upload an image and get its UUID.\n\n" .
+                        'To remove the attachment of existing poster, set this field to `null`.',
+                        type: 'string',
+                        format: 'uuid',
+                        example: '550e8400-e29b-41d4-a716-446655440000'
+                    ),
+                ]),
+            ]
+        ),
+        tags: ['items'],
+        parameters: [new OA\Parameter(ref: self::PARAM_LIBRARY_ID_REF)],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Created',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'item', ref: self::SCHEMA_LIBRARY_ENTRY_REF),
+                    new OA\Property(property: 'poster', type: 'string', example: null),
+                ])
+            ),
+            new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
+            new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
+            new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
+        ]
+    )]
+    public function create(LibraryItemCreateRequest $request, PosterUploadService $service): JsonResponse
+    {
+        $contents = $request->contents;
+        $id = SqliteLibraryMeta::getLibraryTableQuery($request->id)->insertGetId($contents);
+        // todo: implement file uploading
+
+        $insertedItem = array_merge(['id' => $id], $contents);
+        $resource = new LibraryItemResource($insertedItem);
+
+        // todo: upload poster and return its URL
+        $resource->with['poster'] = null;
+
+        return $resource->response()->setStatusCode(201);
+    }
+
     #[OA\Put(
         path: '/api/v1/libraries/{id}/items/{item}',
         operationId: 'items-update',
@@ -284,7 +285,16 @@ class LibraryItemController extends ApiV1Controller
             content: [
                 new OA\JsonContent(properties: [
                     new OA\Property(property: 'contents', ref: self::SCHEMA_LIBRARY_ENTRY_REQUEST_REF),
-                    new OA\Property(property: 'poster', ref: self::SCHEMA_POSTER_BASE64_REF),
+                    new OA\Property(
+                        property: 'posterUUID',
+                        description: "Attach a poster by providing UUID of pre-uploaded image.\n\n" .
+                        "Use `/api/v1/posters` endpoint to upload an image and get its UUID.\n\n" .
+                        'To remove the attachment of existing poster, set this field to `null`. ' .
+                        'To remain the attachment unchanged, just omit this field.',
+                        type: 'string',
+                        format: 'uuid',
+                        example: '550e8400-e29b-41d4-a716-446655440000'
+                    ),
                 ]),
             ]
         ),

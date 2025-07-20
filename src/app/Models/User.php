@@ -75,6 +75,16 @@ class User extends AuthUser implements HasApiTokensContract, HasLocalePreference
         'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    public function isActive(): bool
+    {
+        return $this->status === UserStatusEnum::ACTIVE->value;
+    }
+
+    public function isAccessible(): bool
+    {
+        return !in_array($this->status, [UserStatusEnum::BANNED->value, UserStatusEnum::DELETED->value], true);
+    }
+
     /**
      * Get the user's preferred locale.
      *

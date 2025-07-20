@@ -18,25 +18,30 @@ $forwardToSinglePage = static function () {
     return view('index');
 };
 
-Route::middleware(['throttle:web'])
-    ->group(function () use ($forwardToSinglePage) {
-        Route::get('/', $forwardToSinglePage);
-        Route::get('/app', $forwardToSinglePage);
-        Route::get('/login', $forwardToSinglePage);
-        Route::get('/signup', $forwardToSinglePage);
-        Route::get('/profile', $forwardToSinglePage);
-    });
+Route::middleware(['throttle:web']) //
+->group(function () use ($forwardToSinglePage) {
+    Route::get('/', $forwardToSinglePage)
+        ->name('index');
+    Route::get('/app', $forwardToSinglePage)
+        ->name('app');
+    Route::get('/login', $forwardToSinglePage)
+        ->name('login');
+    Route::get('/signup', $forwardToSinglePage)
+        ->name('signup');
+    Route::get('/profile', $forwardToSinglePage)
+        ->name('profile');
+});
 
 Route::middleware(['throttle:web', /*'signed:relative'*/]) // todo: manage correct middleware
-    ->group(function () {
-        Route::get('/email-confirmation', [WebController::class, 'emailVerify'])
-            ->name('verification.verify');
-        Route::get('/password-reset', [WebController::class, 'resetPasswordForm'])
-            ->name('password.reset');
-    });
+->group(function () {
+    Route::get('/email-confirmation', [WebController::class, 'emailVerify'])
+        ->name('verification.verify');
+    Route::get('/password-reset', [WebController::class, 'resetPasswordForm'])
+        ->name('password.reset');
+});
 
-Route::middleware(['throttle:web'])
-    ->group(function () {
-        Route::get('/email-confirmation-preview', [WebController::class, 'previewVerifyEmail']);
-        Route::get('/password-reset-preview', [WebController::class, 'previewPasswordResetEmail']);
-    });
+Route::middleware(['throttle:web']) //
+->group(function () {
+    Route::get('/email-confirmation-preview', [WebController::class, 'previewVerifyEmail']);
+    Route::get('/password-reset-preview', [WebController::class, 'previewPasswordResetEmail']);
+});

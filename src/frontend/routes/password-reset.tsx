@@ -48,7 +48,7 @@ const FullscreenContainer = styled(Box)(({ theme }) => ({
   width: '100vw',
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  [theme.breakpoints.up('sm')]: {
-    backgroundImage: 'var(--var-background-image)',
-  },
+  // [theme.breakpoints.up('sm')]: {
+  backgroundImage: 'var(--var-background-image)',
+  // },
 }));

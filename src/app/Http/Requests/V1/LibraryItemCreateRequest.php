@@ -4,7 +4,6 @@ namespace App\Http\Requests\V1;
 
 use App\Models\SqliteLibraryMeta;
 use App\Rules\LibraryItemStructureRule;
-use App\Utils\FileHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -37,14 +36,8 @@ class LibraryItemCreateRequest extends FormRequest
      */
     public function prepareForValidation(): void
     {
-        $poster = null;
-        if (!empty($this->input('poster'))) {
-            $poster = FileHelper::fromBase64($this->input('poster'));
-        }
-
         $this->merge([
             'id' => $this->route('id'),
-            'poster' => $poster,
         ]);
     }
 
@@ -66,7 +59,7 @@ class LibraryItemCreateRequest extends FormRequest
 
         return [
             'contents' => ['required', 'array', new LibraryItemStructureRule($preValidated['id'])],
-            'poster' => ['nullable', 'file', 'max:4096', 'mimes:jpg,png'],
+            'posterUUID' => ['nullable', 'uuid'],
         ];
     }
 }

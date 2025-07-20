@@ -204,14 +204,14 @@
   },
   "passwordRecovery": {
     "emailSent": "We have sent an e-mail for you. Please check your inbox.",
-    "subtitle": "To confirm the ownership of your account please enter the e-mail address your account is registered to. We will send you recovery instructions to this address.",
+    "subtitle": "To confirm the ownership of your account, please enter the email address your account is registered to. We will send you recovery instructions to this address.",
     "title": "Password Recovery Request"
   },
   "passwordReset": {
     "backToSignIn": "Back To Sign In",
     "email": "Email address",
     "emailHint": "This email address is the identifier of your account",
-    "subtitle": "Alright, now you can set a new password for your account.",
+    "subtitle": "Great! You can now set up a new password for your account and regain control of your digital world.",
     "successfullyReset": "Password has been reset. You can sign in using your new password.",
     "title": "Password Reset"
   },

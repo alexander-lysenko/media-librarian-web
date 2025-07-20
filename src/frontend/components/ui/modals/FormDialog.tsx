@@ -31,12 +31,7 @@ const DialogWrapper = ({ open, onClose, onSubmit, onKeyDown, paperSx, ...props }
     slots: { transition: Grow },
     slotProps: {
       transition: { timeout: 120 },
-      paper: {
-        component: 'form',
-        sx: paperSx,
-        onSubmit: onSubmit,
-        onKeyDown: onKeyDown,
-      },
+      paper: { component: 'form', sx: paperSx, onSubmit: onSubmit, onKeyDown: onKeyDown },
     },
     ...props,
   };

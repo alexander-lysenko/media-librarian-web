@@ -3,22 +3,27 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\ApiV1Controller;
-use App\Utils\FileHelper;
+use App\Http\Requests\V1\PosterUploadRequest;
+use App\Services\ImageProcessingService;
+use App\Utils\TmpFile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Throwable;
 
 /**
  * PosterController - Uses a temporary storage to upload posters
  */
 class PosterController extends ApiV1Controller
 {
+    private string $tmpPrefix = self::R2_STORAGE_POSTER_TMP_PREFIX;
+
     #[OA\Get(
         path: '/api/v1/posters',
         operationId: 'posters-find',
@@ -40,12 +45,14 @@ class PosterController extends ApiV1Controller
                 description: 'OK',
                 content: [
                     new OA\MediaType(
-                        mediaType: 'image/jpeg',
+                        mediaType: 'image/webp',
                         schema: new OA\Schema(type: 'string', format: 'binary'),
                     ),
                     new OA\MediaType(
                         mediaType: 'application/json',
-                        schema: new OA\Schema(type: 'string', format: 'base64'),
+                        schema: new OA\Schema(properties: [
+                            new OA\Property(property: 'data', type: 'string', format: 'base64'),
+                        ]),
                     ),
                 ],
             ),
@@ -55,15 +62,25 @@ class PosterController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ],
     )]
-    public function find(Request $request): BinaryFileResponse
+    public function find(Request $request): JsonResponse|BinaryFileResponse
     {
         $request->validate(['id' => ['required', 'uuid']]);
-        $key = implode(':', ['posters', $request->input('id')]);
+        $uuid = $request->input(key: 'id');
 
-        if (Cache::has($key)) {
-            return new BinaryFileResponse(Cache::get($key));
+        $imgContents = Storage::disk(name: 'r2')->get(path: "$this->tmpPrefix/$uuid.webp");
+
+        if (empty($imgContents)) {
+            throw new NotFoundHttpException(message: 'Poster not found');
         }
-        throw new NotFoundHttpException('Poster not found');
+
+        if ($request->wantsJson()) {
+            return new JsonResponse(['data' => base64_encode(string: $imgContents)]);
+        }
+
+        $tmpFilePath = (new TmpFile())->getFilename();
+        file_put_contents(filename: $tmpFilePath, data: $imgContents);
+
+        return (new BinaryFileResponse(file: $tmpFilePath))->deleteFileAfterSend();
     }
 
     #[OA\Post(
@@ -72,24 +89,18 @@ class PosterController extends ApiV1Controller
         description: 'A Poster is uploaded into the temporary storage and its UUID is returned by the endpoint. ' .
         'You may provide the UUID to a Library Item on create or update it, then the poster will be attached to that ' .
         "Item and the file will be moved into the permanent storage. \n\n" .
-        'Any temporary poster not attached to a Library Item will be disposed after 24 hours.',
+        'Every temporary poster not attached to any Library Item will be disposed after 24 hours.',
         summary: 'Upload Poster',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
             content: [
-                new OA\MediaType(
-                    mediaType: 'application/json',
-                    schema: new OA\Schema(properties: [
-                        new OA\Property(property: 'poster', type: 'string', format: 'base64'),
-                    ])
-                ),
-                new OA\MediaType(
-                    mediaType: 'multipart/form-data',
-                    schema: new OA\Schema(properties: [
-                        new OA\Property(property: 'poster', type: 'file', format: 'image/jpeg'),
-                    ])
-                ),
+                new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(properties: [
+                    new OA\Property(property: 'poster', type: 'file', format: 'image/*'),
+                ])),
+                new OA\MediaType(mediaType: 'application/json', schema: new OA\Schema(properties: [
+                    new OA\Property(property: 'poster', type: 'string', format: 'base64'),
+                ])),
             ],
         ),
         tags: ['posters'],
@@ -102,43 +113,33 @@ class PosterController extends ApiV1Controller
                 ]),
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
+            new OA\Response(ref: self::RESPONSE_413_REF, response: 413),
             new OA\Response(ref: self::RESPONSE_422_REF, response: 422),
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ],
     )]
-    public function upload(Request $request): JsonResponse
+    public function upload(PosterUploadRequest $request, ImageProcessingService $imageProcessingService): JsonResponse
     {
         $uuid = Str::uuid();
-
-        $requestContentType = $request->getContentTypeFormat();
-        $requestData = [];
-
-        if ($requestContentType === 'json') {
-            $request->validate(['poster' => ['required', 'string']]);
-            $requestData['poster'] = FileHelper::fromBase64($request->input('poster'));
-        } else {
-            $request->validate(['poster' => ['required', 'file']]);
-            $requestData['poster'] = $request->file('poster');
-        }
-
-        $validator = Validator::make($requestData, [
-            'poster' => ['image', 'mimes:jpeg,png,webp,bitmap', 'max:2048'],
-        ]);
+        $uploadedFile = $request->file(key: 'poster');
 
         try {
-            $validator->validate();
-        } catch (ValidationException $e) {
-            /** @noinspection PhpUnhandledExceptionInspection */
-            throw $e;
+            $imgContents = $imageProcessingService->processFromSource(contents: $uploadedFile->get());
+            file_put_contents(filename: $uploadedFile->getRealPath(), data: $imgContents);
+            $storedFilePath = Storage::disk(name: 'r2')->putFileAs(
+                path: $this->tmpPrefix,
+                file: $uploadedFile,
+                name: "$uuid.webp"
+            );
+            if (empty($storedFilePath)) {
+                throw new FileException('Rejected to upload the file.');
+            }
+        } catch (Throwable $exception) {
+            Log::error($exception);
+
+            return new JsonResponse(data: ['message' => "Failed to upload poster: {$exception->getMessage()}"], status: 500);
         }
 
-        // Save the file to the Memcached or Redis
-        Cache::put(
-            key: implode(':', ['posters', $uuid]),
-            value: file_get_contents($requestData['poster']),
-            ttl: 86_400,
-        );
-
-        return new JsonResponse(['id' => $uuid], 201);
+        return new JsonResponse(data: ['id' => $uuid], status: 201);
     }
 }

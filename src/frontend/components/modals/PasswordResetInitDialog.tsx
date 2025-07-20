@@ -39,6 +39,7 @@ export const PasswordResetInitDialog = ({ open, onClose }: Props) => {
     id: 'password-recovery',
     open,
     fullWidth: true,
+    fullScreen: false,
     onSubmit: handleSubmit,
     onClose: handleClose,
   };

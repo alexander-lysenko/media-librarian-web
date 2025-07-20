@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Collapse, TextField, useMediaQuery, useTheme } from '@mui/material';
+import { Alert, Box, Button, Collapse, TextField } from '@mui/material';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +24,6 @@ interface Props {
  */
 export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const passwordResetFormHook = usePasswordResetForm(onClose);
   const { registerField, isSubmitting, errors, dismissRootError, handleSubmit, handleClose } = passwordResetFormHook;
@@ -33,6 +31,8 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
   const dialogProps: FormDialogProps = {
     id: 'password-reset',
     open: open,
+    maxWidth: 'xs',
+    fullScreen: false,
     onSubmit: handleSubmit,
     onClose: handleClose,
   };
@@ -70,14 +70,13 @@ export const PasswordResetDialog = ({ open, onClose }: Props) => {
         />
       </FormDialog.Content>
       <FormDialog.Actions>
-        <Button variant='text' fullWidth={fullScreen} onClick={handleClose}>
+        <Button variant='text' onClick={handleClose}>
           {t('passwordReset.backToSignIn')}
         </Button>
         <Box sx={{ flex: '1' }}></Box>
         <Button
           type='submit'
           variant='contained'
-          fullWidth={fullScreen}
           loading={isSubmitting}
           loadingPosition='end'
           endIcon={<LockReset />}
