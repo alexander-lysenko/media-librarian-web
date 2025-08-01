@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
  * A request entity to validate the data passed to CREATE a new Item into an existing Library
  * @property int $id
  * @property array $contents
- * @property mixed $poster
+ * @property string|null $posterUUID
  */
 class LibraryItemCreateRequest extends FormRequest
 {

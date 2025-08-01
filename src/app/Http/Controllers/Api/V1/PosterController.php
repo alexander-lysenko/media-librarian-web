@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\PosterUploadRequest;
 use App\Services\ImageProcessingService;
+use App\Utils\Enum\PictureFormatEnum;
 use App\Utils\TmpFile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -124,7 +125,10 @@ class PosterController extends ApiV1Controller
         $uploadedFile = $request->file(key: 'poster');
 
         try {
-            $imgContents = $imageProcessingService->processFromSource(contents: $uploadedFile->get());
+            $imgContents = $imageProcessingService->convert(
+                contents: $uploadedFile->get(),
+                format: PictureFormatEnum::WEBP,
+            );
             file_put_contents(filename: $uploadedFile->getRealPath(), data: $imgContents);
             $storedFilePath = Storage::disk(name: 'r2')->putFileAs(
                 path: $this->tmpPrefix,

@@ -13,6 +13,7 @@ use Illuminate\Validation\Rule;
  * @property int $id
  * @property int $item
  * @property array $contents
+ * @property string|null $posterUUID
  */
 class LibraryItemUpdateRequest extends FormRequest
 {

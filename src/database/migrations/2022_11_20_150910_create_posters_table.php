@@ -13,11 +13,11 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create($this->tableName, static function (Blueprint $table) {
-            $table->id();
+            $table->uuid()->primary();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->integer('library_id');
             $table->integer('item_id');
-            $table->string('uri');
+            $table->string('path');
             $table->timestamps();
         });
     }

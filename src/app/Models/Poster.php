@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * The model represents the table for poster. Designed for SQLite database
+ * The model represents a service table for cataloging posters
+ * that are attached to a Library Item and uploaded to the external storage.
  *
- * @property int $id
+ * @property int $uuid
  * @property int $user_id
  * @property int $library_id
  * @property int $item_id
- * @property string $uri
+ * @property string $path
  * @property string $created_at
  * @property string $updated_at
  */
@@ -22,9 +23,10 @@ class Poster extends Model
 
     /** @inheritdoc */
     public $fillable = [
+        'uuid',
         'user_id',
         'library_id',
         'item_id',
-        'uri',
+        'path',
     ];
 }
