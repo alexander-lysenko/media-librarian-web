@@ -2,46 +2,38 @@
 
 namespace App\Models;
 
-use App\DTO\LibraryFilterDto;
+use App\DTO\PaginationParamsDto;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * A Search model to implement complex filtering of items from a Library
+ * A Search model to implement complex filtering of Items from a Library
  */
-class LibrarySearch
+class LibraryItemsSearch
 {
-    /**
-     * LibrarySearch constructor
-     */
-    public function __construct(public Builder $query)
-    {
-    }
+    public function __construct(public Builder $query) {}
 
     /**
      * The search payload method
-     * @param LibraryFilterDto $filter
-     * @return LengthAwarePaginator
      */
-    public function search(LibraryFilterDto $filter): LengthAwarePaginator
+    public function search(int $libraryId, PaginationParamsDto $pagination, array $terms = []): LengthAwarePaginator
     {
-        $this->query = SqliteLibraryMeta::getLibraryTableQuery($filter->libraryId);
-        foreach ($filter->term as $column => $parameters) {
+        $this->query = SqliteLibraryMeta::getLibraryTableQuery($libraryId);
+
+        foreach ($terms as $column => $parameters) {
             $this->parseTerm($column, $parameters);
         }
 
         $this->query->when(
-            $filter->sortAttribute,
-            static fn(Builder $query) => $query->orderBy($filter->sortAttribute, $filter->sortDirection)
+            $pagination->sortBy,
+            static fn(Builder $query) => $query->orderBy($pagination->sortBy, $pagination->sortDirection)
         );
 
-        return $this->query->paginate(perPage: $filter->perPage, page: $filter->page);
+        return $this->query->paginate(perPage: $pagination->perPage, page: $pagination->page);
     }
 
     /**
-     * @param string $column
-     * @param array $parameters
-     * @return void
+     * Parses search term and converts it into query builder statements
      */
     private function parseTerm(string $column, array $parameters): void
     {

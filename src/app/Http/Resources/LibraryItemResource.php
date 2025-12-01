@@ -24,4 +24,9 @@ class LibraryItemResource extends JsonResource
 
         return is_object($resource) ? get_object_vars($resource) : $resource;
     }
+
+    public function withPoster(?string $poster): void
+    {
+        $this->with['poster'] = $poster;
+    }
 }

@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Events\PasswordResetLinkSent;
+use App\Events\PosterUpdated;
 use App\Events\Registered;
 use App\Listeners\RevokeKeysAfterPasswordReset;
 use App\Listeners\SendPasswordResetNotification;
 use App\Listeners\SendEmailVerificationNotification;
+use App\Listeners\UpdatePosterReference;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
@@ -27,6 +29,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         PasswordReset::class => [
             RevokeKeysAfterPasswordReset::class,
+        ],
+        PosterUpdated::class => [
+            UpdatePosterReference::class,
         ],
     ];
 

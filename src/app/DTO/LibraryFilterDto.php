@@ -7,20 +7,19 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * Data Transfer Object for filter options.
  * It is used to filter items from a Library
- * @noinspection PhpClassCanBeReadonlyInspection
  */
-class LibraryFilterDto
+readonly class LibraryFilterDto
 {
     /**
      * LibraryFilterDto
      */
     public function __construct(
-        public readonly int $libraryId,
-        public readonly ?string $sortAttribute,
-        public readonly string $sortDirection,
-        public readonly int $page,
-        public readonly int $perPage,
-        public readonly array $term,
+        public int $libraryId,
+        public ?string $sortAttribute,
+        public string $sortDirection,
+        public int $page,
+        public int $perPage,
+        public array $term,
 
     ) {}
 

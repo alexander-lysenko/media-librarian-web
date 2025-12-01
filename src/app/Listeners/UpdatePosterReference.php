@@ -11,9 +11,6 @@ use Throwable;
 
 class UpdatePosterReference implements ShouldQueue
 {
-    /**
-     * @var PosterUpdated
-     */
     private PosterUpdated $eventData;
 
     /**
@@ -24,6 +21,15 @@ class UpdatePosterReference implements ShouldQueue
     public function handle(PosterUpdated $event): void
     {
         $this->eventData = $event;
+        $newPosterId = $this->eventData->getNewPosterId();
+        $oldPosterId = $this->eventData->getOldPosterId();
+
+        match (true) {
+            $oldPosterId && !$newPosterId => $this->deleteOldPoster(),
+            !$oldPosterId && $newPosterId => $this->placeNewPoster(),
+            $newPosterId && $oldPosterId && $newPosterId !== $oldPosterId => $this->updatePoster(),
+            default => false,
+        };
     }
 
     public function failed(PosterUpdated $event, Throwable $throwable): void
@@ -40,11 +46,39 @@ class UpdatePosterReference implements ShouldQueue
             ->first();
     }
 
-    private function deleteOldPoster() {
-        $this->posterCloudService->delete();
+    private function createPosterCatalogEntry(): Poster
+    {
+        return new Poster([
+            'user_id' => $this->eventData->getUserId(),
+            'library_id' => $this->eventData->getLibraryId(),
+            'item_id' => $this->eventData->getLibraryItemId(),
+        ]);
     }
 
-    private function placeNewPoster() {
-        $this->posterCloudService->upload();
+    private function deleteOldPoster(): void
+    {
+        $this->posterCloudService->delete();
+
+        $this->getPosterCatalogEntry()?->delete();
+    }
+
+    private function placeNewPoster(): void
+    {
+        $this->posterCloudService->rename();
+
+        $poster = $this->createPosterCatalogEntry();
+        $poster->setAttribute('id', $this->eventData->getNewPosterId());
+        $poster->save();
+    }
+
+    private function updatePoster(): void
+    {
+        $this->posterCloudService->rename();
+
+        $poster = $this->getPosterCatalogEntry();
+        if ($poster !== null) {
+            $poster->setAttribute('id', $this->eventData->getNewPosterId());
+            $poster->save();
+        }
     }
 }

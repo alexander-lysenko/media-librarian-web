@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\DTO\LibraryFilterDto;
+use App\DTO\PaginationParamsDto;
+use App\Events\PosterUpdated;
 use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\LibraryIdRequest;
 use App\Http\Requests\V1\LibraryItemCreateRequest;
@@ -10,13 +11,15 @@ use App\Http\Requests\V1\LibraryItemRequest;
 use App\Http\Requests\V1\LibraryItemUpdateRequest;
 use App\Http\Requests\V1\LibraryPaginatedRequest;
 use App\Http\Resources\LibraryItemResource;
-use App\Models\LibrarySearch;
+use App\Http\Resources\PaginatedJsonResource;
+use App\Models\LibraryItemsSearch;
 use App\Models\SqliteLibraryMeta;
-use App\Services\PosterUploadService;
-use Illuminate\Database\Query\Builder;
+use App\Repositories\LibraryItemRepository;
+use App\Services\PosterCloudService;
+use ErrorException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 use Random\RandomException;
@@ -114,6 +117,11 @@ use Random\RandomException;
  */
 class LibraryItemController extends ApiV1Controller
 {
+    public function __construct(
+        private readonly PosterCloudService $posterCloudService,
+        private readonly LibraryItemRepository $itemRepository,
+    ) {}
+
     #[OA\Get(
         path: '/api/v1/libraries/{id}/items',
         operationId: 'items-index',
@@ -156,26 +164,16 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ],
     )]
-    public function index(LibraryIdRequest $request): JsonResponse
+    public function index(LibraryIdRequest $request, LibraryItemsSearch $searchModel): JsonResponse
     {
-        $paginatedResource = SqliteLibraryMeta::getLibraryTableQuery($request->id)
-            ->when($request->get('sort'), static fn(Builder $query) => $query->orderBy(
-                $request->get('sort.attribute'),
-                $request->get('sort.direction', 'asc')
-            ))
-            ->paginate(perPage: $request->get('perPage', 15), page: $request->get('page'));
+        $paginatedResource = $searchModel->search(
+            libraryId: $request->id,
+            pagination: PaginationParamsDto::fromRequest($request),
+        );
 
-        $pagination = [
-            'currentPage' => $paginatedResource->currentPage(),
-            'lastPage' => $paginatedResource->lastPage(),
-            'perPage' => $paginatedResource->perPage(),
-            'total' => $paginatedResource->total(),
-        ];
-
-        // TODO: replace with LibraryPaginatedResource
-        $resource = new JsonResource($paginatedResource->items());
+        $resource = new PaginatedJsonResource($paginatedResource);
+        // todo: attach poster links
         $resource::wrap('items');
-        $resource->with['pagination'] = $pagination;
 
         return $resource->response();
     }
@@ -207,14 +205,11 @@ class LibraryItemController extends ApiV1Controller
     )]
     public function view(LibraryItemRequest $request): JsonResponse
     {
-        $item = SqliteLibraryMeta::getLibraryTableQuery($request->id)
-            ->where('id', $request->item)
-            ->get()
-            ->first();
+        $item = $this->itemRepository->getItemById($request->id, $request->item);
+        $posterUrl = $this->posterCloudService->tmpUrl();
 
         $resource = new LibraryItemResource($item);
-        // todo: include poster
-        $resource->with['poster'] = '';
+        $resource->withPoster($posterUrl);
 
         return $resource->response();
     }
@@ -259,17 +254,24 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    public function create(LibraryItemCreateRequest $request, PosterUploadService $service): JsonResponse
+    public function create(LibraryItemCreateRequest $request): JsonResponse
     {
         $contents = $request->contents;
-        $id = SqliteLibraryMeta::getLibraryTableQuery($request->id)->insertGetId($contents);
-        // todo: implement file uploading
+        $id = $this->itemRepository->insertItem($request->id, $contents);
 
         $insertedItem = array_merge(['id' => $id], $contents);
-        $resource = new LibraryItemResource($insertedItem);
 
-        // todo: upload poster and return its URL
-        $resource->with['poster'] = null;
+        $resource = new LibraryItemResource($insertedItem);
+        $resource->with['poster'] = $this->posterCloudService->createUrl();
+
+        $event = new PosterUpdated(
+            userId: $request->user()->id,
+            libraryId: $request->id,
+            libraryItemId: $id,
+            oldPosterId: null,
+            newPosterId: $request->posterUUID ?: null,
+        );
+        Event::dispatch($event);
 
         return $resource->response()->setStatusCode(201);
     }
@@ -319,22 +321,27 @@ class LibraryItemController extends ApiV1Controller
     )]
     public function update(LibraryItemUpdateRequest $request): JsonResponse
     {
-        $query = SqliteLibraryMeta::getLibraryTableQuery($request->id)
-            ->where('id', $request->item);
+        $posterQuery = $this->getPosterQuery($request);
 
-        $updated = $query->update($request->validated('contents'));
+        if (!$this->itemRepository->updateItem($request->id, $request->item, $request->contents)) {
+            /** @noinspection PhpUnhandledExceptionInspection */
+            throw new ErrorException('Failed to update item');
+        }
         // todo: handle error when item is not updated
-        $updatedItem = $query->get()->first();
+        $updatedItem = $this->itemRepository->getItemById($request->id, $request->item);
+        $poster = $posterQuery->first();
 
         $resource = new LibraryItemResource($updatedItem);
-        // todo: upload poster and return its URL
-        // PosterUploadJob::dispatch(
-        //     userId: $request->user()->id,
-        //     libraryId: $request->id,
-        //     itemId: $request->item,
-        //     poster: $request->get('poster'),
-        // );
-        $resource->with['poster'] = '';
+        $resource->with['poster'] = $this->posterCloudService->createUrl();
+
+        $event = new PosterUpdated(
+            userId: $request->user()->id,
+            libraryId: $request->id,
+            libraryItemId: $request->item,
+            oldPosterId: $poster?->uuid,
+            newPosterId: $request->has('posterUUID') ? $request->posterUUID : $poster?->uuid,
+        );
+        Event::dispatch($event);
 
         return $resource->response();
     }
@@ -358,13 +365,27 @@ class LibraryItemController extends ApiV1Controller
         ]
     )]
     /**
-     * TODO: Implement idempotence
      * @param LibraryItemRequest $request
      * @return JsonResponse
      */
     public function delete(LibraryItemRequest $request): JsonResponse
     {
-        // SqliteLibraryMeta::getLibraryTableQuery($request->id)->delete($request->item);
+        if (!$this->itemRepository->itemExists($request->id, $request->item)) {
+            return new JsonResponse(null, 204);
+        }
+
+        $poster = $this->getPosterQuery($request)->first();
+
+        $event = new PosterUpdated(
+            userId: $request->user()->id,
+            libraryId: $request->id,
+            libraryItemId: $request->item,
+            oldPosterId: $poster?->uuid,
+            newPosterId: null,
+        );
+        Event::dispatch($event);
+
+        $this->itemRepository->deleteItemById($request->id, $request->item);
 
         return new JsonResponse(null, 204);
     }
@@ -417,22 +438,17 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ],
     )]
-    public function search(LibraryPaginatedRequest $request, LibrarySearch $librarySearch): JsonResponse
+    public function search(LibraryPaginatedRequest $request, LibraryItemsSearch $searchModel): JsonResponse
     {
-        $filterDto = LibraryFilterDto::fromRequest($request);
-        // todo: test it
-        $paginatedResource = $librarySearch->search($filterDto);
+        $items = $searchModel->search(
+            libraryId: $request->id,
+            pagination: PaginationParamsDto::fromRequest($request),
+            terms: $request->get('term')
+        );
 
-        $pagination = [
-            'currentPage' => $paginatedResource->currentPage(),
-            'lastPage' => $paginatedResource->lastPage(),
-            'perPage' => $paginatedResource->perPage(),
-            'total' => $paginatedResource->total(),
-        ];
-
-        $resource = new JsonResource($paginatedResource->items());
+        $resource = new PaginatedJsonResource($items);
+        // todo: attach poster links
         $resource::wrap('items');
-        $resource->with['pagination'] = $pagination;
 
         return $resource->response();
     }
@@ -486,7 +502,7 @@ class LibraryItemController extends ApiV1Controller
 
         $resource = new LibraryItemResource($item);
         // todo: include poster
-        $resource->with['poster'] = '';
+        $resource->withPoster($this->posterCloudService->createUrl());
 
         return $resource->response();
     }
