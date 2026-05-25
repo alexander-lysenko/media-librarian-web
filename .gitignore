@@ -1,6 +1,11 @@
 .idea
 logs/
 pgsql_data/
+.env
+.env.development
+.env.production
+.env.testing
+.env.backup
 docker-compose.local.yml
 docker-compose-local
 docker-compose.staging.yml

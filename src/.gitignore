@@ -5,10 +5,6 @@
 /storage/*.key
 /storage/api-docs/*
 /vendor
-.env
-.env.development
-.env.production
-.env.backup
 .phpunit.cache
 .phpunit.result.cache
 Homestead.json

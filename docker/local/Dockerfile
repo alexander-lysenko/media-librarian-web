@@ -8,7 +8,7 @@ RUN apk add php82-mbstring php82-xml php82-json php82-zip php82-gd php82-phar ph
     php82-pdo php82-pdo_pgsql php82-sqlite3 php82-pdo_sqlite php82-redis
 RUN apk add php82-pecl-xdebug
 
-RUN cd /root && wget https://getcomposer.org/download/2.7.5/composer.phar && \
+RUN cd /root && wget https://getcomposer.org/download/2.9.2/composer.phar && \
     chmod +x composer.phar && ln -s /root/composer.phar /usr/bin/composer
 
 # Copy configurations
@@ -25,7 +25,7 @@ COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Prepare things to execute
 
-RUN unlink /usr/bin/php || ln -s /usr/bin/php82 /usr/bin/php
+RUN unlink /usr/bin/php 2>/dev/null || ln -s /usr/bin/php82 /usr/bin/php
 RUN chmod +x /root/docker-entrypoint.sh
 RUN usermod -u 1000 nginx
 

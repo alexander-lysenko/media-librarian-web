@@ -10,14 +10,14 @@ DONE_STDOUT="\e[1;32m DONE \e[0m"
 function setup_env_file() {
   echo "Preparing environment variables..."
   # Check if .env file exists. If not, create a new one from .env.example
-  if [ ! -f "$DIRNAME"/src/.env ]; then
+  if [ ! -f "$DIRNAME"/.env ]; then
     CURRENT_USER=$(whoami)
-    echo -n "Dotenv file is not found! Trying to make a copy from $DIRNAME/src/.env.example ..."
+    echo -n "Dotenv file is not found! Trying to make a copy from $DIRNAME/.env.example ..."
 
-    cp -n "$DIRNAME"/src/.env.example "$DIRNAME"/src/.env
-    sudo chown "$CURRENT_USER":"$CURRENT_USER" "$DIRNAME"/src/.env
+    cp -n "$DIRNAME"/.env.example "$DIRNAME"/.env
+    sudo chown "$CURRENT_USER":"$CURRENT_USER" "$DIRNAME"/.env
   else
-    echo -n "Creating environment from the file: $DIRNAME/src/.env ..."
+    echo -n "Creating environment from the file: $DIRNAME/.env ..."
   fi
   echo -e "$DONE_STDOUT"
 }
@@ -87,4 +87,4 @@ esac
 
 # shellcheck disable=SC2086
 # shellcheck disable=SC2068
-docker compose --file $CONFIG --env-file "$DIRNAME"/src/.env $opts $@
+docker compose --file $CONFIG --env-file "$DIRNAME"/.env $opts $@
