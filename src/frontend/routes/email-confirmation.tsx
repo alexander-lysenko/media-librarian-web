@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AppRoutes } from '../core/enums';
 
-export const Route = createFileRoute(AppRoutes.emailConfirmation)({
+export const Route = createFileRoute('/email-confirmation')({
   component: EmailConfirmation,
 });
 

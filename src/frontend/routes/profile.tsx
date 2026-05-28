@@ -55,7 +55,7 @@ import {
 import { UploadAvatarDialog } from '../components/modals/profile/UploadAvatarDialog';
 import { MyLibraries } from '../components/profile/MyLibraries';
 import { ProfileAvatar } from '../components/profile/ProfileAvatar';
-import { AccountStatusEnum, AppRoutes } from '../core/enums';
+import { AccountStatusEnum } from '../core/enums';
 import { useProfileGetRequest } from '../requests/profileRequests';
 import { useProfileDialogsStore } from '../store/app/useProfileDialogsStore';
 import { useLanguageStore, useTranslationStore } from '../store/system/useTranslationStore';
@@ -64,7 +64,7 @@ import { useProfileStore } from '../store/useProfileStore';
 import type { MenuProps } from '@mui/material';
 import type { ReactNode, SyntheticEvent } from 'react';
 
-export const Route = createFileRoute(AppRoutes.profile)({
+export const Route = createFileRoute('/profile')({
   component: Profile,
 });
 

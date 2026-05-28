@@ -1,35 +1,22 @@
 import react from '@vitejs/plugin-react-swc';
+
+// @ts-ignore
 import { defineConfig, loadEnv } from 'vite';
 
 // @ts-ignore
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
-
-import type { ManualChunksOption } from 'rollup';
-
-const combineManualChunks: ManualChunksOption = (id) => {
-  switch (true) {
-    case id.includes('node_modules/@mui/'):
-      return id.toString().split('node_modules/@mui/')[1].split('/')[0].toString();
-    // return id;
-    // return "mui";
-    case id.includes('node_modules/'):
-      return id.toString().split("node_modules/")[1].split("/")[0].toString();
-      // return 'vendor';
-    default:
-      return 'index';
-  }
-};
 
 /**
  * Define config for Vite build
  */
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd());
+
   return {
     base: command === 'serve' ? '' : '/build/',
-    root: command === 'serve' ? './frontend' : '',
+    root: './',
     publicDir: 'fake_dir_so_nothing_gets_copied',
-    envDir: command === 'serve' ? '../' : './',
+    envDir: '../',
     plugins: [
       tanstackRouter({
         target: 'react',
@@ -43,16 +30,22 @@ export default defineConfig(({ command, mode }) => {
     ],
     build: {
       manifest: true,
-      minify: 'esbuild',
-      // minify: false,
-      // sourcemap: true,
+      minify: true,
+      sourcemap: true,
       outDir: 'public/build',
-      rollupOptions: {
+      rolldownOptions: {
         input: ['./frontend/index.ts'],
-        // preserveEntrySignatures: "exports-only",
-        output: {
-          // preserveModules: true,
-          manualChunks: combineManualChunks,
+        advancedChunks: {
+          groups: [
+            {
+              name: 'mui',
+              test: /[\\/]node_modules[\\/]@mui[\\/]/
+            },
+            {
+              name: 'vendor',
+              test: /[\\/]node_modules[\\/]/,
+            },
+          ],
         },
       },
       chunkSizeWarningLimit: 500,

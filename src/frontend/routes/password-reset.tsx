@@ -8,7 +8,7 @@ import { useUnsplashImageRequest } from '../requests/unsplashApiRequests';
 
 import type { CSSProperties } from 'react';
 
-export const Route = createFileRoute(AppRoutes.passwordReset)({
+export const Route = createFileRoute('/password-reset')({
   component: PasswordReset,
 });
 

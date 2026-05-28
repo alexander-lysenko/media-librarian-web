@@ -7,10 +7,9 @@ import { BackgroundContainer, StickyFooter } from '../components';
 import { Copyright } from '../components';
 import { SignupForm } from '../components/forms/SignupForm';
 import { PersonAddAltRounded } from '../components/icons';
-import { AppRoutes } from '../core/enums';
 import { useUnsplashRandomRequest } from '../requests/unsplashApiRequests';
 
-export const Route = createFileRoute(AppRoutes.signup)({
+export const Route = createFileRoute('/signup')({
   component: Signup,
 });
 

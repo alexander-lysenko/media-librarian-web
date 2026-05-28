@@ -10,7 +10,7 @@ import { PasswordResetInitDialog } from '../components/modals/PasswordResetInitD
 import { AppRoutes } from '../core/enums';
 import { useUnsplashRandomRequest } from '../requests/unsplashApiRequests';
 
-export const Route = createFileRoute(AppRoutes.login)({
+export const Route = createFileRoute('/login')({
   component: Login,
 });
 

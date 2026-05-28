@@ -14,14 +14,13 @@ import { LibraryTable } from '../components/tables/LibraryTable';
 import { LibrariesEmptyState } from '../components/ui/LibrariesEmptyState';
 import { LibrariesErrorState } from '../components/ui/LibrariesErrorState';
 import { enqueueSnack } from '../core/actions';
-import { AppRoutes } from '../core/enums';
 import { useLibraryAllItemsGetRequest } from '../requests/libraryItemRequests';
 import { useLibrariesGetRequest } from '../requests/libraryRequests';
 import { useLibrariesStore, useSelectedLibraryStore } from '../store/library/useLibrariesStore';
 import { useLibraryTableStore } from '../store/library/useLibraryTableStore';
 import { useLibraryItemFormStore } from '../store/useLibraryItemFormStore';
 
-export const Route = createFileRoute(AppRoutes.appHome)({
+export const Route = createFileRoute("/app")({
   component: App,
   // loader: (ctx) => ctx.queryClient.ensureQueryData({ queryKey: ['get', 'profile'], exact: true }),
 });

@@ -8,8 +8,8 @@ RUN apk add php82-mbstring php82-xml php82-json php82-zip php82-gd php82-phar ph
     php82-pdo php82-pdo_pgsql php82-sqlite3 php82-pdo_sqlite php82-redis
 RUN apk add php82-pecl-xdebug
 
-RUN cd /root && wget https://getcomposer.org/download/2.9.2/composer.phar && \
-    chmod +x composer.phar && ln -s /root/composer.phar /usr/bin/composer
+RUN wget https://getcomposer.org/download/2.9.2/composer.phar -O /root/composer.phar && \
+    chmod +x /root/composer.phar && ln -s /root/composer.phar /usr/bin/composer
 
 # Copy configurations
 COPY ./nginx /etc/nginx
