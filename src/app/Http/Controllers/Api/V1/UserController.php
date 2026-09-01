@@ -7,10 +7,10 @@ use App\Events\Registered;
 use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\PasswordResetPerformRequest;
 use App\Http\Requests\V1\SignupRequest;
-use App\Models\User;
-use App\Services\UserAccountService;
+use App\Repositories\UserAccountRepository;
 use App\Utils\Enum\UserStatusEnum;
 use Illuminate\Auth\Events\PasswordReset as PasswordResetEvent;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,78 +25,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class UserController extends ApiV1Controller
 {
-    #[OA\Post(
-        path: '/api/v1/user/signup',
-        operationId: 'user-signup',
-        description: 'Registers a new account. This account initially has limited permissions until its owner ' .
-        "confirms email address.\\\n The confirmation link will be sent to the email address mentioned " .
-        "in the request as a successful result of the operation\\\n " .
-        'This email address is used for both account identification and authentication purposes.' .
-        "\n\n **CAPTCHA-PROTECTED**" .
-        "\n### Rate Limiter\n| Number of Requests | Time frame |\n| -- | -- |\n" .
-        '| 1 | 6 hours (21600 seconds)',
-        summary: 'Sign up a new User',
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(properties: [
-                new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
-                new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
-                new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
-                new OA\Property(property: 'passwordRepeat', type: 'string', example: 'PasSw0rd'),
-                new OA\Property(property: 'locale', type: 'string', example: 'en'),
-                new OA\Property(property: 'theme', type: 'string', example: 'dark'),
-            ])
-        ),
-        tags: ['auth'],
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: 'Created',
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(
-                        property: 'message',
-                        type: 'string',
-                        example: 'Your account has been created. Please verify your e-mail to activate your account'
-                    ),
-                    new OA\Property(property: 'user', properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
-                        new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
-                    ]),
-                ])
-            ),
-            new OA\Response(
-                response: 422,
-                description: 'Unprocessable Entity',
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'errors', properties: [
-                        new OA\Property(
-                            property: 'email',
-                            type: 'array',
-                            items: new OA\Items(type: 'string', example: 'Email is required'),
-                        ),
-                    ]),
-                ]),
-            ),
-        ]
-    )]
-    public function signup(SignupRequest $request, UserAccountService $accountService): JsonResponse
-    {
-        $user = $accountService->createNewUser(
-            name: $request->name,
-            email: $request->email,
-            password: $request->password,
-            locale: $request->locale,
-            theme: $request->theme
-        );
-
-        Event::dispatch(new Registered($user, $user->email));
-
-        return new JsonResponse([
-            'message' => trans('common.signup.created') . ' ' . trans('common.signup.mustConfirmEmail'),
-            'user' => $user,
-        ], Response::HTTP_CREATED);
-    }
+    public function __construct(
+        private readonly UserAccountRepository $accountRepository,
+    ) {}
 
     #[OA\Post(
         path: '/api/v1/user/login',
@@ -148,18 +79,91 @@ class UserController extends ApiV1Controller
         ]);
 
         if (Auth::guard('web')->attempt($credentials, $request->boolean('rememberMe'))) {
-            // Auth::guard('web')->authenticate();
-            $redirectTo = $request->user()->status === UserStatusEnum::ACTIVE->value ? '/app' : '/profile';
-            $token = $request->user()->createToken('apiToken')->plainTextToken;
+            $user = Auth::guard('web')->authenticate();
+            $token = $user->createToken('apiToken')->plainTextToken;
+            $redirectTo = $user->status === UserStatusEnum::ACTIVE->value ? '/app' : '/profile';
 
             return new JsonResponse([
                 'message' => trans('common.auth.success'),
                 'token' => explode('|', $token)[1],
                 'redirectTo' => $redirectTo,
-            ], 302);
+            ], Response::HTTP_FOUND);
         }
 
         return new JsonResponse(['message' => trans('common.auth.invalid')], Response::HTTP_UNAUTHORIZED);
+    }
+
+    #[OA\Post(
+        path: '/api/v1/user/signup',
+        operationId: 'user-signup',
+        description: 'Registers a new account. This account initially has limited permissions until its owner ' .
+        "confirms email address.\\\n The confirmation link will be sent to the email address mentioned " .
+        "in the request as a successful result of the operation\\\n " .
+        'This email address is used for both account identification and authentication purposes.' .
+        "\n\n **CAPTCHA-PROTECTED**" .
+        "\n### Rate Limiter\n| Number of Requests | Time frame |\n| -- | -- |\n" .
+        '| 1 | 6 hours (21600 seconds)',
+        summary: 'Sign up a new User',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'email', type: 'string', format: 'email', example: 'john.doe@example.com'),
+                new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                new OA\Property(property: 'password', type: 'string', example: 'PasSw0rd'),
+                new OA\Property(property: 'passwordRepeat', type: 'string', example: 'PasSw0rd'),
+                new OA\Property(property: 'locale', type: 'string', example: 'en'),
+                new OA\Property(property: 'theme', type: 'string', example: 'dark'),
+            ])
+        ),
+        tags: ['auth'],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Created',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(
+                        property: 'message',
+                        type: 'string',
+                        example: 'Your account has been created. Please verify your e-mail to activate your account'
+                    ),
+                    new OA\Property(property: 'user', properties: [
+                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                        new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                        new OA\Property(property: 'email', type: 'string', example: 'john.doe@example.com'),
+                    ]),
+                ])
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Unprocessable Entity',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'errors', properties: [
+                        new OA\Property(
+                            property: 'email',
+                            type: 'array',
+                            items: new OA\Items(type: 'string', example: 'Email is required'),
+                        ),
+                    ]),
+                ]),
+            ),
+        ]
+    )]
+    public function signup(SignupRequest $request): JsonResponse
+    {
+        $user = $this->accountRepository->createUser(
+            name: $request->name,
+            email: $request->email,
+            password: $request->password,
+            locale: $request->locale,
+            theme: $request->theme
+        );
+
+        Event::dispatch(new Registered($user, $user->email));
+
+        return new JsonResponse([
+            'message' => trans('common.signup.created') . ' ' . trans('common.signup.mustConfirmEmail'),
+            'user' => $user,
+        ], Response::HTTP_CREATED);
     }
 
     #[OA\Post(
@@ -190,17 +194,17 @@ class UserController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    public function requestPasswordReset(Request $request, UserAccountService $accountService): JsonResponse
+    public function requestPasswordReset(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'email' => ['required', 'email'], // validating the presence of the email is intentionally omitted
         ]);
 
-        /** @var User|null $user */
-        $user = User::query()->where('email', $validated['email'])->first();
-
-        if ($user) {
+        try {
+            $user = $this->accountRepository->getByEmail($validated['email']);
             Event::dispatch(new PasswordResetLinkSent($user));
+        } catch (ModelNotFoundException) {
+            // Do nothing. User doesn't need to know that the account may not exist
         }
 
         return new JsonResponse(['message' => trans('common.password.sent')]);
@@ -235,11 +239,17 @@ class UserController extends ApiV1Controller
         $email = strtolower($request->email);
         $newPassword = Hash::make($request->newPassword);
 
-        $user = User::query()->where('email', $email)->first();
-        $user->forceFill(['password' => $newPassword])->save();
+        try {
+            $user = $this->accountRepository->getByEmail($email);
+            $user->forceFill(['password' => $newPassword])->save();
 
-        Event::dispatch(new PasswordResetEvent($user));
+            Event::dispatch(new PasswordResetEvent($user));
+        } catch (ModelNotFoundException) {
+            return new JsonResponse(data: [
+                'message' => 'user not found',
+            ], status: Response::HTTP_NOT_FOUND);
+        }
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return new JsonResponse(data: null, status: Response::HTTP_NO_CONTENT);
     }
 }

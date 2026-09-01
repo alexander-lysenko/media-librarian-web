@@ -89,4 +89,9 @@ class SqliteLibraryMeta extends Model
 
         return $libraryMetaEntry->getConnection()->table($libraryMetaEntry->tbl_name);
     }
+
+    public function getItemsCount(): int
+    {
+        return $this->getConnection()->table($this->tbl_name)->count();
+    }
 }

@@ -35,7 +35,7 @@ services:
         networks:
             - bridge
         healthcheck:
-            test: [ "CMD", "pg_isready -q -d ${DB_DATABASE} -U ${DB_USERNAME}" ]
+            test: [ "CMD-SHELL", "pg_isready -q -d $${DB_DATABASE} -U $${DB_USERNAME}" ]
 networks:
     bridge:
         driver: bridge

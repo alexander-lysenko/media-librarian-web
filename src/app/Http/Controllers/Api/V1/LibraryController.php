@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\CreateLibraryRequest;
 use App\Http\Requests\V1\LibraryIdRequest;
+use App\Jobs\PosterBatchRemoveJob;
 use App\Models\SqliteLibraryMeta;
+use App\Repositories\LibraryRepository;
 use Carbon\Carbon;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
-use Throwable;
 
 #[OA\Schema(
     schema: 'DataTypes',
@@ -55,6 +55,10 @@ use Throwable;
  */
 class LibraryController extends ApiV1Controller
 {
+    public function __construct(
+        private readonly LibraryRepository $libraryRepository,
+    ) {}
+
     #[OA\Get(
         path: '/api/v1/libraries',
         operationId: 'libraries-index',
@@ -83,6 +87,8 @@ class LibraryController extends ApiV1Controller
     {
         $request->hasValidSignature(); // stub
 
+        // todo: make response paginated
+        // todo: extract code into LibraryRepository
         $metadataRows = SqliteLibraryMeta::query()->get()->all();
         $libraries = array_map(static function ($row) {
             $item = [];
@@ -156,51 +162,15 @@ class LibraryController extends ApiV1Controller
     )]
     public function create(CreateLibraryRequest $request): JsonResponse
     {
-        $sqliteLibraryMeta = new SqliteLibraryMeta();
-        $connection = $sqliteLibraryMeta->getConnection();
+        $title = $request->input('title');
+        $fields = Arr::pluck($request->input('fields'), 'type', 'name');
 
-        $transaction = static function () use ($connection, $request, $sqliteLibraryMeta, &$resource) {
-            $title = $request->input('title');
-            $metadata = Arr::pluck($request->input('fields'), 'type', 'name');
-
-            $createTableSchema = function (Blueprint $table) use ($metadata, $sqliteLibraryMeta) {
-                $table->id();
-                foreach ($metadata as $name => $type) {
-                    if ($name === array_key_first($metadata)) {
-                        $table->string($name, 255)->unique();
-                        continue;
-                    }
-                    $sqliteLibraryMeta->createTableColumnByType($table, $name, $type);
-                }
-            };
-            $connection->getSchemaBuilder()->create($title, $createTableSchema);
-
-            $schema = $connection->query()
-                ->select('sql')
-                ->from('sqlite_master')
-                ->where('type', '=', 'table')
-                ->where('name', $title)
-                ->pluck('sql')
-                ->first();
-
-            $sqliteLibraryMeta->fill([
-                'tbl_name' => $title,
-                'schema' => $schema,
-                'meta' => json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
-            ])->save();
-
-            $resource = new JsonResource([
-                'id' => $sqliteLibraryMeta->id,
-                'title' => $title,
-                'fields' => $metadata,
-            ]);
-        };
-
-        try {
-            $connection->transaction($transaction);
-        } catch (Throwable $throwable) {
-            Log::error($throwable);
-        }
+        $library = $this->libraryRepository->create($title, $fields);
+        $resource = new JsonResource([
+            'id' => $library->id,
+            'title' => $title,
+            'fields' => $fields,
+        ]);
 
         return $resource->response()->setStatusCode(201);
     }
@@ -236,24 +206,16 @@ class LibraryController extends ApiV1Controller
     )]
     public function view(LibraryIdRequest $request): JsonResponse
     {
-        /** @var SqliteLibraryMeta $sqliteLibraryMeta */
-        $sqliteLibraryMeta = SqliteLibraryMeta::query()->where('id', $request->id)->first();
-        $connection = $sqliteLibraryMeta->getConnection();
-
-        $itemsCount = $connection->query()
-            ->select($connection->raw('count(*) as count'))
-            ->from($sqliteLibraryMeta->tbl_name)
-            ->value('count');
-        $createdAtCarbon = new Carbon($sqliteLibraryMeta->created_at);
+        $libraryMeta = $this->libraryRepository->getById($request->id);
 
         $resource = new JsonResource([
-            'id' => $sqliteLibraryMeta->id,
-            'title' => $sqliteLibraryMeta->tbl_name,
-            'fields' => json_decode($sqliteLibraryMeta->meta, JSON_OBJECT_AS_ARRAY),
+            'id' => $libraryMeta->id,
+            'title' => $libraryMeta->tbl_name,
+            'fields' => json_decode($libraryMeta->meta, JSON_OBJECT_AS_ARRAY),
         ]);
         $resource->with['meta'] = [
-            'created_at' => $createdAtCarbon->format('Y-m-d H:i:s'),
-            'items_count' => (int)$itemsCount,
+            'created_at' => Carbon::parse($libraryMeta->created_at)->format('Y-m-d H:i:s'),
+            'items_count' => $libraryMeta->getItemsCount(),
         ];
 
         return $resource->response();
@@ -274,24 +236,10 @@ class LibraryController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * TODO: Implement idempotence
-     * @param LibraryIdRequest $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
-    public function delete(LibraryIdRequest $request): JsonResponse
+    public function delete(int $id): JsonResponse
     {
-        /** @var SqliteLibraryMeta $sqliteLibraryMeta */
-        $sqliteLibraryMeta = SqliteLibraryMeta::query()->where('id', $request->id)->first();
-        $connection = $sqliteLibraryMeta->getConnection();
-
-        $connection->transaction(function () use ($connection, $sqliteLibraryMeta) {
-            // todo: Remove posters (use a background job)
-
-            $connection->getSchemaBuilder()->dropIfExists($sqliteLibraryMeta->tbl_name);
-            $sqliteLibraryMeta->delete();
-        });
+        $this->libraryRepository->deleteById($id);
+        PosterBatchRemoveJob::dispatch(['userId' => Auth::user()->id, 'libraryId' => $id]);
 
         return new JsonResponse(null, 204);
     }
@@ -325,36 +273,18 @@ class LibraryController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    /**
-     * TODO: Implement idempotence
-     * @param LibraryIdRequest $request
-     * @return JsonResponse
-     * @throws Throwable
-     */
     public function clear(LibraryIdRequest $request): JsonResponse
     {
-        /** @var SqliteLibraryMeta $sqliteLibraryMeta */
-        $sqliteLibraryMeta = SqliteLibraryMeta::query()->where('id', $request->id)->first();
-        $connection = $sqliteLibraryMeta->getConnection();
+        $libraryMeta = $this->libraryRepository->getById($request->id);
+        $itemsAffected = $this->libraryRepository->cleanUpById($request->id);
 
-        $connection->transaction(function () use ($connection, $sqliteLibraryMeta, &$itemsAffected) {
-            // todo: Remove posters (use a background job)
-
-            $itemsAffected = $connection->query()
-                ->select($connection->raw('count(*) as count'))
-                ->from($sqliteLibraryMeta->tbl_name)
-                ->value('count');
-            $connection->table($sqliteLibraryMeta->tbl_name)->truncate();
-        });
+        PosterBatchRemoveJob::dispatch(['userId' => Auth::user()->id, 'libraryId' => $request->id]);
 
         $resource = new JsonResource([
-            'id' => $sqliteLibraryMeta->id,
-            'title' => $sqliteLibraryMeta->tbl_name,
+            'id' => $libraryMeta->id,
+            'title' => $libraryMeta->tbl_name
         ]);
-        $resource->with['meta'] = [
-            'status' => 'truncated',
-            'items_affected' => (int)$itemsAffected,
-        ];
+        $resource->with['meta'] = ['status' => 'truncated', 'items_affected' => $itemsAffected];
 
         return $resource->response()->setStatusCode(200);
     }
