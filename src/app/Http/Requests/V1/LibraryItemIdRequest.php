@@ -4,18 +4,17 @@ namespace App\Http\Requests\V1;
 
 use App\Http\Middleware\DatabaseSwitch;
 use App\Models\SqliteLibraryMeta;
-use App\Rules\LibraryItemStructureRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 /**
- * A request entity to validate the data passed to UPDATE an existing Item into an existing Library
- * @property int $id
- * @property int $item
- * @property array $contents
- * @property string|null $posterUUID
+ * A request entity to validate the ID of an existing Item from an existing Library
+ * during view/update/delete the Item
+ * @property int $libraryId
+ * @property int $itemId
  */
-class LibraryItemUpdateRequest extends FormRequest
+class LibraryItemIdRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,8 +32,8 @@ class LibraryItemUpdateRequest extends FormRequest
     public function prepareForValidation(): void
     {
         $this->merge([
-            'id' => $this->route('id'),
-            'item' => $this->route('item'),
+            'libraryId' => $this->route('id'),
+            'itemId' => $this->route('item'),
         ]);
     }
 
@@ -47,26 +46,24 @@ class LibraryItemUpdateRequest extends FormRequest
         /**
          * If the upper level validation fails, an exception will be thrown and the rules below will never run.
          * If the upper level validation succeeds, the validated values may be used in the lower level rules.
-         * ['id' => "1"] // This is the example of a successful validation result (illustrated by field "id")
+         * ['libraryId' => "1"] // This is the example of a successful validation result (illustrated by field "id")
          */
 
         $idValidated = $this->validate([
-            'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
+            'libraryId' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
         ]);
 
         $libraryTableName = SqliteLibraryMeta::query()
-            ->where('id', $idValidated['id'])
+            ->where('id', $idValidated['libraryId'])
             ->pluck('tbl_name')
             ->first();
         $libraryTablePath = implode('.', [DatabaseSwitch::CONNECTION_PATH, $libraryTableName]);
 
-        $itemValidated = $this->validate([
-            'item' => ['required', 'integer', 'min:1', Rule::exists($libraryTablePath, 'id')],
-        ]);
-
         return [
-            'contents' => ['required', new LibraryItemStructureRule($idValidated['id'], $itemValidated['item'])],
-            'posterUUID' => ['nullable', 'uuid'],
+            'itemId' => ['required', 'integer', 'min:1', Rule::when(
+                condition: $this->method() !== HttpRequest::METHOD_DELETE,
+                rules: Rule::exists($libraryTablePath, 'id')
+            )],
         ];
     }
 }

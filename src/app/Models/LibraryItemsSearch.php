@@ -7,7 +7,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * A Search model to implement complex filtering of Items from a Library
+ * A Search model that implements complex filtering of Items from a particular Library
  */
 class LibraryItemsSearch
 {

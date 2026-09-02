@@ -48,7 +48,9 @@ Route::middleware(['auth.bearer:sanctum', 'throttle:api.basic'])
     ->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::put('/password', [ProfileController::class, 'changePassword'])->name('changePassword');
+        Route::put('/password', [ProfileController::class, 'changePassword'])
+            ->name('changePassword')
+            ->middleware(['throttle:captcha:1,30,changePassword']);
 
         Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');
     });

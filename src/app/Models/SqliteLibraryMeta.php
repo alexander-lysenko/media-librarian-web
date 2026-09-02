@@ -63,17 +63,17 @@ class SqliteLibraryMeta extends Model
     public static function createTableColumnByType(Blueprint $table, string $name, string $type): ColumnDefinition
     {
         return match ($type) {
-            InputType::LINE->value => $table->string($name, 255)->nullable(),
-            InputType::TEXT->value => $table->text($name)->nullable(),
-            InputType::DATE->value => $table->date($name)->nullable(),
-            InputType::DATETIME->value => $table->timestamp($name)->nullable(),
-            InputType::URL->value => $table->string($name)->nullable(),
-            InputType::CHECKBOX->value => $table->boolean($name)->nullable(),
-            InputType::RATING_5->value => $table->tinyInteger($name)->unsigned()->nullable(),
-            InputType::RATING_5_PRECISION->value => $table->decimal($name, 2, 1)->unsigned()->nullable(),
-            InputType::RATING_10->value => $table->smallInteger($name)->unsigned()->nullable(),
-            InputType::RATING_10_PRECISION->value => $table->decimal($name, 3, 1)->unsigned()->nullable(),
-            InputType::PRIORITY->value => $table->tinyInteger($name)->nullable(),
+            InputType::LINE => $table->string($name, 255)->nullable(),
+            InputType::TEXT => $table->text($name)->nullable(),
+            InputType::DATE => $table->date($name)->nullable(),
+            InputType::DATETIME => $table->timestamp($name)->nullable(),
+            InputType::URL => $table->string($name)->nullable(),
+            InputType::CHECKBOX => $table->boolean($name)->nullable(),
+            InputType::RATING_5 => $table->tinyInteger($name)->unsigned()->nullable(),
+            InputType::RATING_5_PRECISION => $table->decimal($name, 2, 1)->unsigned()->nullable(),
+            InputType::RATING_10 => $table->smallInteger($name)->unsigned()->nullable(),
+            InputType::RATING_10_PRECISION => $table->decimal($name, 3, 1)->unsigned()->nullable(),
+            InputType::PRIORITY => $table->tinyInteger($name)->nullable(),
         };
     }
 

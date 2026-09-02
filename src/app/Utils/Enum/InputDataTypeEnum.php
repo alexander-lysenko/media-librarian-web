@@ -7,15 +7,27 @@ namespace App\Utils\Enum;
  */
 enum InputDataTypeEnum: string
 {
-    case LINE = 'line';
-    case TEXT = 'text';
-    case DATE = 'date';
-    case DATETIME = 'datetime';
-    case URL = 'url';
-    case CHECKBOX = 'checkmark';
-    case RATING_5 = 'rating5';
-    case RATING_5_PRECISION = 'rating5precision';
-    case RATING_10 = 'rating10';
-    case RATING_10_PRECISION = 'rating10precision';
-    case PRIORITY = 'priority';
+    public const LINE = 'line';
+    public const TEXT = 'text';
+    public const DATE = 'date';
+    public const DATETIME = 'datetime';
+    public const URL = 'url';
+    public const CHECKBOX = 'checkmark';
+    public const RATING_5 = 'rating5';
+    public const RATING_5_PRECISION = 'rating5precision';
+    public const RATING_10 = 'rating10';
+    public const RATING_10_PRECISION = 'rating10precision';
+    public const PRIORITY = 'priority';
+
+    case E_LINE = self::LINE;
+    case E_TEXT = self::TEXT;
+    case E_DATE = self::DATE;
+    case E_DATETIME = self::DATETIME;
+    case E_URL = self::URL;
+    case E_CHECKBOX = self::CHECKBOX;
+    case E_RATING_5 = self::RATING_5;
+    case E_RATING_5_PRECISION = self::RATING_5_PRECISION;
+    case E_RATING_10 = self::RATING_10;
+    case E_RATING_10_PRECISION = self::RATING_10_PRECISION;
+    case E_PRIORITY = self::PRIORITY;
 }

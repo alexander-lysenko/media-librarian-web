@@ -31,8 +31,8 @@ class CreateLibraryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $libraryTitlePattern = RegexPatternsEnum::LIBRARY_TITLE->value;
-        $libraryFieldPattern = RegexPatternsEnum::LIBRARY_FIELD->value;
+        $libraryTitlePattern = RegexPatternsEnum::LIBRARY_TITLE;
+        $libraryFieldPattern = RegexPatternsEnum::LIBRARY_FIELD;
 
         return [
             'title' => ['required', 'string', 'max:128', "regex:$libraryTitlePattern", new UniqueLibraryNameRule()],
@@ -40,7 +40,7 @@ class CreateLibraryRequest extends FormRequest
 
             'fields.*.name' => ['required', 'distinct:ignore_case', "regex:$libraryFieldPattern"],
             'fields.*.type' => ['required', Rule::enum(InputDataTypeEnum::class)],
-            'fields.0.type' => [Rule::enum(InputDataTypeEnum::class)->only(InputDataTypeEnum::LINE)],
+            'fields.0.type' => [Rule::enum(InputDataTypeEnum::class)->only(InputDataTypeEnum::E_LINE)],
         ];
     }
 }

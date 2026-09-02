@@ -64,7 +64,7 @@ class ValidationController extends ApiV1Controller
     )]
     public function validateLibraryName(Request $request): JsonResponse
     {
-        $libraryTitlePattern = RegexPatternsEnum::LIBRARY_TITLE->value;
+        $libraryTitlePattern = RegexPatternsEnum::LIBRARY_TITLE;
 
         $request->validate([
             'title' => ['required', 'string', 'max:255', "regex:$libraryTitlePattern", new UniqueLibraryNameRule()],

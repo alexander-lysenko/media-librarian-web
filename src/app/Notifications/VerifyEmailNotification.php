@@ -44,7 +44,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
      */
     public function toMail(mixed $notifiable): Mailable
     {
-        $isFirstMsg = $notifiable->status === UserStatusEnum::CREATED->value;
+        $isFirstMsg = $notifiable->status === UserStatusEnum::CREATED;
 
         $mailable = new ConfirmAddressMailable(
             username: $notifiable->name,

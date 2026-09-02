@@ -13,7 +13,7 @@ class PasswordChangeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $availableStatuses = [UserStatusEnum::ACTIVE->value, UserStatusEnum::BANNED->value];
+        $availableStatuses = [UserStatusEnum::ACTIVE, UserStatusEnum::BANNED];
 
         return !empty($this->user()->email) && in_array($this->user()->status, $availableStatuses, true);
     }

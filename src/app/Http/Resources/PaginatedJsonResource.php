@@ -15,12 +15,32 @@ class PaginatedJsonResource extends JsonResource
         parent::__construct($paginatedResource->items());
 
         $this::wrap('items');
+        $this->withPagination($paginatedResource);
+    }
 
+    public function withPagination(LengthAwarePaginator $paginatedResource): static
+    {
         $this->with['pagination'] = [
             'currentPage' => $paginatedResource->currentPage(),
             'lastPage' => $paginatedResource->lastPage(),
             'perPage' => $paginatedResource->perPage(),
             'total' => $paginatedResource->total(),
         ];
+
+        return $this;
+    }
+
+    public function withSort(?string $attribute, ?string $direction): static
+    {
+        if (is_null($attribute) || is_null($direction)) {
+            return $this;
+        }
+
+        $this->with['sort'] = [
+            'attribute' => $attribute,
+            'direction' => $direction,
+        ];
+
+        return $this;
     }
 }

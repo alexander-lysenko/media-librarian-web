@@ -46,11 +46,21 @@ class PosterCloudService
         return '';
     }
 
-    public function tmpUrl()
+    public function tmpUrl(int $libraryId, int $itemId): ?string
+    {
+        // todo: add poster path resolving, handle case when poster is not found
+
+        return Storage::disk('r2')->temporaryUrl(
+            path: 'Hotline Miami - Lamborghini (20250417112906).jpg',
+            expiration: now()->addSeconds(60)
+        );
+    }
+
+    public function tmpUrlByUuid(string $uuid): string
     {
         return Storage::disk('r2')->temporaryUrl(
-            'Hotline Miami - Lamborghini (20250417112906).jpg',
-            now()->addSeconds(15)
+            path: 'Hotline Miami - Lamborghini (20250417112906).jpg',
+            expiration: now()->addSeconds(60)
         );
     }
 }

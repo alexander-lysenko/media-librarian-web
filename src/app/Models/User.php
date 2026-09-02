@@ -77,12 +77,12 @@ class User extends AuthUser implements HasApiTokensContract, HasLocalePreference
 
     public function isActive(): bool
     {
-        return $this->status === UserStatusEnum::ACTIVE->value;
+        return $this->status === UserStatusEnum::ACTIVE;
     }
 
     public function isAccessible(): bool
     {
-        return !in_array($this->status, [UserStatusEnum::BANNED->value, UserStatusEnum::DELETED->value], true);
+        return !in_array($this->status, [UserStatusEnum::BANNED, UserStatusEnum::DELETED], true);
     }
 
     /**
@@ -112,9 +112,9 @@ class User extends AuthUser implements HasApiTokensContract, HasLocalePreference
      */
     public function markEmailAsVerified(): bool
     {
-        $isFreshUser = $this->status === UserStatusEnum::CREATED->value;
+        $isFreshUser = $this->status === UserStatusEnum::CREATED;
         $this->forceFill([
-            'status' => $isFreshUser ? UserStatusEnum::ACTIVE->value : $this->status,
+            'status' => $isFreshUser ? UserStatusEnum::ACTIVE : $this->status,
             'email_verified_at' => $this->freshTimestamp(),
         ]);
 

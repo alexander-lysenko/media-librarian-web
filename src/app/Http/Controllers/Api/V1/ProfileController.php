@@ -166,7 +166,6 @@ class ProfileController extends ApiV1Controller
     )]
     public function changePassword(PasswordChangeRequest $request): JsonResponse
     {
-        /** TODO: Protect this endpoint with captcha */
         // Changes password (assuming that the current password was successfully validated)
         $request->user()
             ->forceFill(['password' => Hash::make($request->validated('newPassword'))])

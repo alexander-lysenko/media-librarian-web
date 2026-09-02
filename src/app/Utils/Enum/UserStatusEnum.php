@@ -7,8 +7,13 @@ namespace App\Utils\Enum;
  */
 enum UserStatusEnum: string
 {
-    case CREATED = 'CREATED';
-    case ACTIVE = 'ACTIVE';
-    case BANNED = 'BANNED';
-    case DELETED = 'DELETED';
+    public const CREATED = 'CREATED';
+    public const ACTIVE = 'ACTIVE';
+    public const BANNED = 'BANNED';
+    public const DELETED = 'DELETED';
+
+    case E_CREATED = self::CREATED;
+    case E_ACTIVE = self::ACTIVE;
+    case E_BANNED = self::BANNED;
+    case E_DELETED = self::DELETED;
 }

@@ -8,10 +8,10 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * A request entity to validate search/sort/pagination terms passed to get a paginated view of a Library
- * @property int $id
+ * A request entity to validate search/sort/pagination terms passed to get a paginated view of Items
+ * @property int $libraryId
  */
-class LibraryPaginatedRequest extends FormRequest
+class PaginateItemsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,7 +28,11 @@ class LibraryPaginatedRequest extends FormRequest
      */
     public function prepareForValidation(): void
     {
-        $this->merge(['id' => $this->route('id')]);
+        $this->merge([
+            'libraryId' => $this->route('id'),
+            'sort.attribute' => $this->input('sort.attribute', 'id'),
+            'sort.direction' => $this->input('sort.direction', 'asc'),
+        ]);
     }
 
     private array $libraryFields = [];
@@ -46,12 +50,12 @@ class LibraryPaginatedRequest extends FormRequest
          */
 
         $idValidated = $this->validate([
-            'id' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
+            'libraryId' => ['required', 'integer', 'min:1', Rule::exists(SqliteLibraryMeta::class, 'id')],
         ]);
 
         // Get the metadata of a Library
         /** @var SqliteLibraryMeta $libraryModel */
-        $libraryModel = SqliteLibraryMeta::query()->where('id', $idValidated['id'])->get()->firstOrFail();
+        $libraryModel = SqliteLibraryMeta::query()->where('id', $idValidated['libraryId'])->get()->firstOrFail();
 
         // Prepare rules, fields, and attributes
         $libraryMeta = json_decode($libraryModel->meta, true);

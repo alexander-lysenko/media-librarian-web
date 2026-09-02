@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Utils\Enum\InputDataTypeEnum as InputType;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
@@ -142,17 +143,17 @@ class LibrarySearchTermRule implements ValidationRule
     private static function extractTypedRules(): array
     {
         return [
-            'line' => ['nullable', 'string', 'max:255'],
-            'text' => ['nullable', 'string'],
-            'url' => ['nullable', 'string', 'max:255'],
-            'checkmark' => ['boolean'],
-            'date' => ['date_format:Y-m-d'],
-            'datetime' => ['date_format:Y-m-d H:i:s'],
-            'rating5' => ['integer', 'between:0,5'],
-            'rating5precision' => ['numeric', 'between:0,5'],
-            'rating10' => ['integer', 'between:0,10'],
-            'rating10precision' => ['numeric', 'between:0,10'],
-            'priority' => ['numeric', 'between:-5,5'],
+            InputType::LINE => ['nullable', 'string', 'max:255'],
+            InputType::TEXT => ['nullable', 'string'],
+            InputType::URL => ['nullable', 'string', 'max:255'],
+            InputType::CHECKBOX => ['boolean'],
+            InputType::DATE => ['date_format:Y-m-d'],
+            InputType::DATETIME => ['date_format:Y-m-d H:i:s'],
+            InputType::RATING_5 => ['integer', 'between:0,5'],
+            InputType::RATING_5_PRECISION => ['numeric', 'between:0,5'],
+            InputType::RATING_10 => ['integer', 'between:0,10'],
+            InputType::RATING_10_PRECISION => ['numeric', 'between:0,10'],
+            InputType::PRIORITY => ['numeric', 'between:-5,5'],
         ];
     }
 
@@ -171,17 +172,17 @@ class LibrarySearchTermRule implements ValidationRule
         ];
 
         return [
-            'line' => [Rule::in($optionTypeMap['text'])],
-            'text' => [Rule::in($optionTypeMap['text'])],
-            'url' => [Rule::in($optionTypeMap['text'])],
-            'checkmark' => [Rule::in($optionTypeMap['bool'])],
-            'date' => [Rule::in($optionTypeMap['date'])],
-            'datetime' => [Rule::in($optionTypeMap['date'])],
-            'rating5' => [Rule::in($optionTypeMap['number'])],
-            'rating5precision' => [Rule::in($optionTypeMap['number'])],
-            'rating10' => [Rule::in($optionTypeMap['number'])],
-            'rating10precision' => [Rule::in($optionTypeMap['number'])],
-            'priority' => [Rule::in($optionTypeMap['priority'])],
+            InputType::LINE => [Rule::in($optionTypeMap['text'])],
+            InputType::TEXT => [Rule::in($optionTypeMap['text'])],
+            InputType::URL => [Rule::in($optionTypeMap['text'])],
+            InputType::CHECKBOX => [Rule::in($optionTypeMap['bool'])],
+            InputType::DATE => [Rule::in($optionTypeMap['date'])],
+            InputType::DATETIME => [Rule::in($optionTypeMap['date'])],
+            InputType::RATING_5 => [Rule::in($optionTypeMap['number'])],
+            InputType::RATING_5_PRECISION => [Rule::in($optionTypeMap['number'])],
+            InputType::RATING_10 => [Rule::in($optionTypeMap['number'])],
+            InputType::RATING_10_PRECISION => [Rule::in($optionTypeMap['number'])],
+            InputType::PRIORITY => [Rule::in($optionTypeMap['priority'])],
         ];
     }
 }

@@ -9,10 +9,9 @@ use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 /**
- * A request entity to validate the ID of an existing Library during view/update/delete the Library
- * @property int $id
+ * A request entity to validate search/sort/pagination terms passed to get a paginated view of Libraries
  */
-class LibraryIdRequest extends FormRequest
+class PaginateLibrariesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +28,10 @@ class LibraryIdRequest extends FormRequest
      */
     public function prepareForValidation(): void
     {
-        $this->merge(['id' => $this->route('id')]);
+        $this->merge([
+            'sort.attribute' => $this->input('sort.attribute', 'title'),
+            'sort.direction' => $this->input('sort.direction', 'asc'),
+        ]);
     }
 
     /**
@@ -39,10 +41,11 @@ class LibraryIdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'min:1', Rule::when(
-                condition: $this->method() !== HttpRequest::METHOD_DELETE,
-                rules: Rule::exists(SqliteLibraryMeta::class, 'id')
-            )],
+            'sort.attribute' => ['nullable', 'required_with:sort.direction', Rule::in(['title'])],
+            'sort.direction' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'perPage' => ['nullable', 'integer', 'min:0', 'max:250'],
+            'filter' => ['nullable', 'string', 'max:64'],
         ];
     }
 }

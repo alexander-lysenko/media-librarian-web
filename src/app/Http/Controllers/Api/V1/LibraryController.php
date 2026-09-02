@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\DTO\PaginationParamsDto;
 use App\Http\Controllers\Api\ApiV1Controller;
 use App\Http\Requests\V1\CreateLibraryRequest;
 use App\Http\Requests\V1\LibraryIdRequest;
+use App\Http\Requests\V1\PaginateLibrariesRequest;
+use App\Http\Resources\PaginatedJsonResource;
 use App\Jobs\PosterBatchRemoveJob;
+use App\Models\LibrarySearch;
 use App\Models\SqliteLibraryMeta;
 use App\Repositories\LibraryRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -62,10 +64,24 @@ class LibraryController extends ApiV1Controller
     #[OA\Get(
         path: '/api/v1/libraries',
         operationId: 'libraries-index',
-        description: 'The response contains a list of IDs and schemas of all Libraries already created.',
-        summary: 'Get All Libraries',
+        description: "The response contains a list of IDs and schemas of all Libraries already created.\n\n" .
+        'By default the selection is paginated. To get all items, set `perPage` parameter to `0`.',
+        summary: 'List / Get All Libraries',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['libraries'],
+        parameters: [
+            new OA\Parameter(
+                parameter: 'filter',
+                name: 'filter',
+                description: 'Filter by title',
+                in: 'query',
+                schema: new OA\Schema(type: 'string')
+            ),
+            new OA\Parameter(ref: self::PARAM_SORT_ATTR_REF),
+            new OA\Parameter(ref: self::PARAM_SORT_DIR_REF),
+            new OA\Parameter(ref: self::PARAM_PAGE_REF),
+            new OA\Parameter(ref: self::PARAM_PER_PAGE_REF),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -76,6 +92,16 @@ class LibraryController extends ApiV1Controller
                         new OA\Property(property: 'title', type: 'string', example: 'Movies'),
                         new OA\Property(property: 'fields', ref: self::SCHEMA_LIBRARY_REF),
                     ])),
+                    new OA\Property(property: 'sort', properties: [
+                        new OA\Property(property: 'attribute', type: 'string', example: 'id'),
+                        new OA\Property(property: 'direction', type: 'string', example: 'desc'),
+                    ]),
+                    new OA\Property(property: 'pagination', properties: [
+                        new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                        new OA\Property(property: 'lastPage', type: 'integer', example: 15),
+                        new OA\Property(property: 'perPage', type: 'integer', example: 20),
+                        new OA\Property(property: 'total', type: 'integer', example: 299),
+                    ]),
                 ])
             ),
             new OA\Response(ref: self::RESPONSE_401_REF, response: 401),
@@ -83,25 +109,23 @@ class LibraryController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    public function index(Request $request): JsonResponse
+    public function index(PaginateLibrariesRequest $request, LibrarySearch $searchModel): JsonResponse
     {
-        $request->hasValidSignature(); // stub
+        $paginatedResource = $searchModel->search(
+            pagination: PaginationParamsDto::fromRequest($request),
+            filter: $request->input('filter'),
+        );
+        $paginatedResource->transform(function (SqliteLibraryMeta $libraryMeta) {
+            return [
+                'id' => $libraryMeta->id,
+                'title' => $libraryMeta->tbl_name,
+                'fields' => json_decode(json: $libraryMeta->meta, associative: true, flags: JSON_OBJECT_AS_ARRAY),
+            ];
+        });
 
-        // todo: make response paginated
-        // todo: extract code into LibraryRepository
-        $metadataRows = SqliteLibraryMeta::query()->get()->all();
-        $libraries = array_map(static function ($row) {
-            $item = [];
-
-            $item['id'] = $row->id;
-            $item['title'] = $row->tbl_name;
-            $item['fields'] = json_decode($row->meta, true, 512, JSON_OBJECT_AS_ARRAY);
-
-            return $item;
-        }, $metadataRows);
-
-        /** @noinspection OneTimeUseVariablesInspection */
-        $resource = new JsonResource($libraries);
+        $resource = new PaginatedJsonResource($paginatedResource);
+        $resource->wrap('data');
+        $resource->withSort(...$request->array('sort'));
 
         return $resource->response();
     }
@@ -236,10 +260,13 @@ class LibraryController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    public function delete(int $id): JsonResponse
+    public function delete(LibraryIdRequest $request): JsonResponse
     {
-        $this->libraryRepository->deleteById($id);
-        PosterBatchRemoveJob::dispatch(['userId' => Auth::user()->id, 'libraryId' => $id]);
+        $libraryId = $request->id;
+
+        $this->libraryRepository->deleteById($libraryId);
+        $this->libraryRepository->resetCachedCount($libraryId);
+        PosterBatchRemoveJob::dispatch(['userId' => $request->user()->id, 'libraryId' => $libraryId]);
 
         return new JsonResponse(null, 204);
     }
@@ -275,14 +302,17 @@ class LibraryController extends ApiV1Controller
     )]
     public function clear(LibraryIdRequest $request): JsonResponse
     {
-        $libraryMeta = $this->libraryRepository->getById($request->id);
-        $itemsAffected = $this->libraryRepository->cleanUpById($request->id);
+        $libraryId = $request->id;
 
-        PosterBatchRemoveJob::dispatch(['userId' => Auth::user()->id, 'libraryId' => $request->id]);
+        $libraryMeta = $this->libraryRepository->getById($libraryId);
+        $itemsAffected = $this->libraryRepository->cleanUpById($libraryId);
+        $this->libraryRepository->resetCachedCount($libraryId);
+
+        PosterBatchRemoveJob::dispatch(['userId' => $request->user()->id, 'libraryId' => $libraryId]);
 
         $resource = new JsonResource([
             'id' => $libraryMeta->id,
-            'title' => $libraryMeta->tbl_name
+            'title' => $libraryMeta->tbl_name,
         ]);
         $resource->with['meta'] = ['status' => 'truncated', 'items_affected' => $itemsAffected];
 

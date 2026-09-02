@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\SqliteLibraryMeta;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class LibraryRepository
 {
@@ -86,5 +88,27 @@ class LibraryRepository
         $libraryMeta->getConnection()->table($libraryMeta->tbl_name)->truncate();
 
         return $totalItems;
+    }
+
+    public function cacheItemsCount(int $id): int
+    {
+        $cacheKey = self::composeCacheKey(libraryId: $id);
+
+        return Cache::remember($cacheKey, 60, static function () use ($id) {
+            return SqliteLibraryMeta::getLibraryTableQuery(libraryId: $id)->count();
+        });
+    }
+
+    public function resetCachedCount(int $id): void
+    {
+        $cacheKey = self::composeCacheKey(libraryId: $id);
+        Cache::forget($cacheKey);
+    }
+
+    private static function composeCacheKey(int $libraryId): string
+    {
+        $userId = Auth::user()->id;
+
+        return "items-count-$userId-$libraryId";
     }
 }
