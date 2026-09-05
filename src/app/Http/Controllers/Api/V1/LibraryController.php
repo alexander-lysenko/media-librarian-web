@@ -202,7 +202,7 @@ class LibraryController extends ApiV1Controller
     #[OA\Get(
         path: '/api/v1/libraries/{id}',
         operationId: 'libraries-view',
-        description: 'The response contains structure (schema) of the specified Library.',
+        description: 'View the structure (schema) of a particular Library.',
         summary: 'Get the Metadata of a Library',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['libraries'],
@@ -248,7 +248,7 @@ class LibraryController extends ApiV1Controller
     #[OA\Delete(
         path: '/api/v1/libraries/{id}',
         operationId: 'libraries-delete',
-        description: 'Remove the specified Library along with all Items included. The operation cannot be undone.',
+        description: 'Remove a particular Library including all its Items. The operation cannot be undone.',
         summary: 'Delete a Library',
         security: self::SECURITY_SCHEME_BEARER,
         tags: ['libraries'],
@@ -274,7 +274,7 @@ class LibraryController extends ApiV1Controller
     #[OA\Patch(
         path: '/api/v1/libraries/{id}',
         operationId: 'libraries-clear',
-        description: 'Remove all Items from the specified Library but not the Library itself. ' .
+        description: 'Remove all Items from a particular Library but not the Library itself (i.e. truncate). ' .
         'The operation cannot be undone.',
         summary: 'Clear (Truncate) a Library',
         security: self::SECURITY_SCHEME_BEARER,

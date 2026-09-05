@@ -11,15 +11,15 @@ use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 /**
- * Validation Controller - performs various independent asynchronous validations
+ * Validation Controller - provides various independent asynchronous validation endpoints
  */
 class ValidationController extends ApiV1Controller
 {
     #[OA\Post(
         path: '/api/v1/validations/email',
         operationId: 'validate-email',
-        description: '',
-        summary: "Validate user's e-mail address during signup and/or changing address through its profile",
+        description: "Validate user's e-mail address during signup and/or changing address through its profile",
+        summary: "Validate a user's e-mail address",
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(properties: [
@@ -45,8 +45,8 @@ class ValidationController extends ApiV1Controller
     #[OA\Post(
         path: '/api/v1/validations/libraries',
         operationId: 'validate-library-name',
-        description: '',
-        summary: 'Validate uniqueness for Library name when a new Library is created',
+        description: 'Validate uniqueness for Library name when a new Library is created',
+        summary: 'Validate a Library title',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
@@ -76,11 +76,11 @@ class ValidationController extends ApiV1Controller
     #[OA\Post(
         path: '/api/v1/validations/libraries/{id}/items',
         operationId: 'validate-library-item-name',
-        description: '',
-        summary: "Validate uniqueness for Item title when the Item is created or updated\n\n." .
+        description: "Validate uniqueness for Item title when the Item is created or updated\n\n." .
         'When updating an existing Item, please provide its ID with `item` property in the request body to skip ' .
         "the self-checking of its existing title for uniqueness. \nWhen creating a new Item, the property `item` " .
         'should be either omitted or set to `null`. ',
+        summary: 'Validate a Library Item title',
         security: self::SECURITY_SCHEME_BEARER,
         requestBody: new OA\RequestBody(
             required: true,
