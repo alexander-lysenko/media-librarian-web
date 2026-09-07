@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PosterController;
 use App\Http\Controllers\WebController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,4 +45,11 @@ Route::middleware(['throttle:web']) //
 ->group(function () {
     Route::get('/email-confirmation-preview', [WebController::class, 'previewVerifyEmail']);
     Route::get('/password-reset-preview', [WebController::class, 'previewPasswordResetEmail']);
+});
+
+
+Route::middleware(['throttle:web']) //
+->group(static function () {
+    Route::get('/posters/{uuid}', [PosterController::class, 'generateCloudUrl'])
+        ->name('posters.cloudLink');
 });

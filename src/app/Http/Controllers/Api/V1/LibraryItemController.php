@@ -5,17 +5,17 @@ namespace App\Http\Controllers\Api\V1;
 use App\DTO\PaginationParamsDto;
 use App\Events\PosterUpdated;
 use App\Http\Controllers\Api\ApiV1Controller;
-use App\Http\Requests\V1\LibraryIdRequest;
 use App\Http\Requests\V1\CreateItemRequest;
+use App\Http\Requests\V1\LibraryIdRequest;
 use App\Http\Requests\V1\LibraryItemIdRequest;
-use App\Http\Requests\V1\UpdateLibraryItemRequest;
 use App\Http\Requests\V1\PaginateItemsRequest;
+use App\Http\Requests\V1\UpdateLibraryItemRequest;
 use App\Http\Resources\LibraryItemResource;
 use App\Http\Resources\PaginatedJsonResource;
 use App\Models\LibraryItemsSearch;
+use App\Models\Poster;
 use App\Repositories\LibraryItemRepository;
 use App\Repositories\PosterRepository;
-use App\Services\PosterCloudService;
 use ErrorException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
@@ -115,7 +115,7 @@ use OpenApi\Attributes as OA;
 class LibraryItemController extends ApiV1Controller
 {
     public function __construct(
-        private readonly PosterCloudService $posterCloudService,
+        private readonly PosterRepository $posterRepository,
         private readonly LibraryItemRepository $itemRepository,
     ) {}
 
@@ -163,20 +163,23 @@ class LibraryItemController extends ApiV1Controller
     )]
     public function index(PaginateItemsRequest $request, LibraryItemsSearch $searchModel): JsonResponse
     {
-        $paginatedResource = $searchModel->search(
+        $items = $searchModel->search(
             libraryId: $request->libraryId,
             pagination: PaginationParamsDto::fromRequest($request),
             terms: $request->array('term'),
         );
-        $paginatedResource->each(function (object $item) use ($request, &$posters) {
-            $posters[$item->id] = $this->posterCloudService->tmpUrl(libraryId: $request->libraryId, itemId: $item->id);
-        });
+        $itemIds = $items->pluck('id')->toArray();
 
-        $resource = new PaginatedJsonResource($paginatedResource);
+        $this->posterRepository->getMultipleEntries(libraryId: $request->libraryId, itemIds: $itemIds)
+            ->each(function (Poster $poster) use (&$posterLinks) {
+                $posterLinks[$poster->item_id] = $poster->getResourceLink();
+            });
+
+        $resource = new PaginatedJsonResource($items);
         $resource->withSort(...$request->array('sort'));
 
-        if (!empty($posters)) {
-            $resource->with['posters'] = $posters;
+        if (!empty($posterLinks)) {
+            $resource->with['posters'] = $posterLinks;
         }
 
         return $resource->response();
@@ -232,21 +235,24 @@ class LibraryItemController extends ApiV1Controller
     )]
     public function search(PaginateItemsRequest $request, LibraryItemsSearch $searchModel): JsonResponse
     {
-        $posterRepository = app(PosterRepository::class);
-        $items = $searchModel->search(
+        $search = $searchModel->search(
             libraryId: $request->id,
             pagination: PaginationParamsDto::fromRequest($request),
             terms: $request->array('term')
         );
+        $itemIds = $search->pluck('id')->toArray();
 
-        $itemIds = $items->pluck('id')->toArray();
-
-        $resource = new PaginatedJsonResource($items);
+        $resource = new PaginatedJsonResource($search);
         $resource->withSort(...$request->array('sort'));
-        $resource->with['posters'] = $posterRepository->getPosterEntries(
-            libraryId: $request->id,
-            itemIds: $itemIds,
-        );
+
+        $this->posterRepository->getMultipleEntries(libraryId: $request->libraryId, itemIds: $itemIds)
+            ->each(function (Poster $poster) use (&$posterLinks) {
+                $posterLinks[$poster->item_id] = $poster->getResourceLink();
+            });
+
+        if (!empty($posterLinks)) {
+            $resource->with['posters'] = $posterLinks;
+        }
 
         return $resource->response();
     }
@@ -279,10 +285,10 @@ class LibraryItemController extends ApiV1Controller
     public function view(LibraryItemIdRequest $request): JsonResponse
     {
         $item = $this->itemRepository->getById($request->libraryId, $request->itemId);
-        $posterUrl = $this->posterCloudService->tmpUrl(libraryId: $request->libraryId, itemId: $request->itemId);
+        $poster = $this->posterRepository->getEntry(libraryId: $request->libraryId, itemId: $request->itemId);
 
         $resource = new LibraryItemResource($item);
-        $resource->withPoster($posterUrl);
+        $resource->withPoster($poster?->getResourceLink());
 
         return $resource->response();
     }
@@ -335,8 +341,10 @@ class LibraryItemController extends ApiV1Controller
         $resource = new LibraryItemResource($insertedItem);
 
         if ($request->has('posterUUID') && $request->posterUUID !== null) {
-            $posterUrl = $this->posterCloudService->tmpUrlByUuid(uuid: $request->posterUUID);
-
+            $posterUrl = route(
+                name: 'posters.cloudLink',
+                parameters: ['uuid' => $request->posterUUID]
+            );
             $event = new PosterUpdated(
                 userId: $request->user()->id,
                 libraryId: $request->libraryId,
@@ -395,7 +403,7 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    public function update(UpdateLibraryItemRequest $request, PosterRepository $posterRepository): JsonResponse
+    public function update(UpdateLibraryItemRequest $request): JsonResponse
     {
         $posterUuidProvided = $request->has('posterUUID');
         if (!$this->itemRepository->updateItem($request->libraryId, $request->itemId, $request->contents)) {
@@ -406,14 +414,12 @@ class LibraryItemController extends ApiV1Controller
         $updatedItem = $this->itemRepository->getById(libraryId: $request->libraryId, itemId: $request->itemId);
         $resource = new LibraryItemResource($updatedItem);
 
-        $poster = $posterRepository->getPosterEntry($request->libraryId, $request->itemId);
+        $poster = $this->posterRepository->getEntry($request->libraryId, $request->itemId);
         $posterUrl = match (true) {
-            !$posterUuidProvided && !!$poster?->uuid => $this->posterCloudService->tmpUrl(
-                libraryId: $request->libraryId,
-                itemId: $request->itemId
-            ),
-            $posterUuidProvided && $request->posterUUID !== null => $this->posterCloudService->tmpUrlByUuid(
-                uuid: $request->posterUUID
+            !$posterUuidProvided && !!$poster?->uuid => $poster->getResourceLink(),
+            $posterUuidProvided && $request->posterUUID !== null => route(
+                name: 'posters.cloudLink',
+                parameters: ['uuid' => $request->posterUUID]
             ),
             default => null,
         };
@@ -450,14 +456,14 @@ class LibraryItemController extends ApiV1Controller
             new OA\Response(ref: self::RESPONSE_500_REF, response: 500),
         ]
     )]
-    public function delete(LibraryItemIdRequest $request, PosterRepository $posterRepository): JsonResponse
+    public function delete(LibraryItemIdRequest $request): JsonResponse
     {
         if (!$this->itemRepository->exists(libraryId: $request->libraryId, itemId: $request->itemId)) {
             return new JsonResponse(null, 204);
         }
 
         $this->itemRepository->deleteItem($request->libraryId, $request->itemId);
-        $poster = $posterRepository->getPosterEntry($request->libraryId, $request->itemId);
+        $poster = $this->posterRepository->getEntry($request->libraryId, $request->itemId);
 
         $event = new PosterUpdated(
             userId: $request->user()->id,
@@ -501,10 +507,10 @@ class LibraryItemController extends ApiV1Controller
     public function random(LibraryIdRequest $request): JsonResponse
     {
         $item = $this->itemRepository->getRandomItem($request->id);
-        $posterUrl = $this->posterCloudService->tmpUrl(libraryId: $request->id, itemId: $item->id);
+        $poster = $this->posterRepository->getEntry(libraryId: $request->id, itemId: $item->id);
 
         $resource = new LibraryItemResource($item);
-        $resource->withPoster($posterUrl);
+        $resource->withPoster($poster?->getResourceLink());
 
         return $resource->response();
     }

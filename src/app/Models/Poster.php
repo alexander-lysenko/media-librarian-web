@@ -29,4 +29,9 @@ class Poster extends Model
         'item_id',
         'path',
     ];
+
+    public function getResourceLink()
+    {
+        return route('posters.cloudLink', ['uuid' => $this->uuid]);
+    }
 }

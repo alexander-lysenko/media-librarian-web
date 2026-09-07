@@ -41,12 +41,7 @@ class PosterCloudService
 
     public function delete() {}
 
-    public function createUrl(): string
-    {
-        return '';
-    }
-
-    public function tmpUrl(int $libraryId, int $itemId): ?string
+    public function getSignedUrl(int $libraryId, int $itemId): ?string
     {
         // todo: add poster path resolving, handle case when poster is not found
 
@@ -56,7 +51,7 @@ class PosterCloudService
         );
     }
 
-    public function tmpUrlByUuid(string $uuid): string
+    public function tmpSignedUrl(string $uuid): ?string
     {
         return Storage::disk('r2')->temporaryUrl(
             path: 'Hotline Miami - Lamborghini (20250417112906).jpg',

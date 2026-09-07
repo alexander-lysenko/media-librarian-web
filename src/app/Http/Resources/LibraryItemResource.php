@@ -27,6 +27,8 @@ class LibraryItemResource extends JsonResource
 
     public function withPoster(?string $poster): void
     {
-        $this->with['poster'] = $poster;
+        if (!empty($poster)) {
+            $this->with['poster'] = $poster;
+        }
     }
 }
